@@ -11,7 +11,7 @@ The desktop sidebar provides separate sections for **Book Reader, Research Shelf
 - **PDF and Markdown reading:** Open a book from the Subject Library or select a local PDF. Google Drive books require a valid Drive grant. The browser loads PDF.js 4.10.38 from a public CDN while reading; PDF contents are requested from Drive only for the signed-in user. The built-in reader supports files up to 80 MB; originals can be larger and remain in Drive. Select text on a PDF to save an on-page highlight, create a sticky note, or add a notebook excerpt. Definition-formatted passages can become flashcards. Scanned, image-only pages require external OCR to yield selectable text.
 - **Study search:** Ctrl/Cmd + K finds notebook notes, stickies, flashcards, tasks, library metadata, saved PDF highlights and research references. This is metadata/stored-text search; it does not build a searchable index of every uploaded textbook page.
 - **Smart recall:** The existing four-rating spaced repetition remains in place. Paste `Term: definition` lines or select a saved note/sticky to generate reviewable, local flashcards; no AI calls or guessed facts.
-- **Research Shelf:** Store references with metadata and DOI links; DOI lookup uses the Crossref public API when accessible. Copied reference text should be checked against APA 7 formatting before academic submission.
+- **Reference Manager:** The upgraded Research Shelf now supports editable source metadata, DOI lookup, duplicate-safe RIS/BibTeX import and export, and APA-style draft citations.
 - **Study Board and Mind Maps:** Drag cards and concept nodes, connect related theories, and keep the layouts inside account-synced study data. The board can pin existing handwritten sticky notes.
 - **Voice Notes:** The browser's Web Speech recognition (when available) turns speech into an editable transcript. Speech processing may require internet and use the browser's provider. PsychDesk does not persist raw microphone audio. Review and save transcripts to the Notebook.
 - **Focus and analytics:** Optional browser-generated rain/brown noise, a session intention, fullscreen focus, a 12-week activity heatmap, subject study totals and aggregate self-ratings. Figures reflect logged sessions and reviews only.
@@ -21,6 +21,31 @@ The desktop sidebar provides separate sections for **Book Reader, Research Shelf
 New structured data fields: `research`, `boardItems`, `mindMaps` and `pdfHighlights`; all are included in existing local backups and account Firestore snapshots. The 750 KB safe-limit for Firestore snapshots still applies; books themselves remain in Drive. External content and private credentials must never be placed in the public GitHub repository.
 
 The Smart Timetable, Exam Simulator, Offline Study feature and Gemini Study Tutor were deliberately **not** added.
+
+## Psychology Dictionary, Reference Manager and History Timeline (November 2026)
+
+These features are available as dedicated desktop sidebar sections and under **Tools** on mobile.
+
+**Psychology Dictionary**
+- 64 concise, topic-filtered glossary entries with linked related concepts and reading sources. Built-in definitions live in `psychology-data.js`, not in the user's cloud data.
+- Search, bookmark, add/edit/delete personal terms, and turn definitions into ordinary notebook notes, handwritten sticky notes or flashcards.
+- Personal entries and bookmarks are saved with the currently selected PsychDesk account; the reference content remains shared across accounts and is not diagnostic advice.
+
+**Psychology Timeline**
+- 24 selected milestones spanning 1859–1988, with filters, researchers, a reading-source link and explanations.
+- Add and edit personal milestones, bookmark events, and save your own short reflections. Events can be converted into notebook notes or flashcards.
+- Dates and interpretations are based on publicly available historical and educational resources; this curated selection is not a complete global history. Starting dates for schools of thought are approximate.
+
+**Reference Manager**
+- Upgrades the existing `research` collection in place; old references are displayed without destructive migration.
+- Enter or edit journal articles, books, book chapters, conference contributions, theses, reports, and online pages, including journal, volume, issue, pages, DOI, URL, keywords and notes.
+- Look up metadata from Crossref when online; always review imported publication data.
+- Import **RIS** and **BibTeX** via a confirmation preview. Existing DOI or normalized title/year matches are skipped; imports are capped at 1 MB, 250 parsed entries and the existing Firestore safety limit. Export all references to RIS or BibTeX for Zotero and similar apps.
+- Copy an **APA-style citation draft** for review. This is not a fully certified APA 7 implementation: verify capitalization, author formatting, edition and publisher details. Interchange formats do not transfer PDF attachments or app collections.
+
+**Sync and privacy:** the only new account fields are `dictionaryEntries`, `dictionaryBookmarks`, `timelineEvents`, `timelineBookmarks`, and `timelineAnnotations`. They are optional arrays and migrate non-destructively with old JSON backups and Firebase snapshots. Nothing changes the existing Drive OAuth configuration or uploads books automatically.
+
+The four deliberately excluded features remain unimplemented: Smart Timetable, Exam Simulator, Offline Study, and Gemini Study Tutor.
 
 ## Departments
 
