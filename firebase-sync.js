@@ -52,7 +52,7 @@ async function signIn(){
  if(!configured) return openAccount();
  if(loginInProgress) return;
  if(!auth){ alert('Firebase authentication is not ready. Check your connection, then reload PsychDesk in Chrome.'); return; }
- loginInProgress=true;lastError='';updateBadge();
+ loginInProgress=true;lastError='';updateBadge();window.PsychDeskSetup?.start?.();
  try {
   const provider=new GoogleAuthProvider();
   provider.addScope(DRIVE_FILE_SCOPE);
@@ -78,7 +78,7 @@ async function signIn(){
   };
   console.error('PsychDesk Google sign-in failed',code,e);
   updateBadge();
-  alert('Google sign-in failed.\n\nError: '+lastError+'\n\n'+(hints[code]||'Try Chrome and share the exact error code.')+'\n\nWebsite: https://sid964.github.io/psychdesk/');
+  if(window.PsychDeskSetup?.fail) window.PsychDeskSetup.fail('Google sign-in failed: '+lastError, code); else alert('Google sign-in failed.\n\nError: '+lastError+'\n\n'+(hints[code]||'Try Chrome and share the exact error code.')+'\n\nWebsite: https://sid964.github.io/psychdesk/');
  }finally{loginInProgress=false;}
 }
 async function accountChanged(next){
@@ -207,7 +207,15 @@ function openAccount(){
  <p class="account-meta">Signing out clears this tab's Drive connection. Public setup and local account data stay saved; reconnect Drive when needed. Automatic sync runs after saved changes. On network loss, device data stays locally, but only synced changes are available on another device.</p>`;
  core.openModal('Google account & study sync',`<div class="settings-section">${body}</div>`);
 }
-window.PsychDeskFirebase={openAccount,getUserId:()=>user?.uid||null};
+window.PsychDeskFirebase={
+ openAccount,getUserId:()=>user?.uid||null,
+ getConnectionStatus:()=>({
+  signedIn:!!user, email:user?.email||'', uid:user?.uid||'',
+  synced:!!user&&signedInReady&&!dirty&&!busy&&!conflict&&!lastError&&navigator.onLine,
+  loading:!!user&&(!signedInReady||busy||dirty)&&!lastError&&!conflict&&navigator.onLine,
+  conflict, error:lastError, online:navigator.onLine, dirty
+ })
+};
 accountBtn?.addEventListener('click',openAccount);
 document.addEventListener('click',e=>{
  const b=e.target.closest('[data-firebase]');if(!b)return;e.preventDefault();
