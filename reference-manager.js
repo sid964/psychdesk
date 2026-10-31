@@ -65,11 +65,14 @@ function apaDraft(record){
  else if(row.url)pieces.push(row.url);
  return pieces.filter(Boolean).join(' ').replace(/\s{2,}/g,' ').trim();
 }
-function dedupeKey(raw){
+function dedupeKeys(raw){
  const r=normalized(raw);
- if(validDOI(r.doi))return 'doi:'+r.doi.toLowerCase();
- return 'title:'+r.title.toLocaleLowerCase().replace(/[^a-z0-9]+/g,' ').trim()+'|'+(r.year||'');
+ const keys=[];
+ if(validDOI(r.doi))keys.push('doi:'+r.doi.toLowerCase());
+ if(r.title)keys.push('title:'+r.title.toLocaleLowerCase().replace(/[^a-z0-9]+/g,' ').trim()+'|'+(r.year||''));
+ return keys;
 }
+function dedupeKey(raw){return dedupeKeys(raw)[0]||'';}
 function filterRows(){
  const needle=search.toLowerCase().trim();
  return rows().map(normalized).filter(r=>(subjectFilter==='all'||r.subjectId===subjectFilter)&&
@@ -142,7 +145,7 @@ function saveForm(e){
  if(!r.title){core.toast('A reference title is required.');return;}
  if(r.doi&&!validDOI(r.doi)){core.toast('Check DOI format.');return;}
  const original=rows().find(x=>x.id===r.id);
- const duplicate=rows().find(x=>x.id!==r.id&&dedupeKey(x)===dedupeKey(r));
+ const newKeys=new Set(dedupeKeys(r));const duplicate=rows().find(x=>x.id!==r.id&&dedupeKeys(x).some(key=>newKeys.has(key)));
  if(duplicate){core.toast('This reference appears to be saved already.');return;}
  const d=data();if(!Array.isArray(d.research))d.research=[];
  if(original)Object.assign(original,r,{createdAt:original.createdAt,updatedAt:new Date().toISOString()});
@@ -293,11 +296,11 @@ function exportRIS(records){
  }).join('\r\n\r\n')+'\r\n';
 }
 function importPreview(items){
- const present=new Set(rows().map(dedupeKey)),seen=new Set();const accepted=[];
+ const present=new Set(rows().flatMap(dedupeKeys)),seen=new Set(),accepted=[];
  for(const value of items.slice(0,250)){
-  const row=normalized(value),key=dedupeKey(row);
-  if(!row.title||seen.has(key)||present.has(key))continue;
-  seen.add(key);accepted.push(row);
+  const row=normalized(value),keys=dedupeKeys(row);
+  if(!row.title||keys.some(key=>seen.has(key)||present.has(key)))continue;
+  keys.forEach(key=>seen.add(key));accepted.push(row);
  }
  return accepted;
 }
