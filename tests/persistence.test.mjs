@@ -259,3 +259,23 @@ test('expired tab Drive session is rejected without contacting Google',async()=>
  assert.equal(await env.window.PsychDeskCloud.restoreDriveSession(),false);
  assert.equal(tabSession.has('psychdesk-drive-tab-v1'),false);
 });
+
+test('Firebase account restoration reuses an authorized Drive tab session without opening Google settings',async()=>{
+ const storage=new Map(),tabSession=new Map(),first=environment(storage,false,tabSession);
+ first.window.PSYCHDESK_DRIVE_CLIENT_ID=CLIENT;
+ first.setUser('alice');
+ first.context.fetch=async()=>({ok:true,status:200,text:async()=>JSON.stringify({user:{emailAddress:'alice@example.test'}})});
+ const pending=first.cloud.connectDrive();first.oauth.callback({access_token:'recent-google-drive-token',expires_in:3600});
+ await pending;await first.window.PsychDeskCloud.verifyDriveConnection();
+ assert.ok(tabSession.has('psychdesk-drive-tab-v1'));
+ const refreshed=environment(storage,false,tabSession);
+ refreshed.window.PSYCHDESK_DRIVE_CLIENT_ID=CLIENT;
+ refreshed.context.fetch=first.context.fetch;
+ const fb=firebase(refreshed);
+ await fb.change({uid:'alice',email:'alice@example.test'});
+ for(let i=0;i<5;i++)await Promise.resolve();
+ assert.equal(refreshed.window.PsychDeskCloud.isConnected(),true);
+ await fb.change(null);
+ assert.equal(refreshed.window.PsychDeskCloud.isConnected(),false);
+ assert.equal(tabSession.has('psychdesk-drive-tab-v1'),false);
+});
