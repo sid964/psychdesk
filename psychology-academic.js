@@ -124,7 +124,7 @@ document.addEventListener('click',event=>{
 });
 document.addEventListener('input',event=>{
  if(event.target?.id!=='psyDictionaryQuery')return;
- if(controller){controller.abort();controller=null;++sequence;}
+ if(controller){controller.abort();controller=null;++sequence;working=false;const btn=byId('psyAcademicSearch');if(btn)btn.disabled=false;}
  const area=byId('psyAcademicResults');
  if(area&&lastQuery&&queryText(event.target.value)!==lastQuery){area.textContent='Tap Find research to search for the new concept.';records=[];}
 });
