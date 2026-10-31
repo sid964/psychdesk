@@ -19,7 +19,7 @@ async function pdfLib(){
 function bookTitle(){return material?.title||localFile?.name||'Your book';}
 function shelf(){
  const items=(getData().materials||[]).filter(m=>m.kind==='pdf'||m.kind==='markdown');
- return '<section class="hero"><div class="eyebrow">READ · MARK · REMEMBER</div><h1>Book reader.</h1><p>Read your books in PsychDesk and turn selected text into lasting study notes.</p></section>'+
+ return '<section class="hero"><div class="eyebrow">READ · MARK · REMEMBER</div><h1>Book reader.</h1><p>Read your books in PsychDesk and turn selected text into lasting study notes.</p></section>'+ (readerError?'<div class="reader-error" role="alert">'+h(readerError)+' <button data-reader="driveSettings">Check Drive connection</button>'+(material?.url&&allowLink(material.url)?' <a href="'+h(allowLink(material.url))+'" target="_blank" rel="noopener noreferrer">Open in Google Drive ↗</a>':'')+'</div>':'')+
  '<div class="study-panel"><div class="study-panel-heading"><h2>Choose your material</h2><span>PDF or Markdown</span></div>'+
  '<p>Books in your library are stored in your own Google Drive. Reconnect Drive if you are asked to. You can also open a local PDF for this session.</p>'+
  '<label class="reader-local-label">Open a PDF from this device <input id="localReaderFile" type="file" accept=".pdf,.md,.markdown,application/pdf,text/markdown"></label>'+
@@ -124,7 +124,8 @@ function capture(){
  const sel=window.getSelection?.(),layer=$('#readerTextLayer'),surface=$('#readerPageSurface');
  if(!sel||!sel.rangeCount||sel.isCollapsed)return;
  const range=sel.getRangeAt(0);
- if(!layer||!layer.contains(range.commonAncestorContainer))return;
+ if((!layer||!layer.contains(range.commonAncestorContainer))&&!$('#readerMarkdown')?.contains(range.commonAncestorContainer))return;
+ if(fileText){selected={text:String(sel.toString()).trim().slice(0,3000),rects:[],page:1};updateSelection();return;}
  const text=String(sel.toString()).trim().slice(0,3000);
  if(!text)return;
  const bounds=surface.getBoundingClientRect();
@@ -200,12 +201,13 @@ document.addEventListener('change',e=>{
  if(e.target.id==='localReaderFile'){openLocal(e.target.files?.[0]);}
  if(e.target.id==='readerPage')navigate(e.target.value);
 });
-document.addEventListener('pointerup',e=>{if(e.target.closest('#readerTextLayer'))setTimeout(capture,0);});
-document.addEventListener('keyup',e=>{if(e.target.closest?.('#readerTextLayer'))setTimeout(capture,0);});
+document.addEventListener('pointerup',e=>{if(e.target.closest('#readerTextLayer,#readerMarkdown'))setTimeout(capture,0);});
+document.addEventListener('keyup',e=>{if(e.target.closest?.('#readerTextLayer,#readerMarkdown'))setTimeout(capture,0);});
 document.addEventListener('click',e=>{
  const b=e.target.closest('[data-reader]');if(!b)return;e.preventDefault();
  switch(b.dataset.reader){
  case 'openBook':openMaterial(b.dataset.id);break;
+ case 'driveSettings':cloud?.openSettings?.();break;
  case 'back':back();break;
  case 'prev':navigate(page-1);break;
  case 'next':navigate(page+1);break;
