@@ -12,4 +12,4 @@ window.PSYCHDESK_FIREBASE_CONFIG = {
 
 // Public OAuth web client ID for optional Google Drive authorization.
 // This is not an OAuth client secret. Friends should never need to enter it.
-window.PSYCHDESK_DRIVE_CLIENT_ID = "659114399201-a9men6lh75snq5in5kko8el5maiah797.apps.googleusercontent.com";
+window.PSYCHDESK_DRIVE_CLIENT_ID = "659114399201-a9men61h75snq5in5kko8el5maiah797.apps.googleusercontent.com";
