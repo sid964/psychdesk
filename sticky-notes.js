@@ -190,5 +190,5 @@ window.addEventListener('pagehide',()=>{if(autosave&&raw.trim())save();});
 function resetDraft(){clearTimeout(autosave);autosave=null;groupId='';raw='';heading='';subjectId='';paper='butter';}
 window.addEventListener('psychdesk:session-reset',resetDraft);
 window.addEventListener('psychdesk:data-replaced',()=>{if(groupId&&!bucket(groupId).length)resetDraft();});
-window.PsychDeskStickies={render,fromNote,generate,save};
+window.PsychDeskStickies={render,fromNote,generate,save,edit};
 })();
