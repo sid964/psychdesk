@@ -9,6 +9,11 @@ on:
       - 'tests/psychology-dictionary.test.cjs'
       - 'tests/psychology-online.test.cjs'
       - 'tests/study-extensions.test.cjs'
+      - 'tests/drive-persistence.test.cjs'
+      - 'functions/**'
+      - 'drive-persistence.js'
+      - 'firebase-config.js'
+      - 'firebase.json'
       - 'note-history.js'
       - 'psychology-connections.js'
       - 'psychology-academic.js'
@@ -44,5 +49,8 @@ jobs:
           node --check note-history.js
           node --check cloud.js
           node --check firebase-sync.js
+          node --check drive-persistence.js
+          node --check functions/index.js
+          node --check functions/lib/oauth.js
       - name: Test psychology dictionary data and loading
-        run: node --test tests/psychology-dictionary.test.cjs tests/psychology-online.test.cjs tests/study-extensions.test.cjs
+        run: node --test tests/psychology-dictionary.test.cjs tests/psychology-online.test.cjs tests/study-extensions.test.cjs tests/drive-persistence.test.cjs functions/tests/oauth.test.cjs
