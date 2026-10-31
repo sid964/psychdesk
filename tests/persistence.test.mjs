@@ -105,3 +105,12 @@ test('storage write failure purges legacy secrets and reports that saving failed
 test('offline loading finds versioned assets and cache cleanup preserves other apps',async()=>{
  const handlers={},removed=[];let response,options;const self={location:{origin:'https://sid964.github.io'},clients:{claim(){}},skipWaiting(){},addEventListener:(type,fn)=>handlers[type]=fn};const caches={keys:async()=>['other-app-cache','psychdesk-old','psychdesk-settings-v1'],delete:async key=>removed.push(key),match:async(_,opts)=>{options=opts;return 'cached-script'}};vm.runInNewContext(source('sw.js'),{self,caches,URL,fetch:async()=>{throw Error('offline')}});handlers.fetch({request:{method:'GET',url:'https://sid964.github.io/psychdesk/cloud.js?v=settings-1'},respondWith:value=>response=value});assert.equal(await response,'cached-script');assert.equal(options.ignoreSearch,true);handlers.activate({waitUntil:value=>response=value});await response;assert.deepEqual(removed,['psychdesk-old']);
 });
+
+test('Gemini timeout is not reported as an App Check rejection',async()=>{
+ const env=environment(),auth={currentUser:{uid:'alice'}};
+ env.window.PSYCHDESK_APP_CHECK_SITE_KEY='public-site-key';
+ env.window.PSYCHDESK_FIREBASE_CONFIG={appId:'app',projectId:'project'};
+ Object.assign(env.context,{initializeApp:()=>({}),getApp:()=>({}),getApps:()=>[],getAuth:()=>auth,initializeAppCheck:()=>({}),ReCaptchaEnterpriseProvider:class{},getToken:async()=>({token:'test'}),getAI:()=>({}),GoogleAIBackend:class{},getGenerativeModel:()=>({generateContent:()=>new Promise(()=>{})}),setTimeout:(fn,ms)=>{if(ms===60000)queueMicrotask(fn);return 1}});
+ vm.runInContext(stripImports(source('firebase-ai.js')),env.context);
+ await assert.rejects(env.window.PsychDeskAI.generateText({prompt:'test'}),error=>error.code==='psychdesk/timeout' && error.message.includes('No server rejection') && !error.message.includes('App Check rejected'));
+});

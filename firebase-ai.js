@@ -15,7 +15,7 @@ const withTimeout = (task, ms, message) => {
   let timer;
   return Promise.race([
     Promise.resolve().then(task),
-    new Promise((_, reject) => { timer = setTimeout(() => reject(Error(message)), ms); })
+    new Promise((_, reject) => { timer = setTimeout(() => reject(Object.assign(Error(message), {code:'psychdesk/timeout'})), ms); })
   ]).finally(() => clearTimeout(timer));
 };
 
@@ -35,14 +35,15 @@ window.PsychDeskAI = {
         model,
         generationConfig: {temperature:0.5, maxOutputTokens:2200}
       });
-      const result = await withTimeout(() => generativeModel.generateContent(prompt), 60000, 'Gemini did not respond within 60 seconds. Check Firebase AI Logic status, model availability, API quota, and App Check enforcement; then retry.');
+      const result = await withTimeout(() => generativeModel.generateContent(prompt), 60000, 'Gemini timed out after 60 seconds while waiting for a response. No server rejection was received. Retry once; if it repeats, check the browser network request and Firebase AI Logic status.');
       const output = result?.response?.text()?.trim();
       if (!output) throw Error('Gemini returned no text. Try again with a different question.');
       return output;
     } catch(error) {
+      if(error?.code==='psychdesk/timeout') throw error;
       const message=describe(error);
-      if(/403|PERMISSION_DENIED|app.check|app.check|attestation/i.test(message))
-        throw Error('Firebase AI Logic/App Check rejected the request. Check that AI Logic is enabled and App Check is enforced with a registered web app. '+message);
+      if(/\b403\b|PERMISSION_DENIED/i.test(message))
+        throw Error('Firebase AI Logic denied access. The server error below may identify an API, project permission, or App Check configuration issue. '+message);
       throw Error(message);
     }
   }
