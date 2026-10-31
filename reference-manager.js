@@ -90,9 +90,9 @@ function render(){
  '<div class="ref-metrics"><div><strong>'+rows().length+'</strong><span>Saved sources</span></div><div><strong>'+rows().filter(r=>validDOI(cleanDOI(r.doi))).length+'</strong><span>DOIs recorded</span></div><div><strong>'+list.length+'</strong><span>Matching results</span></div></div>'+
  '<section class="ref-quick-add"><div><small>ADD A REFERENCE</small><h2>Start with a DOI or enter metadata.</h2><p>Look up published work through Crossref. Every field remains editable after lookup.</p></div>'+
  '<div class="ref-doi-row"><input type="text" id="refLookupInput" autocomplete="off" placeholder="10.1037/… or DOI link" aria-label="Reference DOI"><button type="button" data-ref="lookup" class="primary">Find DOI</button><button type="button" data-ref="add" class="secondary">+ Manual entry</button></div><p id="refLookupStatus" role="status"></p></section>'+
- '<div class="ref-toolbar"><div><button data-ref="import" class="secondary">↑ Import RIS / BibTeX</button><button data-ref="exportRIS" class="secondary">↓ Export RIS</button><button data-ref="exportBIB" class="secondary">↓ Export BibTeX</button></div>'+
+ '<details class="ref-advanced"><summary>Import / export files (optional)</summary><div class="ref-toolbar"><div><button data-ref="import" class="secondary">↑ Import RIS / BibTeX</button><button data-ref="exportRIS" class="secondary">↓ Export RIS</button><button data-ref="exportBIB" class="secondary">↓ Export BibTeX</button></div>'+
  '<input type="file" id="referenceImportFile" accept=".ris,.bib,.bibtex,.txt,text/plain,application/x-bibtex" hidden>'+
- '<span>Compatible with reference managers such as Zotero. Imports are reviewed before saving.</span></div>'+
+ '<span>Compatible with reference managers such as Zotero. Imports are reviewed before saving.</span></div></details>'+
  '<div class="ref-controls"><label>Search bibliography<input id="refSearch" type="search" value="'+h(search)+'" placeholder="Title, author, DOI, keywords…"></label>'+
  '<label>Subject<select id="refSubjectFilter"><option value="all">All subjects</option>'+opts+'</select></label>'+
  '<label>Type<select id="refTypeFilter"><option value="all">All types</option>'+types.map(([id,name])=>'<option value="'+id+'"'+(typeFilter===id?' selected':'')+'>'+name+'</option>').join('')+'</select></label>'+
