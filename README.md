@@ -46,6 +46,15 @@ These features are available as dedicated desktop sidebar sections and under **T
 - Source attribution matters. Do not upload or redistribute proprietary dictionary datasets or textbook definitions without permission. Textbook-aligned packs may be created from user-owned books as newly written summaries; the textbook itself is not copied into the reference database. The supplemental summaries link to OpenStax *Psychology 2e* for further reading and are newly authored, not verbatim dictionary excerpts.
 - Large imports depend on browser storage quota and device performance. A partially interrupted import retains completed batches; import the same pack again to resume or refresh entries safely.
 
+
+**On-demand online dictionary lookup (November 2026)**
+
+- The **same search box** now shows the existing curated/personal results immediately and, after a brief pause, asks Wikipedia for matching public articles. There is **no account setup, API key, hosted backend, bulk download or need to attach a textbook**.
+- Each online result shows a short excerpt, a direct source link and an attribution notice. Wikipedia is a general encyclopedia rather than a vetted psychology/clinical dictionary, so check important information against textbooks or primary research.
+- Opening an online result offers **Save to dictionary** (local IndexedDB, survives refresh but does not sync as bulk data), **Save as note**, or **Make flashcard** (these use the existing account-data sync). Wikipedia wording must retain attribution to Wikipedia contributors and its CC BY-SA 4.0 license.
+- Only the entered search phrase is sent to Wikipedia; the app does not send notebooks, credentials, books, personal entries, or uploaded PDFs. Search requests are debounced, aborted on new queries, capped at eight results, and retried via a button when unavailable. Earlier results are cached in memory briefly to reduce repeated requests.
+- Online lookups require internet. Offline/local terminology, bookmarks, Timeline, Reference Manager, Google Drive and Firebase continue working as before. The number of available online results is never represented as one million verified psychology concepts.
+
 **Psychology Timeline**
 - 34 selected milestones spanning 1859–2022, with filters, researchers, a reading-source link and explanations.
 - Add and edit personal milestones, bookmark events, and save your own short reflections. Events can be converted into notebook notes or flashcards.
