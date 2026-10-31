@@ -43,3 +43,6 @@
 .reader-markdown{background:#f2f0e9;color:#222;padding:26px;font:14px/1.65 'DM Sans',sans-serif;white-space:pre-wrap;overflow-wrap:anywhere;max-height:80vh;overflow:auto;border-radius:6px;user-select:text}
 @media(max-width:1050px){.reader-layout{grid-template-columns:1fr}.reader-sidebar{position:static;max-height:none}.reader-page-area{min-height:380px}}
 @media(max-width:570px){.reader-page-area{padding:7px}.reader-sidebar{padding:14px}.reader-toolbar{gap:6px}.reader-toolbar button{padding:8px 10px;font-size:10px}.reader-layout{gap:10px}.reader-side-actions{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.reader-error{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:12px 0 22px;padding:15px 18px;border:1px solid #704a4a;background:#1c1111;color:#ffd2d2;border-radius:12px;font-size:12px;line-height:1.6}
+.reader-error :is(button,a){border:1px solid #755b5b;background:#2a1c1c;color:#fff;padding:8px 10px;text-decoration:none;border-radius:8px;font-weight:700;font-size:11px}
