@@ -32,7 +32,7 @@ These features are available as dedicated desktop sidebar sections and under **T
 - Personal entries and bookmarks are saved with the currently selected PsychDesk account; the reference content remains shared across accounts and is not diagnostic advice.
 
 **Psychology Timeline**
-- 24 selected milestones spanning 1859–1988, with filters, researchers, a reading-source link and explanations.
+- 34 selected milestones spanning 1859–2022, with filters, researchers, a reading-source link and explanations.
 - Add and edit personal milestones, bookmark events, and save your own short reflections. Events can be converted into notebook notes or flashcards.
 - Dates and interpretations are based on publicly available historical and educational resources; this curated selection is not a complete global history. Starting dates for schools of thought are approximate.
 
