@@ -7,21 +7,21 @@ const CLIENT='123456-test.apps.googleusercontent.com';
 const backup=(preferences={})=>({version:2,subjects:[],tasks:[],cards:[],sessions:[],notes:[],reviews:[],preferences:{dailyGoal:60,...preferences}});
 function deferred(){let resolve,reject;const promise=new Promise((a,b)=>{resolve=a;reject=b});return {promise,resolve,reject}}
 function stripImports(code){let skipping=false;return code.split(String.fromCharCode(10)).filter(line=>{if(line.startsWith('import '))skipping=true;if(!skipping)return true;if(line.includes(';'))skipping=false;return false}).join(String.fromCharCode(10))}
-function environment(storage=new Map(),writeError=false) {
+function environment(storage=new Map(),writeError=false,tabSession=new Map()) {
  const events=new EventTarget(),nodes=new Map(),toasts=[];
  const node=()=>({innerHTML:'',textContent:'',dataset:{},style:{},classList:{add(){},remove(){},toggle(){}},listeners:{},addEventListener(type,fn){this.listeners[type]=fn},setAttribute(){},querySelector(){return null},querySelectorAll(){return []},focus(){},append(){},remove(){},click(){}});
  const document={addEventListener(){},querySelector(selector){if(selector==='#modalRoot .modal'||selector==='#driveStatus')return null;if(!nodes.has(selector))nodes.set(selector,node());return nodes.get(selector)},querySelectorAll(){return []},body:node(),createElement:node};
  const window={addEventListener:events.addEventListener.bind(events),dispatchEvent:events.dispatchEvent.bind(events)};
- const context=vm.createContext({window,document,Event,AbortController,URL,URLSearchParams,Blob,TextEncoder,structuredClone,console,location:{protocol:'https:',hostname:'sid964.github.io',origin:'https://sid964.github.io'},navigator:{onLine:true},localStorage:{getItem:key=>storage.get(key)??null,setItem:(key,value)=>{if(writeError)throw Error('Storage unavailable');storage.set(key,String(value))},removeItem:key=>storage.delete(key)},setTimeout:()=>1,clearTimeout(){},setInterval(){},requestAnimationFrame:fn=>fn(),confirm:()=>true,alert:message=>toasts.push(message),FormData:class{constructor(form){this.form=form}get(){return this.form.value}},fetch:async()=>({ok:true,status:200,text:async()=>'{}'})});
+ const context=vm.createContext({window,document,Event,AbortController,URL,URLSearchParams,Blob,TextEncoder,structuredClone,console,location:{protocol:'https:',hostname:'sid964.github.io',origin:'https://sid964.github.io'},navigator:{onLine:true},localStorage:{getItem:key=>storage.get(key)??null,setItem:(key,value)=>{if(writeError)throw Error('Storage unavailable');storage.set(key,String(value))},removeItem:key=>storage.delete(key)},sessionStorage:{getItem:key=>tabSession.get(key)??null,setItem:(key,value)=>tabSession.set(key,String(value)),removeItem:key=>tabSession.delete(key)},setTimeout:()=>1,clearTimeout(){},setInterval(){},requestAnimationFrame:fn=>fn(),confirm:()=>true,alert:message=>toasts.push(message),FormData:class{constructor(form){this.form=form}get(){return this.form.value}},fetch:async()=>({ok:true,status:200,text:async()=>'{}'})});
  vm.runInContext(source('app.js'),context);
  window.PsychDeskCore.toast=message=>toasts.push(message);
- let uid=null,oauth=null;window.PsychDeskFirebase={getUserId:()=>uid};
+ let uid=null,oauth=null;window.PsychDeskFirebase={getUserId:()=>uid,getConnectionStatus:()=>({email:uid?uid+'@example.test':''})};
  context.google=window.google={accounts:{oauth2:{initTokenClient:options=>{oauth=options;return {requestAccessToken(){}}},revoke(){}}}};
  const cloudSource=source('cloud.js').replace('window.PsychDeskCloud=', 'window.__cloud={connectDrive,api,settingsView,openSettings,pullDrive};window.PsychDeskCloud=');
  vm.runInContext(cloudSource,context);
  const ready=()=>window.dispatchEvent(new Event('psychdesk:account-ready'));
  const saveClient=value=>{window.__cloud.openSettings();const form=document.querySelector('#googleSettingsForm');form.value=value;form.listeners.submit({preventDefault(){}})};
- return {context,window,storage,toasts,nodes,core:window.PsychDeskCore,cloud:window.__cloud,setUser:value=>{uid=value},ready,saveClient,get oauth(){return oauth}};
+ return {context,window,storage,tabSession,toasts,nodes,core:window.PsychDeskCore,cloud:window.__cloud,setUser:value=>{uid=value},ready,saveClient,get oauth(){return oauth}};
 }
 async function authorize(env){const pending=env.cloud.connectDrive();env.oauth.callback({access_token:'memory-only-token',expires_in:3600});await pending}
 function firebase(env,overrides={}){
@@ -218,4 +218,44 @@ test('missing optional psychology fields in old backups are normalized and inval
  assert.equal(env.core.getData().timelineEvents.length,0);
  const bad=backup();bad.timelineAnnotations='not-an-array';
  assert.throws(()=>env.core.replaceData(bad),/Invalid PsychDesk/);
+});
+
+test('verified short-lived Drive access survives same-tab refresh for the same Google account only',async()=>{
+ const storage=new Map(),tabSession=new Map();
+ const first=environment(storage,false,tabSession);
+ first.saveClient(CLIENT);
+ first.setUser('alice');
+ first.context.fetch=async()=>({ok:true,status:200,text:async()=>JSON.stringify({user:{emailAddress:'alice@example.test'}})});
+ const connect=first.cloud.connectDrive();
+ first.oauth.callback({access_token:'scoped-drive-token',expires_in:3600});
+ await connect;
+ await first.window.PsychDeskCloud.verifyDriveConnection();
+ assert.match(tabSession.get('psychdesk-drive-tab-v1')||'',/scoped-drive-token/);
+ assert.doesNotMatch(JSON.stringify([...storage]),/scoped-drive-token/);
+ const refreshed=environment(storage,false,tabSession);
+ refreshed.setUser('alice');
+ refreshed.context.fetch=first.context.fetch;
+ assert.equal(await refreshed.window.PsychDeskCloud.restoreDriveSession(),true);
+ assert.equal(refreshed.window.PsychDeskCloud.isConnected(),true);
+ refreshed.window.PsychDeskCloud.resetSession();
+ assert.equal(tabSession.has('psychdesk-drive-tab-v1'),false);
+ assert.equal(refreshed.window.PsychDeskCloud.isConnected(),false);
+});
+test('Drive refresh token is discarded when another account is active',async()=>{
+ const storage=new Map(),tabSession=new Map();
+ const alice=environment(storage,false,tabSession);alice.saveClient(CLIENT);alice.setUser('alice');
+ alice.context.fetch=async()=>({ok:true,status:200,text:async()=>JSON.stringify({user:{emailAddress:'alice@example.test'}})});
+ const connect=alice.cloud.connectDrive();alice.oauth.callback({access_token:'alice-private-token',expires_in:3600});await connect;
+ await alice.window.PsychDeskCloud.verifyDriveConnection();
+ const bob=environment(storage,false,tabSession);bob.setUser('bob');
+ assert.equal(await bob.window.PsychDeskCloud.restoreDriveSession(),false);
+ assert.equal(tabSession.has('psychdesk-drive-tab-v1'),false);
+ assert.equal(bob.window.PsychDeskCloud.isConnected(),false);
+});
+test('expired tab Drive session is rejected without contacting Google',async()=>{
+ const storage=new Map(),tabSession=new Map();
+ const env=environment(storage,false,tabSession);env.saveClient(CLIENT);env.setUser('alice');
+ tabSession.set('psychdesk-drive-tab-v1',JSON.stringify({uid:'alice',email:'alice@example.test',token:'expired-token',expiresAt:Date.now()-1000,clientId:CLIENT}));
+ assert.equal(await env.window.PsychDeskCloud.restoreDriveSession(),false);
+ assert.equal(tabSession.has('psychdesk-drive-tab-v1'),false);
 });
