@@ -87,7 +87,7 @@ async function signIn(){
 async function accountChanged(next){
  accountEpoch++;
  // Clear independent Drive authority and pending file operations, including sign-out in another tab.
- window.PsychDeskCloud?.resetSession?.();
+ window.PsychDeskCloud?.resetSession?.({keepRefreshSession:Boolean(next && (!user || user.uid===next.uid))});
  clearTimeout(syncTimer); if(unsubscribe){unsubscribe();unsubscribe=null;}
  signedInReady=false;busy=false;dirty=false;conflict=false;lastError='';revision=0;changes=0;
  if(!next){ pendingDriveCredential=null;user=null;localStorage.removeItem('psychdesk-last-user-v3');core.useStorageKey('psychdesk-v1');updateBadge();return; }
