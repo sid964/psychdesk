@@ -20,6 +20,18 @@ function clearDriveAuthorization(){
  pendingUpload=null;driveEpoch++;accessToken='';tokenExpires=0;driveAbort.abort();driveAbort=new AbortController();
  if(pendingDriveReject){pendingDriveReject(Error('Account or Drive setup changed. Reconnect Google Drive.'));pendingDriveReject=null;}
 }
+// Reuse the short-lived Google token granted during Firebase Google sign-in.
+// Token never enters localStorage, Firestore, backups or GitHub.
+// Google must explicitly consent to the drive.file scope.
+function acceptGoogleSignInDriveToken(token, uid){
+ if(typeof token!=='string'||!token||!uid||window.PsychDeskFirebase?.getUserId?.()!==uid)return false;
+ clearDriveAuthorization();
+ accessToken=token;
+ tokenExpires=Date.now()+50*60*1000; // conservative upper bound; Drive's 401 will require reconnect
+ try{const node=document.querySelector('#driveStatus');if(node)node.textContent='✓ Drive connected via Google sign-in · Last backup: '+whenStamp(config.lastSyncAt)}catch{}
+ window.dispatchEvent(new Event('psychdesk:drive-connected'));
+ return true;
+}
 function resetSession(){
  window.dispatchEvent(new Event('psychdesk:session-reset'));
  clearDriveAuthorization();
@@ -185,5 +197,5 @@ function handle(event){let button=event.target.closest('[data-cloud]');if(!butto
 document.addEventListener('click',handle);
 document.addEventListener('change',e=>{if(e.target.id==='noteFilter'){noteSubject=e.target.value;document.querySelector('#noteResults').innerHTML=noteCards()}});
 document.addEventListener('input',e=>{if(e.target.id==='noteSearch'){noteQuery=e.target.value;document.querySelector('#noteResults').innerHTML=noteCards()}});
-window.PsychDeskCloud={renderNotes,openSettings,resetSession,connectDrive,uploadMaterial,noteEditor,isConnected:()=>Boolean(accessToken&&Date.now()<tokenExpires),cancelUpload:clearDriveAuthorization};
+window.PsychDeskCloud={renderNotes,openSettings,resetSession,connectDrive,acceptGoogleSignInDriveToken,uploadMaterial,noteEditor,isConnected:()=>Boolean(accessToken&&Date.now()<tokenExpires),cancelUpload:clearDriveAuthorization};
 })();
