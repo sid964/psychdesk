@@ -234,6 +234,7 @@ function selectedDetails(entry){
  '<h2>'+esc(entry.term)+'</h2><h3>What it means</h3><p class="psy-definition">'+esc(entry.definition)+'</p>'+
  (entry.example?'<h3>Example in practice</h3><p>'+esc(entry.example)+'</p>':'')+
  (entry.source?'<a class="psy-source" target="_blank" rel="noopener noreferrer" href="'+esc(entry.source)+'">Open original source ↗</a>':'')+
+ (entry.source.startsWith('https://en.wikipedia.org/wiki/')?'<p class="psy-pack-hint">Text: Wikipedia contributors, <a target="_blank" rel="noopener noreferrer" href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.</p>':'')+
  '<p class="psy-pack-hint">Imported wording is not independently verified by PsychDesk. Confirm important facts against your textbook or original source.</p>'+
  '<div class="psy-detail-actions">'+action('bookmark',marked?'✦ Bookmarked':'☆ Bookmark')+
  action('note','Save to notebook')+action('flash','Make flashcard')+action('copy','Copy definition')+'</div></article>';
@@ -286,5 +287,15 @@ document.addEventListener('click',event=>{
  if(event.target.closest('[data-psy]'))setTimeout(()=>{if(el('psyPackUtility'))scheduleSearch(0);else if(document.querySelector('.psy-info-strip'))void mount();},0);
 });
 window.addEventListener('psychdesk:tab-changed',()=>setTimeout(()=>{if(document.querySelector('.psy-info-strip')&&el('psyDictionaryResults'))void mount();},0));
-window.PsychDeskDictionaryPacks={mount,search:async(q,category='All')=>searchIndex(await openDB(),normalize(q),category),count:async()=>readCount(await openDB())};
+async function saveTerm(row){
+ const entry=makeRecord(row);
+ if(!entry){
+  const known=knownCurated.has(normalize(row?.term));
+  return {saved:false,reason:known?'already-curated':'invalid'};
+ }
+ const db=await openDB();
+ await commitBatch(db,[entry]);
+ return {saved:true,id:entry.id,count:await readCount(db)};
+}
+window.PsychDeskDictionaryPacks={mount,saveTerm,search:async(q,category='All')=>searchIndex(await openDB(),normalize(q),category),count:async()=>readCount(await openDB())};
 })();
