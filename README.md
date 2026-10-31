@@ -28,6 +28,44 @@ Use the **+ Note** button in the top bar from anywhere. Type or paste your thoug
 
 On desktop the sidebar highlights everyday study sections and the three reference tools; advanced extras are grouped under **More study tools**. Android already has a **Tools** button.
 
+## Persistent Google Drive sign-in — optional Firebase backend
+
+**Status:** The backend source is included, but is **disabled until deployed and configured**. Until then, existing short-lived Google Drive sign-in continues to work normally. Never commit a client secret or refresh token to this public GitHub repository.
+
+### How it works
+
+Google's browser-only access tokens expire and cannot renew without a user gesture. PsychDesk's optional Firebase Cloud Function uses Google's authorization-code flow and holds an encrypted refresh token for each verified Google-signed-in Firebase account. After Google grants offline access, the browser can request a new short-lived Drive token using its automatically renewed Firebase ID token. No cross-site cookies or frontend refresh tokens are necessary. The backend checks Firebase Google authentication, verified account email, exact allowed website origin and matching Google Drive identity before storing a grant. Refresh tokens are encrypted with AES-256-GCM, held separately from study data in Firestore, and never exposed to the browser. Disconnect deletes and revokes the server grant.
+
+### Owner deployment checklist (required for persistent sign-in)
+
+1. Confirm your Firebase project **psystudy-e4854** allows Cloud Functions deployments (Blaze billing may be required). The backend uses Node 22 and region **asia-south1**.
+2. In Google Cloud, locate the OAuth Web Client ID already published in firebase-config.js. Confirm the same Google Cloud project, add **https://sid964.github.io** to Authorized JavaScript origins and enable the Google Drive API. Obtain its client **secret** privately.
+3. Install Firebase CLI, sign in as the project owner, and select the project. From the repo root run:
+   - npm install -g firebase-tools
+   - firebase login
+   - firebase use psystudy-e4854
+4. Set two private Secret Manager values via CLI, without writing them to source code:
+   - firebase functions:secrets:set GOOGLE_DRIVE_CLIENT_SECRET
+   - firebase functions:secrets:set DRIVE_TOKEN_KEY
+   Generate the second as a random 32-byte key encoded in base64 (for example, use a trusted local execution of openssl rand -base64 32). Do **not** paste either secret into ChatGPT, GitHub, or frontend JavaScript. Rotating the encryption key without re-encrypting stored grants requires users to reconnect.
+5. **Deny browser/client reads and writes to Firestore collection psychdeskDriveGrants in your existing Firestore security rules.** Only the Firebase Admin server code should access these documents. Do not overwrite your existing study data rules.
+6. Run: firebase deploy --only functions:drive-auth
+7. After the function is deployed, in firebase-config.js set the exact public URL:
+   window.PSYCHDESK_DRIVE_BACKEND_URL = 'https://asia-south1-psystudy-e4854.cloudfunctions.net/psychdeskDriveAuth';
+   Then publish the updated GitHub Pages site. The URL itself is public configuration, not a credential. The client refuses to send Firebase ID tokens to any other backend address.
+8. Sign in to PsychDesk and click **Connect Google Drive** once to authorize server-side Drive access. Refresh, close and reopen the site, and test Drive books and backups. The Google consent screen may still be needed if grants are revoked or expired.
+
+**Important Google rule:** OAuth consent screens in External **Testing** mode generally issue seven-day refresh tokens for Google Drive scopes. Move the app to **In production** once Google requirements are met for long-lived authorization. Google's policies can still expire or revoke grants; truly permanent authorization cannot be guaranteed.
+
+The existing hosted GitHub Pages app remains operational without backend setup. Firebase account sync, books, notes, backups and AMOLED styling remain unchanged. No private credentials should enter the public repository. This solution is deliberately staged for secure deployment by the owning Google/Firebase account.
+
+### Tests
+
+- Backend implementation: functions/index.js and functions/lib/oauth.js; tests: functions/tests/oauth.test.cjs.
+- Browser bridge: drive-persistence.js; tests: tests/drive-persistence.test.cjs.
+- Run node --test functions/tests/oauth.test.cjs tests/drive-persistence.test.cjs for targeted checks, and node --test tests/*.test.mjs for existing persistence checks.
+
+
 ## Connected studying, autosave, academic research and Drive refresh (November 2026)
 
 These are upgrades to the existing PsychDesk workspace; they do **not** modify the study data schema or replace existing saved material.

@@ -97,6 +97,7 @@ async function accountChanged(next){
  core.closeModal();
  localStorage.setItem('psychdesk-last-user-v3',next.uid);
  core.useStorageKey('psychdesk-user-'+next.uid);
+  window.dispatchEvent(new Event('psychdesk:identity-ready'));
   // A same-tab Drive grant should not depend on a successful Firestore data fetch.
   void window.PsychDeskCloud?.restoreDriveSession?.();
  dirty=localStorage.getItem(uidKey('pending'))==='1';
@@ -214,6 +215,7 @@ function openAccount(){
 }
 window.PsychDeskFirebase={
  openAccount,getUserId:()=>user?.uid||null,
+  getIdToken:async()=>user&&auth?.currentUser?.uid===user.uid?auth.currentUser.getIdToken():null,
  getConnectionStatus:()=>({
   signedIn:!!user, email:user?.email||'', uid:user?.uid||'',
   synced:!!user&&signedInReady&&!dirty&&!busy&&!conflict&&!lastError&&navigator.onLine,

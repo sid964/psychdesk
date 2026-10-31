@@ -8,7 +8,7 @@ let stored={};try{stored=JSON.parse(localStorage.getItem(CONF)||'{}')||{}}catch{
 let config={clientId:validClientId(stored.clientId)?stored.clientId:''};
 for(const field of ['syncStamp','backupId','lastSyncAt']) if(typeof stored[field]==='string') config[field]=stored[field];
 stored=null;
-let accessToken='',tokenExpires=0,driveBusy=false,driveEpoch=0,driveVerified=false,restorePromise=null;
+let accessToken='',tokenExpires=0,driveBusy=false,driveEpoch=0,driveVerified=false,restorePromise=null,driveFromBackend=false;
 let driveAbort=new AbortController(),pendingDriveReject=null;
 let noteQuery='',noteSubject='all';
 const escape=core.esc;
@@ -20,13 +20,14 @@ function clientId(){const builtIn=window.PSYCHDESK_DRIVE_CLIENT_ID; if(validClie
 // goes to localStorage, Firestore, service workers or study backups.
 function forgetDriveSession(){try{sessionStorage.removeItem(DRIVE_SESSION_KEY)}catch{}}
 function storeDriveSession(email){
+ if(driveFromBackend)return false;
  const uid=window.PsychDeskFirebase?.getUserId?.();
  const owner=window.PsychDeskFirebase?.getConnectionStatus?.()?.email||'';
  if(!uid||!owner||!email||owner.toLowerCase()!==email.toLowerCase()||!accessToken||tokenExpires<Date.now()+30000)return false;
  try{sessionStorage.setItem(DRIVE_SESSION_KEY,JSON.stringify({uid,email,token:accessToken,expiresAt:tokenExpires,clientId:clientId()}));return true}catch{return false}
 }
 function clearDriveAuthorization({forgetSession=true}={}){
- pendingUpload=null;driveEpoch++;accessToken='';tokenExpires=0;driveVerified=false;driveAbort.abort();driveAbort=new AbortController();
+ pendingUpload=null;driveEpoch++;accessToken='';tokenExpires=0;driveVerified=false;driveFromBackend=false;driveAbort.abort();driveAbort=new AbortController();
  if(forgetSession)forgetDriveSession();
  if(pendingDriveReject){pendingDriveReject(Error('Account or Drive setup changed. Reconnect Google Drive.'));pendingDriveReject=null;}
 }
@@ -69,6 +70,24 @@ function acceptGoogleSignInDriveToken(token, uid){
  accessToken=token;tokenExpires=Date.now()+50*60*1000;driveVerified=false;
  void verifyDriveConnection().catch(()=>{});
  return true;
+}
+async function acceptPersistentDriveToken(token,expiresIn,uid){
+ if(typeof token!=='string'||token.length<10||!uid||window.PsychDeskFirebase?.getUserId?.()!==uid)return false;
+ if(!Number.isFinite(expiresIn)||expiresIn<60||expiresIn>7200)return false;
+ clearDriveAuthorization();
+ driveFromBackend=true;
+ accessToken=token;
+ tokenExpires=Date.now()+expiresIn*1000-60000;
+ try{await verifyDriveConnection();return driveVerified;}
+ catch{clearDriveAuthorization();return false;}
+}
+async function ensureDriveReady(){
+ if(accessToken&&Date.now()<tokenExpires)return;
+ if(window.PsychDeskDrivePersistence?.enabled?.()){
+  const ok=await window.PsychDeskDrivePersistence.restore();
+  if(ok&&accessToken&&Date.now()<tokenExpires)return;
+ }
+ checkAuth();
 }
 function resetSession({keepRefreshSession=false}={}){
  window.dispatchEvent(new Event('psychdesk:session-reset'));
@@ -144,7 +163,7 @@ function noteEditor(note){let n=note||{id:'',title:'',body:'',subjectId:'',tags:
 function legacySettingsView(){let secure=location.protocol==='https:'||location.hostname==='localhost';return `<div class="settings-section"><h3>Google Drive</h3><p class="note">Syncs subjects, study tasks, flashcards, sessions, preferences and notes as <b>psychdesk-backup.json</b>. It also writes <b>Study Notes.md</b> to a dedicated PsychDesk folder. Manual sync helps avoid accidentally overwriting another device.</p><p class="cloud-status" id="driveStatus">${driveVerified&&accessToken&&Date.now()<tokenExpires?'Connected for this session':'Not connected'} · Last successful upload/download: ${escape(whenStamp(config.lastSyncAt))}</p><form id="googleSettingsForm"><div class="field"><label>Google OAuth Web Client ID</label><input name="clientId" autocomplete="off" placeholder="123456-…apps.googleusercontent.com" value="${escape(clientId())}"></div><button class="secondary" type="submit" style="width:100%">Save public client ID</button></form><p class="note">This public ID stays in this browser after sign-out. When signed in, it also syncs with your account settings; wait for ✓ Synced before switching devices. Reconnect Drive after sign-out, reload or expiry.</p><div class="helper-links"><a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener noreferrer">Google Cloud credentials ↗</a><a href="https://console.cloud.google.com/apis/library/drive.googleapis.com" target="_blank" rel="noopener noreferrer">Enable Drive API ↗</a></div><p class="note">${secure?'For Error 400: origin_mismatch, open the exact OAuth Web Client used above and add '+escape(location.origin)+' under Authorized JavaScript origins (no path or trailing slash). This is separate from authorized domains in Firebase Authentication.':'Drive OAuth is unavailable in a downloaded HTML file or Android WebView. Host PsychDesk on HTTPS and register that origin.'}</p><div class="button-row" style="margin-bottom:9px"><button class="primary" data-cloud="connectDrive" ${!secure?'disabled':''}>Connect / reconnect Drive</button><button class="secondary" data-cloud="disconnectDrive">Disconnect</button></div><div class="button-row"><button class="secondary" data-cloud="uploadDrive">↑ Upload to Drive</button><button class="secondary" data-cloud="downloadDrive">↓ Restore from Drive</button></div><p class="note">A restore replaces the local planner after confirmation. Upload will ask before overwriting cloud changes. No background sync or automatic merge.</p></div>
 <div class="settings-section"><h3>Data control</h3><p class="note">Cloud backup excludes access tokens. PDF and Markdown originals stay in Drive; backups contain the subject catalogue and notes, not copies of the books. Cloud files are not end-to-end encrypted by PsychDesk. Avoid confidential clinical material.</p></div>`}
 
-function settingsView(){if(!window.PSYCHDESK_DRIVE_CLIENT_ID)return legacySettingsView();const secure=location.protocol==='https:'||location.hostname==='localhost';const connected=!!driveVerified&&accessToken&&Date.now()<tokenExpires;return `<div class="settings-section"><h3>Google Drive backups</h3><p class="note">Keep a backup of your subjects, notes, flashcards and progress in your own Google Drive. Books and PDFs are stored in your private PsychDesk folder.</p><p class="cloud-status" id="driveStatus">${connected?'✓ Drive connected':'Drive not connected'} · Last backup: ${escape(whenStamp(config.lastSyncAt))}</p><div class="button-row" style="margin-bottom:10px"><button class="primary" data-cloud="connectDrive" ${!secure?'disabled':''}>${connected?'Reconnect Google Drive':'Connect Google Drive'}</button></div><div class="button-row"><button class="secondary" data-cloud="uploadDrive">↑ Back up to Drive</button><button class="secondary" data-cloud="downloadDrive">↓ Restore backup</button></div><p class="note">Drive access needs your permission and may expire; your Google login and Firestore study progress are separate. Restoring replaces local planner data after confirmation. No automatic Drive merging.</p></div><div class="settings-section"><h3>Data and privacy</h3><p class="note">Your Drive files stay in your Google account. A short-lived Drive token is kept only in this browser tab to survive refreshes. It expires automatically and is cleared on sign-out. Backups include your notes and study catalogue but not PDF or Markdown file contents. Avoid confidential clinical material.</p></div>`}
+function settingsView(){if(!window.PSYCHDESK_DRIVE_CLIENT_ID)return legacySettingsView();const secure=location.protocol==='https:'||location.hostname==='localhost';const connected=!!driveVerified&&accessToken&&Date.now()<tokenExpires;return `<div class="settings-section"><h3>Google Drive backups</h3><p class="note">Keep a backup of your subjects, notes, flashcards and progress in your own Google Drive. Books and PDFs are stored in your private PsychDesk folder.</p><p class="cloud-status" id="driveStatus">${connected?'✓ Drive connected':'Drive not connected'} · Last backup: ${escape(whenStamp(config.lastSyncAt))}</p><div class="button-row" style="margin-bottom:10px"><button class="primary" data-cloud="connectDrive" ${!secure?'disabled':''}>${connected?'Reconnect Google Drive':'Connect Google Drive'}</button></div><div class="button-row"><button class="secondary" data-cloud="uploadDrive">↑ Back up to Drive</button><button class="secondary" data-cloud="downloadDrive">↓ Restore backup</button></div><p class="note">Drive access needs your permission and may expire; your Google login and Firestore study progress are separate. Restoring replaces local planner data after confirmation. No automatic Drive merging.</p></div><div class="settings-section"><h3>Data and privacy</h3><p class="note">Your Drive files stay in your Google account. A short-lived Drive token is kept in this browser tab in legacy mode. With the optional persistent backend, the refresh token stays encrypted on Firebase and access is renewed securely. It expires automatically and is cleared on sign-out. Backups include your notes and study catalogue but not PDF or Markdown file contents. Avoid confidential clinical material.</p></div>`}
 function legacyOpenSettings(){core.openModal('Google Drive & backups',settingsView());let form=document.querySelector('#googleSettingsForm');form?.addEventListener('submit',e=>{e.preventDefault();const value=String(new FormData(form).get('clientId')||'').trim();
  if(!validClientId(value)){core.toast('Enter a public OAuth Web Client ID ending in .apps.googleusercontent.com, not a secret key.');return;}
  if(value!==clientId())clearDriveAuthorization();
@@ -163,6 +182,7 @@ function driveError(error){
  return /origin_mismatch/i.test(message)?Error('Google rejected this website origin. In Google Cloud, edit the OAuth Web Client whose ID is saved here and add '+location.origin+' to Authorized JavaScript origins (no path or trailing slash).'):Error(message);
 }
 async function connectDrive(){
+ if(window.PsychDeskDrivePersistence?.enabled?.())return window.PsychDeskDrivePersistence.connect();
  if(!isSupportedOrigin())throw Error('Google OAuth requires a hosted HTTPS site or localhost.');
  if(window.PsychDeskAndroid)throw Error('Google sign-in is not supported inside Android WebView. Open the hosted PsychDesk site in Chrome.');
  const publicId=clientId();if(!publicId)throw Error('PsychDesk Google Drive setup is unavailable. Contact the app administrator.');
@@ -205,8 +225,7 @@ async function verifyDriveConnection(){
  return {connected:true,email};
 }
 async function api(url,options={}){
- checkAuth();const requestEpoch=driveEpoch;
- const res=await driveRequest(url,options);
+ const res=await driveRequest(url,options);const requestEpoch=driveEpoch;
  const body=await res.text();
  if(requestEpoch!==driveEpoch)throw Error('Drive session changed. Reconnect Google Drive.');
  let json;try{json=JSON.parse(body)}catch{json=null}
@@ -233,11 +252,17 @@ async function pullDrive(){let folder=await folderId(),remote=await findFile('ps
  // Revalidate and replace using the existing local data model without another confirmation.
  core.replaceData(imported);core.save();config.syncStamp=remote.modifiedTime;config.backupId=remote.id;config.lastSyncAt=new Date().toISOString();persist();return true;}
 async function cloudAction(job){if(driveBusy){core.toast('A Drive action is already running');return}driveBusy=true;let requestEpoch=driveEpoch;const status=document.querySelector('#driveStatus');if(status)status.textContent='Working with Google Drive…';try{if(job==='connect'){const connection=connectDrive();requestEpoch=driveEpoch;await connection;await verifyDriveConnection();core.toast('Google Drive connected for this session')}else if(job==='upload'){let success=await pushDrive();if(success)core.toast('Full backup and notes uploaded to Drive')}else if(job==='download'){let success=await pullDrive();if(success)core.toast('Restored from Google Drive')}}catch(e){if(requestEpoch===driveEpoch){core.toast(errorMsg(e));alert(errorMsg(e))}}finally{driveBusy=false;if(document.querySelector('#driveStatus'))document.querySelector('#driveStatus').textContent=`${driveVerified&&accessToken&&Date.now()<tokenExpires?'Connected':'Not connected'} · Last sync: ${whenStamp(config.lastSyncAt)}`}}
-function disconnectDrive(){if(accessToken&&window.google?.accounts?.oauth2)google.accounts.oauth2.revoke(accessToken,()=>{});clearDriveAuthorization();core.toast('Disconnected from Drive; public setup is saved');core.closeModal()}
+async function disconnectDrive(){
+ if(window.PsychDeskDrivePersistence?.enabled?.()){
+  try{await window.PsychDeskDrivePersistence.disconnect();}
+  catch(error){core.toast(String(error.message||error).slice(0,130));return;}
+ }else if(accessToken&&window.google?.accounts?.oauth2){google.accounts.oauth2.revoke(accessToken,()=>{});}
+ clearDriveAuthorization();core.toast('Disconnected from Drive; public setup is saved');core.closeModal();
+}
 function refreshSettings(){core.closeModal();openSettings()}
 let pendingUpload=null;
 async function driveRequest(url,options={}){
- checkAuth();const epoch=driveEpoch,sessionSignal=driveAbort.signal,controller=new AbortController();
+ await ensureDriveReady();checkAuth();const epoch=driveEpoch,sessionSignal=driveAbort.signal,controller=new AbortController();
  const abort=()=>controller.abort();sessionSignal.addEventListener('abort',abort,{once:true});
  const timeout=setTimeout(()=>controller.abort(),120000);
  try{const response=await fetch(url,{...options,signal:controller.signal,headers:{Authorization:`Bearer ${accessToken}`,...options.headers}});
@@ -251,6 +276,7 @@ async function driveRequest(url,options={}){
 async function fetchStudyMaterial(driveId){
  const id=String(driveId||'');
  if(!/^[A-Za-z0-9_-]{10,120}$/.test(id))throw Error('This book is missing its valid Drive file ID.');
+ await ensureDriveReady();
  if(!driveVerified||!accessToken||Date.now()>=tokenExpires)throw Error('Reconnect Google Drive to read your books.');
  const epoch=driveEpoch;
  const response=await driveRequest(base+'/'+encodeURIComponent(id)+'?alt=media');
@@ -264,7 +290,7 @@ async function fetchStudyMaterial(driveId){
 }
 async function uploadMaterial(file,subject,onProgress=()=>{}){
  if(driveBusy)throw Error('Another Drive operation is running. Please wait.');
- const epoch=driveEpoch;checkAuth();if(!file||!file.size||file.size>512*1024*1024)throw Error('Choose a non-empty PDF or Markdown file up to 512 MB.');
+ await ensureDriveReady();const epoch=driveEpoch;checkAuth();if(!file||!file.size||file.size>512*1024*1024)throw Error('Choose a non-empty PDF or Markdown file up to 512 MB.');
  const ext=file.name.toLowerCase().split('.').pop();if(!['pdf','md','markdown'].includes(ext))throw Error('Only PDF and Markdown books are supported.');
  if(ext==='pdf' && !(await file.slice(0,1024).text()).includes('%PDF-'))throw Error('This file does not contain a PDF header.');
  if(epoch!==driveEpoch)throw Error('Account changed before upload. Select the file again.');driveBusy=true;
@@ -313,5 +339,5 @@ function handle(event){let button=event.target.closest('[data-cloud]');if(!butto
 document.addEventListener('click',handle);
 document.addEventListener('change',e=>{if(e.target.id==='noteFilter'){noteSubject=e.target.value;document.querySelector('#noteResults').innerHTML=noteCards()}});
 document.addEventListener('input',e=>{if(e.target.id==='noteSearch'){noteQuery=e.target.value;document.querySelector('#noteResults').innerHTML=noteCards()}});
-window.PsychDeskCloud={renderNotes,openSettings,resetSession,connectDrive,verifyDriveConnection,restoreDriveSession,acceptGoogleSignInDriveToken,fetchStudyMaterial,uploadMaterial,noteEditor,isConnected:()=>Boolean(driveVerified&&accessToken&&Date.now()<tokenExpires),cancelUpload:clearDriveAuthorization};
+window.PsychDeskCloud={renderNotes,openSettings,resetSession,connectDrive,verifyDriveConnection,restoreDriveSession,acceptGoogleSignInDriveToken,acceptPersistentDriveToken,fetchStudyMaterial,uploadMaterial,noteEditor,isConnected:()=>Boolean(driveVerified&&accessToken&&Date.now()<tokenExpires),cancelUpload:clearDriveAuthorization};
 })();
