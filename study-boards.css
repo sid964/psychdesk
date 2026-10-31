@@ -1,0 +1,31 @@
+/* PsychDesk board & mind maps — calm charcoal workspace */
+.board-top,.mind-top{display:flex;flex-wrap:wrap;gap:11px;align-items:center;margin:15px 0}
+.board-top>button,.mind-top>button{padding:11px 15px;font-size:12px;border-radius:10px}
+.board-top select,.mind-top select{background:#151515;color:#eee;border:1px solid #494949;border-radius:10px;padding:11px;max-width:260px;flex:1;min-width:160px}
+.board-canvas,.mind-board{height:580px;min-height:460px;position:relative;border-radius:20px;overflow:hidden;border:1px solid #363636;background-color:#0c0c0c;background-image:radial-gradient(#ffffff14 1px,transparent 1px);background-size:22px 22px;margin:18px 0 30px}
+.board-empty{position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);color:#a9a9a9;line-height:2;text-align:center;font-size:14px;max-width:250px}
+.board-empty strong{font-size:21px;font-family:Georgia,serif;color:#e9e9e9;font-weight:400}
+.board-card{position:absolute;width:min(215px,42%);min-height:155px;border:1px solid #424242;border-radius:15px;padding:12px 14px;background:#242424;color:#ededed;box-shadow:0 12px 25px #000b;display:flex;flex-direction:column;touch-action:none;user-select:none;z-index:1}
+.board-card:nth-child(3n){transform:rotate(-1.6deg)}.board-card:nth-child(4n){transform:rotate(1.3deg)}
+.board-card.board-attached{background:#eee1b9;color:#242424;border-color:#e1d0a2}
+.board-grip{display:flex;align-items:center;gap:5px;font-size:17px;color:#aaa;cursor:grab;user-select:none;touch-action:none;padding:5px 0}
+.board-attached .board-grip{color:#686056}
+.board-grip span{font:700 10px 'DM Sans',sans-serif;letter-spacing:.8px}
+.board-card p{font:500 18px/1.24 'Caveat',cursive;white-space:pre-wrap;overflow-wrap:anywhere;flex:1;margin:8px 0 15px;max-height:175px;overflow:hidden}
+.board-item-footer{display:flex;gap:9px;justify-content:flex-end}
+.board-item-footer button{font-size:10px;padding:6px 8px;border-radius:7px;border:1px solid #7775;color:inherit;background:#ffffff1c}
+.board-attached .board-item-footer button{background:#fff7}
+.mind-board{height:620px;min-height:520px}
+.mind-board svg{position:absolute;inset:0;pointer-events:none;width:100%;height:100%;overflow:visible}
+.mind-node{position:absolute;min-width:124px;max-width:180px;min-height:49px;border:1px solid #737373;border-radius:13px;padding:10px 13px;background:#242424;color:#f5f5f5;font-size:12px;font-weight:750;line-height:1.5;text-align:center;overflow-wrap:anywhere;box-shadow:0 9px 23px #000c;user-select:none;touch-action:none;z-index:2}
+.mind-node.selected{background:#ddd;color:#161616;border-color:#fff}
+.mind-node.connecting{outline:3px dashed #fff;outline-offset:5px}
+.mind-grip{display:block;font-size:14px;line-height:1;cursor:grab;touch-action:none;color:#bfbfbf;margin-bottom:2px}
+.mind-node.selected .mind-grip{color:#666}
+.mind-bottom{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:flex-end}
+.mind-bottom span{margin-right:auto;font-size:12px;color:#aaa;line-height:1.5}
+.mind-bottom button{background:#181818;border:1px solid #464646;color:#eee;padding:9px 13px;border-radius:9px;font-size:11px}
+.mind-description{border:1px solid #2e2e2e;background:#101010;border-radius:12px;padding:15px;margin:15px 0;color:#aaa;font-size:12px}
+.mind-description strong{color:#fff}
+@media(max-width:650px){.board-canvas{height:560px}.mind-board{height:520px}.board-card{width:min(175px,46%);padding:9px 11px;min-height:135px}.board-card p{font-size:16px;line-height:1.18}.mind-node{min-width:105px;max-width:132px;min-height:47px;font-size:11px;padding:7px 8px}.board-top select{width:100%;max-width:none;flex-basis:65%}}
+@media(prefers-reduced-motion:reduce){.board-card,.mind-node{transition:none}}
