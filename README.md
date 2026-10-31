@@ -54,6 +54,28 @@ Existing Firebase project: **psystudy-e4854**. The public Firebase Web SDK ident
 - Flashcards and review scheduling
 - Focus timer
 - Google account cloud sync with conflict detection
-- Optional Drive manual backups and Gemini experimental study tools
+- Optional Drive manual backups and Gemini via Firebase AI Logic + App Check
 
 No GitHub repository content should contain identifiable counselling client information.
+
+
+## Firebase AI Logic + App Check setup (Gemini inside PsychDesk)
+
+**Status:** Code integrated. Gemini stays disabled until the public Web reCAPTCHA Enterprise site key is configured and the AI Logic console wizard is completed. The browser no longer asks for or sends a Gemini API key.
+
+1. [Firebase AI Logic — Psystudy](https://console.firebase.google.com/project/psystudy-e4854/ailogic) → Get started → choose **Gemini Developer API**. Finish the guided API setup. The wizard may automatically enforce App Check for AI Logic.
+2. [Google Cloud reCAPTCHA Enterprise](https://console.cloud.google.com/security/recaptcha?project=psystudy-e4854) (sometimes under Fraud Defense) → Create key → **Website / Web** → **score-based**, not a checkbox challenge. Allowed domain: **sid964.github.io** (no https:// or /psychdesk). Do not add localhost to a production key.
+3. [Firebase App Check](https://console.firebase.google.com/project/psystudy-e4854/appcheck) → **Apps** → register existing Web app **Study plan site**, with **reCAPTCHA Enterprise** and the same public site key.
+4. In **app-check-config.js**, replace the empty string in `window.PSYCHDESK_APP_CHECK_SITE_KEY = "";` with the public **site key** (not an API secret), and commit that one file. The public site key is safe for a browser; Gemini API keys, service account secrets, and reCAPTCHA secret keys are not.
+5. In Firebase App Check → **APIs**, verify Firebase **AI Logic** is **Enforced**. Do not enable enforcement for Authentication or Firestore during this initial AI setup unless those services have also been tested with valid App Check tokens.
+6. Reload PsychDesk in Chrome, sign in with Google, open **Gemini** and try a harmless question such as “Explain classical conditioning.” Confirm a response appears **inside PsychDesk**. Do not enter identifiable counselling-client information.
+
+Note: App Check confirms requests originate from an approved application; it is not a per-person access control. The client also requires Google sign-in for Gemini, but a strict single-user AI allowance would require additional server-side authorization. Gemini API use is billed/limited separately from Google AI Pro.
+
+On November 2, 2026, App Check enforcement becomes mandatory for Firebase AI Logic. Check Google's Firebase AI Logic documentation for subsequent updates.
+
+Relevant docs:
+- https://firebase.google.com/docs/ai-logic/get-started?platform=web
+- https://firebase.google.com/docs/app-check/web/recaptcha-enterprise-provider
+- https://firebase.google.com/docs/ai-logic/app-check
+
