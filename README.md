@@ -33,9 +33,18 @@ On desktop the sidebar highlights everyday study sections and the three referenc
 These features are available as dedicated desktop sidebar sections and under **Tools** on mobile.
 
 **Psychology Dictionary**
-- 64 concise, topic-filtered glossary entries with linked related concepts and reading sources. Built-in definitions live in `psychology-data.js`, not in the user's cloud data.
+- **322 built-in, distinct reference entries** (64 original + 258 new original concise summaries), with reading links and topic filters. The data lives in `psychology-data.js` and `psychology-expanded-data.js`, not in user cloud snapshots.
 - Search, bookmark, add/edit/delete personal terms, and turn definitions into ordinary notebook notes, handwritten sticky notes or flashcards.
 - Personal entries and bookmarks are saved with the currently selected PsychDesk account; the reference content remains shared across accounts and is not diagnostic advice.
+
+
+**Extended dictionary packs (2026):**
+- Import a `.jsonl`, `.ndjson`, or `.csv` collection from the dictionary screen. Required columns/keys: `term` and `definition`; optional: `category`, `example`, `source`. CSV supports single-line quoted values; JSONL supports one JSON object per line.
+- Imported entries use an IndexedDB index on term prefixes. Results are capped at 40 visible rows per search; continue typing for more specific terms. Empty searches show the first 40 imported entries as a preview alongside the smaller curated collection.
+- The counter is an **actual count of unique imported terms**, not a claimed corpus size. Duplicate normalized terms replace previous imports, and terms already in the built-in collection are excluded from imports. A million-plus real entries could theoretically be indexed when suitable sourced data and device storage are available; **this repository does not yet ship or claim one million psychology terms**.
+- Imports are **local to the browser/device**, remain across page refreshes, and do **not** enter Firebase/Firestore/Google Drive backups; that avoids exceeding the 750 KB account-sync limit. Native bookmarks, notes, and flashcards created from imported entries continue to use normal account sync. An imported entry cannot be opened on another device unless that device also imports the corresponding pack.
+- Source attribution matters. Do not upload or redistribute proprietary dictionary datasets or textbook definitions without permission. Textbook-aligned packs may be created from user-owned books as newly written summaries; the textbook itself is not copied into the reference database. The supplemental summaries link to OpenStax *Psychology 2e* for further reading and are newly authored, not verbatim dictionary excerpts.
+- Large imports depend on browser storage quota and device performance. A partially interrupted import retains completed batches; import the same pack again to resume or refresh entries safely.
 
 **Psychology Timeline**
 - 34 selected milestones spanning 1859–2022, with filters, researchers, a reading-source link and explanations.
