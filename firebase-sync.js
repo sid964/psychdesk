@@ -37,12 +37,32 @@ function updateBadge(){
 }
 function notify(message){ core.toast(message); updateBadge(); }
 let loginInProgress = false;
+// A single Google consent flow can authorize both Firebase sign-in and Drive.
+const DRIVE_FILE_SCOPE='https://www.googleapis.com/auth/drive.file';
+let accountChanging=false,pendingDriveCredential=null;
+function deliverDriveCredential(){
+ if(accountChanging||!pendingDriveCredential)return;
+ const {uid,token}=pendingDriveCredential;
+ if(!user||user.uid!==uid)return;
+ if(window.PsychDeskCloud?.acceptGoogleSignInDriveToken?.(token,uid)){
+  pendingDriveCredential=null;
+ }
+}
 async function signIn(){
  if(!configured) return openAccount();
  if(loginInProgress) return;
  if(!auth){ alert('Firebase authentication is not ready. Check your connection, then reload PsychDesk in Chrome.'); return; }
  loginInProgress=true;lastError='';updateBadge();
- try { await signInWithPopup(auth, new GoogleAuthProvider()); }
+ try {
+  const provider=new GoogleAuthProvider();
+  provider.addScope(DRIVE_FILE_SCOPE);
+  const result=await signInWithPopup(auth,provider);
+  const credential=GoogleAuthProvider.credentialFromResult(result);
+  if(credential?.accessToken && result?.user?.uid){
+   pendingDriveCredential={uid:result.user.uid,token:credential.accessToken};
+   deliverDriveCredential();
+  }
+ }
  catch(e){
   const code=e?.code||'unknown-error';
   lastError=code+': '+messageError(e);
@@ -67,7 +87,7 @@ async function accountChanged(next){
  window.PsychDeskCloud?.resetSession?.();
  clearTimeout(syncTimer); if(unsubscribe){unsubscribe();unsubscribe=null;}
  signedInReady=false;busy=false;dirty=false;conflict=false;lastError='';revision=0;changes=0;
- if(!next){ user=null;localStorage.removeItem('psychdesk-last-user-v3');core.useStorageKey('psychdesk-v1');updateBadge();return; }
+ if(!next){ pendingDriveCredential=null;user=null;localStorage.removeItem('psychdesk-last-user-v3');core.useStorageKey('psychdesk-v1');updateBadge();return; }
  // The old offline-only data stays under psychdesk-v1, even after account login.
  const oldGuest = JSON.parse(localStorage.getItem('psychdesk-v1')||'null') || core.getData();
  user=next;localGuest=structuredClone(oldGuest);
@@ -210,7 +230,16 @@ else{
  try {
   const firebaseApp=initializeApp(config);
   auth=getAuth(firebaseApp);db=getFirestore(firebaseApp);
-  onAuthStateChanged(auth, next=>accountChanged(next),e=>{lastError=messageError(e);updateBadge()});
+  onAuthStateChanged(auth, next=>{
+   accountChanging=true;
+   Promise.resolve(accountChanged(next)).catch(e=>{
+    lastError='Account initialization: '+messageError(e);updateBadge();
+   }).finally(()=>{
+    accountChanging=false;
+    if(!next) pendingDriveCredential=null;
+    else deliverDriveCredential();
+   });
+  },e=>{lastError=messageError(e);updateBadge()});
   updateBadge();
  } catch(e){lastError='Firebase initialization: '+messageError(e);updateBadge();}
 }
