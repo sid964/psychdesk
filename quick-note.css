@@ -17,3 +17,12 @@
 @media(max-width:570px){.quick-note-launch{margin-left:5px;width:39px;min-width:39px;height:39px;padding:0;border-radius:11px}.quick-note-launch .quick-label{display:none}.quick-capture>textarea{min-height:200px}.quick-choices{flex-direction:column}.quick-choices button{width:100%}}
 @media(max-width:375px){.quick-note-launch{width:34px;min-width:34px;height:36px}.quick-capture>textarea{padding:14px}}
 @media(prefers-reduced-motion:reduce){.quick-note-launch{transition:none!important;transform:none!important}}
+
+/* Monochrome Drive connection status: separate from Firestore sync. */
+.drive-status-chip{display:inline-flex;flex:none;align-items:center;justify-content:center;gap:6px;margin-left:8px;min-height:37px;border:1px solid #3b3b3b;background:#181818;color:#d8d8d8;border-radius:10px;padding:7px 10px;cursor:pointer;white-space:nowrap;font:800 11px 'DM Sans',sans-serif}
+.drive-status-chip[data-state="ready"]{border-color:#707070;background:#303030;color:#fff}
+.drive-status-chip[data-state="connecting"]{opacity:.73}
+.drive-status-chip:hover{border-color:#a9a9a9}
+.drive-status-chip>span:first-child{font-size:17px;line-height:1}
+@media(max-width:600px){.drive-status-chip{min-width:35px;width:35px;padding:7px 5px;margin-left:4px}.drive-chip-label{display:none}}
+@media(max-width:380px){.drive-status-chip{min-width:31px;width:31px;min-height:34px}}
