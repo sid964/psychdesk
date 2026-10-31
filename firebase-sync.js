@@ -39,7 +39,7 @@ function notify(message){ core.toast(message); updateBadge(); }
 async function signIn(){
  if(!configured) return openAccount();
  try { await signInWithPopup(auth, new GoogleAuthProvider()); }
- catch(e){ lastError = messageError(e); updateBadge(); alert('Google sign-in failed: '+lastError+'\n\nOpen PsychDesk in Chrome on your Firebase HTTPS address and check that Google sign-in is enabled and the domain is authorized.'); }
+ catch(e){ lastError = messageError(e); updateBadge(); alert('Google sign-in failed: '+lastError+'\n\nOpen https://sid964.github.io/psychdesk/ in Chrome; enable Google sign-in in Firebase Authentication and authorize sid964.github.io. If you use Brave, allow the sign-in popup.'); }
 }
 async function accountChanged(next){
  clearTimeout(syncTimer); if(unsubscribe){unsubscribe();unsubscribe=null;}
