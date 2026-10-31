@@ -32,9 +32,12 @@ test('curated dictionary includes accurate, searchable concepts without storing 
 });
 test('timeline links to sourced milestones and retains personal selection',()=>{
  const a=env(),knowledge=a.window.PsychDeskKnowledge;
- assert.ok(knowledge.history().length>=20);
+ assert.ok(knowledge.history().length>=34);
  assert.ok(knowledge.history().some(x=>x.year===1879&&/Wundt/i.test(x.title)));
  assert.ok(knowledge.timelineEntries('1913').some(x=>/Watson/i.test(x.people)));
+ assert.ok(knowledge.timelineEntries('2022').some(x=>/ICD-11/i.test(x.title)));
+ assert.ok(knowledge.timelineEntries('2015').some(x=>/reproducibility/i.test(x.title)));
+
  assert.match(knowledge.renderTimeline(),/Psychology Timeline/);
  knowledge.openTerm('working-memory');assert.equal(a.tab,'dictionary');
  knowledge.openEvent('milestone-2');assert.equal(a.tab,'timeline');
@@ -122,7 +125,7 @@ test('personal timeline reflections can be bookmarked and stored without modifyi
  const click=dataset=>a.listeners.click.forEach(cb=>cb({target:{closest:()=>({dataset})},preventDefault(){}}));
  click({psy:'bookmarkEvent',id:'my-event'});
  assert.equal(a.state.timelineBookmarks[0],'my-event');
- assert.equal(a.window.PSYCHDESK_PSYCHOLOGY_REFERENCE.timeline.length,24);
+ assert.ok(a.window.PSYCHDESK_PSYCHOLOGY_REFERENCE.timeline.length>=34);
  a.window.PsychDeskKnowledge.openEvent('my-event');
  assert.equal(a.tab,'timeline');
 });
