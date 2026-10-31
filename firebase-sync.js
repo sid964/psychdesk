@@ -97,6 +97,8 @@ async function accountChanged(next){
  core.closeModal();
  localStorage.setItem('psychdesk-last-user-v3',next.uid);
  core.useStorageKey('psychdesk-user-'+next.uid);
+  // A same-tab Drive grant should not depend on a successful Firestore data fetch.
+  void window.PsychDeskCloud?.restoreDriveSession?.();
  dirty=localStorage.getItem(uidKey('pending'))==='1';
  revision=Number(localStorage.getItem(uidKey('revision'))||0);
  updateBadge();

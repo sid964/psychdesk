@@ -1,0 +1,33 @@
+/* Quiet study connections, note history and academic lookup. Existing AMOLED tokens. */
+.psy-linked-section{margin-top:26px;padding-top:4px;border-top:1px solid var(--psy-line)}
+.psy-linked-section h3{margin-top:18px}
+.psy-link-group{display:grid;gap:8px;margin:13px 0}
+.psy-link-group>span,.psy-note-connections>strong{font:750 11px 'DM Sans',sans-serif;color:var(--psy-muted)}
+.psy-link-pills{display:flex;gap:7px;flex-wrap:wrap}
+.psy-link-pills button{border:1px solid var(--psy-line);background:var(--psy-panel-soft);color:var(--psy-ink);border-radius:20px;padding:8px 12px;font:650 11px 'DM Sans',sans-serif;text-align:left;max-width:100%;overflow-wrap:anywhere}
+.psy-link-pills button:hover{border-color:var(--psy-accent)}
+.psy-links-empty{font:400 11px/1.7 'DM Sans',sans-serif;color:var(--psy-muted)!important}
+.psy-note-connections{display:grid;gap:10px;padding:14px;border-radius:14px;border:1px solid var(--psy-line);background:var(--psy-panel);margin:10px 0}
+.note-autosave-status{font:600 11px/1.5 'DM Sans',sans-serif;color:var(--psy-muted);margin:13px 0}
+.note-history-panel{margin:12px 0;padding:10px 13px;border:1px solid var(--psy-line);border-radius:12px}
+.note-history-panel summary{cursor:pointer;color:var(--psy-ink);font:700 12px 'DM Sans',sans-serif}
+.note-history-panel .note{margin:10px 0!important}
+.note-history-list{display:grid;gap:7px;margin:13px 0}
+.note-history-list button{display:grid;gap:5px;background:var(--psy-panel-soft);color:var(--psy-ink);border:1px solid var(--psy-line);padding:11px;border-radius:10px;text-align:left}
+.note-history-list button strong{font:700 11px 'DM Sans',sans-serif}
+.note-history-list button span{font:400 10px 'DM Sans',sans-serif;color:var(--psy-muted)}
+.psy-academic-panel{border-top:1px solid var(--psy-line);padding-top:15px;margin:15px 0 25px}
+.psy-academic-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px}
+.psy-academic-head strong{font:800 10px 'DM Sans',sans-serif;letter-spacing:1px;color:var(--psy-ink)}
+.psy-academic-head p{font:400 11px/1.6 'DM Sans',sans-serif;color:var(--psy-muted);margin:5px 0}
+.psy-academic-head button{border:1px solid var(--psy-line);background:var(--psy-panel-soft);border-radius:9px;padding:9px 13px;color:var(--psy-ink);font-size:11px}
+.psy-academic-head button:disabled{opacity:.55;cursor:wait}
+.psy-academic-small{font:400 10px/1.6 'DM Sans',sans-serif;color:var(--psy-muted);margin:10px 0}
+.psy-academic-count{font:750 10px 'DM Sans',sans-serif;color:var(--psy-muted);margin:12px 0}
+.psy-academic-paper{display:grid;gap:9px;border:1px solid var(--psy-line);background:var(--psy-panel);border-radius:14px;padding:16px;margin-top:9px;overflow-wrap:anywhere}
+.psy-academic-paper small{font:600 10px 'DM Sans',sans-serif;color:var(--psy-muted)}
+.psy-academic-paper strong{font:750 13px/1.5 'DM Sans',sans-serif;color:var(--psy-ink)}
+.psy-academic-paper p{font:400 11px/1.6 'DM Sans',sans-serif;color:var(--psy-muted);margin:0}
+.psy-academic-abstract{color:var(--psy-ink)!important}
+.psy-academic-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.psy-academic-actions a,.psy-academic-actions button{padding:8px 10px;color:var(--psy-ink);border:1px solid var(--psy-line);background:var(--psy-panel-soft);border-radius:9px;font:650 11px 'DM Sans',sans-serif;text-decoration:none}
