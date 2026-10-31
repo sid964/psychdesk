@@ -22,3 +22,5 @@
 .setup-close:focus-visible,.setup-button:focus-visible{outline:2px solid #eee;outline-offset:3px}
 @media(max-width:520px){.setup-panel{padding:20px 17px}.setup-actions{flex-direction:column}}
 @media(prefers-reduced-motion:reduce){.setup-panel,.setup-icon{animation:none!important}}
+.setup-help{display:inline-flex;align-items:center;justify-content:center;color:#cecece;text-decoration:underline;text-underline-offset:3px;font-size:12px;padding:10px 4px;flex-basis:100%}
+.setup-help:hover{color:#fff}
