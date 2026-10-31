@@ -5,9 +5,23 @@
 <title>PsychDesk — Psychology Study Planner</title>
 <link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png">
 <link rel="stylesheet" href="style.css">
-</head><body>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght,SOFT@9..144,400,20;9..144,500,20;9..144,600,20&display=swap" rel="stylesheet"><link rel="stylesheet" href="studio-v4.css?v=4"></head><body>
 <div class="app-shell">
-<header class="topbar">
+<aside class="desktop-rail" aria-label="PsychDesk workspace navigation">
+<div class="rail-brand"><div class="brand-mark">ψ</div><div><strong>PsychDesk</strong><small>THE STUDY STUDIO</small></div></div>
+<div class="rail-section-label">YOUR WORKSPACE</div>
+<nav class="rail-nav" aria-label="Desktop workspace navigation">
+<button class="rail-link active" data-tab="today"><span class="rail-symbol">⌂</span> Overview <span class="rail-trail">↗</span></button>
+<button class="rail-link" data-tab="planner"><span class="rail-symbol">▤</span> Study planner</button>
+<button class="rail-link" data-tab="notes"><span class="rail-symbol">✎</span> My notes</button>
+<button class="rail-link" data-tab="recall"><span class="rail-symbol">◇</span> Flashcards</button>
+<button class="rail-link" data-tab="focus"><span class="rail-symbol">◷</span> Focus room</button>
+<button class="rail-link" data-tab="ai"><span class="rail-symbol">✧</span> Gemini studio <span class="rail-new">AI</span></button>
+<button class="rail-link" data-tab="insights"><span class="rail-symbol">▥</span> Insights</button>
+</nav>
+<div class="rail-lower"><div class="rail-motif">✳</div><div class="rail-quote">A little progress,<br><em>made often.</em></div><div class="rail-caption">Your own quiet place for learning.</div><div class="rail-footer">PSYCHDESK <span>© 2026</span></div></div>
+</aside>
+<header class="topbar"><div class="desktop-crumb"><span class="crumb-overline">STUDY WORKSPACE</span><span id="railCurrentSection">Overview</span></div>
   <div class="brand"><div class="brand-mark" aria-hidden="true">ψ</div><div><strong>PsychDesk</strong><span>STUDY SYSTEM</span></div></div>
   <button class="account-chip" id="accountBtn" aria-label="Google account and sync status" title="Google account">Sign in</button><button class="icon-btn" title="Settings and backup" aria-label="Settings and backup" id="settingsBtn"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.07.08-2 2-.08-.07a1.7 1.7 0 0 0-1.88-.34l-1.03.45V21h-2.8v-2a1.7 1.7 0 0 0-1.55-.78L9.4 18.6l-1.4 1.4-2-2 1.4-1.4a1.7 1.7 0 0 0-.1-1.7L5.5 14H3v-2.8h2.5l.7-1.7-1.4-1.4 2-2 1.4 1.4 1.7-.7V4h2.8v2.5l1.7.7 1.4-1.4 2 2-1.4 1.4.7 1.7H21V14h-1.9Z" transform="translate(0,-.25) scale(.96)"/></svg></button>
 </header>
@@ -24,8 +38,8 @@
 </div>
 <div id="modalRoot"></div><div id="toast" role="status" aria-live="polite"></div>
 <script src="https://accounts.google.com/gsi/client" async></script>
-<script src="app.js" defer></script>
-<script src="cloud.js" defer></script>
-<script src="firebase-config.js?v=20261031-2" defer></script>
-<script type="module" src="firebase-sync.js?v=20261031-2"></script>
+<script src="app.js?v=studio4" defer></script>
+<script src="cloud.js?v=studio4" defer></script>
+<script src="firebase-config.js?v=studio4" defer></script>
+<script type="module" src="firebase-sync.js?v=studio4"></script>
 </body></html>
