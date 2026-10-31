@@ -11,7 +11,7 @@ const dateToday=()=>core.today();
 const timestamp=()=>new Date().toISOString();
 const clip=(s,n)=>String(s||'').slice(0,n);
 let query='',searchType='all',researchFilter='all',voiceMode='idle',recognition=null,voiceText='',voiceInterim='',voiceTitle='',voiceSubject='',lastCards=[],ambient=null,ambientMode='off';
-const categories=[['notes','Notes'],['stickies','Stickies'],['cards','Flashcards'],['tasks','Study plan'],['materials','Books & PDFs'],['pdfHighlights','PDF highlights'],['research','Research']];
+const categories=[['notes','Notes'],['stickies','Stickies'],['cards','Flashcards'],['tasks','Study plan'],['materials','Books & PDFs'],['pdfHighlights','PDF highlights'],['research','Research'],['dictionary','Dictionary'],['timeline','Timeline']];
 function searchItems(q=query,type=searchType){
  const term=String(q).toLocaleLowerCase().trim();
  const sources=[
@@ -21,7 +21,9 @@ function searchItems(q=query,type=searchType){
   ['tasks',items('tasks'),v=>v.title,v=>v.title,v=>'planner'],
   ['materials',items('materials'),v=>v.title+' '+(v.fileName||''),v=>v.title,v=>'materials'],
   ['pdfHighlights',items('pdfHighlights'),v=>v.text+' '+(v.note||''),v=>clip(v.text,85),v=>'materials'],
-  ['research',items('research'),v=>v.title+' '+(v.authors||'')+' '+(v.doi||'')+' '+(v.notes||''),v=>v.title,v=>'research']
+  ['research',items('research'),v=>v.title+' '+(v.authors||'')+' '+(v.doi||'')+' '+(v.notes||''),v=>v.title,v=>'research'],
+  ['dictionary',window.PsychDeskKnowledge?.glossary?.()||[],v=>v.term+' '+v.definition+' '+(v.example||''),v=>v.term,v=>'dictionary'],
+  ['timeline',window.PsychDeskKnowledge?.history?.()||[],v=>v.year+' '+v.title+' '+v.description+' '+(v.people||''),v=>v.year+' · '+v.title,v=>'timeline']
  ];
  return sources.filter(a=>type==='all'||type===a[0]).flatMap(([kind,arr,content,label,tab])=>
   arr.filter(x=>term&&String(content(x)).toLocaleLowerCase().includes(term)).map(x=>({kind,title:label(x),excerpt:clip(String(content(x)),185),id:x.id||'',tab:tab(x)}))).slice(0,100);
@@ -283,6 +285,8 @@ document.addEventListener('click',e=>{
   if(kind==='notes'){const n=items('notes').find(v=>v.id===id);if(n){core.setTab('notes');window.PsychDeskCloud?.noteEditor?.(n);break;}}
   if(kind==='stickies'){const n=items('stickies').find(v=>v.id===id);if(n){window.PsychDeskStickies?.edit?.(n.groupId||n.id);break;}}
   if(kind==='materials'){const n=items('materials').find(v=>v.id===id);if(n&&n.kind!=='link'){window.PsychDeskReader?.open?.(n.id);break;}}
+  if(kind==='dictionary'&&window.PsychDeskKnowledge?.openTerm?.(id)!==undefined)break;
+  if(kind==='timeline'&&window.PsychDeskKnowledge?.openEvent?.(id)!==undefined)break;
   applySearchTab(b.dataset.tab);break;}
  case 'lookupDOI':lookup();break;
  case 'removeResearch':if(confirm('Remove this saved research reference?')){data().research=items('research').filter(p=>p.id!==b.dataset.id);core.save();core.render();}break;
