@@ -202,8 +202,9 @@ function focusPanel(){
  '<label class="study-voice-label">What will you work on?<input id="focusIntention" maxlength="145" value="'+h(goal)+'" placeholder="e.g. Read chapter 3 and write a summary"></label>'+
  '<div class="study-sound-controls"><button data-extras="sound" data-mode="off" class="'+(ambientMode==='off'?'active':'')+'">Quiet</button><button data-extras="sound" data-mode="rain" class="'+(ambientMode==='rain'?'active':'')+'">Rain</button><button data-extras="sound" data-mode="brown" class="'+(ambientMode==='brown'?'active':'')+'">Brown noise</button><button data-extras="fullscreen" class="secondary">⛶ Fullscreen focus</button></div><p>Sounds are generated in your browser. They stop when you switch modes or leave the page.</p></div>';
 }
+function stopAmbient(){try{ambient?.source?.stop();ambient?.context?.close()}catch{}ambient=null;ambientMode='off';}
 function sound(mode){
- try{ambient?.source?.stop();ambient?.context?.close()}catch{}ambient=null;ambientMode='off';
+ stopAmbient();
  if(mode==='off'){core.render();return;}
  const Ctx=window.AudioContext||window.webkitAudioContext;
  if(!Ctx){core.toast('Web Audio is unavailable in this browser.');return;}
@@ -301,7 +302,9 @@ document.addEventListener('keydown',e=>{
   const tabs=['today','planner','notes','stickies','recall','materials','research','search'];e.preventDefault();core.setTab(tabs[Number(e.key)-1]);
  }
 });
-window.addEventListener('psychdesk:session-reset',()=>{stopVoice();if(ambient)try{ambient.source.stop();ambient.context.close()}catch{}ambient=null;ambientMode='off';voiceText='';voiceTitle='';voiceSubject='';});
+document.addEventListener('click',e=>{if(ambient&&e.target.closest('[data-tab]'))stopAmbient();});
+window.addEventListener('pagehide',stopAmbient);
+window.addEventListener('psychdesk:session-reset',()=>{stopVoice();stopAmbient();voiceText='';voiceTitle='';voiceSubject='';});
 window.addEventListener('psychdesk:account-ready',()=>showQuickCapture());
 setTimeout(()=>showQuickCapture(),3500);
 window.PsychDeskExtras={renderSearch,renderResearch,renderVoice,recallPanel,insightsPanel,focusPanel,generateCards,searchItems,lookupDOI,validDOI,fromPdf,showQuickCapture};
