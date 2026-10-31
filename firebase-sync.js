@@ -36,27 +36,30 @@ function updateBadge(){
  return status('✓ Synced', 'synced');
 }
 function notify(message){ core.toast(message); updateBadge(); }
+let loginInProgress = false;
 async function signIn(){
  if(!configured) return openAccount();
+ if(loginInProgress) return;
  if(!auth){ alert('Firebase authentication is not ready. Check your connection, then reload PsychDesk in Chrome.'); return; }
- lastError=''; updateBadge();
+ loginInProgress=true;lastError='';updateBadge();
  try { await signInWithPopup(auth, new GoogleAuthProvider()); }
  catch(e){
   const code=e?.code||'unknown-error';
   lastError=code+': '+messageError(e);
   const hints={
-   'auth/popup-blocked':'Your browser blocked the Google login window. Open PsychDesk directly in Google Chrome, allow popups, and retry.',
-   'auth/popup-closed-by-user':'The Google login window was closed before completion. Retry in Chrome with Brave Shields or popup blocking disabled if applicable.',
+   'auth/cancelled-popup-request':'A second sign-in popup request interrupted the first. Close extra login tabs, open PsychDesk directly in Chrome, then tap Continue with Google once.',
+   'auth/popup-blocked':'The browser blocked the Google login window. Open PsychDesk directly in Google Chrome, allow popups, and retry.',
+   'auth/popup-closed-by-user':'The Google login window closed before completion. Open the website directly in Chrome and retry.',
    'auth/unauthorized-domain':'Add sid964.github.io in Firebase Authentication > Settings > Authorized domains.',
    'auth/operation-not-allowed':'Enable Google under Firebase Authentication > Sign-in method and save it.',
-   'auth/invalid-api-key':'The public Firebase web configuration needs correction.',
-   'auth/network-request-failed':'Check your connection, disable aggressive browser blocking for this site, and retry.',
-   'auth/internal-error':'Retry in Chrome. If the problem continues, capture this exact error code.'
+   'auth/invalid-api-key':'Check the public Firebase web configuration.',
+   'auth/network-request-failed':'Check your connection, disable aggressive browser blocking, and retry.',
+   'auth/internal-error':'Retry in Chrome. If the problem continues, capture this error code.'
   };
   console.error('PsychDesk Google sign-in failed',code,e);
   updateBadge();
-  alert('Google sign-in failed.\n\nError: '+lastError+'\n\n'+(hints[code]||'Try Chrome and share this exact error code to diagnose the problem.')+'\n\nWebsite: https://sid964.github.io/psychdesk/');
- }
+  alert('Google sign-in failed.\n\nError: '+lastError+'\n\n'+(hints[code]||'Try Chrome and share the exact error code.')+'\n\nWebsite: https://sid964.github.io/psychdesk/');
+ }finally{loginInProgress=false;}
 }
 async function accountChanged(next){
  clearTimeout(syncTimer); if(unsubscribe){unsubscribe();unsubscribe=null;}
