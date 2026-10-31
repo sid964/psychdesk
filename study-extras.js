@@ -37,7 +37,7 @@ function searchResults(list=searchItems()){
  if(!query.trim())return '<div class="study-empty">Start typing to search your entire PsychDesk workspace.</div>';
  if(!list.length)return '<div class="study-empty">No matching study content. Try a different keyword or filter.</div>';
  return '<div class="study-result-count">'+list.length+' results found (up to 100)</div>'+list.map(x=>
-  '<button class="study-search-hit" data-extras="openSearch" data-tab="'+h(x.tab)+'"><span class="study-kind">'+h(categories.find(c=>c[0]===x.kind)?.[1]||x.kind)+'</span><strong>'+h(x.title)+'</strong><small>'+h(x.excerpt)+'</small></button>').join('');
+  '<button class="study-search-hit" data-extras="openSearch" data-tab="'+h(x.tab)+'" data-kind="'+h(x.kind)+'" data-id="'+h(x.id)+'"><span class="study-kind">'+h(categories.find(c=>c[0]===x.kind)?.[1]||x.kind)+'</span><strong>'+h(x.title)+'</strong><small>'+h(x.excerpt)+'</small></button>').join('');
 }
 function lookupDOI(raw){
  return String(raw||'').trim().replace(/^https?:\/\/(?:dx\.)?doi\.org\//i,'').replace(/^doi:\s*/i,'');
@@ -276,7 +276,12 @@ document.addEventListener('click',e=>{
  const b=e.target.closest('[data-extras]');if(!b)return;e.preventDefault();
  switch(b.dataset.extras){
  case 'filterSearch':searchType=b.dataset.value;core.render();$('#studySearchInput')?.focus();break;
- case 'openSearch':applySearchTab(b.dataset.tab);break;
+ case 'openSearch':{
+  const kind=b.dataset.kind,id=b.dataset.id;
+  if(kind==='notes'){const n=items('notes').find(v=>v.id===id);if(n){core.setTab('notes');window.PsychDeskCloud?.noteEditor?.(n);break;}}
+  if(kind==='stickies'){const n=items('stickies').find(v=>v.id===id);if(n){window.PsychDeskStickies?.edit?.(n.groupId||n.id);break;}}
+  if(kind==='materials'){const n=items('materials').find(v=>v.id===id);if(n&&n.kind!=='link'){window.PsychDeskReader?.open?.(n.id);break;}}
+  applySearchTab(b.dataset.tab);break;}
  case 'lookupDOI':lookup();break;
  case 'removeResearch':if(confirm('Remove this saved research reference?')){data().research=items('research').filter(p=>p.id!==b.dataset.id);core.save();core.render();}break;
  case 'cite':{const p=items('research').find(r=>r.id===b.dataset.id);if(p)navigator.clipboard?.writeText(citation(p)).then(()=>core.toast('Citation copied')).catch(()=>core.toast('Clipboard unavailable.'));break;}
