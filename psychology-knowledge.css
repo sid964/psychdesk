@@ -96,3 +96,10 @@ html[data-theme="light"]{--psy-panel:#fff;--psy-panel-soft:#f4f3f1;--psy-ink:#27
 @media(max-width:600px){.psy-top-tools{flex-direction:column;align-items:stretch}.psy-top-tools>.primary{width:100%}.psy-detail{padding:22px 18px}.psy-detail h2{font-size:30px}.psy-layout,.psy-timeline-layout{gap:15px}.psy-entry-list,.psy-timeline-events{max-height:360px}.ref-metrics{gap:8px}.ref-metrics>div{padding:13px 11px}.ref-metrics strong{font-size:27px}.ref-metrics span{font-size:9px}.ref-quick-add{padding:19px}.ref-doi-row button{flex:1}.ref-library{grid-template-columns:1fr}.ref-edit-form{grid-template-columns:1fr}.ref-controls{grid-template-columns:1fr 1fr}.ref-toolbar{align-items:start}.ref-toolbar button{flex:1}.psy-timeline-card{grid-template-columns:45px minmax(0,1fr) 10px;padding:13px 10px}}
 @media(max-width:380px){.ref-controls{grid-template-columns:1fr}.ref-controls label:first-child{grid-column:auto}.psy-timeline-card{grid-template-columns:42px minmax(0,1fr) 10px}}
 @media(prefers-reduced-motion:reduce){.psy-entry,.psy-timeline-card{transition:none!important}}
+
+/* Optional bibliography tools stay tucked away until needed. */
+.ref-advanced{border:1px solid var(--psy-line);border-radius:12px;padding:12px 15px;background:var(--psy-panel);margin:14px 0;color:var(--psy-ink)}
+.ref-advanced summary{font:750 12px 'DM Sans',sans-serif;cursor:pointer;list-style:revert;padding:5px 2px}
+.ref-advanced summary:focus-visible{outline:2px solid var(--psy-accent);outline-offset:4px}
+.ref-advanced[open] summary{margin-bottom:14px}
+.ref-advanced .ref-toolbar{margin:0;border:0;background:transparent;padding:0;box-shadow:none}
