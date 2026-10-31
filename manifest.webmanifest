@@ -21,5 +21,14 @@
       "purpose": "any maskable"
     }
   ],
-  "description": "Offline-first study planner with psychology notes, optional Gemini AI and Google sign-in and cross-device study sync"
+  "description": "Psychology study workspace with notes, textbooks, highlights, sticky notes, boards, mind maps, flashcards and Google account sync.",
+  "share_target": {
+    "action": "./index.html",
+    "method": "GET",
+    "params": {
+      "title": "shareTitle",
+      "text": "shareText",
+      "url": "shareUrl"
+    }
+  }
 }
