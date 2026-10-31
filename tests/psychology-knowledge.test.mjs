@@ -126,3 +126,13 @@ test('personal timeline reflections can be bookmarked and stored without modifyi
  a.window.PsychDeskKnowledge.openEvent('my-event');
  assert.equal(a.tab,'timeline');
 });
+
+test('BibTeX export makes duplicate citation keys unique without editing stored references',()=>{
+ const a=env(),api=a.window.PsychDeskReferences;
+ const entries=[{title:'First Paper',citationKey:'same2023',year:2023},{title:'Second Paper',citationKey:'same2023',year:2023}];
+ const bib=api.exportBibTeX(entries);
+ assert.match(bib,/@article\{same2023,/);
+ assert.match(bib,/@article\{same2023_2,/);
+ assert.equal(api.parseBibTeX(bib).length,2);
+ assert.equal(entries[1].citationKey,'same2023');
+});
