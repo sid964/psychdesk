@@ -153,6 +153,21 @@ async function driveRequest(url,options={}){
  }catch(error){if(controller.signal.aborted)throw Error('Drive transfer stopped or timed out. Reconnect if needed, then retry the same file.');throw error;}
  finally{clearTimeout(timeout);sessionSignal.removeEventListener('abort',abort)}
 }
+// Read only an app-owned Drive PDF/Markdown for the in-app reader. Never cache document bytes.
+async function fetchStudyMaterial(driveId){
+ const id=String(driveId||'');
+ if(!/^[A-Za-z0-9_-]{10,120}$/.test(id))throw Error('This book is missing its valid Drive file ID.');
+ if(!accessToken||Date.now()>=tokenExpires)throw Error('Reconnect Google Drive to read your books.');
+ const epoch=driveEpoch;
+ const response=await driveRequest(base+'/'+encodeURIComponent(id)+'?alt=media');
+ if(!response.ok)throw Error('Google Drive could not open this book (HTTP '+response.status+'). Check file access and retry.');
+ const size=Number(response.headers.get('Content-Length')||0);
+ if(size>80*1024*1024)throw Error('This book is over the 80 MB in-browser reader limit. Open it in Google Drive instead.');
+ const blob=await response.blob();
+ if(epoch!==driveEpoch)throw Error('Google Drive session changed. Reconnect and reopen the book.');
+ if(blob.size>80*1024*1024)throw Error('This file is too large for the in-browser reader. Open it in Google Drive.');
+ return blob;
+}
 async function uploadMaterial(file,subject,onProgress=()=>{}){
  if(driveBusy)throw Error('Another Drive operation is running. Please wait.');
  const epoch=driveEpoch;checkAuth();if(!file||!file.size||file.size>512*1024*1024)throw Error('Choose a non-empty PDF or Markdown file up to 512 MB.');
@@ -204,5 +219,5 @@ function handle(event){let button=event.target.closest('[data-cloud]');if(!butto
 document.addEventListener('click',handle);
 document.addEventListener('change',e=>{if(e.target.id==='noteFilter'){noteSubject=e.target.value;document.querySelector('#noteResults').innerHTML=noteCards()}});
 document.addEventListener('input',e=>{if(e.target.id==='noteSearch'){noteQuery=e.target.value;document.querySelector('#noteResults').innerHTML=noteCards()}});
-window.PsychDeskCloud={renderNotes,openSettings,resetSession,connectDrive,verifyDriveConnection,acceptGoogleSignInDriveToken,uploadMaterial,noteEditor,isConnected:()=>Boolean(accessToken&&Date.now()<tokenExpires),cancelUpload:clearDriveAuthorization};
+window.PsychDeskCloud={renderNotes,openSettings,resetSession,connectDrive,verifyDriveConnection,acceptGoogleSignInDriveToken,fetchStudyMaterial,uploadMaterial,noteEditor,isConnected:()=>Boolean(accessToken&&Date.now()<tokenExpires),cancelUpload:clearDriveAuthorization};
 })();
