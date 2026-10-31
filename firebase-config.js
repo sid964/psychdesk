@@ -1,8 +1,11 @@
-// PsychDesk public Firebase Web SDK configuration (from user's Firebase Console screenshot).
-// This is NOT a Gemini API key or a private service account credential.
+// PsychDesk public Firebase Web SDK configuration from Firebase Console.
+// These identifiers are intended for use in the browser; do not add private credentials here.
 window.PSYCHDESK_FIREBASE_CONFIG = {
-  apiKey: "AIzaSyBppHGMIWk4YJQBA0ABq19WhE6NgLfzPsg",
+  apiKey: "AIzaSyBppHGMIWK4YJQBAOABq19WhE6NglfzPsg",
   authDomain: "psystudy-e4854.firebaseapp.com",
   projectId: "psystudy-e4854",
-  appId: "1:659114399201:web:16f2b264c5f4fcf5d1eea0"
+  storageBucket: "psystudy-e4854.firebasestorage.app",
+  messagingSenderId: "659114399201",
+  appId: "1:659114399201:web:16f2b264c5f4fcf5d1eea0",
+  measurementId: "G-7PS6NZ1QRS"
 };
