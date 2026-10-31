@@ -60,7 +60,7 @@ function refCard(p){
  return '<article class="study-reference"><div class="study-reference-label">'+h(subj(p.subjectId))+' · '+h(p.year||'Year unknown')+'</div><h3>'+h(p.title)+'</h3><p>'+h(p.authors||'Authors not listed')+'</p><small>'+h(p.doi||'')+'</small>'+
  (p.notes?'<p class="study-reference-notes">'+h(p.notes)+'</p>':'')+
  '<div class="study-ref-actions">'+(link?'<a href="'+h(link)+'" target="_blank" rel="noopener noreferrer">Open paper ↗</a>':'')+
- '<button data-extras="cite" data-id="'+h(p.id)+'">Copy APA-style citation</button><button data-extras="removeResearch" data-id="'+h(p.id)+'">Remove</button></div></article>';
+ '<button data-extras="cite" data-id="'+h(p.id)+'">Copy reference</button><button data-extras="removeResearch" data-id="'+h(p.id)+'">Remove</button></div></article>';
 }
 async function lookup(){
  const form=$('#researchForm');if(!form)return;
