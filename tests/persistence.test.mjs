@@ -164,3 +164,30 @@ test('Google sign-in authorizes Drive in the same consent flow without persistin
  await fb.change(null);
  assert.equal(env.window.PsychDeskCloud.isConnected(),false);
 });
+
+test('new study-suite data survives save, reload, and imported account snapshots',()=>{
+ const env=environment();
+ const d=env.core.getData();
+ d.research.push({id:'research-1',title:'Cognitive psychology study',doi:'10.1234/example'});
+ d.boardItems.push({id:'board-1',kind:'note',text:'Consolidation',x:10,y:10});
+ d.mindMaps.push({id:'map-1',title:'Memory',nodes:[],edges:[]});
+ d.pdfHighlights.push({id:'highlight-1',materialId:'book-1',page:2,text:'Working memory',rects:[]});
+ env.core.save();
+ const reopened=environment(env.storage);
+ assert.equal(reopened.core.getData().research.length,1);
+ assert.equal(reopened.core.getData().boardItems[0].text,'Consolidation');
+ assert.equal(reopened.core.getData().mindMaps[0].title,'Memory');
+ assert.equal(reopened.core.getData().pdfHighlights[0].page,2);
+ const copied=JSON.parse(JSON.stringify(reopened.core.getData()));
+ const fresh=environment();
+ fresh.core.replaceData(copied);
+ assert.equal(fresh.core.getData().research[0].doi,'10.1234/example');
+ assert.equal(fresh.core.getData().mindMaps.length,1);
+ assert.equal(fresh.core.getData().pdfHighlights.length,1);
+});
+test('invalid new study data arrays are rejected rather than silently discarded',()=>{
+ const env=environment();
+ const d=JSON.parse(JSON.stringify(env.core.getData()));
+ d.research='not-an-array';
+ assert.throws(()=>env.core.replaceData(d),/Invalid PsychDesk/);
+});
