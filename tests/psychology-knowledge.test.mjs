@@ -12,7 +12,7 @@ function env(){
  const core={esc:value=>String(value??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'","&#39;"),
   getData:()=>state,id:()=>String(++next),save:()=>{saves++;},render:()=>{},setTab:value=>{tab=value;},
   openModal:()=>{},closeModal:()=>{},toast:()=>{},today:()=>'2026-11-01'};
- const doc={addEventListener:(event,cb)=>{listeners[event]=cb},querySelector:()=>null};
+ const doc={addEventListener:(event,cb)=>{(listeners[event] ||= []).push(cb)},querySelector:()=>null};
  const window={PsychDeskCore:core,addEventListener(){}};
  const context=vm.createContext({window,document:doc,URL,Date,console,confirm:()=>true,setTimeout:()=>1,clearTimeout:()=>{},
   navigator:{clipboard:{writeText:async()=>{}}}});
@@ -41,7 +41,7 @@ test('timeline links to sourced milestones and retains personal selection',()=>{
 });
 test('dictionary bookmark and one-click notebook copy save only user data',()=>{
  const a=env();
- const click=dataset=>a.listeners.click({target:{closest:()=>({dataset})},preventDefault(){}});
+ const click=dataset=>a.listeners.click.forEach(listener=>listener({target:{closest:()=>({dataset})},preventDefault(){}}));
  click({psy:'bookmark',id:'working-memory'});
  assert.equal(a.state.dictionaryBookmarks[0],'working-memory');
  click({psy:'noteTerm',id:'working-memory'});
@@ -113,4 +113,16 @@ test('reference cards escape HTML in imported title and show verified URLs only'
  const markup=a.window.PsychDeskReferences.render();
  assert.ok(markup.includes('&lt;img'));
  assert.ok(!markup.includes('href="javascript:'));
+});
+
+test('personal timeline reflections can be bookmarked and stored without modifying curated milestones',()=>{
+ const a=env();
+ a.core.getData().timelineEvents.push({id:'my-event',year:1982,title:'My local milestone',
+  description:'Academic history in my town',era:'foundations',people:'Local researchers',personal:true});
+ const click=dataset=>a.listeners.click.forEach(cb=>cb({target:{closest:()=>({dataset})},preventDefault(){}}));
+ click({psy:'bookmarkEvent',id:'my-event'});
+ assert.equal(a.state.timelineBookmarks[0],'my-event');
+ assert.equal(a.window.PSYCHDESK_PSYCHOLOGY_REFERENCE.timeline.length,24);
+ a.window.PsychDeskKnowledge.openEvent('my-event');
+ assert.equal(a.tab,'timeline');
 });
