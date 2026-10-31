@@ -157,8 +157,10 @@ test('Google sign-in authorizes Drive in the same consent flow without persistin
    return {user:{uid:'alice'}};
   }
  });
+ env.context.fetch=async()=>({ok:true,status:200,text:async()=>JSON.stringify({user:{emailAddress:'alice@example.test'}})});
  await fb.api.signIn();
  assert.ok(requested.includes('https://www.googleapis.com/auth/drive.file'));
+ await env.window.PsychDeskCloud.verifyDriveConnection();
  assert.equal(env.window.PsychDeskCloud.isConnected(),true);
  assert.doesNotMatch(JSON.stringify([...env.storage]),/one-time-drive-credential/);
  await fb.change(null);
