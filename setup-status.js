@@ -55,6 +55,8 @@
   else if(driveState==='error'||(signed&&!driveVerified&&!checkingDrive&&Date.now()-started>12000))actions='<button type="button" data-setup="drive" class="setup-button primary">Reconnect Google Drive</button><button type="button" data-setup="retry" class="setup-button">Check again</button>';
   else if(complete)actions='<button type="button" data-setup="close" class="setup-button primary">Start studying</button>';
   else if(Date.now()-started>30000)actions='<button type="button" data-setup="retry" class="setup-button">Retry checks</button>';
+  if(first==='error')actions+='<a class="setup-help" target="_blank" rel="noopener noreferrer" href="https://support.google.com/accounts/answer/3466521">Google sign-in help ↗</a>';
+  else if(driveState==='error')actions+='<a class="setup-help" target="_blank" rel="noopener noreferrer" href="https://support.google.com/accounts/answer/3466521">Review Google app permissions ↗</a>';
   byId('setup-actions').innerHTML=actions;
   if(signed&&!driveVerified&&!driveError&&!checkingDrive&&drive()?.isConnected?.())verifyDrive();
  }
