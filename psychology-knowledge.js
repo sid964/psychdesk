@@ -58,7 +58,7 @@ function dictionaryDetail(entry){
  '<button type="button" data-psy="stickyTerm" data-id="'+h(entry.id)+'">Make sticky</button>'+
  '<button type="button" data-psy="cardTerm" data-id="'+h(entry.id)+'">Make flashcard</button>'+
  (entry.personal?'<button type="button" data-psy="editTerm" data-id="'+h(entry.id)+'">Edit</button><button type="button" data-psy="deleteTerm" data-id="'+h(entry.id)+'">Delete</button>':'')+
- '</div></article>';
+ '</div>'+(window.PsychDeskConnections?.forConcept(entry)||'')+'</article>';
 }
 function refreshDictionary(){
  const entries=findTerms(),container=$('#psyDictionaryResults');
