@@ -107,15 +107,17 @@ function renderVoice(){
  '<p id="voiceHelp" role="status" class="study-voice-help">'+(voiceMode==='listening'?'Speak naturally. Stop when finished.':'Audio is not stored by PsychDesk; only the reviewed transcript is saved.')+'</p></div>'+
  '<div class="section-row"><h2>Saved voice transcripts</h2></div><div class="study-reference-grid">'+(recordings.length?recordings.map(n=>'<button class="study-search-hit" data-extras="openVoiceNote" data-id="'+h(n.id)+'"><strong>'+h(n.title)+'</strong><small>'+h(clip(n.body,180))+'</small></button>').join(''):'<div class="study-empty">No saved transcripts yet.</div>')+'</div>';
 }
-function stopVoice(){try{recognition?.stop();}catch{}recognition=null;voiceMode='idle';const i=$('#voiceIndicator');if(i){i.classList.remove('on');i.textContent='● Ready';}const h=$('#voiceHelp');if(h)h.textContent='Dictation stopped. Review the transcript before saving.';}
+function updateVoiceButtons(){const start=$('[data-extras="startVoice"]'),stop=$('[data-extras="stopVoice"]');if(start)start.disabled=voiceMode==='listening';if(stop)stop.disabled=voiceMode!=='listening';}
+function stopVoice(){try{recognition?.stop();}catch{}recognition=null;voiceMode='idle';const i=$('#voiceIndicator');if(i){i.classList.remove('on');i.textContent='● Ready';}const el=$('#voiceHelp');if(el)el.textContent='Dictation stopped. Review the transcript before saving.';updateVoiceButtons();}
 function startVoice(){
  const Recognition=window.SpeechRecognition||window.webkitSpeechRecognition;
  if(!Recognition){core.toast('Voice recognition is not supported in this browser.');return;}
  if(voiceMode==='listening')return;
  const r=new Recognition();recognition=r;
  r.lang=navigator.language||'en-IN';r.continuous=true;r.interimResults=true;
+ updateVoiceButtons();
  let committed=voiceText.trim();voiceMode='listening';
- const indicator=$('#voiceIndicator');if(indicator){indicator.classList.add('on');indicator.textContent='● Listening';}
+ const indicator=$('#voiceIndicator');if(indicator){indicator.classList.add('on');indicator.textContent='● Listening';}updateVoiceButtons();
  r.onresult=e=>{let final='',partial='';
   for(let i=e.resultIndex;i<e.results.length;i++){
    const t=e.results[i][0]?.transcript||'';
@@ -125,8 +127,8 @@ function startVoice(){
   voiceText=committed;voiceInterim=partial;
   const t=$('#voiceTranscript');if(t)t.value=committed+(partial?' '+partial:'');
  };
- r.onerror=e=>{const el=$('#voiceHelp');if(el)el.textContent='Microphone/recognition error: '+(e.error||'unknown')+'. Check permission, browser support and internet.';voiceMode='idle';};
- r.onend=()=>{voiceMode='idle';recognition=null;const i=$('#voiceIndicator');if(i){i.classList.remove('on');i.textContent='● Ready';}const t=$('#voiceTranscript');if(t)t.value=voiceText;};
+ r.onerror=e=>{const el=$('#voiceHelp');if(el)el.textContent='Microphone/recognition error: '+(e.error||'unknown')+'. Check permission, browser support and internet.';voiceMode='idle';updateVoiceButtons();};
+ r.onend=()=>{voiceMode='idle';recognition=null;const i=$('#voiceIndicator');if(i){i.classList.remove('on');i.textContent='● Ready';}const t=$('#voiceTranscript');if(t)t.value=voiceText;updateVoiceButtons();};
  try{r.start()}catch(e){voiceMode='idle';core.toast('Could not start microphone: '+(e.message||e));}
 }
 function saveVoice(){
@@ -307,7 +309,7 @@ document.addEventListener('keydown',e=>{
   const tabs=['today','planner','notes','stickies','recall','materials','research','search'];e.preventDefault();core.setTab(tabs[Number(e.key)-1]);
  }
 });
-document.addEventListener('click',e=>{if(ambient&&e.target.closest('[data-tab]'))stopAmbient();});
+document.addEventListener('click',e=>{if(e.target.closest('[data-tab]')){if(ambient)stopAmbient();if(voiceMode==='listening')stopVoice();}});
 window.addEventListener('pagehide',stopAmbient);
 window.addEventListener('psychdesk:session-reset',()=>{stopVoice();stopAmbient();voiceText='';voiceTitle='';voiceSubject='';});
 window.addEventListener('psychdesk:account-ready',()=>showQuickCapture());
