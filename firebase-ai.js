@@ -11,6 +11,14 @@ let ai = null, appCheck = null, app = null;
 const state = {status:'setup', message:'App Check setup required'};
 const announce = () => window.dispatchEvent(new Event('psychdesk:ai-status'));
 const describe = error => String(error?.message || error?.code || error || 'Unknown error').slice(0,300);
+const withTimeout = (task, ms, message) => {
+  let timer;
+  return Promise.race([
+    Promise.resolve().then(task),
+    new Promise((_, reject) => { timer = setTimeout(() => reject(Error(message)), ms); })
+  ]).finally(() => clearTimeout(timer));
+};
+
 
 window.PsychDeskAI = {
   getStatus: () => ({...state}),
@@ -18,14 +26,14 @@ window.PsychDeskAI = {
     if (!key || !ai || !appCheck) throw Error(state.message);
     if (!getAuth(app).currentUser) throw Error('Sign in to PsychDesk with Google before using Gemini.');
     // Validate App Check registration before sending study content to AI Logic.
-    try { await getToken(appCheck, false); }
+    try { await withTimeout(() => getToken(appCheck, false), 20000, 'App Check timed out after 20 seconds. The reCAPTCHA site key, allowed hostname, browser protections, or Firebase registration may need attention.'); }
     catch (error) { throw Error('App Check could not verify this browser. Confirm the reCAPTCHA Enterprise site key, allowed domain, and Firebase registration. '+describe(error)); }
     try {
       const generativeModel = getGenerativeModel(ai, {
         model,
         generationConfig: {temperature:0.5, maxOutputTokens:2200}
       });
-      const result = await generativeModel.generateContent(prompt);
+      const result = await withTimeout(() => generativeModel.generateContent(prompt), 60000, 'Gemini did not respond within 60 seconds. Check Firebase AI Logic status, model availability, API quota, and App Check enforcement; then retry.');
       const output = result?.response?.text()?.trim();
       if (!output) throw Error('Gemini returned no text. Try again with a different question.');
       return output;
