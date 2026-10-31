@@ -7,6 +7,7 @@ on:
       - 'index.html'
       - 'sw.js'
       - 'tests/psychology-dictionary.test.cjs'
+      - 'tests/psychology-online.test.cjs'
       - '.github/workflows/dictionary-check.yml'
   pull_request:
     paths:
@@ -30,5 +31,6 @@ jobs:
           node --check psychology-expanded-data.js
           node --check psychology-knowledge.js
           node --check psychology-imports.js
+          node --check psychology-online.js
       - name: Test psychology dictionary data and loading
-        run: node --test tests/psychology-dictionary.test.cjs
+        run: node --test tests/psychology-dictionary.test.cjs tests/psychology-online.test.cjs
