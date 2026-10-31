@@ -59,7 +59,7 @@ function html(){
  return '<section id="psyOnlineBlock" class="psy-online-block" aria-label="Online concept lookup" hidden>'+
  '<div class="psy-online-heading"><strong>MORE CONCEPTS ONLINE</strong><span>Wikipedia · General reference</span></div>'+
  '<div id="psyOnlineResults" aria-live="polite"></div>'+
- '<p class="psy-online-disclaimer">Online summaries are not textbook-reviewed or clinical advice. Verify definitions with your course material. Searching requires internet; no accounts or API keys.</p></section>';
+ '<p class="psy-online-disclaimer">Online summaries are general references, not textbook-reviewed or clinical advice. Your search phrase is sent to Wikipedia while you type; your notes and books are not. Verify important terms with your textbook.</p></section>';
 }
 function mount(){
  if(!isDictionary())return;
