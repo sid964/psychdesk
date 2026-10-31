@@ -29,7 +29,7 @@ function findTerms(q=dictQuery,category=dictCategory,bookmarked=dictSavedOnly){
 }
 function renderDictionary(){
  const entries=findTerms();
- if(!dictSelected||!termById(dictSelected))dictSelected=entries[0]?.id||'';
+ if(!entries.some(x=>x.id===dictSelected))dictSelected=entries[0]?.id||'';
  return '<section class="hero psy-hero"><div class="eyebrow">THE LANGUAGE OF PSYCHOLOGY</div><h1>Psychology Dictionary.</h1><p>Clear, searchable concepts. Link definitions to your own learning.</p></section>'+
  '<div class="psy-info-strip"><span>'+corpus.definitions.length+' curated entries</span><span>+ '+list('dictionaryEntries').length+' personal</span><span>Evidence-informed summaries</span></div>'+
  '<div class="psy-top-tools"><label class="psy-input-label"><span>SEARCH CONCEPTS</span><input type="search" id="psyDictionaryQuery" aria-label="Search psychology dictionary" value="'+h(dictQuery)+'" placeholder="Try: negative reinforcement, validity, memory…"></label>'+
@@ -62,6 +62,7 @@ function dictionaryDetail(entry){
 }
 function refreshDictionary(){
  const entries=findTerms(),container=$('#psyDictionaryResults');
+ if(!entries.some(x=>x.id===dictSelected))dictSelected=entries[0]?.id||'';
  if(container)container.innerHTML=dictionaryResults(entries);
  if($('#psyDictionaryCount'))$('#psyDictionaryCount').textContent=entries.length+' definitions';
  if($('#psyDefinitionDetail'))$('#psyDefinitionDetail').innerHTML=dictionaryDetail(termById(dictSelected));
@@ -114,7 +115,7 @@ function timelineEntries(q=timelineQuery,era=timelineEra,savedOnly=timelineSaved
 }
 function renderTimeline(){
  const events=timelineEntries();
- if(!timelineSelected||!eventById(timelineSelected))timelineSelected=events[0]?.id||'';
+ if(!events.some(x=>x.id===timelineSelected))timelineSelected=events[0]?.id||'';
  const first=history()[0]?.year||1859,last=history().slice(-1)[0]?.year||1988;
  return '<section class="hero psy-hero"><div class="eyebrow">HOW PSYCHOLOGY DEVELOPED</div><h1>Psychology Timeline.</h1><p>Explore key milestones, movements, researchers, and historical context.</p></section>'+
  '<div class="psy-info-strip"><span>'+corpus.timeline.length+' sourced milestones</span><span>'+list('timelineEvents').length+' personal events</span><span>'+first+' — '+last+'</span></div>'+
@@ -150,6 +151,7 @@ function eventDetail(event){
 }
 function refreshTimeline(){
  const events=timelineEntries();
+ if(!events.some(x=>x.id===timelineSelected))timelineSelected=events[0]?.id||'';
  if($('#psyTimelineEvents'))$('#psyTimelineEvents').innerHTML=timelineCards(events);
  if($('#psyEventCount'))$('#psyEventCount').textContent=events.length+' events';
  if($('#psyEventDetail'))$('#psyEventDetail').innerHTML=eventDetail(eventById(timelineSelected));
@@ -226,5 +228,7 @@ document.addEventListener('click',e=>{
  }
 });
 window.addEventListener('psychdesk:session-reset',()=>{dictQuery='';dictCategory='All';dictSavedOnly=false;dictSelected='';timelineQuery='';timelineEra='all';timelineSelected='';timelineSavedOnly=false;});
-window.PsychDeskKnowledge={renderDictionary,renderTimeline,findTerms,timelineEntries,termById,eventById,glossary,history};
+function openTerm(id){if(!termById(id))return;dictSelected=id;dictQuery='';dictCategory='All';dictSavedOnly=false;core.setTab('dictionary');}
+function openEvent(id){if(!eventById(id))return;timelineSelected=id;timelineQuery='';timelineEra='all';timelineSavedOnly=false;core.setTab('timeline');}
+window.PsychDeskKnowledge={renderDictionary,renderTimeline,findTerms,timelineEntries,termById,eventById,glossary,history,openTerm,openEvent};
 })();
