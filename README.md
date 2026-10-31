@@ -22,6 +22,12 @@ New structured data fields: `research`, `boardItems`, `mindMaps` and `pdfHighlig
 
 The Smart Timetable, Exam Simulator, Offline Study feature and Gemini Study Tutor were deliberately **not** added.
 
+## Simple note capture (November 2026)
+
+Use the **+ Note** button in the top bar from anywhere. Type or paste your thoughts into one writing box. Select **Save to Notebook** or **Make a Sticky**. A title and subject are optional: a title is generated from your first line. Unfinished text stays as a draft in the current tab until saved. No AI, APIs, or additional setup are required. The existing full Notebook editor remains available for longer study notes.
+
+On desktop the sidebar highlights everyday study sections and the three reference tools; advanced extras are grouped under **More study tools**. Android already has a **Tools** button.
+
 ## Psychology Dictionary, Reference Manager and History Timeline (November 2026)
 
 These features are available as dedicated desktop sidebar sections and under **Tools** on mobile.
@@ -59,7 +65,7 @@ Use **Study materials** on a subject or the **Library** navigation item. Each de
 
 - PDF and Markdown files up to **512 MB** upload directly to private Google Drive folders: **PsychDesk / Study Materials / Subject name [ID]**.
 - Uploads use the resumable protocol with **8 MiB chunks**. Retry the same selected file after interruption; the app asks Drive for the confirmed offset. Keep the tab open.
-- Upload session URLs and tokens are memory-only. Reload, sign-out or reconnect discards the session; select the file again. Cancel stops the transfer and disconnects local Drive access.
+- Upload session URLs remain memory-only. Interrupted uploads may require selecting the file again. A verified, short-lived Drive access token may be held in this browser tab's sessionStorage to survive refreshes, scoped to the signed-in Google account; it expires and is removed on sign-out. Cancel stops the transfer and disconnects local Drive access.
 - Notes and catalogue metadata sync through the existing account Firestore record. Wait for **✓ Synced** before changing devices.
 - Backups include the catalogue and notes, **not book binaries**. Keep originals in Drive or another backup. The 750 KB Firestore workspace safeguard remains; upload large Markdown books as files instead of pasting them into notes.
 - Add existing Drive or web links without changing their sharing permissions. Open private Drive files with the account that owns or can access them.
@@ -76,7 +82,7 @@ Drive permission is separate from Firebase login:
 3. Add **https://sid964.github.io** under **Authorized JavaScript origins**, without a path or trailing slash.
 4. PsychDesk's public Drive OAuth Client ID is preconfigured centrally. Google sign-in requests the limited Drive permission; if the token expires, use **Reconnect Google Drive** in Settings.
 
-An origin_mismatch error requires correcting that exact client in Google Cloud. Firebase's authorized-domain list is separate. The app requests only **drive.file** permission. Public Client IDs persist locally and follow account sync. Tokens and upload URLs never go into browser settings, Firestore or backups. Reconnect after reload, logout or expiry; Firebase SDK separately manages its own persisted login state.
+An origin_mismatch error requires correcting that exact client in Google Cloud. Firebase's authorized-domain list is separate. The app requests only **drive.file** permission. Public Client IDs persist locally and follow account sync. No Drive access token or upload URL is saved in localStorage, Firestore or study backups. Verified short-lived tokens may stay in sessionStorage within the same browser tab until expiry; closing a tab, signing out, changing accounts, or token expiry can require a fresh Google authorization. Firebase SDK manages its separate persisted sign-in.
 
 Gemini, Firebase AI Logic and reCAPTCHA App Check integration are removed from the website. Previously saved notes remain ordinary notes. Google Cloud products and billing settings are unchanged.
 
