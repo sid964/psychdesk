@@ -311,6 +311,7 @@ document.addEventListener('keydown',e=>{
 });
 document.addEventListener('click',e=>{if(e.target.closest('[data-tab]')){if(ambient)stopAmbient();if(voiceMode==='listening')stopVoice();}});
 window.addEventListener('pagehide',stopAmbient);
+window.addEventListener('psychdesk:tab-changed',e=>{if(e.tab!=='focus'&&ambient)stopAmbient();if(e.tab!=='voice'&&voiceMode==='listening')stopVoice();});
 window.addEventListener('psychdesk:session-reset',()=>{stopVoice();stopAmbient();voiceText='';voiceTitle='';voiceSubject='';});
 window.addEventListener('psychdesk:account-ready',()=>showQuickCapture());
 setTimeout(()=>showQuickCapture(),3500);
