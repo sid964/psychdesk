@@ -226,6 +226,7 @@ document.addEventListener('click',e=>{
   const count=$('#readerHighlightCount');if(count)count.textContent=String(owned().length);visibleMarks();}break;
  }
 });
+window.addEventListener('psychdesk:tab-changed',e=>{if(e.tab!=='reader'&&(pdf||loading)){generation++;pdf?.destroy?.();pdf=null;material=null;localFile=null;fileText='';loading=false;selected={text:'',rects:[],page:1};}});
 window.addEventListener('psychdesk:session-reset',()=>{generation++;pdf?.destroy?.();pdf=null;material=null;localFile=null;fileText='';selected={text:'',rects:[],page:1};});
 window.PsychDeskReader={render:readerHTML,open:openMaterial,openLocal,capture,annotationCard};
 })();
