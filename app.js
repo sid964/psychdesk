@@ -45,14 +45,14 @@ function renderToday(){const items=dueTasks(),goal=data.preferences.dailyGoal||6
 const MIT_STUDY='https://ocw.mit.edu/courses/9-00sc-introduction-to-psychology-fall-2011/resources/lecture-videos/';
 const BOOK_STUDY='https://openstax.org/books/psychology-2e/pages/';
 const STUDY_LIBRARY=[
-{match:/cognit|memory|thinking|intelligence|attention|perception/i,ch:'8-introduction',name:'Memory and cognition',vid:'Lecture 10: Memory I'},
-{match:/biolog|neuro|brain|physio/i,ch:'3-introduction',name:'Biopsychology',vid:'Lecture 3: Brain I'},
-{match:/develop|child|lifespan/i,ch:'9-introduction',name:'Lifespan development',vid:'Lecture 17: Child Development'},
-{match:/social|group|personality/i,ch:'12-introduction',name:'Social psychology',vid:'Lecture 22: Social Psychology I'},
-{match:/research|statistics|method|experiment/i,ch:'2-introduction',name:'Psychological research',vid:'Lecture 2: Science and Research'}];
+{match:/cognit|memory|thinking|intelligence|attention|perception/i,ch:'8-introduction',name:'Memory and cognition',vid:'Lecture 10: Memory I',slug:'lecture-10-memory-i/'},
+{match:/biolog|neuro|brain|physio/i,ch:'3-introduction',name:'Biopsychology',vid:'Lecture 3: Brain I',slug:'lecture-3-brain-i/'},
+{match:/develop|child|lifespan/i,ch:'9-introduction',name:'Lifespan development',vid:'Lecture 17: Child Development',slug:'lecture-17-child-development/'},
+{match:/social|group|personality/i,ch:'12-introduction',name:'Social psychology',vid:'Lecture 22: Social Psychology I',slug:'lecture-22-social-psychology-i/'},
+{match:/research|statistics|method|experiment/i,ch:'2-introduction',name:'Psychological research',vid:'Lecture 2: Science and Research',slug:'lecture-2-science-and-research/'}];
 function resourceDialog(subject){if(!subject)return;const found=STUDY_LIBRARY.find(a=>a.match.test(subject.name)),links=[
 {title:found?.name||'Psychology 2e · free textbook',type:'Read',provider:'OpenStax',url:BOOK_STUDY+(found?.ch||'preface')},
-{title:found?.vid||'Introduction to Psychology · video lectures',type:'Watch',provider:'MIT OpenCourseWare',url:MIT_STUDY},
+{title:found?.vid||'Introduction to Psychology · video lectures',type:'Watch',provider:'MIT OpenCourseWare',url:MIT_STUDY+(found?.slug||'')},
 ...(Array.isArray(subject.resources)?subject.resources.filter(a=>a&&/^https?:\/\//.test(a.url||'')).slice(0,12).map(a=>({...a,type:'Link',provider:'Your link'})):[])];
 openModal('Study resources',`<div class="resource-modal-head"><span class="eyebrow">FREE STUDY MATERIALS</span><h3>${esc(subject.name)}</h3><p class="note">Read from OpenStax or watch MIT lectures. Your own saved links appear here too.</p></div><div class="resource-list">${links.map(a=>`<a class="resource-item" href="${esc(a.url)}" target="_blank" rel="noopener noreferrer"><span class="resource-icon">${a.type==='Watch'?'▷':'↗'}</span><span class="resource-copy"><span class="resource-kicker">${esc(a.provider)} · ${esc(a.type)}</span><strong>${esc(a.title)}</strong></span><span class="resource-arrow">↗</span></a>`).join('')}</div><button class="primary" data-action="geminiSubject" data-id="${esc(subject.id)}" style="width:100%;margin-top:18px">Study this subject with Gemini ✧</button>`);}
 
