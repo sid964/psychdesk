@@ -232,7 +232,7 @@ else{
   auth=getAuth(firebaseApp);db=getFirestore(firebaseApp);
   onAuthStateChanged(auth, next=>{
    accountChanging=true;
-   Promise.resolve(accountChanged(next)).catch(e=>{
+   return Promise.resolve(accountChanged(next)).catch(e=>{
     lastError='Account initialization: '+messageError(e);updateBadge();
    }).finally(()=>{
     accountChanging=false;
