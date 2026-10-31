@@ -29,7 +29,7 @@ function firebase(env,overrides={}){
  Object.assign(env.context,{initializeApp:()=>({}),getAuth:()=>userAuth,getFirestore:()=>({}),GoogleAuthProvider:class{},onAuthStateChanged:(_,fn)=>{authChanged=fn},signInWithPopup:async()=>{},signOut:async()=>{userAuth.currentUser=null;await authChanged(null)},doc:(_,...parts)=>parts.join('/'),getDocFromServer:async()=>({exists:()=>true,data:()=>({revision:1,data:backup()})}),runTransaction:async(_,fn)=>fn({get:async()=>({exists:()=>true,data:()=>({revision:1})}),set(){}}),onSnapshot:()=>()=>{},serverTimestamp:()=>0,...overrides});
  env.window.PSYCHDESK_FIREBASE_CONFIG={apiKey:'public-test-config',projectId:'test',authDomain:'test.firebaseapp.com',appId:'test'};
  const code=stripImports(source('firebase-sync.js'));
- vm.runInContext(code+String.fromCharCode(10)+'window.__firebase={accountChanged,initializeAccount,leaveAccount,syncNow,getState:()=>({user,revision,busy,dirty})};',env.context);
+ vm.runInContext(code+String.fromCharCode(10)+'window.__firebase={accountChanged,initializeAccount,leaveAccount,syncNow,signIn,getState:()=>({user,revision,busy,dirty})};',env.context);
  return {auth:userAuth,change:async user=>{userAuth.currentUser=user;await authChanged(user)},api:env.window.__firebase};
 }
 test('legacy secret fields are purged; public setup survives reload',()=>{
@@ -140,4 +140,27 @@ test('dark mode remembers the selection and updates accessible toggle state',()=
 });
 test('published entry points do not load or expose the removed AI integration',()=>{
  for(const file of ['index.html','app.js','cloud.js','sw.js'])assert.doesNotMatch(source(file),/firebase-ai|app-check-config|renderAI|Gemini|gemini/);
+});
+
+test('Google sign-in authorizes Drive in the same consent flow without persisting its token',async()=>{
+ const env=environment();
+ const requested=[];
+ let state;
+ const provider=class {
+  addScope(value){requested.push(value)}
+  static credentialFromResult(){return {accessToken:'one-time-drive-credential'}}
+ };
+ const fb=firebase(env,{
+  GoogleAuthProvider:provider,
+  signInWithPopup:async()=>{
+   await fb.change({uid:'alice'});
+   return {user:{uid:'alice'}};
+  }
+ });
+ await fb.api.signIn();
+ assert.ok(requested.includes('https://www.googleapis.com/auth/drive.file'));
+ assert.equal(env.window.PsychDeskCloud.isConnected(),true);
+ assert.doesNotMatch(JSON.stringify([...env.storage]),/one-time-drive-credential/);
+ await fb.change(null);
+ assert.equal(env.window.PsychDeskCloud.isConnected(),false);
 });
