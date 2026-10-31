@@ -15,7 +15,7 @@ const configured = Boolean(config.apiKey && config.projectId && config.authDomai
 const limitBytes = 750000; // Keep comfortably below Firestore's 1 MiB document limit.
 let auth = null, db = null, user = null, unsubscribe = null;
 let revision = 0, signedInReady = false, busy = false, dirty = false, conflict = false;
-let syncTimer = null, changes = 0, localGuest = null, lastError = '';
+let syncTimer = null, changes = 0, localGuest = null, lastError = '', accountEpoch = 0;
 const status = (text, state='idle') => { if (accountBtn) { accountBtn.textContent = text; accountBtn.dataset.state=state; accountBtn.title=text; }};
 const uidKey = (part) => `psychdesk-${part}-${user?.uid || 'guest'}`;
 const valid = (d) => Boolean(d && [1,2].includes(d.version) && ['subjects','tasks','cards','sessions'].every(k=>Array.isArray(d[k])) && (!d.notes || Array.isArray(d.notes)));
@@ -62,6 +62,9 @@ async function signIn(){
  }finally{loginInProgress=false;}
 }
 async function accountChanged(next){
+ accountEpoch++;
+ // Clear independent Drive authority and transient AI content, including sign-out in another tab.
+ window.PsychDeskCloud?.resetSession?.();
  clearTimeout(syncTimer); if(unsubscribe){unsubscribe();unsubscribe=null;}
  signedInReady=false;busy=false;dirty=false;conflict=false;lastError='';revision=0;changes=0;
  if(!next){ user=null;localStorage.removeItem('psychdesk-last-user-v3');core.useStorageKey('psychdesk-v1');updateBadge();return; }
@@ -76,11 +79,13 @@ async function accountChanged(next){
  updateBadge();
  if(!navigator.onLine){lastError='Offline: saved on this device; reconnect to check cloud data.';updateBadge();return;}
  try { await initializeAccount(); }
- catch(e){lastError='Could not load cloud: '+messageError(e); signedInReady=false;updateBadge();console.error(e);}
+ catch(e){if(user!==next)return;lastError='Could not load cloud: '+messageError(e); signedInReady=false;updateBadge();console.error(e);}
 }
 async function initializeAccount(){
  if(!user||!navigator.onLine)return;
+ const epoch=accountEpoch;
  const snapshot=await getDocFromServer(refFor());
+ if(epoch!==accountEpoch)return;
  const remote=snapshot.exists()?snapshot.data():null;
  if(remote && !valid(remote.data))throw Error('Cloud record is not a compatible PsychDesk data snapshot');
  const remoteRev=Number(remote?.revision)||0;
@@ -100,11 +105,13 @@ async function initializeAccount(){
   }
   revision=0;signedInReady=true;notePending(true);await syncNow();
  }
+ if(epoch!==accountEpoch)return;
+ window.dispatchEvent(new Event('psychdesk:account-ready'));
  // Subscribe after initial load. Newer remote changes only apply when local work is fully saved.
  if(unsubscribe)unsubscribe();
  const sessionUid=user.uid;
  unsubscribe=onSnapshot(refFor(), snap=>{
-  if(!user||user.uid!==sessionUid||!signedInReady||!snap.exists()||snap.metadata.hasPendingWrites)return;
+  if(epoch!==accountEpoch||!user||user.uid!==sessionUid||!signedInReady||!snap.exists()||snap.metadata.hasPendingWrites)return;
   const record=snap.data(), nextRev=Number(record.revision)||0;
   if(nextRev<=revision)return;
   if(busy)return; // This may be the acknowledgement of our own transaction.
@@ -114,41 +121,43 @@ async function initializeAccount(){
   if(!valid(record.data)){conflict=true;lastError='Invalid remote data';updateBadge();return;}
   revision=nextRev;localStorage.setItem(uidKey('revision'),String(revision));
   core.replaceData(sanitize(record.data));updateBadge();
- }, e=>{lastError='Realtime sync stopped: '+messageError(e);updateBadge();});
+ }, e=>{if(epoch!==accountEpoch)return;lastError='Realtime sync stopped: '+messageError(e);updateBadge();});
 }
 async function syncNow(force=false){
  if(!user||!signedInReady||busy||(!dirty&&!force)||conflict&&!force)return;
  if(!navigator.onLine){lastError='Offline';updateBadge();return;}
- const startUid=user.uid, oldRev=revision, seq=changes, newData=sanitize(core.getData());
+ const startUid=user.uid, epoch=accountEpoch, ref=refFor(), oldRev=revision, seq=changes, newData=sanitize(core.getData());
  try { safeSize(newData); } catch(e){lastError=messageError(e);updateBadge();return;}
  busy=true;lastError='';updateBadge();
  try {
   const newRev=await runTransaction(db,async tx=>{
-   const ref=refFor(),snap=await tx.get(ref),currentRev=snap.exists()?Number(snap.data().revision)||0:0;
+   const snap=await tx.get(ref),currentRev=snap.exists()?Number(snap.data().revision)||0:0;
    if(!force && currentRev!==oldRev) throw Error('CHANGED_ELSEWHERE');
    const nr=currentRev+1;
    tx.set(ref,{revision:nr,data:newData,updatedAt:serverTimestamp()});
    return nr;
   });
-  if(!user||user.uid!==startUid)return;
+  if(epoch!==accountEpoch||!user||user.uid!==startUid)return;
   revision=newRev;localStorage.setItem(uidKey('revision'),String(revision));
   if(seq===changes){notePending(false)}else{notePending(true)}
   conflict=false;lastError='';
  }catch(e){
+  if(epoch!==accountEpoch)return;
   if(messageError(e).includes('CHANGED_ELSEWHERE')){
    conflict=true;lastError='';core.toast('Cloud changed on another device. Open Account to resolve.');
   }else lastError=messageError(e);
- }finally{busy=false;updateBadge();if(dirty&&!conflict&&!lastError)scheduleSync();}
+ }finally{if(epoch===accountEpoch){busy=false;updateBadge();if(dirty&&!conflict&&!lastError)scheduleSync();}}
 }
 function scheduleSync(){if(!user||!signedInReady||conflict)return;clearTimeout(syncTimer);syncTimer=setTimeout(()=>syncNow(),1300);updateBadge();}
 async function reloadCloud(){
  if(!user||!navigator.onLine)return alert('Sign in and connect to the internet first.');
  if(dirty && !confirm('This device has UNSYNCED changes. Loading the cloud will replace them. Export a JSON backup first if you want to preserve them. Continue?'))return;
+ const epoch=accountEpoch;
  try{
-  const snap=await getDocFromServer(refFor());if(!snap.exists()||!valid(snap.data().data))throw Error('No compatible data saved to cloud yet.');
+  const snap=await getDocFromServer(refFor());if(epoch!==accountEpoch)return;if(!snap.exists()||!valid(snap.data().data))throw Error('No compatible data saved to cloud yet.');
   core.replaceData(sanitize(snap.data().data));revision=Number(snap.data().revision)||0;localStorage.setItem(uidKey('revision'),String(revision));
   notePending(false);conflict=false;lastError='';signedInReady=true;core.closeModal();notify('Latest cloud progress loaded');
- }catch(e){alert('Could not reload: '+messageError(e));}
+ }catch(e){if(epoch===accountEpoch)alert('Could not reload: '+messageError(e));}
 }
 async function overwriteCloud(){
  if(!user||!navigator.onLine)return alert('Sign in and connect to the internet first.');
@@ -174,10 +183,10 @@ function openAccount(){
  <div class="button-row"><button class="secondary" data-firebase="backup">Download safety backup</button><button class="secondary" data-firebase="reload">Load cloud progress</button></div>
  <div class="button-row"><button class="secondary" data-firebase="sync">Sync now</button><button class="secondary" data-firebase="overwrite">Replace cloud with this device</button></div>
  <button class="secondary" style="margin-top:9px;width:100%" data-firebase="signout">Sign out of PsychDesk</button>
- <p class="account-meta">Automatic sync runs after saved changes. On network loss, device data stays locally, but only synced changes are available on another device.</p>`;
+ <p class="account-meta">Signing out clears this tab's Drive connection and Gemini chat. Public setup and local account data stay saved; reconnect Drive when needed. Automatic sync runs after saved changes. On network loss, device data stays locally, but only synced changes are available on another device.</p>`;
  core.openModal('Google account & study sync',`<div class="settings-section">${body}</div>`);
 }
-window.PsychDeskFirebase={openAccount};
+window.PsychDeskFirebase={openAccount,getUserId:()=>user?.uid||null};
 accountBtn?.addEventListener('click',openAccount);
 document.addEventListener('click',e=>{
  const b=e.target.closest('[data-firebase]');if(!b)return;e.preventDefault();

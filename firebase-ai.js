@@ -24,10 +24,12 @@ window.PsychDeskAI = {
   getStatus: () => ({...state}),
   async generateText({prompt, model='gemini-3.8-flash'}) {
     if (!key || !ai || !appCheck) throw Error(state.message);
-    if (!getAuth(app).currentUser) throw Error('Sign in to PsychDesk with Google before using Gemini.');
+    const requestUser=getAuth(app).currentUser;
+    if (!requestUser) throw Error('Sign in to PsychDesk with Google before using Gemini.');
     // Validate App Check registration before sending study content to AI Logic.
     try { await withTimeout(() => getToken(appCheck, false), 20000, 'App Check timed out after 20 seconds. The reCAPTCHA site key, allowed hostname, browser protections, or Firebase registration may need attention.'); }
     catch (error) { throw Error('App Check could not verify this browser. Confirm the reCAPTCHA Enterprise site key, allowed domain, and Firebase registration. '+describe(error)); }
+    if (getAuth(app).currentUser !== requestUser) throw Error('Your account changed. Sign in again before using Gemini.');
     try {
       const generativeModel = getGenerativeModel(ai, {
         model,
