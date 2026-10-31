@@ -228,10 +228,13 @@ function focusChanged(e){
  data().focusGoal=clip(target.value,145);core.save();
 }
 function applySearchTab(tab){core.setTab(tab);}
+let captureShown=false;
 function showQuickCapture(){
+ if(captureShown)return false;
  const params=new URLSearchParams(location.search);
  const title=clip(params.get('shareTitle')||'',140),body=clip(params.get('shareText')||'',3500),url=safeUrl(params.get('shareUrl')||'');
  if(!title&&!body&&!url)return false;
+ captureShown=true;
  // Wait for the account state to settle. Confirm before writing to the user's data.
  const open=()=>{
   const markup='<div class="study-share-intro"><p>Review this shared content before saving it to your current PsychDesk account. No changes have been made yet.</p>'+
@@ -299,5 +302,7 @@ document.addEventListener('keydown',e=>{
  }
 });
 window.addEventListener('psychdesk:session-reset',()=>{stopVoice();if(ambient)try{ambient.source.stop();ambient.context.close()}catch{}ambient=null;ambientMode='off';voiceText='';voiceTitle='';voiceSubject='';});
+window.addEventListener('psychdesk:account-ready',()=>showQuickCapture());
+setTimeout(()=>showQuickCapture(),3500);
 window.PsychDeskExtras={renderSearch,renderResearch,renderVoice,recallPanel,insightsPanel,focusPanel,generateCards,searchItems,lookupDOI,validDOI,fromPdf,showQuickCapture};
 })();
