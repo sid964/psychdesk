@@ -191,3 +191,31 @@ test('invalid new study data arrays are rejected rather than silently discarded'
  d.research='not-an-array';
  assert.throws(()=>env.core.replaceData(d),/Invalid PsychDesk/);
 });
+
+test('psychology dictionary and timeline personal data survive account save, reload and JSON restore',()=>{
+ const env=environment();
+ const d=env.core.getData();
+ d.dictionaryEntries.push({id:'personal-term',term:'Sensory adaptation',definition:'Reduced sensitivity with continued stimulation',category:'Biological',personal:true});
+ d.dictionaryBookmarks.push('working-memory');
+ d.timelineEvents.push({id:'personal-history',year:1988,title:'Department founded',description:'Personal course history',era:'foundations',personal:true});
+ d.timelineBookmarks.push('personal-history');
+ d.timelineAnnotations.push({eventId:'personal-history',text:'Exam: be able to date this.'});
+ env.core.save();
+ const reloaded=environment(env.storage);
+ assert.equal(reloaded.core.getData().dictionaryEntries[0].term,'Sensory adaptation');
+ assert.deepEqual(JSON.parse(JSON.stringify(reloaded.core.getData().dictionaryBookmarks)),['working-memory']);
+ assert.equal(reloaded.core.getData().timelineEvents[0].year,1988);
+ assert.equal(reloaded.core.getData().timelineAnnotations[0].text,'Exam: be able to date this.');
+ const restored=environment();
+ restored.core.replaceData(JSON.parse(JSON.stringify(reloaded.core.getData())));
+ assert.equal(restored.core.getData().timelineBookmarks[0],'personal-history');
+ assert.equal(restored.core.getData().dictionaryEntries.length,1);
+});
+test('missing optional psychology fields in old backups are normalized and invalid new fields rejected',()=>{
+ const env=environment();
+ env.core.replaceData(backup());
+ assert.equal(env.core.getData().dictionaryEntries.length,0);
+ assert.equal(env.core.getData().timelineEvents.length,0);
+ const bad=backup();bad.timelineAnnotations='not-an-array';
+ assert.throws(()=>env.core.replaceData(bad),/Invalid PsychDesk/);
+});
