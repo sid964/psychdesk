@@ -112,6 +112,13 @@
   document.body.classList.remove('setup-open');
  }
  window.PsychDeskSetup={start,fail,close,refresh};
+ window.addEventListener('psychdesk:login-complete',event=>{
+  if(!active)return;
+  if(!event.driveGranted){
+   driveError='Google sign-in succeeded, but Drive access was not granted. Use Reconnect Google Drive to authorize it.';
+   checkingDrive=false;generation++;repaint();
+  }
+ });
  window.addEventListener('psychdesk:drive-connected',()=>{if(active){driveError='';driveVerified=false;checkingDrive=false;generation++;refresh();}});
  window.addEventListener('psychdesk:session-reset',()=>{if(active){driveVerified=false;driveError='';generation++;refresh();}});
  window.addEventListener('online',refresh);
