@@ -105,3 +105,66 @@ html[data-theme="dark"] ::selection{background:#2c7452;color:#fff}
 @media(prefers-reduced-motion:reduce) {
  html[data-theme="dark"] *,html[data-theme="dark"] *::before,html[data-theme="dark"] *::after{transition-duration:.01ms!important;animation-duration:.01ms!important}
 }
+
+
+/* AMOLED V2 — true black throughout navigation, workspace and reading surfaces */
+html[data-theme=dark],html[data-theme=dark] body,html[data-theme=dark] #main,html[data-theme=dark] main,
+html[data-theme=dark] .app-shell,html[data-theme=dark] .dashboard-page,
+html[data-theme=dark] .dashboard-content,html[data-theme=dark] .dashboard-primary,
+html[data-theme=dark] .dashboard-secondary {background-color:#000!important;background-image:none!important}
+html[data-theme=dark] :is(.topbar,.desktop-rail,.bottom-nav,.rail-brand,.rail-section-label,.desktop-crumb) {
+ background-color:#000!important;background-image:none!important;box-shadow:none!important;
+}
+html[data-theme=dark] .desktop-rail{border-right:1px solid #222!important}
+html[data-theme=dark] .topbar{border-color:#1c1c1c!important}
+html[data-theme=dark] .bottom-nav{border-radius:0!important;border-top:1px solid #242424!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+html[data-theme=dark] :is(.card,.stat,.task-row,.note-card,.subject-card,.material-card,.modal,.resource-item,.empty,
+ .account-callout,.subtle,.cloud-status,.settings-section,.library-toolbar,.resource-hint,
+ .icon-btn,.mini-btn,.secondary,.select-strip button,.filter,.review-btns button) {
+ background-color:#0c0c0c!important;background-image:none!important;
+ border-color:#292929!important;box-shadow:none!important;color:#f0f0f0!important;
+}
+html[data-theme=dark] :is(.modal,.modal-content,.modal-header,.modal-body,.modal-footer){
+ background-color:#0a0a0a!important;background-image:none!important;color:#f3f3f3!important;
+}
+html[data-theme=dark] :is(.field,.field input,.field select,.field textarea,
+ .note-editor,select,textarea,input:not([type=checkbox]):not([type=radio])) {
+ background-color:#0a0a0a!important;background-image:none!important;color:#f2f2f2!important;border-color:#303030!important;
+}
+html[data-theme=dark] :is(.stat .number,.task-name,.material-card h3,.subject-card strong,
+ .section-row h2,.hero h1,.brand strong,.modal h2,.resource-copy strong){
+ color:#f5f5f5!important;
+}
+html[data-theme=dark] :is(.eyebrow,.link-btn,.resource-arrow,.subject-resource-btn,.subject-edit-btn,.material-type){
+ color:#a4eec3!important;
+}
+html[data-theme=dark] :is(.tag,.tag:not(.overdue),.material-type,.library-summary span,.filter.active,.select-strip button.active){
+ background:#111e16!important;color:#b5efcb!important;border-color:#345740!important;
+}
+html[data-theme=dark] .rail-link{color:#b8c7bd!important}
+html[data-theme=dark] .rail-link:hover{background:#111611!important;color:#fff!important}
+html[data-theme=dark] .rail-link.active{background:#132219!important;color:#d7ffe6!important;box-shadow:none!important}
+html[data-theme=dark] .nav-item{color:#a5b3aa!important}
+html[data-theme=dark] .nav-item.active{color:#b8f2d0!important;background:transparent!important}
+html[data-theme=dark] :is(.resource-icon,.modal .close,.subject-card .subject-resource-btn){
+ background:#151e17!important;color:#b9efcb!important;
+}
+html[data-theme=dark] .banner{background:linear-gradient(125deg,#10261a,#060a07 78%)!important;border-color:#294b35!important}
+html[data-theme=dark] .pill-btn{background:#e2f9eb!important;color:#173b29!important}
+html[data-theme=dark] :is(.progress,.progress-track,.daily-progress,.chart){background-color:transparent}
+html[data-theme=dark] :is(.task-sub,.note-meta,.resource-copy small,.hero p,.note,.tiny,.account-meta,.muted,.chart-label){
+ color:#afb5b1!important;
+}
+html[data-theme=dark] :is(.primary,.gemini-send){background:#1c704a!important;border-color:#319967!important;color:#fff!important}
+html[data-theme=dark] :is(.account-chip,.account-chip[data-state=synced]){
+ background:#102016!important;color:#aee8c2!important;border-color:#2e5d40!important;
+}
+html[data-theme=dark] .stat::before{background:#4a9b67!important;opacity:.52}
+html[data-theme=dark] #toast{background:#101e15!important;border:1px solid #30513b!important}
+html[data-theme=dark] .modal-overlay{background:rgba(0,0,0,.84)!important}
+html[data-theme=dark] .brand-mark{background:#153a2a!important;color:#d7f8e5!important;box-shadow:none!important}
+html[data-theme=dark] body::before,html[data-theme=dark] .app-shell::before{display:none!important}
+@media(max-width:899px) {
+ html[data-theme=dark] :is(body,.topbar,.app-shell,.bottom-nav){background:#000!important}
+ html[data-theme=dark] .bottom-nav{background:#000!important}
+}
