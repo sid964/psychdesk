@@ -110,7 +110,7 @@ function legacyOpenSettings(){core.openModal('Google Drive & backups',settingsVi
 function openSettings(){if(!window.PSYCHDESK_DRIVE_CLIENT_ID)return legacyOpenSettings();core.openModal('Google Drive & backups',settingsView())}
 function errorMsg(error){return String(error?.message||error||'Unknown error').slice(0,330)}
 function isSupportedOrigin(){return location.protocol==='https:'||location.hostname==='localhost'}
-function checkAuth(){if(!accessToken||Date.now()>=tokenExpires){clearDriveAuthorization();throw Error('Google authorization expired. Reconnect Google Drive.')}}
+function checkAuth(){if(!accessToken)throw Error('Drive is not connected yet. Let Google sign-in finish, or Reconnect Google Drive.');if(Date.now()>=tokenExpires){clearDriveAuthorization();throw Error('Google authorization expired. Reconnect Google Drive.')}}
 function driveError(error){
  const message=errorMsg(error);
  return /origin_mismatch/i.test(message)?Error('Google rejected this website origin. In Google Cloud, edit the OAuth Web Client whose ID is saved here and add '+location.origin+' to Authorized JavaScript origins (no path or trailing slash).'):Error(message);
