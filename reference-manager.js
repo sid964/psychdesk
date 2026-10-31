@@ -275,14 +275,18 @@ function bibKey(record,index){
  return (surname+(record.year||'nd')+'_'+(index+1)).replace(/[^a-z0-9_:-]/gi,'');
 }
 function exportBibTeX(records){
+ const usedKeys=new Set();
  return records.map((record,index)=>{
   const r=normalized(record);
+  const baseKey=bibKey(r,index);let key=baseKey,suffix=2;
+  while(usedKeys.has(key.toLowerCase()))key=baseKey+'_'+suffix++;
+  usedKeys.add(key.toLowerCase());
   const type=r.type==='book'?'book':r.type==='chapter'?'incollection':r.type==='conference'?'inproceedings':r.type==='thesis'?'phdthesis':r.type==='report'?'techreport':r.type==='web'?'misc':'article';
   const entries=[['title',r.title],['author',authorsList(r.authors).join(' and ')],['year',r.year],['journal',r.type==='journal'?r.journal:''],
    ['booktitle',['chapter','conference'].includes(r.type)?r.journal:''],['publisher',r.publisher],['volume',r.volume],
    ['number',r.issue],['pages',r.pages],['edition',r.edition],['doi',r.doi],['url',r.url],['keywords',r.tags],['note',r.notes]]
     .filter(([,v])=>String(v??'').trim()).map(([k,v])=>'  '+k+' = {'+bibValue(v)+'}');
-  return '@'+type+'{'+bibKey(r,index)+',\n'+entries.join(',\n')+'\n}';
+  return '@'+type+'{'+key+',\n'+entries.join(',\n')+'\n}';
  }).join('\n\n')+'\n';
 }
 function exportRIS(records){
