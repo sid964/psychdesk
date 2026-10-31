@@ -1,0 +1,107 @@
+
+/* PsychDesk AMOLED 2026 — presentation-only override.
+   Loaded after library.css. No changes to Firebase, storage, data or markup. */
+html[data-theme="dark"] {
+  color-scheme:dark;
+  --bg:#000000;
+  --paper:#0b0e0d;
+  --nav:#050807;
+  --ink:#edf4f0;
+  --muted:#a4b5ad;
+  --line:#24342d;
+  --green:#9ce3bc;
+  --greenlight:#153326;
+  --amber:#e6b77b;
+  --rose:#f19f96;
+  --shadow:0 15px 50px #0009;
+  background:#000;
+}
+html[data-theme="dark"] body,
+html[data-theme="dark"] .app-shell {
+  background:#000!important;
+  color:var(--ink);
+}
+html[data-theme="dark"] body::before {background-image:none!important;opacity:0!important}
+html[data-theme="dark"] :is(.topbar,.bottom-nav,.desktop-rail,.modal,.modal-overlay .modal) {
+  background:#050807!important;
+  color:var(--ink);
+  border-color:#22382c;
+}
+html[data-theme="dark"] .desktop-rail {box-shadow:inset -1px 0 #1d3027}
+html[data-theme="dark"] :is(.card,.stat,.subject-card,.note-card,.task-row,.material-card,.icon-btn,.mini-btn,.secondary,.filter,.select-strip button,.review-btns button,.resource-item,.account-callout,.subtle,.cloud-status,.empty,.resource-hint) {
+  background:#0b0e0d!important;
+  border-color:#24362c!important;
+  color:var(--ink);
+  box-shadow:none;
+}
+html[data-theme="dark"] :is(.banner,.dashboard-secondary .banner){
+  background:linear-gradient(132deg,#102b20 0%,#07120d 72%,#050a07 100%)!important;
+  border:1px solid #29533e;
+  box-shadow:0 18px 55px #0008;
+}
+html[data-theme="dark"] :is(.banner p,.banner h2,.banner .eyebrow){color:#e3f1e8}
+html[data-theme="dark"] :is(.field input,.field select,.field textarea,input:not([type="checkbox"]):not([type="radio"]),textarea,select,.note-editor,.gemini-input-row textarea) {
+  background:#080d0a!important;
+  color:#edf4f0!important;
+  border-color:#2a4133!important;
+  caret-color:#a9f2c9;
+}
+html[data-theme="dark"] :is(input,textarea)::placeholder{color:#81978b}
+html[data-theme="dark"] :is(.primary,.gemini-send){
+  background:#256f50!important;
+  color:#f8fffb!important;
+  border-color:#3e9e73!important;
+}
+html[data-theme="dark"] :is(.primary,.gemini-send):hover{background:#338562!important}
+html[data-theme="dark"] :is(.tag,.material-type,.library-summary span,.filter.active,.select-strip button.active) {
+  background:#123021!important;
+  border-color:#285a3d!important;
+  color:#b0eecb!important;
+}
+html[data-theme="dark"] :is(.account-chip,.account-chip[data-state=synced]){
+  background:#0d2418!important;color:#b4edc8!important;border-color:#2c6545!important;
+}
+html[data-theme="dark"] .account-chip[data-state=saving]{background:#2b2413!important;color:#efcf8f!important;border-color:#745c30!important}
+html[data-theme="dark"] :is(.account-chip[data-state=error],.account-chip[data-state=conflict],.tag.overdue){background:#301a1a!important;color:#ffd1ca!important;border-color:#754544!important}
+html[data-theme="dark"] :is(.note,.muted,.hero p,.task-sub,.tiny,.note-meta,.account-meta,.chart-label,.crumb-overline) {color:#a8b9ae!important}
+html[data-theme="dark"] :is(.link-btn,.resource-arrow,.subject-resource-btn,.subject-edit-btn,.eyebrow){color:#96dcb3!important}
+html[data-theme="dark"] :is(.rail-link.active,.nav-item.active) {background:#11291c!important;color:#d5fae3!important}
+html[data-theme="dark"] .bottom-nav{border-top:1px solid #24392d!important}
+html[data-theme="dark"] .bottom-nav .nav-item{color:#9db4a7}
+html[data-theme="dark"] :is(.modal-overlay,.overlay){background:#000c!important;backdrop-filter:blur(12px)}
+html[data-theme="dark"] :is(.modal-header,.modal-footer){border-color:#283c2f}
+html[data-theme="dark"] :is(.check-btn,.select-strip button){background:#0b140f!important;border-color:#4d6e58!important}
+html[data-theme="dark"] .check-btn.done{background:#24734d!important;color:#fff!important}
+html[data-theme="dark"] :is(.progress,.progress-track){background:#1a2b21!important}
+html[data-theme="dark"] :is(.chart-bar,.chart-bar.current){background:#398d68}
+html[data-theme="dark"] :is(.gemini-shell,.gemini-topline,.gemini-compose,.gemini-transcript,.chat-bubble,.gemini-welcome,.gemini-followup,.gemini-input-row,.gemini-tools,.prompt-presets button,.resource-icon,.rail-section-label,.library-toolbar) {
+  border-color:#274034;
+}
+html[data-theme="dark"] :is(.gemini-shell,.gemini-topline,.gemini-compose,.gemini-transcript,.gemini-welcome,.gemini-followup){background:#070c09!important;color:var(--ink)}
+html[data-theme="dark"] :is(.chat-bubble,.prompt-presets button){background:#111d16!important;color:#e9f7ee!important;border:1px solid #294235}
+html[data-theme="dark"] .chat-user .chat-bubble{background:#143325!important;color:#e9ffef!important}
+html[data-theme="dark"] .gemini-orbit{color:#a1f1c2}
+html[data-theme="dark"] .dashboard-page .hero::after{color:#326847!important;opacity:.26}
+html[data-theme="dark"] :is(.subject-card::after,.banner::after){opacity:.16}
+html[data-theme="dark"] :is(.material-card,.subject-card,.note-card,.task-row,.card,.stat){
+  transition:transform .48s cubic-bezier(.22,1,.36,1),border-color .36s ease,background-color .36s ease,box-shadow .48s ease;
+}
+@media(hover:hover){
+  html[data-theme="dark"] :is(.material-card,.subject-card,.note-card,.card):hover{
+    border-color:#3f7957!important;
+    box-shadow:0 16px 45px #000b!important;
+  }
+}
+html[data-theme="dark"] :is(button,a,input,textarea,select):focus-visible{
+  outline:2px solid #8be1b2!important;
+  outline-offset:3px;
+}
+html[data-theme="dark"] #toast{background:#143020;color:#edfdf3;border:1px solid #386b4d}
+html[data-theme="dark"] ::selection{background:#2c7452;color:#fff}
+@media(max-width:899px){
+  html[data-theme="dark"] :is(.topbar,.app-shell){background:#000!important}
+  html[data-theme="dark"] .bottom-nav{background:#070b08!important}
+}
+@media(prefers-reduced-motion:reduce) {
+ html[data-theme="dark"] *,html[data-theme="dark"] *::before,html[data-theme="dark"] *::after{transition-duration:.01ms!important;animation-duration:.01ms!important}
+}
