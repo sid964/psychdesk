@@ -91,8 +91,50 @@ function renderNotes(){let d=core.getData();return `<section class="hero"><div c
 <div class="field"><select id="noteFilter" aria-label="Filter notes by subject"><option value="all">All subjects</option>${d.subjects.map(s=>`<option value="${escape(s.id)}" ${noteSubject===s.id?'selected':''}>${escape(s.name)}</option>`).join('')}</select></div>
 <div id="noteResults">${noteCards()}</div>
 <div class="card" style="margin-top:14px"><strong style="font-size:13px">Your work stays yours.</strong><p class="note">Notes stay on your device and sync to your Google account when signed in. Google Drive backups are optional. Books and PDFs live in your subject library.</p><div class="button-row"><button class="secondary" data-tab="materials">Subject library</button></div></div>`}
-function noteEditor(note){let n=note||{id:'',title:'',body:'',subjectId:'',tags:''};core.openModal(n.id?'Edit study note':'New study note',`<form id="noteForm"><input type="hidden" name="id" value="${escape(n.id)}"><div class="field"><label>Note title *</label><input name="title" maxlength="140" required placeholder="e.g. Piaget's cognitive stages" value="${escape(n.title)}"></div><div class="field"><label>Subject</label><select name="subjectId">${core.subjectOptions(n.subjectId)}</select></div><div class="field"><label>Tags (comma-separated)</label><input name="tags" maxlength="150" placeholder="development, memory, exam" value="${escape(n.tags||'')}"></div><div class="field"><label>Your notes</label><textarea class="note-editor" name="body" maxlength="100000" placeholder="Write definitions, examples, research findings and questions…">${escape(n.body||'')}</textarea></div><div class="button-row"><button type="submit" class="primary">Save note</button>${n.id?`<button class="secondary" type="button" data-cloud="deleteNote" data-id="${escape(n.id)}">Delete</button>`:''}</div></form><p class="note" style="margin-top:13px">Saved locally and synced through Firestore when signed in. Drive backup is optional.</p>`);
- document.querySelector('#noteForm').addEventListener('submit',e=>{e.preventDefault();let f=new FormData(e.currentTarget),title=String(f.get('title')||'').trim(),body=String(f.get('body')||''),tags=String(f.get('tags')||'').trim();if(!title)return;let d=core.getData(),existing=d.notes.find(x=>x.id===f.get('id'));const now=new Date().toISOString();const update={title,body,tags,subjectId:String(f.get('subjectId')||''),updatedAt:now};if(existing)Object.assign(existing,update);else d.notes.unshift({...update,id:core.id(),createdAt:now});core.save();core.closeModal();core.render();core.toast('Note saved on this device');});}
+function noteEditor(note){let n=note||{id:'',title:'',body:'',subjectId:'',tags:''};n=window.PsychDeskNoteHistory?.restoreDraft(n)||n;core.openModal(n.id?'Edit study note':'New study note',`<form id="noteForm"><input type="hidden" name="id" value="${escape(n.id)}"><div class="field"><label>Note title *</label><input name="title" maxlength="140" placeholder="Optional — created from your first line" value="${escape(n.title)}"></div><div class="field"><label>Subject</label><select name="subjectId">${core.subjectOptions(n.subjectId)}</select></div><div class="field"><label>Tags (comma-separated)</label><input name="tags" maxlength="150" placeholder="development, memory, exam" value="${escape(n.tags||'')}"></div><div class="field"><label>Your notes</label><textarea class="note-editor" name="body" maxlength="100000" placeholder="Write definitions, examples, research findings and questions…">${escape(n.body||'')}</textarea></div><div class="button-row"><button type="submit" class="primary">Save note</button>${n.id?`<button class="secondary" type="button" data-cloud="deleteNote" data-id="${escape(n.id)}">Delete</button>`:''}</div><p id="noteAutosaveStatus" class="note-autosave-status" role="status">${n.draftRestored?'Recovered your unsaved writing.':'Automatically saved as you type.'}</p><details class="note-history-panel"><summary>Previous versions</summary><div id="noteHistoryList">${window.PsychDeskNoteHistory?.historyHTML(n.id)||''}</div></details></form><p class="note" style="margin-top:13px">Note changes save to your account data. Previous versions and drafts are protected on this device.</p>`);
+  const form=document.querySelector('#noteForm'),ownerAtOpen=window.PsychDeskFirebase?.getUserId?.()||'guest';
+  let autosaveTimer;
+  function saveFromEditor(close){
+   if(!form?.isConnected)return false;
+   const currentOwner=window.PsychDeskFirebase?.getUserId?.()||'guest';
+   if(ownerAtOpen!==currentOwner)return false;
+   const values=new FormData(form),body=String(values.get('body')||''),typedTitle=String(values.get('title')||'').trim();
+   const title=(typedTitle||body.split(/\r?\n/).find(v=>v.trim())?.trim()||'').slice(0,140);
+   if(!title&&!body.trim())return false;
+   const previousId=String(values.get('id')||'');
+   const d=core.getData(),existing=(d.notes||[]).find(x=>x.id===previousId);
+   const update={title:title||'Untitled note',body,tags:String(values.get('tags')||'').trim().slice(0,150),
+    subjectId:String(values.get('subjectId')||''),updatedAt:new Date().toISOString()};
+   const changed=!existing||['title','body','tags','subjectId'].some(k=>String(existing[k]||'')!==String(update[k]||''));
+   let id=previousId;
+   if(changed){
+    if(existing){window.PsychDeskNoteHistory?.recordVersion(existing);Object.assign(existing,update);}
+    else{const entry={...update,id:core.id(),createdAt:update.updatedAt};d.notes.unshift(entry);id=entry.id;form.elements.id.value=id;}
+    core.save();
+   }
+   window.PsychDeskNoteHistory?.clearDraft(previousId);
+   if(id!==previousId)window.PsychDeskNoteHistory?.clearDraft(id);
+   if(!typedTitle)form.elements.title.value=update.title;
+   const status=form.querySelector('#noteAutosaveStatus');
+   if(status)status.textContent=(changed?'Saved':'Up to date')+' on this device · '+new Date().toLocaleTimeString();
+   const history=form.querySelector('#noteHistoryList');
+   if(history)history.innerHTML=window.PsychDeskNoteHistory?.historyHTML(id)||'';
+   if(close){core.closeModal();core.render();core.toast('Note saved');}
+   return true;
+  }
+  form.addEventListener('input',()=>{
+   const ok=window.PsychDeskNoteHistory?.saveDraft(form);
+   const status=form.querySelector('#noteAutosaveStatus');
+   if(status)status.textContent=ok?'Draft protected · saving…':'Local draft storage is full. Please save your note.';
+   clearTimeout(autosaveTimer);
+   autosaveTimer=setTimeout(()=>saveFromEditor(false),1400);
+  });
+  form.addEventListener('change',()=>{
+   window.PsychDeskNoteHistory?.saveDraft(form);
+   clearTimeout(autosaveTimer);autosaveTimer=setTimeout(()=>saveFromEditor(false),1400);
+  });
+  form.addEventListener('submit',e=>{e.preventDefault();clearTimeout(autosaveTimer);saveFromEditor(true);});
+}
 function legacySettingsView(){let secure=location.protocol==='https:'||location.hostname==='localhost';return `<div class="settings-section"><h3>Google Drive</h3><p class="note">Syncs subjects, study tasks, flashcards, sessions, preferences and notes as <b>psychdesk-backup.json</b>. It also writes <b>Study Notes.md</b> to a dedicated PsychDesk folder. Manual sync helps avoid accidentally overwriting another device.</p><p class="cloud-status" id="driveStatus">${driveVerified&&accessToken&&Date.now()<tokenExpires?'Connected for this session':'Not connected'} · Last successful upload/download: ${escape(whenStamp(config.lastSyncAt))}</p><form id="googleSettingsForm"><div class="field"><label>Google OAuth Web Client ID</label><input name="clientId" autocomplete="off" placeholder="123456-…apps.googleusercontent.com" value="${escape(clientId())}"></div><button class="secondary" type="submit" style="width:100%">Save public client ID</button></form><p class="note">This public ID stays in this browser after sign-out. When signed in, it also syncs with your account settings; wait for ✓ Synced before switching devices. Reconnect Drive after sign-out, reload or expiry.</p><div class="helper-links"><a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener noreferrer">Google Cloud credentials ↗</a><a href="https://console.cloud.google.com/apis/library/drive.googleapis.com" target="_blank" rel="noopener noreferrer">Enable Drive API ↗</a></div><p class="note">${secure?'For Error 400: origin_mismatch, open the exact OAuth Web Client used above and add '+escape(location.origin)+' under Authorized JavaScript origins (no path or trailing slash). This is separate from authorized domains in Firebase Authentication.':'Drive OAuth is unavailable in a downloaded HTML file or Android WebView. Host PsychDesk on HTTPS and register that origin.'}</p><div class="button-row" style="margin-bottom:9px"><button class="primary" data-cloud="connectDrive" ${!secure?'disabled':''}>Connect / reconnect Drive</button><button class="secondary" data-cloud="disconnectDrive">Disconnect</button></div><div class="button-row"><button class="secondary" data-cloud="uploadDrive">↑ Upload to Drive</button><button class="secondary" data-cloud="downloadDrive">↓ Restore from Drive</button></div><p class="note">A restore replaces the local planner after confirmation. Upload will ask before overwriting cloud changes. No background sync or automatic merge.</p></div>
 <div class="settings-section"><h3>Data control</h3><p class="note">Cloud backup excludes access tokens. PDF and Markdown originals stay in Drive; backups contain the subject catalogue and notes, not copies of the books. Cloud files are not end-to-end encrypted by PsychDesk. Avoid confidential clinical material.</p></div>`}
 
