@@ -8,6 +8,13 @@ on:
       - 'sw.js'
       - 'tests/psychology-dictionary.test.cjs'
       - 'tests/psychology-online.test.cjs'
+      - 'tests/study-extensions.test.cjs'
+      - 'note-history.js'
+      - 'psychology-connections.js'
+      - 'psychology-academic.js'
+      - 'study-connections.css'
+      - 'cloud.js'
+      - 'firebase-sync.js'
       - '.github/workflows/dictionary-check.yml'
   pull_request:
     paths:
@@ -32,5 +39,10 @@ jobs:
           node --check psychology-knowledge.js
           node --check psychology-imports.js
           node --check psychology-online.js
+          node --check psychology-connections.js
+          node --check psychology-academic.js
+          node --check note-history.js
+          node --check cloud.js
+          node --check firebase-sync.js
       - name: Test psychology dictionary data and loading
-        run: node --test tests/psychology-dictionary.test.cjs tests/psychology-online.test.cjs
+        run: node --test tests/psychology-dictionary.test.cjs tests/psychology-online.test.cjs tests/study-extensions.test.cjs
