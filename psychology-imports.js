@@ -42,7 +42,7 @@ function searchIndex(db,prefix,category){
  return new Promise((resolve,reject)=>{
   const tx=db.transaction(STORE,'readonly'),store=tx.objectStore(STORE);
   const index=store.index(category==='All'?'termLower':'categoryTerm');
-  const range=rangeFor(prefix,category),countRequest=index.count(range),cursorRequest=index.openCursor(range);
+  const range=rangeFor(prefix,category),countRequest=range?index.count(range):index.count(),cursorRequest=range?index.openCursor(range):index.openCursor();
   const entries=[];let count=0;
   countRequest.onsuccess=()=>{count=countRequest.result;};
   cursorRequest.onsuccess=()=>{
