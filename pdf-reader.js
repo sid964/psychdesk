@@ -7,7 +7,8 @@ const CDN='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/';
 let libPromise=null,pdf=null,material=null,localFile=null,page=1,scale=1.1,generation=0,loading=false;
 let selected={text:'',rects:[],page:1},readerError='',fileText='',searchQuery='',searchHits=[],lastSearchIndex=-1;
 const allHighlights=()=>Array.isArray(getData().pdfHighlights)?getData().pdfHighlights:[];
-const owned=()=>allHighlights().filter(x=>x.materialId===(material?.id||'local'));
+const materialKey=()=>material?.id||(localFile?'local:'+localFile.name+':'+localFile.size+':'+(localFile.lastModified||0):'unselected');
+const owned=()=>allHighlights().filter(x=>x.materialId===materialKey());
 const allowLink=u=>{try{const a=new URL(u);return /^https?:$/.test(a.protocol)?a.href:''}catch{return''}};
 async function pdfLib(){
  if(!libPromise)libPromise=import(CDN+'pdf.min.mjs').then(mod=>{
@@ -144,7 +145,7 @@ function addHighlight(){
  if(note===null)return;
  const data=getData();
  if(!Array.isArray(data.pdfHighlights))data.pdfHighlights=[];
- data.pdfHighlights.push({id:core.id(),materialId:material?.id||'local',page:selected.page,text:selected.text.slice(0,3000),rects:selected.rects,
+ data.pdfHighlights.push({id:core.id(),materialId:materialKey(),page:selected.page,text:selected.text.slice(0,3000),rects:selected.rects,
  note:String(note).slice(0,400),createdAt:new Date().toISOString()});
  core.save();const el=$('#readerHighlights');
  if(el)el.innerHTML=owned().slice().reverse().map(annotationCard).join('');
