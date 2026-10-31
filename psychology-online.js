@@ -175,7 +175,7 @@ function saveFlashcard(row){
  }
  d.cards.push({
   id:core.id(),question,
-  answer:(row.definition+'\nSource: '+row.source).slice(0,1500),
+  answer:(row.definition.slice(0,1100)+'\nSource: '+row.source+'\nAttribution: Wikipedia contributors (CC BY-SA 4.0)').slice(0,1500),
   subjectId:'',due:core.today(),interval:0,reps:0
  });
  core.save();core.toast('Flashcard saved for review.');
