@@ -1,12 +1,23 @@
-# PsychDesk — Psychology Study Planner
+# PsychDesk Studio 4 — Psychology Study Workspace
 
 A mobile-friendly Progressive Web App for psychology study planning, notes, flashcards, focus sessions, and progress tracking.
 
+
+## Studio 4 interface upgrade (31 October 2026)
+- Responsive, spacious desktop dashboard with a persistent left navigation rail; Android retains compact bottom tabs.
+- Softer motion: staggered card entrances, navigation transitions, tactile controls, animated Gemini state and refined modal interactions.
+- Subjects now include **Explore resources** linking to subject-specific OpenStax Psychology 2e chapters and verified MIT OpenCourseWare lecture videos. You can add custom HTTP(S) study links while editing subjects; those link records are included in Firestore account sync.
+- **Gemini studio is inside the PsychDesk website**, including conversation-style replies, guided study prompts, selectable notes, summaries, quizzes, and flashcard creation. The previous ChatGPT handoff was removed.
+- Gemini currently requires you to enter your own Gemini API key into the app’s Settings during the browser session. It is not stored in GitHub, Firestore, or local backups. For stronger security before broader use, migrate to **Firebase AI Logic + App Check**; the current browser-key option is for personal testing, not a production-grade secret-management system.
+- Existing Google Sign-In, Cloud Firestore sync, user data format, local-first storage, and manual Drive backups are unchanged. The latest design is loaded by `studio-v4.css`.
+- External educational sites open in a separate tab, **but Gemini conversations never redirect away from PsychDesk**.
+- Academic references linked in the app are independent resources; their textbook content is not automatically imported into Gemini.
+
 ## Site and deployment
 
-GitHub Pages project site: **https://sid964.github.io/psychdesk/** (available **after** enabling Pages).
+Live GitHub Pages site: **https://sid964.github.io/psychdesk/**.
 
-The actual app is in `index.html`, `app.js`, `cloud.js`, `firebase-sync.js`, `firebase-config.js`, `style.css`, `sw.js`, `manifest.webmanifest`, and `icons/`.
+The site uses `index.html`, `app.js`, `cloud.js`, `firebase-sync.js`, `firebase-config.js`, `style.css`, `studio-v4.css`, `sw.js`, `manifest.webmanifest`, and `icons/`.
 
 ### One-time GitHub Pages setup
 
