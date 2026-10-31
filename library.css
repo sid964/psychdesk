@@ -1,0 +1,28 @@
+/* Subject library and accessible light/dark palettes */
+.library-toolbar{display:flex;align-items:end;gap:16px;justify-content:space-between}.library-toolbar .field{flex:1;margin:0;max-width:650px}.library-title{font-size:clamp(24px,3vw,38px);font-weight:500;line-height:1.25;margin:30px 0 12px}.library-summary{display:flex;flex-wrap:wrap;gap:10px}.library-summary span,.material-type{padding:6px 10px;border-radius:8px;background:var(--greenlight);color:var(--green);font-size:11px;font-weight:750}.material-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.material-grid>.empty{grid-column:1/-1}.material-card{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:24px;display:flex;flex-direction:column;align-items:start;min-width:0}.material-card h3{font-size:22px;line-height:1.35;overflow-wrap:anywhere;font-weight:500;margin:18px 0 8px}.material-card p{font-size:12px;color:var(--muted);overflow-wrap:anywhere;margin:0 0 20px}.material-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto}.material-actions a{text-decoration:none;font-size:12px;padding:10px 14px}.material-grid .note-card{margin:0}.library-toolbar .secondary{flex-shrink:0}progress{accent-color:var(--green);height:14px}.material-type{letter-spacing:1px}.subject-card strong{max-width:100%}
+:root[data-theme=dark]{--bg:#101b19;--paper:#192925;--ink:#e7f1eb;--muted:#acc0b5;--line:#344b41;--green:#9ed9b8;--greenlight:#28473a;--nav:#192925;--shadow:0 12px 40px #0003;color-scheme:dark}
+html[data-theme=dark] body{background:#101b19;color:var(--ink)}
+html[data-theme=dark] .app-shell{background:transparent}
+html[data-theme=dark] :is(.topbar,.bottom-nav,.modal,.card,.stat,.subject-card,.note-card,.task-row,.material-card,.icon-btn,.mini-btn,.secondary,.filter,.select-strip button,.review-btns button){background:var(--paper);color:var(--ink);border-color:var(--line)}
+html[data-theme=dark] :is(.field input,.field textarea,.field select){background:#12221c;color:var(--ink);border-color:var(--line)}
+html[data-theme=dark] :is(.empty,.cloud-status,.resource-hint,.resource-item,.account-callout,.subtle,.tag,.modal .close){background:#21382e;color:var(--ink);border-color:var(--line)}
+html[data-theme=dark] :is(.account-chip,.account-chip[data-state=synced]){background:#213d30;color:#b9efce;border-color:#47775b}
+html[data-theme=dark] :is(.account-chip[data-state=error],.account-chip[data-state=conflict]){background:#472c2b;color:#ffd0c8;border-color:#99675e}
+html[data-theme=dark] .account-chip[data-state=saving]{background:#423c25;color:#eedda4;border-color:#7d754b}
+html[data-theme=dark] :is(.subject-resource-btn,.subject-edit-btn,.eyebrow,.resource-kicker,.resource-arrow,.link-btn){color:var(--green)}
+html[data-theme=dark] :is(.account-meta,.crumb-overline,.note-meta,.chart-label){color:var(--muted)}
+html[data-theme=dark] .resource-icon{background:#2b5140;color:#c0ebd1}
+html[data-theme=dark] .primary{background:#367755;color:#fff;border-color:#69a883}
+html[data-theme=dark] :is(.filter.active,.select-strip button.active){background:#315f46;color:#e7f6ed}
+html[data-theme=dark] .progress{background:#30483b}
+html[data-theme=dark] .check-btn{background:#182d22;border-color:#719981}
+html[data-theme=dark] .check-btn.done{background:#367755;color:#fff}
+html[data-theme=dark] .modal-header{border-color:var(--line)}
+html[data-theme=dark] .subject-card::after{color:#48705b}
+html[data-theme=dark] .desktop-rail{background:#0d241b}
+html[data-theme=dark] .rail-link.active{background:#30543f;color:#e0f4e8}
+html[data-theme=dark] .tag.overdue{background:#472c2b;color:#ffc7bc}
+html[data-theme=dark] :is(.hero p,.task-sub,.tiny,.note){color:var(--muted)}
+@media(max-width:650px){.material-grid{grid-template-columns:1fr}.library-toolbar{align-items:stretch;flex-direction:column}.library-toolbar .field{max-width:none}.material-card{padding:20px}.library-title{font-size:28px}.topbar{flex-wrap:wrap;gap:8px}.topbar .brand{flex:1;min-width:125px}.topbar .account-chip{max-width:100px}.topbar .icon-btn{width:36px;height:36px;flex-shrink:0}.section-row{flex-wrap:wrap}.section-row .primary{font-size:12px}}
+
+.library-toolbar .field{min-width:0}

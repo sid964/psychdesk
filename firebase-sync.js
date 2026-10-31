@@ -1,4 +1,4 @@
-/* PsychDesk v3: per-Google-account sync. Uses the public Firebase Web SDK, not Gemini keys. */
+/* PsychDesk v3: per-Google-account sync. Uses the public Firebase Web SDK. */
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js';
 import {
   getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithPopup,
@@ -63,7 +63,7 @@ async function signIn(){
 }
 async function accountChanged(next){
  accountEpoch++;
- // Clear independent Drive authority and transient AI content, including sign-out in another tab.
+ // Clear independent Drive authority and pending file operations, including sign-out in another tab.
  window.PsychDeskCloud?.resetSession?.();
  clearTimeout(syncTimer); if(unsubscribe){unsubscribe();unsubscribe=null;}
  signedInReady=false;busy=false;dirty=false;conflict=false;lastError='';revision=0;changes=0;
@@ -106,6 +106,7 @@ async function initializeAccount(){
   revision=0;signedInReady=true;notePending(true);await syncNow();
  }
  if(epoch!==accountEpoch)return;
+ if(core.ensureSubjectDepartments())core.save();
  window.dispatchEvent(new Event('psychdesk:account-ready'));
  // Subscribe after initial load. Newer remote changes only apply when local work is fully saved.
  if(unsubscribe)unsubscribe();
@@ -176,14 +177,14 @@ async function leaveAccount(){
 }
 function openAccount(){
  const h=core.esc;
- const body=!configured?`<div class="account-callout">Firebase is not configured yet. Open <b>firebase-config.js</b>, insert your project's public web app config, enable Google Authentication and create Firestore. Read <b>README.md</b> in the package for setup and deployment.</div><p class="account-meta">Host PsychDesk on Firebase Hosting for reliable Google sign-in. Never put Gemini API keys or service account secrets in the public config.</p>`
+ const body=!configured?`<div class="account-callout">Firebase is not configured yet. Open <b>firebase-config.js</b>, insert your project's public web app config, enable Google Authentication and create Firestore. Read <b>README.md</b> in the package for setup and deployment.</div><p class="account-meta">Host PsychDesk on Firebase Hosting for reliable Google sign-in. Never put private API keys or service account secrets in the public config.</p>`
  : !user?`<p class="note">Use one Google account for your study notes, tasks, flashcards and progress on all your devices. The first sign-in imports your offline work if your cloud account is empty.</p><button class="primary" style="width:100%" data-firebase="signin">Continue with Google</button><p class="account-meta">Google Drive backup requires a separate Drive permission. Signing in here creates the study-cloud connection.</p>`
  :`<p><strong>${h(user.displayName||'Google account')}</strong></p><p class="account-meta">${h(user.email||'')}<br>Cloud status: <b>${conflict?'Conflict — newer cloud data detected':lastError?lastError:dirty?'Awaiting sync':signedInReady?'Up to date':'Connecting'}</b><br>Cloud revision: ${revision}<br>Storage: Firestore tied to this Google account</p>
  ${conflict?'<div class="account-callout">Your current device and Google cloud contain different work. Download a safety backup, then choose which version to keep. No silent overwrite will occur.</div>':''}
  <div class="button-row"><button class="secondary" data-firebase="backup">Download safety backup</button><button class="secondary" data-firebase="reload">Load cloud progress</button></div>
  <div class="button-row"><button class="secondary" data-firebase="sync">Sync now</button><button class="secondary" data-firebase="overwrite">Replace cloud with this device</button></div>
  <button class="secondary" style="margin-top:9px;width:100%" data-firebase="signout">Sign out of PsychDesk</button>
- <p class="account-meta">Signing out clears this tab's Drive connection and Gemini chat. Public setup and local account data stay saved; reconnect Drive when needed. Automatic sync runs after saved changes. On network loss, device data stays locally, but only synced changes are available on another device.</p>`;
+ <p class="account-meta">Signing out clears this tab's Drive connection. Public setup and local account data stay saved; reconnect Drive when needed. Automatic sync runs after saved changes. On network loss, device data stays locally, but only synced changes are available on another device.</p>`;
  core.openModal('Google account & study sync',`<div class="settings-section">${body}</div>`);
 }
 window.PsychDeskFirebase={openAccount,getUserId:()=>user?.uid||null};
