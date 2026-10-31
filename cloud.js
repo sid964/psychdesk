@@ -104,6 +104,12 @@ async function connectDrive(){
   }catch(e){fail(e)}
  });
 }
+// Read-only Drive API check: possession of an OAuth token alone does not prove access.
+async function verifyDriveConnection(){
+ if(!accessToken||Date.now()>=tokenExpires)throw Error('Drive permission is missing or expired. Reconnect Google Drive.');
+ const status=await api('https://www.googleapis.com/drive/v3/about?fields=user(emailAddress)');
+ return {connected:true,email:status?.user?.emailAddress||''};
+}
 async function api(url,options={}){
  checkAuth();const requestEpoch=driveEpoch;
  const res=await driveRequest(url,options);
@@ -197,5 +203,5 @@ function handle(event){let button=event.target.closest('[data-cloud]');if(!butto
 document.addEventListener('click',handle);
 document.addEventListener('change',e=>{if(e.target.id==='noteFilter'){noteSubject=e.target.value;document.querySelector('#noteResults').innerHTML=noteCards()}});
 document.addEventListener('input',e=>{if(e.target.id==='noteSearch'){noteQuery=e.target.value;document.querySelector('#noteResults').innerHTML=noteCards()}});
-window.PsychDeskCloud={renderNotes,openSettings,resetSession,connectDrive,acceptGoogleSignInDriveToken,uploadMaterial,noteEditor,isConnected:()=>Boolean(accessToken&&Date.now()<tokenExpires),cancelUpload:clearDriveAuthorization};
+window.PsychDeskCloud={renderNotes,openSettings,resetSession,connectDrive,verifyDriveConnection,acceptGoogleSignInDriveToken,uploadMaterial,noteEditor,isConnected:()=>Boolean(accessToken&&Date.now()<tokenExpires),cancelUpload:clearDriveAuthorization};
 })();
