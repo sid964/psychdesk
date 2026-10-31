@@ -19,11 +19,12 @@ async function europePMC(query,{signal,fetchImpl=fetch}={}){
  return (data?.resultList?.result||[]).map(p=>{
   const id=String(p.id||'');
   const doi=doiValue(p.doi);
+  const headings=(p.meshHeadingList?.meshHeading||[]).slice(0,6).map(x=>toText(x.descriptorName||x.descriptor?.descriptorName||'')).filter(Boolean);
   return {
    id:'europe:'+String(p.source||'')+':'+id,
    title:toText(p.title).slice(0,250),authors:toText(p.authorString).slice(0,260),
    year:Number(p.pubYear)||null,doi,journal:toText(p.journalTitle||p.journalInfo?.journal?.title).slice(0,180),
-   abstract:toText(p.abstractText).slice(0,420),provider:'Europe PMC',
+   abstract:toText(p.abstractText).slice(0,420),meshHeadings:headings,provider:'Europe PMC',
    url:doi?safeLink('https://doi.org/'+encodeURIComponent(doi)):safeLink('https://europepmc.org/article/'+encodeURIComponent(p.source||'MED')+'/'+encodeURIComponent(id))
   };
  }).filter(r=>r.title&&r.url);
@@ -74,6 +75,7 @@ function render(items){
   '<strong>'+h(r.title)+'</strong>'+
   (r.authors?'<p>'+h(r.authors)+'</p>':'')+
   (r.abstract?'<p class="psy-academic-abstract">'+h(r.abstract)+(r.abstract.length===420?'…':'')+'</p>':'')+
+  (r.meshHeadings?.length?'<small>Indexed MeSH topics: '+h(r.meshHeadings.join(', '))+'</small>':'')+
   '<div class="psy-academic-actions"><a href="'+h(r.url)+'" target="_blank" rel="noopener noreferrer">Open paper ↗</a>'+
   '<button type="button" data-academic-save="'+i+'">Save to Reference Manager</button></div></article>'
  ).join('');
