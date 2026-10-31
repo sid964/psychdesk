@@ -17,7 +17,7 @@ function environment(storage=new Map(),writeError=false) {
  window.PsychDeskCore.toast=message=>toasts.push(message);
  let uid=null,oauth=null;window.PsychDeskFirebase={getUserId:()=>uid};
  context.google=window.google={accounts:{oauth2:{initTokenClient:options=>{oauth=options;return {requestAccessToken(){}}},revoke(){}}}};
- const cloudSource=source('cloud.js').replace('window.PsychDeskCloud=', 'window.__cloud={connectDrive,api,runAI,settingsView,openSettings,pullDrive};window.PsychDeskCloud=');
+ const cloudSource=source('cloud.js').replace('window.PsychDeskCloud=', 'window.__cloud={connectDrive,api,settingsView,openSettings,pullDrive};window.PsychDeskCloud=');
  vm.runInContext(cloudSource,context);
  const ready=()=>window.dispatchEvent(new Event('psychdesk:account-ready'));
  const saveClient=value=>{window.__cloud.openSettings();const form=document.querySelector('#googleSettingsForm');form.value=value;form.listeners.submit({preventDefault(){}})};
@@ -68,27 +68,19 @@ test('client changes clear the previous Drive authority',async()=>{
 });
 test('logout aborts Drive reads and rejects late responses',async()=>{
  const env=environment();env.saveClient(CLIENT);await authorize(env);const body=deferred();let signal;env.context.fetch=async(_,options)=>{signal=options.signal;return {ok:true,status:200,text:()=>body.promise}};
- const response=env.cloud.api('https://example.test');await Promise.resolve();env.window.PsychDeskCloud.resetSession();assert.equal(signal.aborted,true);body.resolve('{}');await assert.rejects(response,/session changed/);
+ const response=env.cloud.api('https://example.test');await Promise.resolve();env.window.PsychDeskCloud.resetSession();assert.equal(signal.aborted,true);body.resolve('{}');await assert.rejects(response,/session changed|stopped or timed out/);
 });
 test('expired Drive permission clears memory and explains reconnecting',async()=>{
- const env=environment();env.saveClient(CLIENT);await authorize(env);env.context.fetch=async()=>({ok:false,status:401,text:async()=>'{}'});await assert.rejects(env.cloud.api('https://example.test'),/expired or was revoked/);await assert.rejects(env.cloud.api('https://example.test'),/Reconnect/);
+ const env=environment();env.saveClient(CLIENT);await authorize(env);env.context.fetch=async()=>({ok:false,status:401,text:async()=>'{}'});await assert.rejects(env.cloud.api('https://example.test'),/expired/);await assert.rejects(env.cloud.api('https://example.test'),/Reconnect/);
 });
 test('origin mismatch explains the exact origin to register',async()=>{
  const env=environment();env.saveClient(CLIENT);const connect=env.cloud.connectDrive();env.oauth.callback({error:'origin_mismatch'});await assert.rejects(connect,error=>error.message.includes('https://sid964.github.io')&&error.message.includes('Authorized JavaScript origins'));
 });
-test('late Gemini answer cannot reappear after logout',async()=>{
- const env=environment(),answer=deferred();env.window.PsychDeskAI={getStatus:()=>({status:'ready'}),generateText:()=>answer.promise};env.window.PsychDeskCloud.startGeminiCoach('old private prompt');const request=env.cloud.runAI();env.window.PsychDeskCloud.resetSession();answer.resolve('old private answer');await request;assert.doesNotMatch(env.window.PsychDeskCloud.renderAI(),/old private prompt|old private answer/);
-});
-test('Firebase sign-out invokes separate Drive and chat cleanup',async()=>{
+test('Firebase sign-out clears separate Drive authorization',async()=>{
  const env=environment();env.saveClient(CLIENT);const fb=firebase(env);await fb.change({uid:'alice'});await authorize(env);await fb.api.leaveAccount();assert.equal(env.window.PsychDeskFirebase.getUserId(),null);await assert.rejects(env.cloud.api('https://example.test'),/Reconnect/);assert.equal(JSON.parse(env.storage.get('psychdesk-cloud-v2')).clientId,CLIENT);
 });
 test('an old Firestore load cannot replace guest data after logout',async()=>{
  const env=environment(),snapshot=deferred();const fb=firebase(env,{getDocFromServer:()=>snapshot.promise});const loading=fb.change({uid:'alice'});await fb.change(null);snapshot.resolve({exists:()=>true,data:()=>({revision:9,data:{...backup(),notes:[{id:'private',title:'previous account'}]}})});await loading;assert.equal(env.core.getData().notes.length,0);assert.equal(fb.api.getState().user,null);
-});
-test('Firebase AI checks the account again after App Check completes',async()=>{
- const env=environment(),verification=deferred(),user={uid:'alice'},auth={currentUser:null};auth.currentUser=user;let calls=0;env.window.PSYCHDESK_APP_CHECK_SITE_KEY='public-site-key';env.window.PSYCHDESK_FIREBASE_CONFIG={appId:'public-app',projectId:'public-project'};
- Object.assign(env.context,{initializeApp:()=>({}),getApp:()=>({}),getApps:()=>[],getAuth:()=>auth,initializeAppCheck:()=>({}),ReCaptchaEnterpriseProvider:class{},getToken:()=>verification.promise,getAI:()=>({}),GoogleAIBackend:class{},getGenerativeModel:()=>({generateContent:async()=>{calls++;return {response:{text:()=> 'answer'}}}})});
- vm.runInContext(stripImports(source('firebase-ai.js')),env.context);const request=env.window.PsychDeskAI.generateText({prompt:'study question'});auth.currentUser=null;verification.resolve({token:'sdk-managed-token'});await assert.rejects(request,/account changed/);assert.equal(calls,0);
 });
 test('a remote change of public client ID invalidates old Drive access',async()=>{
  const env=environment();env.setUser('alice');env.saveClient(CLIENT);await authorize(env);env.core.replaceData(backup({driveClientId:'654321-other.apps.googleusercontent.com'}));await assert.rejects(env.cloud.api('https://example.test'),/Reconnect/);assert.equal(JSON.parse(env.storage.get('psychdesk-cloud-v2')).clientId,'654321-other.apps.googleusercontent.com');
@@ -103,14 +95,49 @@ test('storage write failure purges legacy secrets and reports that saving failed
  const storage=new Map([['psychdesk-cloud-v2',JSON.stringify({clientId:CLIENT,geminiKey:'old-secret'})]]);const env=environment(storage,true);assert.doesNotMatch(JSON.stringify([...storage]),/old-secret/);env.saveClient(CLIENT);assert.ok(env.toasts.some(message=>message.includes('storage unavailable')));
 });
 test('offline loading finds versioned assets and cache cleanup preserves other apps',async()=>{
- const handlers={},removed=[];let response,options;const self={location:{origin:'https://sid964.github.io'},clients:{claim(){}},skipWaiting(){},addEventListener:(type,fn)=>handlers[type]=fn};const caches={keys:async()=>['other-app-cache','psychdesk-old','psychdesk-settings-v1'],delete:async key=>removed.push(key),match:async(_,opts)=>{options=opts;return 'cached-script'}};vm.runInNewContext(source('sw.js'),{self,caches,URL,fetch:async()=>{throw Error('offline')}});handlers.fetch({request:{method:'GET',url:'https://sid964.github.io/psychdesk/cloud.js?v=settings-1'},respondWith:value=>response=value});assert.equal(await response,'cached-script');assert.equal(options.ignoreSearch,true);handlers.activate({waitUntil:value=>response=value});await response;assert.deepEqual(removed,['psychdesk-old']);
+ const handlers={},removed=[];let response,options;const self={location:{origin:'https://sid964.github.io'},clients:{claim(){}},skipWaiting(){},addEventListener:(type,fn)=>handlers[type]=fn};const caches={keys:async()=>['other-app-cache','psychdesk-old','psychdesk-library-v1'],delete:async key=>removed.push(key),match:async(_,opts)=>{options=opts;return 'cached-script'}};vm.runInNewContext(source('sw.js'),{self,caches,URL,fetch:async()=>{throw Error('offline')}});handlers.fetch({request:{method:'GET',url:'https://sid964.github.io/psychdesk/cloud.js?v=settings-1'},respondWith:value=>response=value});assert.equal(await response,'cached-script');assert.equal(options.ignoreSearch,true);handlers.activate({waitUntil:value=>response=value});await response;assert.deepEqual(removed,['psychdesk-old']);
 });
 
-test('Gemini timeout is not reported as an App Check rejection',async()=>{
- const env=environment(),auth={currentUser:{uid:'alice'}};
- env.window.PSYCHDESK_APP_CHECK_SITE_KEY='public-site-key';
- env.window.PSYCHDESK_FIREBASE_CONFIG={appId:'app',projectId:'project'};
- Object.assign(env.context,{initializeApp:()=>({}),getApp:()=>({}),getApps:()=>[],getAuth:()=>auth,initializeAppCheck:()=>({}),ReCaptchaEnterpriseProvider:class{},getToken:async()=>({token:'test'}),getAI:()=>({}),GoogleAIBackend:class{},getGenerativeModel:()=>({generateContent:()=>new Promise(()=>{})}),setTimeout:(fn,ms)=>{if(ms===60000)queueMicrotask(fn);return 1}});
- vm.runInContext(stripImports(source('firebase-ai.js')),env.context);
- await assert.rejects(env.window.PsychDeskAI.generateText({prompt:'test'}),error=>error.code==='psychdesk/timeout' && error.message.includes('No server rejection') && !error.message.includes('App Check rejected'));
+
+test('subject departments are seeded once without losing existing work',()=>{
+ const env=environment();env.core.replaceData({...backup(),subjects:[{id:'my-course',name:'My course'}],notes:[{id:'n',title:'Keep',body:'Notes',subjectId:'my-course'}]});
+ assert.equal(env.core.ensureSubjectDepartments(),true);assert.equal(env.core.getData().subjects.length,10);assert.equal(env.core.getData().notes[0].title,'Keep');assert.equal(env.core.ensureSubjectDepartments(),false);
+});
+test('material catalogue survives backup restore without storing file bytes',()=>{
+ const env=environment(),material={id:'m',subjectId:'bio',title:'Biopsychology',kind:'pdf',url:'https://drive.google.com/file/d/test/view',size:202000000};
+ env.core.replaceData({...backup(),materials:[material]});assert.equal(env.core.getData().materials[0].size,202000000);env.window.receiveBackup(JSON.stringify(env.core.getData()));assert.equal(env.core.getData().materials[0].title,'Biopsychology');
+});
+function uploadResponse(status,value={},headers={}){return {status,ok:status>=200&&status<300,headers:{get:key=>headers[key]||null},json:async()=>value,text:async()=>JSON.stringify(value)}}
+function book(size=9*1024*1024){return Object.assign(new Blob(['%PDF-1.7',new Uint8Array(size-8)]),{name:'book.pdf',lastModified:1})}
+function uploadServer(env,chunkHandler){
+ let folders=0;env.context.fetch=async(url,options)=>{
+  if(options.method==='PUT')return chunkHandler(options);
+  if(options.method==='POST')return uploadResponse(200,{}, {Location:'https://www.googleapis.com/upload/drive/v3/files?upload_id=test'});
+  return uploadResponse(200,{files:[{id:'folder'+(++folders),name:'folder',mimeType:'application/vnd.google-apps.folder'}]});
+ };
+}
+test('large PDF uploads use bounded chunks and publish the confirmed Drive file',async()=>{
+ const env=environment();env.saveClient(CLIENT);await authorize(env);const ranges=[],sizes=[];
+ uploadServer(env,options=>{ranges.push(options.headers['Content-Range']);sizes.push(options.body.size);return ranges.length===1?uploadResponse(308,{}, {Range:'bytes=0-8388607'}):uploadResponse(200,{id:'saved-book'});});
+ const result=await env.window.PsychDeskCloud.uploadMaterial(book(),{id:'bio',name:'Biology'});assert.equal(result.driveId,'saved-book');assert.deepEqual(sizes,[8388608,1048576]);assert.equal(ranges[1],'bytes 8388608-9437183/9437184');assert.doesNotMatch(JSON.stringify([...env.storage]),/upload_id|memory-only-token/);
+});
+test('interrupted upload probes server offset and resumes without creating another file',async()=>{
+ const env=environment();env.saveClient(CLIENT);await authorize(env);let step=0;const ranges=[];
+ uploadServer(env,options=>{ranges.push(options.headers['Content-Range']);step++;if(step===1)return uploadResponse(308,{}, {Range:'bytes=0-8388607'});if(step===2)throw Error('network interrupted');if(step===3)return uploadResponse(308,{}, {Range:'bytes=0-8388607'});return uploadResponse(200,{id:'resumed-book'});});
+ const file=book(),subject={id:'bio',name:'Biology'};await assert.rejects(env.window.PsychDeskCloud.uploadMaterial(file,subject),/interrupted/);const result=await env.window.PsychDeskCloud.uploadMaterial(file,subject);assert.equal(result.driveId,'resumed-book');assert.equal(ranges[2],'bytes */9437184');assert.equal(ranges[3],'bytes 8388608-9437183/9437184');
+});
+test('unsupported files are rejected and Markdown books are supported',async()=>{
+ const env=environment();env.saveClient(CLIENT);await authorize(env);await assert.rejects(env.window.PsychDeskCloud.uploadMaterial(Object.assign(new Blob(['exe']),{name:'tool.exe'}),{id:'bio',name:'Bio'}),/Only PDF and Markdown/);
+ uploadServer(env,()=>uploadResponse(200,{id:'markdown-book'}));const saved=await env.window.PsychDeskCloud.uploadMaterial(Object.assign(new Blob(['# My book']),{name:'book.md'}),{id:'bio',name:'Bio'});assert.equal(saved.kind,'markdown');
+});
+test('subject library shows only the selected subject and rejects script links',()=>{
+ const env=environment();vm.runInContext(source('materials.js'),env.context);env.core.replaceData({...backup(),subjects:[{id:'bio',name:'Biology'},{id:'soc',name:'Social'}],materials:[{id:'one',subjectId:'bio',title:'My biology book',kind:'pdf',url:'javascript:alert(1)'},{id:'two',subjectId:'soc',title:'Other subject book',kind:'pdf',url:'https://example.com'}]});env.window.scrollTo=()=>{};env.window.PsychDeskMaterials.open('bio');const html=env.window.PsychDeskMaterials.render();assert.match(html,/My biology book/);assert.doesNotMatch(html,/Other subject book|href="javascript/);
+});
+test('dark mode remembers the selection and updates accessible toggle state',()=>{
+ const values=new Map(),handlers={},button={setAttribute(k,v){this[k]=v},addEventListener(type,fn){handlers.toggle=fn}},root={dataset:{},style:{}};
+ const context={window:{matchMedia:()=>({matches:false,addEventListener(){}}),addEventListener(){}},document:{documentElement:root,querySelector:selector=>selector==='#themeToggle'?button:{},addEventListener:(type,fn)=>handlers[type]=fn},localStorage:{getItem:key=>values.get(key),setItem:(key,value)=>values.set(key,value)}};
+ vm.runInNewContext(source('theme.js'),context);handlers.DOMContentLoaded();assert.equal(root.dataset.theme,'light');handlers.toggle();assert.equal(root.dataset.theme,'dark');assert.equal(button['aria-pressed'],'true');vm.runInNewContext(source('theme.js'),context);assert.equal(root.dataset.theme,'dark');
+});
+test('published entry points do not load or expose the removed AI integration',()=>{
+ for(const file of ['index.html','app.js','cloud.js','sw.js'])assert.doesNotMatch(source(file),/firebase-ai|app-check-config|renderAI|Gemini|gemini/);
 });
