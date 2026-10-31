@@ -1,0 +1,16 @@
+/* Dense indexes are represented by small results, never a million DOM nodes. */
+.psy-pack-utility{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;padding:16px 18px;margin:0 0 9px;border:1px solid var(--psy-line);border-radius:15px;background:var(--psy-panel)}
+.psy-pack-summary{display:grid;gap:5px;min-width:205px;flex:1}
+.psy-pack-summary strong{font:750 13px 'DM Sans',sans-serif;color:var(--psy-ink)}
+.psy-pack-summary small{font:400 11px/1.5 'DM Sans',sans-serif;color:var(--psy-muted)}
+.psy-pack-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.psy-pack-controls span{font:800 11px 'DM Sans',sans-serif;color:var(--psy-ink);font-variant-numeric:tabular-nums}
+.psy-pack-controls button{padding:9px 13px;border:1px solid var(--psy-line);background:var(--psy-panel-soft);color:var(--psy-ink);border-radius:10px;font:750 11px 'DM Sans',sans-serif}
+.psy-pack-controls button:disabled{opacity:.4;cursor:wait}
+.psy-pack-status{margin:0 0 17px;color:var(--psy-muted);font:400 10px/1.65 'DM Sans',sans-serif}
+.psy-pack-error{color:#e99b9b}
+.psy-imported-results{display:grid;gap:8px;border-top:1px solid var(--psy-line);padding-top:14px;margin-top:7px}
+.psy-pack-results-label{font:800 10px/1.7 'DM Sans',sans-serif;letter-spacing:1px;color:var(--psy-muted)}
+.psy-pack-hint{font:400 11px/1.65 'DM Sans',sans-serif;color:var(--psy-muted)!important;margin:5px 0 12px}
+.psy-pack-entry{border-style:dashed}
+@media(max-width:680px){.psy-pack-controls{width:100%;justify-content:space-between}.psy-pack-utility{padding:14px}}

@@ -1,0 +1,34 @@
+name: Psychology dictionary checks
+on:
+  push:
+    paths:
+      - 'psychology-*.js'
+      - 'psychology-*.css'
+      - 'index.html'
+      - 'sw.js'
+      - 'tests/psychology-dictionary.test.cjs'
+      - '.github/workflows/dictionary-check.yml'
+  pull_request:
+    paths:
+      - 'psychology-*.js'
+      - 'psychology-*.css'
+      - 'index.html'
+      - 'sw.js'
+      - 'tests/psychology-dictionary.test.cjs'
+      - '.github/workflows/dictionary-check.yml'
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check JavaScript syntax
+        run: |
+          node --check psychology-data.js
+          node --check psychology-expanded-data.js
+          node --check psychology-knowledge.js
+          node --check psychology-imports.js
+      - name: Test psychology dictionary data and loading
+        run: node --test tests/psychology-dictionary.test.cjs
