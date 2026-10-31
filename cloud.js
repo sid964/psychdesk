@@ -195,7 +195,7 @@ async function driveRequest(url,options={}){
   if(epoch!==driveEpoch)throw Error('Drive session changed. Reconnect Drive.');
   if(response.status===401){clearDriveAuthorization();throw Error('Drive authorization expired. Reconnect Drive and retry.');}
   return response;
- }catch(error){if(controller.signal.aborted)throw Error('Drive transfer stopped or timed out. Reconnect if needed, then retry the same file.');throw error;}
+ }catch(error){if(controller.signal.aborted&&!/authorization expired/i.test(String(error?.message||error)))throw Error('Drive transfer stopped or timed out. Reconnect if needed, then retry the same file.');throw error;}
  finally{clearTimeout(timeout);sessionSignal.removeEventListener('abort',abort)}
 }
 // Read only an app-owned Drive PDF/Markdown for the in-app reader. Never cache document bytes.
