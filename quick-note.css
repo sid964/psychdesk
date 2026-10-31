@@ -1,0 +1,19 @@
+/* One-tap note capture — minimal monochrome presentation */
+.quick-note-launch{flex:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;margin-left:10px;border:1px solid #454545;border-radius:12px;background:#eeeeee!important;color:#111!important;min-width:82px;height:39px;padding:0 13px;font:800 12px 'DM Sans',sans-serif;white-space:nowrap;cursor:pointer;box-shadow:none}
+.quick-note-launch:hover{background:#fff!important;transform:translateY(-1px)}
+.quick-note-launch .quick-plus{font-size:20px;line-height:1}
+.quick-capture{display:grid;gap:15px}
+.quick-capture-heading span{display:block;font:800 10px 'DM Sans',sans-serif;letter-spacing:2px;color:#a2a2a2}
+.quick-capture-heading p{font:500 19px/1.35 'Fraunces',Georgia,serif;color:#ededed;margin:6px 0 2px}
+.quick-capture>textarea{width:100%;min-height:215px;resize:vertical;background:#101010!important;border:1px solid #3e3e3e;border-radius:14px;color:#eee!important;font:400 14px/1.8 'DM Sans',sans-serif;padding:18px 17px;outline:0}
+.quick-capture>textarea:focus-visible{outline:2px solid #e5e5e5;outline-offset:2px}
+.quick-more{border:1px solid #353535;border-radius:12px;background:#171717;padding:12px 14px}
+.quick-more summary{font-size:12px;color:#c2c2c2;cursor:pointer;user-select:none}
+.quick-more label{display:grid;gap:7px;color:#ddd;font-size:11px;font-weight:700;margin-top:14px}
+.quick-more input,.quick-more select{width:100%;background:#0d0d0d!important;color:#eee!important;border:1px solid #454545;border-radius:9px;padding:10px;font-size:12px}
+.quick-draft-status,.quick-privacy{font-size:11px;line-height:1.65;color:#aaa;margin:0}
+.quick-choices{display:flex;gap:9px}
+.quick-choices button{flex:1;min-width:0;padding:13px 10px;border-radius:11px;font-size:12px;font-weight:750}
+@media(max-width:570px){.quick-note-launch{margin-left:5px;width:39px;min-width:39px;height:39px;padding:0;border-radius:11px}.quick-note-launch .quick-label{display:none}.quick-capture>textarea{min-height:200px}.quick-choices{flex-direction:column}.quick-choices button{width:100%}}
+@media(max-width:375px){.quick-note-launch{width:34px;min-width:34px;height:36px}.quick-capture>textarea{padding:14px}}
+@media(prefers-reduced-motion:reduce){.quick-note-launch{transition:none!important;transform:none!important}}
