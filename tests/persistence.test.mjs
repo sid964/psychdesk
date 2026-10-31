@@ -153,7 +153,7 @@ test('Google sign-in authorizes Drive in the same consent flow without persistin
  const fb=firebase(env,{
   GoogleAuthProvider:provider,
   signInWithPopup:async()=>{
-   await fb.change({uid:'alice'});
+   await fb.change({uid:'alice',email:'alice@example.test'});
    return {user:{uid:'alice'}};
   }
  });
