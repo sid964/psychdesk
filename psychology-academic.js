@@ -116,7 +116,7 @@ function save(index){
  const now=new Date().toISOString();
  data.research.push({id:core.id(),title:record.title,authors:record.authors,year:record.year,
   journal:record.journal,doi:record.doi,url:record.url,notes:'Source: '+record.provider+'. Review the original article before citing.',
-  type:'journal-article',subjectId:'',createdAt:now,updatedAt:now});
+  type:'journal',subjectId:'',createdAt:now,updatedAt:now});
  core.save();core.toast('Paper saved to Reference Manager.');
 }
 document.addEventListener('click',event=>{
