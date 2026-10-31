@@ -285,8 +285,8 @@ document.addEventListener('click',e=>{
   if(kind==='notes'){const n=items('notes').find(v=>v.id===id);if(n){core.setTab('notes');window.PsychDeskCloud?.noteEditor?.(n);break;}}
   if(kind==='stickies'){const n=items('stickies').find(v=>v.id===id);if(n){window.PsychDeskStickies?.edit?.(n.groupId||n.id);break;}}
   if(kind==='materials'){const n=items('materials').find(v=>v.id===id);if(n&&n.kind!=='link'){window.PsychDeskReader?.open?.(n.id);break;}}
-  if(kind==='dictionary'&&window.PsychDeskKnowledge?.openTerm?.(id)!==undefined)break;
-  if(kind==='timeline'&&window.PsychDeskKnowledge?.openEvent?.(id)!==undefined)break;
+  if(kind==='dictionary'){window.PsychDeskKnowledge?.openTerm?.(id);break;}
+  if(kind==='timeline'){window.PsychDeskKnowledge?.openEvent?.(id);break;}
   applySearchTab(b.dataset.tab);break;}
  case 'lookupDOI':lookup();break;
  case 'removeResearch':if(confirm('Remove this saved research reference?')){data().research=items('research').filter(p=>p.id!==b.dataset.id);core.save();core.render();}break;
