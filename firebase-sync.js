@@ -62,9 +62,9 @@ async function signIn(){
    pendingDriveCredential={uid:result.user.uid,token:credential.accessToken};
    deliverDriveCredential();
   }
-  window.dispatchEvent(new CustomEvent('psychdesk:login-complete',{
-   detail:{driveGranted:Boolean(credential?.accessToken)}
-  }));
+  const loginEvent=new Event('psychdesk:login-complete');
+  loginEvent.driveGranted=Boolean(credential?.accessToken);
+  window.dispatchEvent(loginEvent);
  }
  catch(e){
   const code=e?.code||'unknown-error';
