@@ -35,6 +35,8 @@ async function restoreDriveSession(){
  const uid=window.PsychDeskFirebase?.getUserId?.();
  if(!uid)return false;
  if(driveVerified&&accessToken&&Date.now()<tokenExpires)return true;
+ // Keep a valid cached grant while offline; check it after connectivity returns.
+ if(typeof navigator!=='undefined'&&!navigator.onLine)return false;
  let session;
  try{session=JSON.parse(sessionStorage.getItem(DRIVE_SESSION_KEY)||'null')}catch{forgetDriveSession();return false}
  if(!session)return false;
@@ -48,8 +50,11 @@ async function restoreDriveSession(){
   try{
    await verifyDriveConnection();
    return epoch===driveEpoch&&driveVerified;
-  }catch{
-   if(epoch===driveEpoch)clearDriveAuthorization();
+  }catch(error){
+   if(epoch===driveEpoch){
+    const temporary=/failed to fetch|network|offline|timed out|timeout/i.test(String(error?.message||error));
+    clearDriveAuthorization({forgetSession:!temporary});
+   }
    return false;
   }
  })();
@@ -76,6 +81,7 @@ function syncPublicSettings(){
  else if(config.clientId){prefs.driveClientId=config.clientId;core.save();}
 }
 window.addEventListener('psychdesk:account-ready',()=>{syncPublicSettings();void restoreDriveSession();});
+window.addEventListener('online',()=>{void restoreDriveSession();});
 window.addEventListener('psychdesk:data-replaced',()=>{
  if(window.PsychDeskFirebase?.getUserId?.() && validClientId(core.getData().preferences?.driveClientId))syncPublicSettings();
 });
