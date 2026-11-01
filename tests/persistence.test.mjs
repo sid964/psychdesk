@@ -29,7 +29,7 @@ function firebase(env,overrides={}){
  Object.assign(env.context,{initializeApp:()=>({}),getAuth:()=>userAuth,getFirestore:()=>({}),GoogleAuthProvider:class{},onAuthStateChanged:(_,fn)=>{authChanged=fn},signInWithPopup:async()=>{},signOut:async()=>{userAuth.currentUser=null;await authChanged(null)},doc:(_,...parts)=>parts.join('/'),getDocFromServer:async()=>({exists:()=>true,data:()=>({revision:1,data:backup()})}),runTransaction:async(_,fn)=>fn({get:async()=>({exists:()=>true,data:()=>({revision:1})}),set(){}}),onSnapshot:()=>()=>{},serverTimestamp:()=>0,...overrides});
  env.window.PSYCHDESK_FIREBASE_CONFIG={apiKey:'public-test-config',projectId:'test',authDomain:'test.firebaseapp.com',appId:'test'};
  const code=stripImports(source('firebase-sync.js'));
- vm.runInContext(code+String.fromCharCode(10)+'window.__firebase={accountChanged,initializeAccount,leaveAccount,syncNow,signIn,getState:()=>({user,revision,busy,dirty})};',env.context);
+ vm.runInContext(code+String.fromCharCode(10)+'window.__firebase={accountChanged,initializeAccount,leaveAccount,syncNow,signIn,encodeCloudData,decodeCloudData,getState:()=>({user,revision,busy,dirty})};',env.context);
  return {auth:userAuth,change:async user=>{userAuth.currentUser=user;await authChanged(user)},api:env.window.__firebase};
 }
 test('legacy secret fields are purged; public setup survives reload',()=>{
@@ -302,4 +302,88 @@ test('ink handwriting pages survive account save, reload, and JSON import withou
  fresh.core.replaceData(old);
  assert.equal(fresh.core.getData().inkNotes.length,0);
  assert.throws(()=>fresh.core.replaceData({...old,inkNotes:'malformed'}),/Invalid/);
+});
+
+
+test('Firestore snapshot encoding preserves nested stylus, map and PDF geometry while preventing illegal nested arrays',async()=>{
+ const env=environment();
+ let uploaded=null;
+ const cloudBefore=backup();
+ const fb=firebase(env,{
+  getDocFromServer:async()=>({exists:()=>true,data:()=>({revision:7,data:cloudBefore})}),
+  runTransaction:async(_,callback)=>callback({
+   get:async()=>({exists:()=>true,data:()=>({revision:7})}),
+   set:(ref,record)=>{assert.equal(ref,'users/alice/psychdesk/state');uploaded=record;}
+  })
+ });
+ await fb.change({uid:'alice',email:'alice@example.test'});
+ const d=env.core.getData();
+ d.notes.push({id:'n1',title:'Research question',body:'Keep these notes intact'});
+ d.inkNotes.push({id:'ink-1',title:'My handwriting',strokes:[
+  {kind:'pen',w:3.2,c:'#20252b',p:[[20,30,44],[42,53,95]]}
+ ]});
+ d.mindMaps.push({id:'map-1',nodes:[{id:'a',label:'Memory',points:[[1,2],[3,4]]}],edges:[]});
+ d.pdfHighlights.push({id:'pdf-1',page:3,rects:[[1,2,3,4],[5,6,7,8]]});
+ env.core.save();
+ await fb.api.syncNow(true);
+ assert.ok(uploaded,'Firestore transaction should write an account snapshot');
+ assert.equal(uploaded.data,undefined,'new snapshots must not contain the invalid map-shaped data field');
+ assert.equal(uploaded.dataFormat,'psychdesk-json-v1');
+ assert.equal(typeof uploaded.dataJson,'string');
+ // Enforce Firestore's documented restriction in the fake SDK: arrays cannot directly contain arrays.
+ function checkFirestore(value){
+  if(Array.isArray(value)){
+   for(const child of value){assert.equal(Array.isArray(child),false,'Firestore cannot store arrays within arrays');checkFirestore(child);}
+  }else if(value&&typeof value==='object'){
+   for(const child of Object.values(value))checkFirestore(child);
+  }
+ }
+ checkFirestore(uploaded);
+ const decoded=JSON.parse(uploaded.dataJson);
+ assert.equal(decoded.inkNotes[0].strokes[0].p[1][2],95);
+ assert.equal(decoded.mindMaps[0].nodes[0].points[1][1],4);
+ assert.equal(decoded.pdfHighlights[0].rects[1][3],8);
+ assert.equal(decoded.notes[0].body,'Keep these notes intact');
+ assert.equal(fb.api.getState().dirty,false,'valid cloud sync clears pending state');
+ const restored=environment();
+ const fb2=firebase(restored,{getDocFromServer:async()=>({exists:()=>true,data:()=>uploaded})});
+ await fb2.change({uid:'alice',email:'alice@example.test'});
+ assert.equal(restored.core.getData().inkNotes[0].strokes[0].p[1][2],95);
+ assert.equal(restored.core.getData().notes[0].body,'Keep these notes intact');
+ assert.equal(restored.core.getData().pdfHighlights[0].rects[1][3],8);
+});
+
+test('legacy map-based cloud records still load and migrate to safe JSON on next upload',async()=>{
+ const env=environment();
+ const record=backup();
+ record.notes.push({id:'legacy',title:'Old note',body:'Original data'});
+ let upload;
+ const fb=firebase(env,{
+  getDocFromServer:async()=>({exists:()=>true,data:()=>({revision:9,data:record})}),
+  runTransaction:async(_,callback)=>callback({
+   get:async()=>({exists:()=>true,data:()=>({revision:9})}),
+   set:(_,value)=>{upload=value;}
+  })
+ });
+ await fb.change({uid:'alice'});
+ assert.equal(env.core.getData().notes[0].body,'Original data');
+ await fb.api.syncNow(true);
+ assert.equal(JSON.parse(upload.dataJson).notes[0].body,'Original data');
+ assert.equal(upload.revision,10);
+});
+
+test('corrupted encoded cloud data never overwrites local notes',async()=>{
+ const env=environment();
+ env.core.useStorageKey('psychdesk-user-alice');
+ env.core.getData().notes.push({id:'safe',title:'Device notes',body:'Do not erase'});
+ env.core.save();
+ const fb=firebase(env,{
+  getDocFromServer:async()=>({exists:()=>true,data:()=>({revision:2,dataFormat:'psychdesk-json-v1',dataJson:'{broken'})})
+ });
+ await fb.change({uid:'alice'});
+ assert.equal(env.core.getData().notes[0].body,'Do not erase');
+ assert.equal(fb.api.getState().dirty,false);
+ const status=env.window.PsychDeskFirebase.getConnectionStatus();
+ assert.match(status.error,/Could not decode cloud study data/);
+ assert.equal(status.synced,false);
 });
