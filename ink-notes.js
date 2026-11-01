@@ -68,6 +68,7 @@ function renderEditor(note){
  '<button type="button" data-ink="redo" aria-label="Redo stroke"'+(redo.length?'':' disabled')+'>↷ Redo</button></div>'+
  '</div>'+
  '<div class="ink-writing-options"><label class="ink-toggle"><input type="checkbox" id="inkPenOnly"'+(penOnly?' checked':'')+'> Pen-first mode <span>Ignore finger touches and palms</span></label>'+
+ '<button type="button" class="ink-polish-shortcut" data-ink-convert="focus" aria-label="Go to handwriting polish and note conversion">✦ Polish → Notes</button>'+ 
  '<label class="ink-smooth-toggle"><input id="inkSmooth" type="checkbox"'+(smoothInk?' checked':'')+'> Smooth pen strokes</label>'+ 
  '<div class="ink-export-actions"><button type="button" data-ink="exportSvg">↓ SVG</button><button type="button" data-ink="exportPng">↓ PNG</button>'+
  '<button type="button" data-ink="delete" class="ink-danger">Delete page</button></div></div>'+
