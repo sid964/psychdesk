@@ -37,6 +37,8 @@ async function takeGrant(grant){
 }
 async function restore(){
  if(!enabled()||!window.PsychDeskFirebase?.getUserId?.()||!navigator.onLine)return false;
+ // Revalidating an already active Drive grant would abort ongoing book reads/uploads.
+ if(window.PsychDeskCloud?.isConnected?.())return true;
  if(restoring)return restoring;
  restoring=(async()=>{
   try{return Boolean(await takeGrant(await request('token')));}
