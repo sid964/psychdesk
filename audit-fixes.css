@@ -70,3 +70,9 @@ html[data-theme=dark] :is(.rail-section-label,.rail-brand small,.rail-caption,.r
  color:#9d9d9d!important
 }
 html[data-theme=dark] .dashboard-page .hero::after{color:#555!important}
+
+/* The oversized decorative sidebar circle must not create a horizontal scroll lane. */
+@media(min-width:900px){
+ .desktop-rail{overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior-x:none}
+ .desktop-rail::before{max-width:none;pointer-events:none}
+}
