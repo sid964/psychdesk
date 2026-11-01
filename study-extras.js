@@ -89,7 +89,9 @@ function saveResearch(e){
  if(doi&&!validDOI(doi)){core.toast('Check the DOI format.');return;}
  const row={id:core.id(),title:clip(title,230),authors:clip(f.elements.authors.value.trim(),260),year:year?Number(year):null,doi,subjectId:f.elements.subjectId.value,
   url:safeUrl(f.elements.url.value),notes:clip(f.elements.notes.value.trim(),3000),createdAt:timestamp()};
- data().research=items('research').concat(row);core.save();core.render();core.toast('Research reference saved');
+ const d=data(),before=d.research;d.research=items('research').concat(row);
+ if(core.save()===false){d.research=before;core.toast('Could not save research. The form remains available.');return;}
+ core.render();core.toast('Research reference saved');
 }
 function citation(p){
  const authors=p.authors||'Unknown author',year=p.year||'n.d.';
@@ -139,8 +141,10 @@ function saveVoice(){
  const title=String($('#voiceTitle')?.value||voiceTitle).trim()||'Voice note · '+new Date().toLocaleDateString();
  const subjectId=$('#voiceSubject')?.value||voiceSubject;
  if(!text){core.toast('Write or dictate something first.');return;}
- data().notes.unshift({id:core.id(),title:clip(title,140),body:clip(text,10000),tags:'voice-transcript',subjectId,createdAt:timestamp(),updatedAt:timestamp()});
- core.save();voiceText='';voiceTitle='';voiceSubject='';core.render();core.toast('Transcript saved to Notebook');
+ const d=data(),created={id:core.id(),title:clip(title,140),body:clip(text,10000),tags:'voice-transcript',subjectId,createdAt:timestamp(),updatedAt:timestamp()};
+ d.notes.unshift(created);
+ if(core.save()===false){d.notes=d.notes.filter(n=>n!==created);core.toast('Transcript not saved. Keep the text open and retry.');return;}
+ voiceText='';voiceTitle='';voiceSubject='';core.render();core.toast('Transcript saved to Notebook');
 }
 function generateCards(text,subjectId,limit=12){
  const lines=String(text||'').replace(/\r/g,'').split(/\n+/).map(s=>s.trim().replace(/^[•*−-]\s+/,'')).filter(Boolean);
@@ -183,7 +187,9 @@ function saveCards(){
  const present=new Set(items('cards').map(c=>c.question.toLowerCase()));
  const unique=lastCards.filter(c=>!present.has(c.question.toLowerCase()));
  if(!unique.length){core.toast('These questions are already in your deck.');return;}
- data().cards.push(...unique);core.save();lastCards=[];core.setTab('recall');core.toast(unique.length+' flashcards saved for review');
+ const d=data();d.cards.push(...unique);
+ if(core.save()===false){const created=new Set(unique);d.cards=d.cards.filter(c=>!created.has(c));core.toast('Flashcards could not be saved. Your preview remains available.');return;}
+ lastCards=[];core.setTab('recall');core.toast(unique.length+' flashcards saved for review');
 }
 function insightsPanel(){
  const sessions=items('sessions'),reviews=items('reviews'),days=[];

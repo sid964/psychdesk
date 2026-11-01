@@ -148,9 +148,16 @@ function saveForm(e){
  const newKeys=new Set(dedupeKeys(r));const duplicate=rows().find(x=>x.id!==r.id&&dedupeKeys(x).some(key=>newKeys.has(key)));
  if(duplicate){core.toast('This reference appears to be saved already.');return;}
  const d=data();if(!Array.isArray(d.research))d.research=[];
+ const previous=original?{...original}:null;
+ const created=!original?{...r,id:core.id(),createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()}:null;
  if(original)Object.assign(original,r,{createdAt:original.createdAt,updatedAt:new Date().toISOString()});
- else d.research.push({...r,id:core.id(),createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()});
- core.save();core.closeModal();core.render();core.toast(original?'Reference updated':'Reference saved');
+ else d.research.push(created);
+ if(core.save()===false){
+  if(original)Object.assign(original,previous);else d.research=d.research.filter(x=>x!==created);
+  core.toast('Could not save reference. Your form is still open; free storage and retry.');
+  return;
+ }
+ core.closeModal();core.render();core.toast(original?'Reference updated':'Reference saved');
 }
 async function doiLookup(){
  const el=$('#refLookupInput'),status=$('#refLookupStatus');
@@ -328,9 +335,15 @@ async function loadFile(file){
 }
 function confirmImport(){
  if(!pendingImport.length)return;
- const d=data();d.research=rows().concat(pendingImport.map(x=>({...x,id:core.id(),createdAt:new Date().toISOString()})));
- const count=pendingImport.length;pendingImport=[];
- core.save();core.closeModal();core.render();core.toast(count+' reference'+(count===1?'':'s')+' imported');
+ const d=data(),before=d.research;
+ d.research=rows().concat(pendingImport.map(x=>({...x,id:core.id(),createdAt:new Date().toISOString()})));
+ const count=pendingImport.length;
+ if(core.save()===false){
+  d.research=before;
+  core.toast('Could not import references. Nothing was discarded; free storage and retry.');
+  return;
+ }
+ pendingImport=[];core.closeModal();core.render();core.toast(count+' reference'+(count===1?'':'s')+' imported');
 }
 function download(name,content,type='text/plain'){
  const url=URL.createObjectURL(new Blob([content],{type:type+';charset=utf-8'}));

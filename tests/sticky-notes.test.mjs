@@ -6,10 +6,10 @@ import {readFileSync} from 'node:fs';
 const source=readFileSync(new URL('../sticky-notes.js',import.meta.url),'utf8');
 function harness(){
  const data={subjects:[{id:'cog',name:'Cognitive Psychology'}],stickies:[],notes:[]};
- const events={};let counter=0,saves=0,pending=null;
+ const events={};let counter=0,saves=0,pending=null,saveWorks=true;
  const core={
   esc:value=>String(value??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'),
-  id:()=>String(++counter),getData:()=>data,save:()=>{saves++},
+  id:()=>String(++counter),getData:()=>data,save:()=>{saves++;return saveWorks;},
   setTab:()=>{},toast:()=>{}
  };
  const window={PsychDeskCore:core,addEventListener:(name,fn)=>{events['window:'+name]=fn}};
@@ -21,7 +21,7 @@ function harness(){
   console
  });
  vm.runInContext(source,context);
- return {data,window,events,runSave:()=>{const cb=pending;if(cb)cb()},get saves(){return saves}};
+ return {data,window,events,runSave:()=>{const cb=pending;if(cb)cb()},get saves(){return saves},setSaveWorks(v){saveWorks=v}};
 }
 test('long study notes become linked cards while preserving original source',()=>{
  const env=harness();
@@ -66,4 +66,18 @@ test('sticky rendering escapes untrusted text',()=>{
  const markup=env.window.PsychDeskStickies.render();
  assert.ok(!markup.includes('<img src=x'));
  assert.match(markup,/&lt;img/);
+});
+test('sticky autosave failure restores the previous collection and retains unsaved text',()=>{
+ const env=harness();
+ env.events.input({target:{id:'stickyText',value:'First sticky'}});
+ env.runSave();
+ assert.equal(env.data.stickies.length,1);
+ const original=JSON.stringify(env.data.stickies);
+ env.setSaveWorks(false);
+ env.events.input({target:{id:'stickyText',value:'Second longer updated sticky'}});
+ env.runSave();
+ assert.equal(JSON.stringify(env.data.stickies),original);
+ env.setSaveWorks(true);
+ env.events.click({target:{closest:q=>q==='[data-sticky]'?{dataset:{sticky:'save'}}:null},preventDefault(){}});
+ assert.match(env.data.stickies[0].rawText,/Second longer updated/);
 });
