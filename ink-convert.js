@@ -205,6 +205,10 @@ function onClick(event){
  const action=control.dataset.inkConvert;
  if(action==='focus'){byId('inkConvertPanel')?.scrollIntoView({behavior:'smooth',block:'start'});return;}
  if(action==='recognize'){void runRecognition();return;}
+ if(action==='source'){
+  if(!window.PsychDeskInk?.openPage?.(control.dataset.id))core.toast('Original ink page was not found.');
+  return;
+ }
  const page=active(),text=currentText();
  if(!page)return;
  if(action==='saveNeat'){
