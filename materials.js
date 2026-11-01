@@ -20,9 +20,20 @@ function editor(item){const subject=current();if(!subject)return;core.openModal(
  core.closeModal();core.render()})}
 function uploadDialog(){if(uploading)return core.toast('An upload is already running.');if(!cloud.isConnected()){cloud.openSettings();core.toast('Connect Drive, then return to your subject to upload a book.');return;}const subject=current();if(!subject)return;
  core.openModal('Upload to '+subject.name,`<form id="materialUpload"><div class="field"><label>PDF or Markdown book</label><input id="materialFile" type="file" accept=".pdf,.md,.markdown" required></div><div class="field"><label>Display title (optional)</label><input id="materialTitle" maxlength="180" placeholder="Use the file name"></div><progress id="uploadProgress" max="100" value="0" style="width:100%"></progress><p id="uploadStatus" role="status" class="note">Uploads go directly to your private Drive. Retry the same file after a connection interruption.</p><div class="button-row"><button id="uploadSubmit" class="primary">Upload to Drive</button><button type="button" class="secondary" data-library="cancel">Cancel & disconnect</button></div></form>`);
+ let uploadedResult=null;
  document.querySelector('#materialUpload').addEventListener('submit',async e=>{e.preventDefault();if(uploading)return;const file=document.querySelector('#materialFile').files[0];if(!file)return;const title=document.querySelector('#materialTitle').value.trim()||file.name,epoch=generation,owner=core.getData();uploading=true;const status=document.querySelector('#uploadStatus'),button=document.querySelector('#uploadSubmit');button.disabled=true;status.textContent='Preparing Drive folders…';
- try{const result=await cloud.uploadMaterial(file,subject,percent=>{if(epoch!==generation)return;const bar=document.querySelector('#uploadProgress');if(bar)bar.value=percent;status.textContent='Uploading '+percent+'% — keep this tab open.';});if(epoch!==generation||owner!==core.getData())return;
- owner.materials.push({...result,id:core.id(),subjectId:subject.id,title,createdAt:new Date().toISOString()});core.save();core.closeModal();core.render();core.toast('Book saved in Drive and added to your subject.');
+ try{const result=uploadedResult||await cloud.uploadMaterial(file,subject,percent=>{if(epoch!==generation)return;const bar=document.querySelector('#uploadProgress');if(bar)bar.value=percent;status.textContent='Uploading '+percent+'% — keep this tab open.';});if(epoch!==generation||owner!==core.getData())return;
+ const entry={...result,id:core.id(),subjectId:subject.id,title,createdAt:new Date().toISOString()};
+ owner.materials.push(entry);
+ if(core.save()===false){
+  owner.materials=owner.materials.filter(x=>x!==entry);
+  uploadedResult=result;
+  status.textContent='File uploaded to Google Drive, but its library entry could not be saved. Free storage, then retry saving here. Do not upload the file again.';
+  button.textContent='Retry saving library entry';
+  return;
+ }
+ uploadedResult=null;
+ core.closeModal();core.render();core.toast('Book saved in Drive and added to your subject.');
  }catch(error){if(epoch===generation){status.textContent=String(error.message||error);button.textContent='Retry upload';core.toast('Upload not completed. Your original file is unchanged.');}}finally{uploading=false;button.disabled=false;}
  });
 }
@@ -32,7 +43,11 @@ case 'read':if(item)window.PsychDeskReader?.open(item.id);break;
  case 'upload':uploadDialog();break;case 'cancel':cloud.cancelUpload();break;
  case 'note':cloud.noteEditor({id:'',title:'',body:'',tags:'',subjectId:current().id});break;
  case 'link':editor();break;case 'edit':if(item)editor(item);break;
- case 'remove':if(item&&confirm('Remove this library entry? The original file will remain in Drive.')){core.getData().materials=core.getData().materials.filter(m=>m.id!==item.id);core.save();core.render()}break;
+ case 'remove':if(item&&confirm('Remove this library entry? The original file will remain in Drive.')){
+  const d=core.getData(),old=d.materials;d.materials=d.materials.filter(m=>m.id!==item.id);
+  if(core.save()===false){d.materials=old;core.toast('Could not remove library entry: storage unavailable.');}
+  else core.render();
+ }break;
  case 'resources':core.resourceDialog(current());break;
 }});
 window.addEventListener('psychdesk:session-reset',()=>{generation++;uploading=false;selected='';});
