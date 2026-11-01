@@ -12,7 +12,7 @@ const data=()=>core.getData();
 const notes=()=>Array.isArray(data().inkNotes)?data().inkNotes:(data().inkNotes=[]);
 const bytes=value=>new TextEncoder().encode(JSON.stringify(value)).length;
 const titleOf=n=>String(n?.title||'Untitled page').slice(0,90);
-let activeId='',tool='pen',color=COLORS[0],penOnly=true,smoothInk=true,current=null,history=[],redo=[],lastPointer=null;
+let activeId='',tool='pen',color=COLORS[0],penOnly=true,current=null,history=[],redo=[],lastPointer=null;
 let saving=false,mountedCanvas=null;
 function active(){return notes().find(n=>n.id===activeId)||null;}
 function announce(message){const node=document.querySelector('#inkStatus');if(node)node.textContent=message;}
@@ -68,16 +68,13 @@ function renderEditor(note){
  '<button type="button" data-ink="redo" aria-label="Redo stroke"'+(redo.length?'':' disabled')+'>↷ Redo</button></div>'+
  '</div>'+
  '<div class="ink-writing-options"><label class="ink-toggle"><input type="checkbox" id="inkPenOnly"'+(penOnly?' checked':'')+'> Pen-first mode <span>Ignore finger touches and palms</span></label>'+
- '<button type="button" class="ink-polish-shortcut" data-ink-convert="focus" aria-label="Go to handwriting polish and note conversion">✦ Polish → Notes</button>'+ 
- '<label class="ink-smooth-toggle"><input id="inkSmooth" type="checkbox"'+(smoothInk?' checked':'')+'> Smooth pen strokes</label>'+ 
  '<div class="ink-export-actions"><button type="button" data-ink="exportSvg">↓ SVG</button><button type="button" data-ink="exportPng">↓ PNG</button>'+
  '<button type="button" data-ink="delete" class="ink-danger">Delete page</button></div></div>'+
  '<div class="ink-page-scroll" aria-label="Scrollable handwriting page"><div class="ink-paper" id="inkPaper">'+
  '<canvas id="inkCanvas" width="'+PAGE_WIDTH+'" height="'+PAGE_HEIGHT+'" aria-label="Draw handwritten notes here with a stylus or mouse"></canvas>'+
  '</div></div>'+
  '<p class="ink-help">Works with ASUS Pen and other Windows pens. Pressure varies by device and browser. Write on the page; use the area around it to scroll. Your strokes are editable and exportable, not an image screenshot.</p>'+
- '<p class="ink-help ink-storage-warning">Compact ink pages sync through your existing PsychDesk account within its storage limits. Export large handwritten notes as SVG or PNG for safekeeping.</p>'+ 
- (window.PsychDeskInkConvert?.panel(note)||'')+
+ '<p class="ink-help ink-storage-warning">Compact ink pages sync through your existing PsychDesk account within its storage limits. Export large handwritten notes as SVG or PNG for safekeeping.</p>'+
  '</div>';
 }
 function render(){
@@ -112,14 +109,7 @@ function drawStroke(ctx,stroke){
   for(let i=1;i<points.length;i++){
    const a=points[i-1],b=points[i];
    ctx.lineWidth=width*(stroke.kind==='highlighter'?1:0.55+((a[2]+b[2])/200)*0.85);
-   ctx.beginPath();
-   if(smoothInk&&points.length>2&&stroke.kind!=='highlighter'){
-    const before=points[i-2],next=points[i+1];
-    const start=before?[(before[0]+a[0])/2,(before[1]+a[1])/2]:[a[0],a[1]];
-    const end=next?[(a[0]+b[0])/2,(a[1]+b[1])/2]:[b[0],b[1]];
-    ctx.moveTo(start[0],start[1]);ctx.quadraticCurveTo(a[0],a[1],end[0],end[1]);
-   }else{ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);}
-   ctx.stroke();
+   ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke();
   }
  }
  ctx.restore();
@@ -310,7 +300,6 @@ function onClick(event){
 document.addEventListener('click',onClick);
 document.addEventListener('change',event=>{
  if(event.target?.id==='inkPenOnly'){penOnly=event.target.checked;announce(penOnly?'Pen-first mode: finger touches ignored.':'Finger drawing enabled.');}
- if(event.target?.id==='inkSmooth'){smoothInk=event.target.checked;repaint();announce(smoothInk?'Smoother pen lines enabled. Original pen points are preserved.':'Original pen line rendering restored.');}
  if(event.target?.id==='inkSubject')commitMeta('subjectId',event.target.value);
  if(event.target?.id==='inkTitle')commitMeta('title',event.target.value);
 });
@@ -319,10 +308,5 @@ document.addEventListener('keydown',event=>{
 });
 window.addEventListener('psychdesk:tab-changed',e=>{if(e.tab==='ink')requestAnimationFrame(mount);else current=null;});
 window.addEventListener('psychdesk:session-reset',()=>{activeId='';current=null;history=[];redo=[];mountedCanvas=null;});
-function openPage(id){
- if(!notes().some(n=>n.id===id))return false;
- activeId=id;current=null;history=[];redo=[];
- core.setTab('ink');return true;
-}
-window.PsychDeskInk={render,mount,drawStroke,canvasPoint,svgSource,nearSegment,eraserHit,saveChange,getActive:active,openPage};
+window.PsychDeskInk={render,mount,drawStroke,canvasPoint,svgSource,nearSegment,eraserHit,saveChange,getActive:active};
 })();
