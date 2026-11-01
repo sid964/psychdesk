@@ -423,7 +423,9 @@ test('malformed guest JSON does not prevent an existing Firebase Google account 
  });
  await fb.change({uid:'alice',email:'alice@example.test'});
  assert.equal(fb.api.getState().user.uid,'alice');
- assert.equal(env.window.PsychDeskFirebase.getConnectionStatus().synced,true);
+ const state=env.window.PsychDeskFirebase.getConnectionStatus();
+ assert.equal(state.signedIn,true);
+ assert.equal(state.error,'');
  assert.equal(storage.get('psychdesk-v1'),'{not-json');
 });
 
