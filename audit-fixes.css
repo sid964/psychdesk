@@ -1,0 +1,54 @@
+/* Verified browser-audit fixes: compact touch header and readable quick capture in both themes. */
+@media(max-width:570px){
+ .topbar{gap:5px;padding-left:14px;padding-right:14px;min-width:0}
+ .topbar .brand{min-width:0;gap:6px;margin-right:auto}
+ .topbar .brand-mark{width:34px;height:34px;min-width:34px;border-radius:10px;font-size:22px}
+ .topbar .brand strong{font-size:16px}
+ .topbar .brand span{font-size:7px;letter-spacing:.6px}
+ .topbar .icon-btn{width:35px;min-width:35px;height:35px;padding:0;margin-left:0}
+ .topbar .account-chip{max-width:105px;min-width:0;margin:0;padding:8px 9px;font-size:10px}
+ .topbar .quick-note-launch{margin-left:0}
+ .topbar .drive-status-chip{margin-left:0}
+ .bottom-nav{padding-left:3px;padding-right:3px}
+ .nav-item{font-size:9px}
+}
+@media(max-width:405px){
+ .topbar .brand>div:not(.brand-mark){display:none}
+ .topbar .account-chip{max-width:101px}
+ .topbar .icon-btn{width:33px;min-width:33px}
+ .topbar .quick-note-launch{width:35px;min-width:35px}
+ .topbar .drive-status-chip{width:32px;min-width:32px}
+ main{padding-inline:15px}
+ .modal{padding-left:16px;padding-right:16px}
+}
+@media(max-width:345px){
+ .topbar{gap:4px;padding-inline:9px}
+ .topbar .account-chip{max-width:88px}
+ .topbar .brand-mark{width:31px;min-width:31px;height:31px}
+ .bottom-nav .nav-item{font-size:8.5px}
+}
+html[data-theme=light] .quick-capture-heading span,
+html:not([data-theme=dark]) .quick-capture-heading span{color:#616161}
+html[data-theme=light] .quick-capture-heading p,
+html:not([data-theme=dark]) .quick-capture-heading p{color:#222}
+html[data-theme=light] .quick-capture>textarea,
+html:not([data-theme=dark]) .quick-capture>textarea{
+ background:#fff!important;color:#222!important;border-color:#bdbdbd
+}
+html[data-theme=light] .quick-more,
+html:not([data-theme=dark]) .quick-more{background:#f7f7f7;border-color:#d0d0d0}
+html[data-theme=light] .quick-more summary,
+html:not([data-theme=dark]) .quick-more summary{color:#343434}
+html[data-theme=light] .quick-more label,
+html:not([data-theme=dark]) .quick-more label{color:#333}
+html[data-theme=light] .quick-more input,
+html[data-theme=light] .quick-more select,
+html:not([data-theme=dark]) .quick-more input,
+html:not([data-theme=dark]) .quick-more select{
+ background:#fff!important;color:#222!important;border-color:#bbb
+}
+html[data-theme=light] .quick-draft-status,
+html[data-theme=light] .quick-privacy,
+html:not([data-theme=dark]) .quick-draft-status,
+html:not([data-theme=dark]) .quick-privacy{color:#555}
+@media(prefers-reduced-motion:reduce){.quick-capture *{animation:none!important}}
