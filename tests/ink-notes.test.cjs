@@ -89,3 +89,36 @@ test('storage failure rolls back the unsaved stroke rather than reporting succes
  assert.equal(page.strokes.length,0);
  assert.equal(page.updatedAt,old);
 });
+
+
+test('removing handwriting conversion preserves legacy handwritten pages and existing typed study notes',()=>{
+ const s=setup();
+ const legacy={
+  id:'ink-original',title:'Learning theories',subjectId:'cog',
+  strokes:[{kind:'pen',c:'#20252b',w:3.2,p:[[12,19,52],[27,38,78]]}],
+  neatText:'Previously polished handwriting',createdAt:'2026-11-01T10:00:00Z',
+  updatedAt:'2026-11-01T10:30:00Z'
+ };
+ const typed={
+  id:'saved-conversion',title:'Learning theories',body:'Previously converted note text',
+  inkSourceId:'ink-original',subjectId:'cog',tags:'handwriting, ink notes'
+ };
+ s.study.inkNotes.push(legacy);s.study.notes.push(typed);
+ const previous=JSON.stringify(s.study);
+ assert.ok(click(s,'open',legacy.id));
+ const editor=s.ink.render();
+ assert.match(editor,/inkCanvas/);
+ assert.match(editor,/Pen-first mode/);
+ assert.doesNotMatch(editor,/Polish.{0,10}Notes|Make it neat|Save as study note|inkConvertPanel|Smooth pen strokes|inkSmooth|data-ink-convert/);
+ assert.equal(JSON.stringify(s.study),previous,'existing handwritten and typed data must remain untouched');
+ assert.equal(s.ink.svgSource(legacy).includes('<svg'),true);
+ assert.equal(s.study.notes[0].body,'Previously converted note text');
+ assert.equal(s.study.inkNotes[0].neatText,'Previously polished handwriting');
+ const html=source('index.html'),worker=source('sw.js'),cloud=source('cloud.js');
+ for(const item of [html,worker,s.ink.render(),source('ink-notes.js'),cloud]){
+  assert.doesNotMatch(item,/ink-convert\.(js|css)|PsychDeskInkConvert|data-ink-convert|inkConvertPanel/);
+ }
+ for(const filename of ['ink-convert.js','ink-convert.css','tests/ink-convert.test.cjs']){
+  assert.equal(fs.existsSync(path.join(__dirname,'..',filename)),false);
+ }
+});
