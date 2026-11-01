@@ -5,7 +5,8 @@ const h=core.esc,$=q=>document.querySelector(q),d=()=>core.getData();
 const board=()=>Array.isArray(d().boardItems)?d().boardItems:[];
 const maps=()=>Array.isArray(d().mindMaps)?d().mindMaps:[];
 const allStickies=()=>Array.isArray(d().stickies)?d().stickies:[];
-const limit=(x,min,max)=>Math.max(min,Math.min(max,x));
+const limit=(x,min,max)=>Math.max(min,Math.min(max,Number(x)||0));
+const commit=change=>core.commitChange(change);
 let currentMap='',linkFrom='',selectedNode='',drag=null;
 function boardCard(x){
  const sticky=allStickies().find(n=>n.id===x.stickyId);
@@ -26,14 +27,12 @@ function renderBoard(){
 function boardAdd(){
  const text=prompt('Write a short idea for your board (up to 500 characters):','');
  if(!text?.trim())return;
- d().boardItems=board().concat({id:core.id(),kind:'note',text:text.trim().slice(0,500),x:12+(board().length%5)*14,y:12+(board().length%4)*17,createdAt:new Date().toISOString()});
- core.save();core.render();
+ if(commit(()=>{d().boardItems=board().concat({id:core.id(),kind:'note',text:text.trim().slice(0,500),x:12+(board().length%5)*14,y:12+(board().length%4)*17,createdAt:new Date().toISOString()})}))core.render();
 }
 function boardPin(){
  const id=$('#pinSticky')?.value;
  if(!id||!allStickies().some(n=>n.id===id)){core.toast('Choose an existing sticky note.');return;}
- d().boardItems=board().concat({id:core.id(),kind:'sticky',stickyId:id,x:12+(board().length%5)*14,y:12+(board().length%4)*17});
- core.save();core.render();
+ if(commit(()=>{d().boardItems=board().concat({id:core.id(),kind:'sticky',stickyId:id,x:12+(board().length%5)*14,y:12+(board().length%4)*17})}))core.render();
 }
 function mapSelect(){
  const list=maps();
@@ -55,15 +54,28 @@ function renderMind(){
  '<button data-mind="editNode" '+(!selectedNode?'disabled':'')+'>Rename selected</button><button data-mind="removeNode" '+(!selectedNode?'disabled':'')+'>Remove selected</button></div>'+
  '<div class="mind-description"><strong>'+h(map.title)+'</strong> · '+map.nodes.length+' concepts · '+map.edges.length+' connections</div>':'<div class="study-empty">Create your first concept map. For example: “Memory Systems” or “Psychological Assessment”.</div>');
 }
+function layout(){
+ for(const [selector,surfaceSelector,records,key] of [['.board-card','#boardCanvas',board(),'boardId'],['.mind-node','.mind-board',mapSelect()?.nodes||[],'mindNode']]){
+  const surface=$(surfaceSelector);if(!surface)continue;
+  for(const el of surface.querySelectorAll(selector)){
+   const rec=records.find(x=>x.id===el.dataset[key]);if(!rec)continue;
+   el.style.left=limit((Number(rec.x)||0)*surface.clientWidth/100,0,Math.max(0,surface.clientWidth-el.offsetWidth-4))+'px';
+   el.style.top=limit((Number(rec.y)||0)*surface.clientHeight/100,0,Math.max(0,surface.clientHeight-el.offsetHeight-4))+'px';
+  }
+ }
+ drawEdges();
+}
 function drawEdges(){
  const map=mapSelect(),svg=$('#mindEdges'),surface=$('.mind-board');if(!map||!svg||!surface)return;
  svg.setAttribute('viewBox','0 0 '+surface.clientWidth+' '+surface.clientHeight);
  svg.setAttribute('width','100%');svg.setAttribute('height','100%');
- const w=surface.clientWidth,height=surface.clientHeight;
+ const bounds=surface.getBoundingClientRect(),nodes=[...surface.querySelectorAll('[data-mind-node]')];
  svg.innerHTML=map.edges.map(e=>{
   const from=map.nodes.find(n=>n.id===e.from),to=map.nodes.find(n=>n.id===e.to);
   if(!from||!to)return '';
-  const x1=from.x*w/100+62,y1=from.y*height/100+24,x2=to.x*w/100+62,y2=to.y*height/100+24;
+  const a=nodes.find(n=>n.dataset.mindNode===from.id)?.getBoundingClientRect(),b=nodes.find(n=>n.dataset.mindNode===to.id)?.getBoundingClientRect();
+  if(!a||!b)return '';
+  const x1=a.left-bounds.left+a.width/2,y1=a.top-bounds.top+a.height/2,x2=b.left-bounds.left+b.width/2,y2=b.top-bounds.top+b.height/2;
   return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="#959595" stroke-width="2" stroke-linecap="round"/>';
  }).join('');
 }
@@ -71,28 +83,27 @@ function makeMap(){
  const title=prompt('Name your new psychology mind map:','Memory systems');
  if(!title?.trim())return;
  const map={id:core.id(),title:title.trim().slice(0,90),nodes:[],edges:[]};
- d().mindMaps=maps().concat(map);currentMap=map.id;selectedNode='';linkFrom='';core.save();core.render();drawEdges();
+ if(!commit(()=>{d().mindMaps=maps().concat(map)}))return;currentMap=map.id;selectedNode='';linkFrom='';core.render();
 }
 function addNode(){
  const map=mapSelect();if(!map)return;
  const text=prompt('Concept, theory, researcher or finding:','');
  if(!text?.trim())return;
  if(map.nodes.length>=55){core.toast('Maps are limited to 55 concepts for performance.');return;}
- map.nodes.push({id:core.id(),label:text.trim().slice(0,90),x:9+(map.nodes.length%5)*17,y:11+(Math.floor(map.nodes.length/5)%4)*20});
- core.save();core.render();drawEdges();
+ if(!commit(()=>map.nodes.push({id:core.id(),label:text.trim().slice(0,90),x:9+(map.nodes.length%5)*17,y:11+(Math.floor(map.nodes.length/5)%4)*20})))return;core.render();
 }
 function selectNode(id){
  const map=mapSelect();if(!map)return;
  if(linkFrom&&linkFrom!==id){
   if(!map.edges.some(e=>(e.from===linkFrom&&e.to===id)||(e.from===id&&e.to===linkFrom))){
-   map.edges.push({id:core.id(),from:linkFrom,to:id});core.save();
+   if(!commit(()=>map.edges.push({id:core.id(),from:linkFrom,to:id})))return;
   }
   linkFrom='';selectedNode=id;core.render();drawEdges();return;
  }
  if(linkFrom===id){linkFrom='';selectedNode=id;core.render();drawEdges();return;}
  selectedNode=id;
  $('.mind-node.selected')?.classList.remove('selected');
- const btn=document.querySelector('[data-mind-node="'+id+'"]');
+ const btn=[...document.querySelectorAll('[data-mind-node]')].find(el=>el.dataset.mindNode===id);
  btn?.classList.add('selected');
  const rename=$('[data-mind="editNode"]'),del=$('[data-mind="removeNode"]');
  if(rename)rename.disabled=false;if(del)del.disabled=false;
@@ -100,14 +111,13 @@ function selectNode(id){
 function renameNode(){
  const node=mapSelect()?.nodes.find(n=>n.id===selectedNode);if(!node)return;
  const value=prompt('Rename this concept:',node.label);if(!value?.trim())return;
- node.label=value.trim().slice(0,90);core.save();core.render();drawEdges();
+ if(commit(()=>{node.label=value.trim().slice(0,90)}))core.render();
 }
 function removeNode(){
  const map=mapSelect();if(!map||!selectedNode)return;
  if(!confirm('Remove the selected concept and its connections?'))return;
- map.nodes=map.nodes.filter(n=>n.id!==selectedNode);
- map.edges=map.edges.filter(e=>e.from!==selectedNode&&e.to!==selectedNode);
- selectedNode='';linkFrom='';core.save();core.render();drawEdges();
+ if(!commit(()=>{map.nodes=map.nodes.filter(n=>n.id!==selectedNode);map.edges=map.edges.filter(e=>e.from!==selectedNode&&e.to!==selectedNode)}))return;
+ selectedNode='';linkFrom='';core.render();
 }
 function dragStart(event,selector,kind){
  const grip=event.target.closest(selector);if(!grip||event.button!==0)return;
@@ -116,23 +126,26 @@ function dragStart(event,selector,kind){
  const id=kind==='board'?el?.dataset.boardId:el?.dataset.mindNode;
  const rec=kind==='board'?board().find(x=>x.id===id):mapSelect()?.nodes.find(n=>n.id===id);
  if(!rec||!el)return;
- drag={kind,id,el,surface,rec,startX:event.clientX,startY:event.clientY,moved:false};
+ const bounds=el.getBoundingClientRect();
+ drag={kind,id,el,surface,rec,pointerId:event.pointerId,oldX:rec.x,oldY:rec.y,offsetX:event.clientX-bounds.left,offsetY:event.clientY-bounds.top,startX:event.clientX,startY:event.clientY,moved:false};
  el.setPointerCapture?.(event.pointerId);event.preventDefault();
 }
 function dragMove(event){
- if(!drag)return;
- const b=drag.surface.getBoundingClientRect(),x=limit((event.clientX-b.left)/b.width*100,0,drag.kind==='board'?83:82),
- y=limit((event.clientY-b.top)/b.height*100,0,drag.kind==='board'?83:85);
+ if(!drag||event.pointerId!==drag.pointerId)return;
+ const b=drag.surface.getBoundingClientRect(),x=limit(event.clientX-b.left-drag.offsetX,0,b.width-drag.el.offsetWidth-4)/b.width*100,
+ y=limit(event.clientY-b.top-drag.offsetY,0,b.height-drag.el.offsetHeight-4)/b.height*100;
  if(Math.abs(event.clientX-drag.startX)+Math.abs(event.clientY-drag.startY)>4)drag.moved=true;
  if(!drag.moved)return;
  drag.rec.x=Math.round(x*10)/10;drag.rec.y=Math.round(y*10)/10;
  drag.el.style.left=drag.rec.x+'%';drag.el.style.top=drag.rec.y+'%';
  if(drag.kind==='mind')drawEdges();
 }
-function dragEnd(){
- if(!drag)return;
- if(drag.moved)core.save();
- drag=null;
+function dragEnd(event){
+ if(!drag||event.pointerId!==drag.pointerId)return;
+ const current=drag;drag=null;
+ if(current.moved&&(event.type==='pointercancel'||core.save()===false)){
+  current.rec.x=current.oldX;current.rec.y=current.oldY;layout();
+ }
 }
 document.addEventListener('pointerdown',e=>{
  if(e.target.closest('[data-drag-board]'))dragStart(e,'[data-drag-board]','board');
@@ -151,9 +164,9 @@ document.addEventListener('click',e=>{
   case 'edit':{const item=board().find(x=>x.id===b.dataset.id);if(!item)return;
    const value=prompt('Edit idea:',item.kind==='sticky'?(allStickies().find(n=>n.id===item.stickyId)?.title||''):item.text);
    if(!value?.trim())return;
-   item.kind='note';delete item.stickyId;item.text=value.trim().slice(0,500);core.save();core.render();break;}
-  case 'remove':d().boardItems=board().filter(x=>x.id!==b.dataset.id);core.save();core.render();break;
-  case 'clear':if(confirm('Clear this board? Original stickies remain saved.')){d().boardItems=[];core.save();core.render();}break;
+   if(commit(()=>{item.kind='note';delete item.stickyId;item.text=value.trim().slice(0,500)}))core.render();break;}
+  case 'remove':if(commit(()=>{d().boardItems=board().filter(x=>x.id!==b.dataset.id)}))core.render();break;
+  case 'clear':if(confirm('Clear this board? Original stickies remain saved.')){if(commit(()=>{d().boardItems=[]}))core.render();}break;
   }
  }
  if(b.dataset.mind){
@@ -161,14 +174,14 @@ document.addEventListener('click',e=>{
    case 'newMap':makeMap();break;case 'newNode':addNode();break;
    case 'link':if(!selectedNode){core.toast('Select a concept first.');break;}linkFrom=selectedNode;core.render();drawEdges();break;
    case 'editNode':renameNode();break;case 'removeNode':removeNode();break;
-   case 'deleteMap':if(confirm('Delete this map and all its concepts?')){d().mindMaps=maps().filter(m=>m.id!==currentMap);currentMap='';selectedNode='';linkFrom='';core.save();core.render();}break;
+   case 'deleteMap':if(confirm('Delete this map and all its concepts?')){if(!commit(()=>{d().mindMaps=maps().filter(m=>m.id!==currentMap)}))break;currentMap='';selectedNode='';linkFrom='';core.render();}break;
   }
  }
 });
 document.addEventListener('change',e=>{
  if(e.target?.id==='mindMapSelect'){currentMap=e.target.value;selectedNode='';linkFrom='';core.render();drawEdges();}
 });
-window.addEventListener('resize',()=>{if($('.mind-board'))drawEdges();});
+window.addEventListener('resize',layout);
 window.addEventListener('psychdesk:session-reset',()=>{currentMap='';selectedNode='';linkFrom='';drag=null;});
-window.PsychDeskBoards={renderBoard,renderMind,drawEdges};
+window.PsychDeskBoards={renderBoard,renderMind,drawEdges,layout};
 })();

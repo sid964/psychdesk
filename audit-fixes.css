@@ -85,3 +85,27 @@ html[data-theme=dark] .dashboard-page .hero::after{color:#555!important}
 .recovery-warning button{min-height:42px;font-size:12px}
 html[data-theme=light] .recovery-warning{background:#f4f4f4!important;color:#202020!important;border-color:#aaa!important}
 html[data-theme=light] .recovery-warning p{color:#454545!important}
+
+/* Stable dialogs, keyboard navigation and long user-created content. */
+html{scrollbar-gutter:stable}
+body.modal-open{overflow:hidden}
+.modal-overlay{overscroll-behavior:contain;padding-top:env(safe-area-inset-top)}
+.modal{overscroll-behavior:contain;scroll-padding-block:24px}
+.modal-header{gap:16px;align-items:flex-start}
+.modal-header h2{min-width:0;overflow-wrap:anywhere}
+.modal-header .close{flex:0 0 40px;min-height:40px}
+:where(button,a,input,textarea,select,summary,[tabindex]):focus-visible{outline:2px solid var(--text,#aaa);outline-offset:4px}
+:where(.task-main,.note-card,.reference-card,.study-panel,.reader-hero,.subject-card){min-width:0}
+:where(.task-name,.review-q,.answer,.note-card strong,.reader-hero h1,.reference-title){overflow-wrap:anywhere}
+:where(.button-row,.modal-footer){flex-wrap:wrap}
+.skip-link{position:fixed;top:8px;left:12px;z-index:1200;transform:translateY(-160%);padding:12px 18px;border-radius:10px;background:#eee;color:#111;font-weight:700}
+.skip-link:focus{transform:translateY(0)}
+@media(max-width:570px){
+ .modal input:not([type=hidden]),.modal textarea,.modal select{font-size:16px}
+ .task-row{gap:10px;padding-inline:13px}
+ .task-sub{flex-wrap:wrap;row-gap:4px}
+ .task-actions{display:flex;flex-shrink:0}
+ .mini-btn,.check-btn{min-width:36px;min-height:36px}
+ .section-row{gap:12px;flex-wrap:wrap}
+ .section-row h2{min-width:0}
+}

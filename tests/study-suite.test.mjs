@@ -9,7 +9,7 @@ function makeEnv(){
  const callbacks={};
  const core={
   esc:value=>String(value??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;'),
-  getData:()=>storage,save:()=>{saves++},render:()=>{},setTab:name=>{tab=name},toast:()=>{},
+  getData:()=>storage,commitChange:fn=>{fn(storage);saves++;return true},save:()=>{saves++},render:()=>{},setTab:name=>{tab=name},toast:()=>{},
   id:(()=>{let i=0;return()=>String(++i)})(),today:()=>'2026-10-31',openModal:()=>{},closeModal:()=>{}
  };
  const doc={addEventListener:(type,cb)=>{callbacks['doc:'+type]=cb},querySelector:()=>null,activeElement:{tagName:'BODY'},fullscreenElement:null};

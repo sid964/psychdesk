@@ -13,7 +13,7 @@ function setup(){
  };
  let markup='',saveCount=0,closed=0,tip='',id=0,saveWorks=true;
  const core={esc:s=>String(s??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'),
-  getData:()=>data,id:()=>String(++id),openModal:(_title,html)=>{markup=html},closeModal:()=>{closed++},save:()=>{saveCount++;return saveWorks;},toast:s=>{tip=s}};
+  getData:()=>data,render:()=>{},id:()=>String(++id),openModal:(_title,html)=>{markup=html},closeModal:()=>{closed++},save:()=>{saveCount++;return saveWorks;},toast:s=>{tip=s}};
  const window={PsychDeskCore:core,PsychDeskFirebase:{getUserId:()=> 'alice'},
   PsychDeskStickies:{generate:(text,title,subject,color,group)=>[{id:++id,groupId:group,title,lines:[text],subjectId:subject,color}]}};
  const doc={querySelector:s=>nodes[s]||null,addEventListener:(type,cb)=>{handlers[type]=cb}};

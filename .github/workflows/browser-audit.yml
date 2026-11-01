@@ -2,24 +2,33 @@ name: PsychDesk browser and visual audit
 on:
   pull_request:
     paths:
-      - 'index.html'
-      - 'cloud.js'
-      - 'app.js'
-      - 'drive-persistence.js'
-      - 'firebase-sync.js'
-      - 'quick-note.css'
-      - 'audit-fixes.css'
-      - 'planner-refine.css'
-      - 'ink-notes.css'
-      - 'ink-notes.js'
-      - 'tests/ink-notes.test.cjs'
-      - 'tests/browser-audit.cjs'
+      - '**/*.js'
+      - '**/*.css'
+      - '**/*.html'
+      - 'tests/**'
+      - '.github/workflows/browser-audit.yml'
+  push:
+    branches: [main]
+    paths:
+      - '**/*.js'
+      - '**/*.css'
+      - '**/*.html'
+      - 'tests/**'
       - '.github/workflows/browser-audit.yml'
   workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: browser-audit-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   browser:
     runs-on: ubuntu-latest
     timeout-minutes: 18
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -28,20 +37,20 @@ jobs:
       - name: Install browser test runner
         run: |
           npm install --no-save --no-package-lock playwright@1.56.1
-          npx playwright install --with-deps chromium
+          npx playwright install --with-deps ${{ matrix.browser }}
       - name: Start app locally
         run: |
           python3 -m http.server 8765 --bind 127.0.0.1 >/tmp/psychdesk-web.log 2>&1 &
           for n in $(seq 1 30); do curl -fsS http://127.0.0.1:8765/index.html >/dev/null && break; sleep 1; done
       - name: Audit local desktop and mobile experience
-        run: node tests/browser-audit.cjs
+        run: node tests/browser-audit.cjs ${{ matrix.browser == 'firefox' && '--firefox' || '' }}
       - name: Observe live GitHub Pages without modifying user data
-        if: always()
+        if: always() && matrix.browser == 'chromium'
         continue-on-error: true
         run: node tests/browser-audit.cjs --live
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: psychdesk-browser-audit
+          name: psychdesk-browser-audit-${{ matrix.browser }}
           path: browser-audit-artifacts/
           retention-days: 7

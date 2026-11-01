@@ -8,8 +8,9 @@ const readDraft=()=>{try{const v=JSON.parse(sessionStorage.getItem(draftKey())||
 function remember(){
  const text=$('#quickNoteText'),title=$('#quickNoteTitle'),subject=$('#quickNoteSubject');
  if(!text)return;
- try{sessionStorage.setItem(draftKey(),JSON.stringify({text:text.value.slice(0,LIMIT),title:title?.value?.slice(0,140)||'',subjectId:subject?.value||''}));}catch{}
- const state=$('#quickDraftStatus');if(state)state.textContent='Draft kept in this tab until saved.';
+ let kept=true;
+ try{sessionStorage.setItem(draftKey(),JSON.stringify({text:text.value.slice(0,LIMIT),title:title?.value?.slice(0,140)||'',subjectId:subject?.value||''}));}catch{kept=false;}
+ const state=$('#quickDraftStatus');if(state)state.textContent=kept?'Draft kept in this tab until saved.':'Draft storage is unavailable. Keep this window open or copy your writing.';
 }
 function open(){
  const draft=readDraft();
@@ -48,7 +49,7 @@ function submit(sticky){
   return;
  }
  try{sessionStorage.removeItem(draftKey())}catch{}
- core.closeModal();core.toast(sticky?'Sticky saved to your wall':'Note saved to your notebook');
+ core.closeModal();core.render();core.toast(sticky?'Sticky saved to your wall':'Note saved to your notebook');
 }
 document.addEventListener('click',e=>{
  if(e.target.closest('#quickNoteBtn')){e.preventDefault();open();return;}

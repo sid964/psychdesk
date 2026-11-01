@@ -3,7 +3,7 @@
 const core=window.PsychDeskCore;if(!core)return;
 const prefix='psychdesk-note-history-v1:',maxVersions=8,versionInterval=90*1000;
 const esc=core.esc;
-const owner=()=>window.PsychDeskFirebase?.getUserId?.()||localStorage.getItem('psychdesk-last-user-v3')||'guest';
+const owner=()=>{try{return window.PsychDeskFirebase?.getUserId?.()||localStorage.getItem('psychdesk-last-user-v3')||'guest'}catch{return 'guest'}};
 const key=(kind,id)=>prefix+owner()+':'+kind+':'+(id||'new');
 const safeRead=(k,defaultValue)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??defaultValue}catch{return defaultValue}};
 function isValue(v){return v&&typeof v==='object'&&typeof v.title==='string'&&typeof v.body==='string'}
@@ -29,7 +29,7 @@ function saveDraft(form){
 function clearDraft(id){try{localStorage.removeItem(key('draft',id))}catch{}}
 function recordVersion(note){
  if(!isValue(note)||!note.id)return false;
- const k=key('versions',note.id),items=safeRead(k,[]);
+ const k=key('versions',note.id),raw=safeRead(k,[]),items=Array.isArray(raw)?raw.filter(isValue):[];
  const last=items[0];
  if(last&&Date.now()-Date.parse(last.savedAt)<versionInterval)return true;
  const snapshot={title:note.title,body:note.body,tags:note.tags||'',subjectId:note.subjectId||'',savedAt:new Date().toISOString()};

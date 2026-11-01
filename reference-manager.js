@@ -371,7 +371,7 @@ document.addEventListener('click',e=>{
   case 'add':referenceForm({});break;
   case 'lookup':doiLookup();break;
   case 'edit':if(ref)referenceForm(ref);break;
-  case 'remove':if(ref&&confirm('Delete this reference? Imported PDFs and notebook notes are not affected.')){data().research=rows().filter(r=>r.id!==id);core.save();core.render();}break;
+  case 'remove':if(ref&&confirm('Delete this reference? Imported PDFs and notebook notes are not affected.')){const before=rows();data().research=before.filter(r=>r.id!==id);if(core.save()===false){data().research=before;break;}core.render();}break;
   case 'copy':if(ref)copy(apaDraft(ref));break;
   case 'import':$('#referenceImportFile')?.click();break;
   case 'exportRIS':if(rows().length)download('psychdesk-references.ris',exportRIS(rows()),'application/x-research-info-systems');else core.toast('No references to export.');break;

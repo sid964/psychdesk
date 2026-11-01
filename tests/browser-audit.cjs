@@ -2,13 +2,15 @@
    Local origin exercises UI without touching anyone's live study data.
    Live mode captures read-only metrics and screenshots from GitHub Pages. */
 'use strict';
-const { chromium }=require('playwright');
+const { chromium, firefox }=require('playwright');
+const engineName=process.argv.includes('--firefox')?'firefox':'chromium';
+const auditFlows=require('./browser-flows.cjs');
 const fs=require('node:fs');
 const path=require('node:path');
 const live=process.argv.includes('--live');
 const origin=live?'https://sid964.github.io/psychdesk/':'http://127.0.0.1:8765/';
-const viewports=[{width:320,height:700},{width:360,height:800},{width:390,height:844},{width:768,height:1024},{width:1440,height:900}];
-const dest=path.join(process.cwd(),'browser-audit-artifacts',live?'live':'local');
+const viewports=[{width:320,height:700},{width:360,height:800},{width:390,height:844},{width:768,height:1024},{width:1024,height:768},{width:1440,height:900}];
+const dest=path.join(process.cwd(),'browser-audit-artifacts',live?'live':engineName);
 fs.mkdirSync(dest,{recursive:true});
 const results=[];
 async function inspect(page){
@@ -39,7 +41,7 @@ async function inspect(page){
  });
 }
 async function main(){
- const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+ const browser=await (engineName==='firefox'?firefox:chromium).launch({headless:true});
  let fatal=false;
  try{
   for(const vp of viewports){
@@ -170,6 +172,8 @@ async function main(){
      }
      if((!record.autosaveOnClose||!record.autosaveOnModalReplace)&&vp.width===360)fatal=true;
      if(navigation.some(n=>!n.visible||!n.heading))fatal=true;
+     if(vp.width===390||vp.width===1440)await auditFlows(page,openTab,record);
+     if(errors.length)fatal=true;
      if(overview.overflow>6||overview.headerOverlap.length)fatal=true;
      if(vp.width>=900&&overview.rail.overflowX!=='hidden'&&overview.rail.overflowX!=='clip')fatal=true;
     }
@@ -183,7 +187,7 @@ async function main(){
      record.navigation=navigation;
     }
     results.push(record);
-   }catch(error){fatal=!live;results.push({origin,viewport:vp.width,error:String(error).slice(0,350),errors});}
+   }catch(error){if(!live)fatal=true;results.push({origin,viewport:vp.width,error:String(error).slice(0,350),errors});}
    finally{await context.close();}
   }
   // A separate browser profile deliberately starts with unreadable account storage.

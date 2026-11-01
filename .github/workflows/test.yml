@@ -10,4 +10,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-      - run: node --test tests/*.test.mjs
+      - run: node --test tests/*.test.mjs tests/*.test.cjs functions/tests/*.test.cjs
+      - name: Check all application JavaScript
+        run: |
+          for file in *.js functions/*.js functions/lib/*.js tests/*.cjs; do node --check "$file"; done

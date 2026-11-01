@@ -1,0 +1,66 @@
+'use strict';
+const assert=require('node:assert/strict');
+module.exports=async function auditFlows(page,openTab,record){
+ page.on('dialog',dialog=>dialog.accept());
+ await openTab('planner');
+ await page.locator('[data-action="newTask"]').first().click();
+ assert.equal(await page.locator('#taskForm [name="title"]').evaluate(el=>el===document.activeElement),true,'Dialog focuses a visible field');
+ const focusables=page.locator('.modal button,.modal input:not([type="hidden"]),.modal select,.modal textarea');
+ await focusables.last().focus();await page.keyboard.press('Tab');
+ assert.equal(await page.locator('.modal .close').evaluate(el=>el===document.activeElement),true,'Tab stays in dialog');
+ await page.keyboard.press('Shift+Tab');assert.equal(await focusables.last().evaluate(el=>el===document.activeElement),true,'Reverse tab stays in dialog');
+ await page.locator('#taskForm [name="title"]').fill('Audit topic: memory');
+ await page.locator('#taskForm [name="due"]').fill('');
+ await page.locator('#taskForm [type="submit"]').click();
+ assert.equal(await page.locator('.task-name', {hasText:'Audit topic: memory'}).count(),1);
+ const taskRow=page.locator('.task-row').filter({hasText:'Audit topic: memory'});
+ await taskRow.locator('[data-action="toggleTask"]').click();
+ await page.locator('[data-value="done"]').click();
+ assert.equal(await page.locator('.task-name.completed', {hasText:'Audit topic: memory'}).count(),1);
+ await page.locator('[data-action="newTask"]').first().click();
+ await page.locator('#taskForm [name="title"]').fill('Storage failure draft');
+ await page.evaluate(()=>{window.__setItem=Storage.prototype.setItem;Storage.prototype.setItem=function(k,v){if(k==='psychdesk-v1')throw new DOMException('Full','QuotaExceededError');return window.__setItem.call(this,k,v)}});
+ await page.locator('#taskForm [type="submit"]').click();
+ assert.equal(await page.locator('#taskForm [name="title"]').inputValue(),'Storage failure draft');
+ assert.equal(await page.evaluate(()=>window.PsychDeskCore.getData().tasks.some(t=>t.title==='Storage failure draft')),false);
+ await page.evaluate(()=>{Storage.prototype.setItem=window.__setItem});
+ await page.keyboard.press('Escape');
+ await openTab('notes');
+ await page.locator('[data-cloud="newNote"]').first().click();
+ await page.locator('#noteForm [name="body"]').fill('Notebook closes without losing the last sentence.');
+ await page.locator('.modal .close').click();
+ const note=page.locator('.note-card').filter({hasText:'Notebook closes without losing'});
+ assert.equal(await note.count(),1,'Saved note appears immediately');
+ await note.click();
+ await page.locator('#noteForm [name="body"]').fill('Pending writing before deletion');
+ await page.locator('[data-cloud="deleteNote"]').click();
+ assert.equal(await page.evaluate(()=>window.PsychDeskCore.getData().notes.some(n=>n.body.includes('Pending writing before deletion'))),false,'Deletion must not trigger resurrection by autosave');
+ await page.locator('#quickNoteBtn').click();await page.locator('#quickNoteText').fill('Quick capture appears immediately');await page.locator('[data-quick="note"]').click();
+ assert.equal(await page.locator('.note-card').filter({hasText:'Quick capture appears immediately'}).count(),1);
+ await openTab('recall');await page.locator('[data-action="newCard"]').click();
+ await page.locator('#cardForm [name="question"]').fill('What does the audit verify?');await page.locator('#cardForm [name="answer"]').fill('Actual study actions persist.');await page.locator('#cardForm [type="submit"]').click();
+ await page.locator('[data-action="flip"]').click();assert.match(await page.locator('.answer').innerText(),/Actual study actions persist/);
+ await page.locator('[data-action="rate"][data-rating="good"]').click();
+ assert.equal(await page.evaluate(()=>window.PsychDeskCore.getData().reviews.length),1);
+ await openTab('focus');await page.locator('[data-action="startTimer"]').click();
+ await page.evaluate(()=>{const key='psychdesk-timer-v2:'+window.PsychDeskCore.getStorageKey(),timer=JSON.parse(localStorage.getItem(key));timer.endsAt-=61000;localStorage.setItem(key,JSON.stringify(timer));});
+ await page.reload({waitUntil:'domcontentloaded'});await page.waitForSelector('#main .hero');await openTab('focus');
+ assert.equal(await page.locator('[data-action="completeTimer"]').isEnabled(),true,'Running timer survives refresh with Finish enabled');
+ await page.locator('[data-action="completeTimer"]').click();assert.equal(await page.evaluate(()=>window.PsychDeskCore.getData().sessions.length),1);
+ record.studyFlows={task:true,failedSave:true,notebook:true,quickCapture:true,flashcard:true,timerRefresh:true,keyboardDialog:true};
+ // Populate the surfaces: empty-state overflow checks miss clipped real cards.
+ await page.evaluate(()=>window.PsychDeskCore.commitChange(data=>{
+  data.boardItems=Array.from({length:7},(_,i)=>({id:'board-'+i,kind:'note',text:'A useful idea about psychology '.repeat(6),x:20+i*12,y:20+i*12}));
+  data.mindMaps=[{id:'map',title:'Concepts',nodes:Array.from({length:8},(_,i)=>({id:'node-'+i,label:'A meaningful concept '+i,x:15+i*12,y:15+i*11})),edges:[{id:'edge',from:'node-0',to:'node-7'}]}];
+ }));
+ record.populatedSurfaces=[];
+ for(const [tab,selector,surface] of [['board','.board-card','#boardCanvas'],['mindmap','.mind-node','.mind-board']]){
+  await openTab(tab);await page.locator(selector).first().waitFor();await page.waitForTimeout(150);
+  const clipped=await page.locator(surface).evaluate((el,selector)=>{const b=el.getBoundingClientRect();return [...el.querySelectorAll(selector)].filter(n=>{const r=n.getBoundingClientRect();return r.left<b.left-1||r.top<b.top-1||r.right>b.right+1||r.bottom>b.bottom+1}).length},selector);
+  assert.equal(clipped,0,tab+' cards must stay inside the visible surface');
+  record.populatedSurfaces.push({tab,clipped});
+ }
+ await page.locator('#themeToggle').click();
+ assert.equal(await page.locator('.mind-board').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(243, 241, 236)');
+ await page.locator('#themeToggle').click();
+};
