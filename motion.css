@@ -59,3 +59,8 @@ html[data-theme=dark] #modalRoot .modal-overlay{background:rgba(0,0,0,.56);backd
  .app-shell{transition:none}
  .desktop-rail::before,.dashboard-page .hero::after{transform:none!important}
 }
+.mind-node:active,.board-card:active{transform:none!important}
+@media(prefers-reduced-motion:reduce){
+ :is(button,.resource-item,.note-card,.ink-note-card,.subject-card,.material-card,.tool-card):is(:hover,:active){transform:none!important}
+ .rail-link.active .rail-symbol{transform:none}
+}

@@ -93,9 +93,9 @@
  });
  document.addEventListener('pointermove',e=>{if(!drag||drag.id!==e.pointerId)return;drag.dy=Math.max(0,drag.offset+e.clientY-drag.y);drag.el.style.transform='translateY('+drag.dy+'px)';});
  function endDrag(e){
-  if(!drag||drag.id!==e.pointerId)return;const d=drag,velocity=d.dy/Math.max(1,performance.now()-d.time);drag=null;
+  if(!drag||drag.id!==e.pointerId)return;const d=drag,travel=d.dy-d.offset,velocity=travel/Math.max(1,performance.now()-d.time);drag=null;
   try{d.handle.releasePointerCapture(d.id);}catch{}
-  const dismiss=e.type==='pointerup'&&(d.dy>90||(d.dy>30&&velocity>.65));
+  const dismiss=e.type==='pointerup'&&travel>20&&(d.dy>90||(d.dy>30&&velocity>.65));
   const animation=play(d.el,dismiss?[{transform:'translateY('+d.dy+'px)',opacity:1},{transform:'translateY('+Math.min(innerHeight,600)+'px)',opacity:0}]:spring('translateY',d.dy,0),{duration:dismiss?180:300,easing:dismiss?ease:'linear'});
   d.el.style.removeProperty('transform');
   const finish=()=>{if(dismiss&&d.el===document.querySelector('#modalRoot .modal'))window.PsychDeskCore.closeModal();};
