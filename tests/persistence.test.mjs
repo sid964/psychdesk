@@ -447,3 +447,15 @@ test('realtime sync does not advance revision if the remote snapshot cannot be s
  assert.equal(env.core.getData().notes.length,previous.notes.length);
  assert.equal(env.window.PsychDeskFirebase.getConnectionStatus().conflict,true);
 });
+
+
+test('malformed imported subject color does not become arbitrary CSS or an external tracking URL',()=>{
+ const env=environment();
+ const old=JSON.parse(JSON.stringify(env.core.getData()));
+ old.subjects.push({id:'unsafe-style',name:'Unsafe color test',color:'url(https://untrusted.example/track)'});
+ env.core.replaceData(old);
+ env.core.setTab('planner');
+ const html=env.context.document.querySelector('#main').innerHTML;
+ assert.doesNotMatch(html,/url\(https:\/\/untrusted\.example/);
+ assert.match(html,/#888888/);
+});
