@@ -9,11 +9,11 @@ function setup(){
  const saved=[],handlers={};
  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const core={esc,id:()=>String(saved.length+1)+'-id',getData:()=>study,save:()=>saved.push(JSON.stringify(study)),render:()=>{},toast:()=>{}};
- const document={addEventListener:(t,fn)=>handlers[t]=fn,querySelector:()=>null};
+ const document={addEventListener:(t,fn)=>handlers[t]=fn,querySelector:()=>null,querySelectorAll:()=>[]};
  const window={PsychDeskCore:core,addEventListener:(t,fn)=>handlers[t]=fn};
  const ctx={window,document,TextEncoder,Date,URL,Blob,setTimeout,clearTimeout,confirm:()=>true};
  vm.runInNewContext(source('ink-notes.js'),ctx,{timeout:2000});
- return {study,core,handlers,saved,ink:window.PsychDeskInk};
+ return {study,core,document,handlers,saved,ink:window.PsychDeskInk};
 }
 function click(env,action,id){
  let prevent=false;
@@ -59,6 +59,19 @@ test('eraser only removes nearest stroke and supports empty pages',()=>{
  assert.equal(s.ink.eraserHit(page,[720,811]),1);
  assert.equal(s.ink.eraserHit(page,[400,400]),-1);
  assert.equal(s.ink.eraserHit({strokes:[]},[0,0]),-1);
+});
+test('tool selection and erasing preserve the mounted canvas and its scroll position',()=>{
+ const s=setup();click(s,'new');
+ const handlers={},canvas={getBoundingClientRect:()=>({left:0,top:0,width:600,height:800}),getContext:()=>new Proxy({},{get:()=>()=>{}}),addEventListener:(type,fn)=>{handlers[type]=fn},setPointerCapture(){}};
+ s.document.querySelector=q=>q==='#inkCanvas'?canvas:null;
+ s.ink.mount();
+ s.study.inkNotes[0].strokes.push({kind:'pen',c:'#20252b',w:3,p:[[20,20,50],[40,40,50]]});
+ s.core.render=()=>assert.fail('Replacing the editor would discard canvas focus and scroll');
+ for(const tool of ['pen','highlighter','eraser'])click(s,tool);
+ handlers.pointerdown({currentTarget:canvas,pointerId:1,pointerType:'mouse',isPrimary:true,button:0,buttons:1,clientX:10,clientY:10,preventDefault(){}});
+ assert.equal(s.study.inkNotes[0].strokes.length,0);
+ click(s,'undo');assert.equal(s.study.inkNotes[0].strokes.length,1);
+ click(s,'redo');assert.equal(s.study.inkNotes[0].strokes.length,0);
 });
 test('storage budget rejects oversized strokes and rolls back without touching prior data',()=>{
  const s=setup();click(s,'new');

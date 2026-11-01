@@ -158,7 +158,7 @@ function inkStart(e){
   const at=eraserHit(n,canvasPoint(e,canvas));
   if(at!==-1){
    const removed=n.strokes.splice(at,1)[0];
-   if(saveChange(n,()=>n.strokes.splice(at,0,removed),'Erased a stroke')){history.push({type:'erase',stroke:removed,index:at});redo=[];core.render();}
+   if(saveChange(n,()=>n.strokes.splice(at,0,removed),'Erased a stroke')){history.push({type:'erase',stroke:removed,index:at});redo=[];repaint();updateUndoButtons();}
    else repaint();
   }
   return;
@@ -190,6 +190,13 @@ function updateUndoButtons(){
  const note=active();
  for(const [kind,disabled] of [['undo',!note?.strokes?.length&&!history.length],['redo',!redo.length]]){
   const b=document.querySelector('[data-ink="'+kind+'"]');if(b)b.disabled=disabled;
+ }
+}
+function updateToolButtons(){
+ for(const button of document.querySelectorAll('[data-ink="pen"], [data-ink="highlighter"], [data-ink="eraser"], [data-ink="color"]')){
+  const selected=button.dataset.ink==='color'?button.dataset.color===color:button.dataset.ink===tool;
+  button.classList.toggle('selected',selected);
+  button.setAttribute('aria-pressed',String(selected));
  }
 }
 function mount(){
@@ -287,8 +294,8 @@ function onClick(event){
  if(action==='new')return newPage();
  if(action==='open'){activeId=el.dataset.id;history=[];redo=[];core.render();return;}
  if(action==='back'){current=null;activeId='';history=[];redo=[];core.render();return;}
- if(['pen','highlighter','eraser'].includes(action)){tool=action;core.render();return;}
- if(action==='color'){if(COLORS.includes(el.dataset.color)){color=el.dataset.color;if(tool==='eraser')tool='pen';core.render();}return;}
+ if(['pen','highlighter','eraser'].includes(action)){tool=action;updateToolButtons();return;}
+ if(action==='color'){if(COLORS.includes(el.dataset.color)){color=el.dataset.color;if(tool==='eraser')tool='pen';updateToolButtons();}return;}
  if(action==='undo')return undo();
  if(action==='redo')return redoStroke();
  if(action==='exportSvg')return exportPage('svg');
@@ -309,7 +316,7 @@ document.addEventListener('change',event=>{
 document.addEventListener('keydown',event=>{
  if(event.target?.id==='inkTitle'&&event.key==='Enter'){event.preventDefault();event.target.blur();}
 });
-window.addEventListener('psychdesk:tab-changed',e=>{if(e.tab==='ink')requestAnimationFrame(mount);else current=null;});
+window.addEventListener('psychdesk:tab-changed',e=>{if(e.tab==='ink')mount();else current=null;});
 window.addEventListener('psychdesk:session-reset',()=>{activeId='';current=null;history=[];redo=[];mountedCanvas=null;});
 function openPage(id){
  if(!notes().some(n=>n.id===id))return false;

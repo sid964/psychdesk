@@ -3,13 +3,13 @@ import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {readFileSync} from 'node:fs';
 const source=name=>readFileSync(new URL('../'+name,import.meta.url),'utf8');
-function environment({storage=new Map(),readError=false}={}){
+function environment({storage=new Map(),readError=false,deferFrames=false}={}){
  const events=new EventTarget(),listeners={},nodes=new Map();let fail=false,now=Date.now();
  const node=()=>({innerHTML:'',textContent:'',value:'',dataset:{},style:{},isConnected:true,elements:{},listeners:{},classList:{add(){},remove(){},toggle(){},contains(){return false}},setAttribute(){},removeAttribute(){},querySelector(){return null},querySelectorAll(){return []},addEventListener(t,f){this.listeners[t]=f},focus(){},append(){},remove(){},click(){}});
  const document={querySelector:q=>{if(q==='#modalRoot .modal')return null;if(!nodes.has(q))nodes.set(q,node());return nodes.get(q)},querySelectorAll:()=>[],body:node(),addEventListener:(t,fn)=>(listeners[t]??=[]).push(fn),createElement:node};
  const window={addEventListener:events.addEventListener.bind(events),removeEventListener:events.removeEventListener.bind(events),dispatchEvent:events.dispatchEvent.bind(events),scrollTo(){}};
  const localStorage={getItem:k=>{if(readError)throw Error('Storage denied');return storage.get(k)??null},setItem:(k,v)=>{if(fail)throw Error('Quota exceeded');storage.set(k,String(v))},removeItem:k=>storage.delete(k)};
- const context=vm.createContext({window,document,localStorage,sessionStorage:{getItem:()=>null,setItem(){},removeItem(){}},console,Event,structuredClone,AbortController,URL,URLSearchParams,Blob,TextEncoder,Date:class extends Date{static now(){return now}},location:{protocol:'https:',hostname:'sid964.github.io',origin:'https://sid964.github.io'},navigator:{onLine:true},setInterval(){},setTimeout:()=>1,clearTimeout(){},confirm:()=>true,requestAnimationFrame:fn=>fn(),FormData:class{constructor(form){this.form=form}get(k){return this.form.elements[k]?.value??''}}});
+ const context=vm.createContext({window,document,localStorage,sessionStorage:{getItem:()=>null,setItem(){},removeItem(){}},console,Event,structuredClone,AbortController,URL,URLSearchParams,Blob,TextEncoder,Date:class extends Date{static now(){return now}},location:{protocol:'https:',hostname:'sid964.github.io',origin:'https://sid964.github.io'},navigator:{onLine:true},setInterval(){},setTimeout:()=>1,clearTimeout(){},confirm:()=>true,requestAnimationFrame:fn=>deferFrames?1:fn(),FormData:class{constructor(form){this.form=form}get(k){return this.form.elements[k]?.value??''}}});
  vm.runInContext(source('app.js').replace('window.PsychDeskCore=', 'window.__audit={invoke,taskForm,subjectForm,cardForm,updateReview,tick,completeTimer,getTimer:()=>timer};window.PsychDeskCore='),context);
  return {context,window,document,nodes,storage,core:window.PsychDeskCore,api:window.__audit,failWrites:v=>{fail=v},advance:ms=>{now+=ms},load:name=>vm.runInContext(source(name),context),click:dataset=>{const button={dataset};for(const fn of listeners.click||[])fn({preventDefault(){},target:{closest:q=>q.includes('[data-cloud]')&&dataset.cloud?button:null,classList:{contains:()=>false}}})} };
 }
@@ -17,6 +17,20 @@ function submit(e,selector,values){const form=e.document.querySelector(selector)
 const invoke=(e,action,id)=>e.api.invoke(action,{dataset:{id}});
 test('storage access denied at startup still renders the recovery controls',()=>{
  const e=environment({readError:true});assert.ok(e.core);assert.match(e.document.querySelector('#main').innerHTML,/Saved study data needs recovery/);assert.equal(e.core.save(),false);
+});
+test('handwriting accepts input immediately, even before the next animation frame',()=>{
+ const e=environment({deferFrames:true});e.load('ink-notes.js');
+ const canvas=e.document.querySelector('#inkCanvas');
+ canvas.getBoundingClientRect=()=>({left:0,top:0,width:600,height:800});
+ canvas.getContext=()=>new Proxy({},{get:()=>()=>{}});
+ canvas.setPointerCapture=()=>{};
+ e.core.getData().inkNotes.push({id:'immediate',title:'My page',strokes:[]});
+ e.window.PsychDeskInk.openPage('immediate');
+ const pointer={currentTarget:canvas,pointerId:1,pointerType:'mouse',isPrimary:true,button:0,buttons:1,clientX:10,clientY:10,preventDefault(){}};
+ assert.equal(typeof canvas.listeners.pointerdown,'function');
+ canvas.listeners.pointerdown(pointer);canvas.listeners.pointerup({...pointer,clientX:30,clientY:30});
+ assert.equal(e.core.getData().inkNotes[0].strokes.length,1);
+ assert.equal(JSON.parse(e.storage.get('psychdesk-v1')).inkNotes[0].strokes.length,1);
 });
 test('planner create, edit, toggle and delete stay atomic when storage is full',()=>{
  const e=environment();e.api.taskForm();e.failWrites(true);

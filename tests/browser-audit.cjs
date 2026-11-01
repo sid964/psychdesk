@@ -156,7 +156,10 @@ async function main(){
       record.inkUndo=await page.evaluate(()=>window.PsychDeskCore.getData().inkNotes?.[0]?.strokes?.length===0);
       await page.locator('[data-ink="redo"]').click();
       record.inkRedo=await page.evaluate(()=>window.PsychDeskCore.getData().inkNotes?.[0]?.strokes?.length===1);
+      const mountedPaper=await inkCanvas.elementHandle();
       await page.locator('[data-ink="eraser"]').click();
+      record.inkToolKeepsCanvas=await mountedPaper.evaluate(c=>c===document.querySelector('#inkCanvas'));
+      if(!record.inkToolKeepsCanvas)throw Error('Selecting an ink tool replaced the mounted canvas.');
       await showPaper();
       // Use a point from the saved vector, not a guessed offset near the line.
       const erasePoint=await inkCanvas.evaluate(canvas=>{
@@ -171,6 +174,7 @@ async function main(){
       record.inkErase=await page.evaluate(()=>window.PsychDeskCore.getData().inkNotes?.[0]?.strokes?.length===0);
       await page.locator('[data-ink="undo"]').click();
       record.inkUndoErase=await page.evaluate(()=>window.PsychDeskCore.getData().inkNotes?.[0]?.strokes?.length===1);
+      await mountedPaper.dispose();
       if(!record.inkUndo||!record.inkRedo||!record.inkErase||!record.inkUndoErase)fatal=true;
       await page.screenshot({path:path.join(dest,'ink-drawing-360.png'),animations:'disabled'});
       await page.reload({waitUntil:'domcontentloaded'});
