@@ -158,7 +158,9 @@ function textToSticky(text,subject){
  if(!text.trim()){core.toast('Select or save a passage first.');return;}
  const pages=window.PsychDeskStickies?.generate?.(text,'From '+(bookTitle().slice(0,50)),subject||material?.subjectId||'','cream',core.id(),[]);
  if(!pages?.length){core.toast('Could not generate a sticky.');return;}
- getData().stickies.push(...pages);core.save();core.toast('Handwritten sticky saved to your wall.');
+ const d=getData();d.stickies.push(...pages);
+ if(core.save()===false){d.stickies=d.stickies.filter(v=>!pages.includes(v));core.toast('Could not save sticky from this passage.');return;}
+ core.toast('Handwritten sticky saved to your wall.');
 }
 function textToCards(text,subject){
  const generated=window.PsychDeskExtras?.generateCards?.(text,subject||material?.subjectId||'',12)||[];
@@ -167,7 +169,9 @@ function textToCards(text,subject){
  const unique=generated.filter(c=>!questions.has(c.question.toLowerCase()));
  if(!unique.length){core.toast('These flashcards already exist.');return;}
  if(!confirm('Add '+unique.length+' flashcards generated from the selected definitions? Review them for accuracy before studying.'))return;
- getData().cards.push(...unique);core.save();core.toast(unique.length+' flashcards created.');
+ const d=getData();d.cards.push(...unique);
+ if(core.save()===false){const added=new Set(unique);d.cards=d.cards.filter(v=>!added.has(v));core.toast('Could not save flashcards from this passage.');return;}
+ core.toast(unique.length+' flashcards created.');
 }
 function textToNote(text){
  if(!text.trim()){core.toast('Select a passage first.');return;}
