@@ -6,7 +6,7 @@ const core=window.PsychDeskCore;
 if(!core)return;
 const MODEL='Xenova/trocr-small-handwritten';
 const LIBRARY='https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1';
-const MAX_LINES=30, MAX_TEXT=24000, ACCOUNT_SAFE_BYTES=690000;
+const MAX_LINES=30, MAX_TEXT=24000, ACCOUNT_SAFE_BYTES=685000;
 const el=id=>document.getElementById(id);
 const ink=()=>window.PsychDeskInk;
 const page=()=>ink()?.getActive?.();
@@ -219,7 +219,7 @@ function saveToNotes(){
  if(d.notes.some(n=>n.inkSourceId===note.id&&n.body===text)){
   status('This transcription is already saved in Study Notes.','success');core.toast('Already in Study Notes.');return;
  }
- const draft={id:core.id(),title,title: title==='Untitled ink note'?'Handwritten study note':title,
+ const draft={id:core.id(),title:title==='Untitled ink note'?'Handwritten study note':title,
   body:text,tags:'ink, handwriting',subjectId:note.subjectId||'',inkSourceId:note.id,createdAt:now,updatedAt:now};
  const previous={text:note.neatText,hash:note.neatInkHash,updatedAt:note.updatedAt};
  d.notes.unshift(draft);note.neatText=text;note.neatInkHash=fingerprint(note);note.updatedAt=now;
