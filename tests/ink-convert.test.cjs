@@ -147,3 +147,18 @@ test('Polishing and converted notes are included in existing app shell without p
  assert.match(read('cloud.js'),/noteEditor/);
  assert.ok(html.indexOf('ink-notes.js')<html.indexOf('ink-convert.js'));
 });
+
+test('Neighboring handwriting lines are not merged and excessive lines are never silently dropped',()=>{
+ const h=harness();
+ const lines=h.api.groupLines([stroke(70),stroke(115),stroke(162)]);
+ assert.equal(lines.length,3);
+ const tooMany=Array.from({length:23},(_,i)=>stroke(20+i*57));
+ assert.throws(()=>h.api.groupLines(tooMany),/Too many handwritten lines/);
+});
+test('Converted study notes expose a safe original-handwriting link',()=>{
+ const cloud=read('cloud.js'),ink=read('ink-notes.js'),convert=read('ink-convert.js');
+ assert.ok(cloud.includes('data-ink-convert="source"'));
+ assert.ok(cloud.includes('escape(n.inkSourceId)'));
+ assert.ok(ink.includes('openPage'));
+ assert.ok(convert.includes("if(action==='source')"));
+});

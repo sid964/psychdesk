@@ -33,11 +33,12 @@ function groupLines(strokes,maxLines=MAX_LINES){
    const d=Math.abs(group.center-entry.center);
    if(d<dist){dist=d;best=group;}
   }
-  if(best&&dist<=52){
+  if(best&&dist<=32){
    best.items.push(entry);best.center=best.items.reduce((acc,x)=>acc+x.center,0)/best.items.length;
   }else groups.push({center:entry.center,items:[entry]});
  }
- return groups.sort((a,b)=>a.center-b.center).slice(0,maxLines).map(g=>g.items.map(x=>x.stroke));
+ if(groups.length>maxLines)throw Error('Too many handwritten lines on this page. Split your writing across multiple ink pages so no text is omitted.');
+ return groups.sort((a,b)=>a.center-b.center).map(g=>g.items.map(x=>x.stroke));
 }
 function renderLineImage(strokes,doc=document){
  const entries=strokes.flatMap(s=>safePoints(s)),canvas=doc.createElement('canvas');
@@ -95,7 +96,7 @@ async function localTrOCR(strokes,status,dependencies={}){
  const model=await modelPromise;
  const lines=groupLines(strokes);
  if(!lines.length)throw Error('Write a few words on the page first.');
- if(lines.length>=MAX_LINES)status('Recognizing the first '+MAX_LINES+' writing lines. Export additional pages separately.');
+
  const transcript=[];
  for(let i=0;i<lines.length;i++){
   status('Recognizing handwritten line '+(i+1)+' of '+lines.length+' on this device…');
@@ -179,6 +180,7 @@ function toStudyNote(note,text){
  const original=d.notes.find(n=>n.inkSourceId===note.id);
  if(original&&!confirm('This page already has a linked typed note. Replace the text in that note with your reviewed version?'))return {ok:false,reason:'Existing typed note was left unchanged.'};
  const previous=original?{...original}:null,now=new Date().toISOString();
+ if(original)window.PsychDeskNoteHistory?.recordVersion?.(previous);
  const entry=original||{id:core.id(),createdAt:now};
  Object.assign(entry,{
   title:(note.title||'Handwritten study note').slice(0,140),
@@ -203,6 +205,10 @@ function onClick(event){
  const action=control.dataset.inkConvert;
  if(action==='focus'){byId('inkConvertPanel')?.scrollIntoView({behavior:'smooth',block:'start'});return;}
  if(action==='recognize'){void runRecognition();return;}
+ if(action==='source'){
+  if(!window.PsychDeskInk?.openPage?.(control.dataset.id))core.toast('Original ink page was not found.');
+  return;
+ }
  const page=active(),text=currentText();
  if(!page)return;
  if(action==='saveNeat'){
