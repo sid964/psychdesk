@@ -133,9 +133,17 @@ function noteEditor(note){let n=note||{id:'',title:'',body:'',subjectId:'',tags:
    const changed=!existing||['title','body','tags','subjectId'].some(k=>String(existing[k]||'')!==String(update[k]||''));
    let id=previousId;
    if(changed){
+    const original=existing?{...existing}:null;
     if(existing){window.PsychDeskNoteHistory?.recordVersion(existing);Object.assign(existing,update);}
     else{const entry={...update,id:core.id(),createdAt:update.updatedAt};d.notes.unshift(entry);id=entry.id;form.elements.id.value=id;}
-    core.save();
+    if(core.save()===false){
+     // Keep the recovery draft, and restore the unchanged in-memory original.
+     if(existing)Object.assign(existing,original);
+     else{d.notes=d.notes.filter(x=>x.id!==id);form.elements.id.value=previousId;}
+     const status=form.querySelector('#noteAutosaveStatus');
+     if(status)status.textContent='Could not save to device. Draft kept for recovery. Free storage and retry.';
+     return false;
+    }
    }
    window.PsychDeskNoteHistory?.clearDraft(previousId);
    if(id!==previousId)window.PsychDeskNoteHistory?.clearDraft(id);
