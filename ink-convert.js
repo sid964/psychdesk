@@ -19,7 +19,7 @@ function inkStrokes(note){
 }
 function safePoints(s){
  return (Array.isArray(s?.p)?s.p:[]).filter(p=>Array.isArray(p)&&Number.isFinite(Number(p[0]))&&Number.isFinite(Number(p[1])))
- .map(p=>[Math.max(0,Math.min(PAGE_W,Number(p[0]))),Math.max(0,Math.min(PAGE_H,Number(p[1]))),Number(p[2])||50]);
+ .map(p=>[Math.max(0,Math.min(PAGE_W,Number(p[0]))),Math.max(0,Math.min(PAGE_H,Number(p[1]))),Math.max(0,Math.min(100,Number.isFinite(Number(p[2]))?Number(p[2]):50))]);
 }
 function groupLines(strokes,maxLines=MAX_LINES){
  const ink=strokes.map(s=>{
