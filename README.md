@@ -1,5 +1,17 @@
 # PsychDesk — subject study library
 
+## Firestore sync repair: nested handwritten strokes (November 2026)
+
+**Fix for “Function Transaction.set() called with invalid data. Nested arrays are not supported.”**
+
+Firebase Firestore cannot store an array directly inside another array. Ink Notes records stylus points as `p: [[x, y, pressure], ...]`, so earlier direct uploads of PsychDesk's entire study snapshot could fail despite successful Google sign-in. The account sync module now stores the entire study snapshot as a **lossless JSON string** inside the same owner-only `users/{uid}/psychdesk/state` Firestore document, with revision metadata unchanged. It restores the exact original arrays when loading the snapshot. Older Firestore documents with the previous object-shaped `data` field remain readable and are safely migrated on their next successful save.
+
+- This change does **not** delete or reset handwritten pages, typed notes, subjects, Google Drive files, local study data, or existing backup formats.
+- Current account-side storage and Firestore security rules remain in effect. No Blaze upgrade or new server is required.
+- The study snapshot limit remains 750,000 UTF-8 bytes. Oversized data or corrupted remote data pauses sync and displays an error rather than silently overwriting the local copy.
+- After the new GitHub Pages release loads, open Google account sync and choose **Sync now** if needed; do not select **Load cloud progress** or **Replace cloud with this device** just to fix the nested-array error.
+- Automated tests cover saving nested pen coordinate arrays, reloading them on another device, legacy data restoration, and corrupt snapshot safety.
+
 ## Ink Notes — stylus handwriting and planner redesign (November 2026)
 
 A dedicated **Ink Notes** workspace is available in the desktop sidebar and mobile bottom navigation. Sticky Notes remain accessible from **Tools** and the existing notebook.
