@@ -62,10 +62,16 @@ async function main(){
     }
     if(!live){
      const navigation=[];
-     for(const tab of ['planner','notes','ink','dictionary','research','timeline','tools']){
+     for(const tab of ['today','planner','notes','ink','stickies','recall','focus','insights','search','reader','research','dictionary','timeline','voice','board','mindmap','tools']){
       await openTab(tab);
       await page.waitForTimeout(70);
-      navigation.push({tab,heading:await page.locator('#main h1').first().textContent().catch(()=>''),visible:await page.locator('#main').isVisible()});
+      const state=await page.evaluate(()=>({
+       heading:document.querySelector('#main h1')?.textContent?.trim()||'',
+       overflow:document.documentElement.scrollWidth-innerWidth,
+       rendered:document.querySelector('#main')?.textContent?.trim().length||0
+      }));
+      navigation.push({tab,heading:state.heading,visible:state.rendered>20,overflow:state.overflow});
+      if(state.overflow>8)fatal=true;
       if(['planner','notes','ink','dictionary','research'].includes(tab))await page.screenshot({path:path.join(dest,tab+'-'+vp.width+'.png'),fullPage:false,animations:'disabled'});
       if(tab==='planner'){
        const grid=await page.locator('.subject-grid').evaluate(el=>getComputedStyle(el).gridTemplateColumns);
@@ -83,6 +89,14 @@ async function main(){
       await page.locator('.modal-header .close').click();
       const copy=await page.evaluate(()=>window.PsychDeskCore.getData().notes);
       record.autosaveOnClose=copy.some(n=>n.body==='Browser audit draft should persist on close.');
+      // Replacing an open editor with a new dialog must also flush the last keystroke.
+      await page.locator('[data-cloud="newNote"]').first().click();
+      await page.locator('#noteForm [name="body"]').fill('Switching dialogs also preserves my last sentence.');
+      await page.locator('#settingsBtn').click();
+      record.autosaveOnModalReplace=await page.evaluate(()=>
+       window.PsychDeskCore.getData().notes.some(n=>n.body==='Switching dialogs also preserves my last sentence.'));
+      await page.locator('.modal-header .close').click();
+      if(!record.autosaveOnModalReplace)fatal=true;
       await page.locator('#themeToggle').click();
       await page.locator('#quickNoteBtn').click();
       record.quickNoteLight=await page.evaluate(()=>{
@@ -137,7 +151,7 @@ async function main(){
       if(!record.inkStrokeSaved||!record.inkPersistedAcrossRefresh)fatal=true;
 
      }
-     if(!record.autosaveOnClose&&vp.width===360)fatal=true;
+     if((!record.autosaveOnClose||!record.autosaveOnModalReplace)&&vp.width===360)fatal=true;
      if(navigation.some(n=>!n.visible||!n.heading))fatal=true;
      if(overview.overflow>6||overview.headerOverlap.length)fatal=true;
      if(vp.width>=900&&overview.rail.overflowX!=='hidden'&&overview.rail.overflowX!=='clip')fatal=true;
@@ -154,6 +168,29 @@ async function main(){
     results.push(record);
    }catch(error){fatal=!live;results.push({origin,viewport:vp.width,error:String(error).slice(0,350),errors});}
    finally{await context.close();}
+  }
+  // A separate browser profile deliberately starts with unreadable account storage.
+  // It must allow raw recovery export and never overwrite the damaged original.
+  if(!live){
+   const recovery=await browser.newContext({viewport:{width:390,height:844},acceptDownloads:true});
+   const page=await recovery.newPage();
+   const corrupted='{"version":2,"notes":[{"title":"do not erase"}],BROKEN';
+   await page.addInitScript(raw=>{
+    localStorage.setItem('psychdesk-last-user-v3','alice');
+    localStorage.setItem('psychdesk-user-alice',raw);
+   },corrupted);
+   try{
+    await page.goto(origin,{waitUntil:'domcontentloaded',timeout:25000});
+    await page.waitForSelector('.recovery-warning',{timeout:12000});
+    const preserved=await page.evaluate(()=>window.PsychDeskCore.save()===false&&
+     localStorage.getItem('psychdesk-user-alice')==='{"version":2,"notes":[{"title":"do not erase"}],BROKEN');
+    const downloadPromise=page.waitForEvent('download');
+    await page.locator('[data-action="downloadRecovery"]').click();
+    const file=await downloadPromise;
+    results.push({origin,scenario:'unreadable local data',preserved,filename:file.suggestedFilename()});
+    if(!preserved||!file.suggestedFilename().startsWith('psychdesk-unreadable-study-recovery-'))fatal=true;
+   }catch(error){fatal=true;results.push({origin,scenario:'unreadable local data',error:String(error).slice(0,350)});}
+   finally{await recovery.close();}
   }
  }finally{await browser.close();}
  fs.writeFileSync(path.join(dest,'report.json'),JSON.stringify(results,null,2));
