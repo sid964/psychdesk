@@ -89,3 +89,25 @@ test('storage failure rolls back the unsaved stroke rather than reporting succes
  assert.equal(page.strokes.length,0);
  assert.equal(page.updatedAt,old);
 });
+
+test('handwriting recognition is removed while legacy ink and converted note data stay untouched',()=>{
+ const s=setup();click(s,'new');
+ const note=s.study.inkNotes[0];
+ note.strokes.push({kind:'pen',c:'#20252b',w:3,p:[[12,20,45],[22,30,70]]});
+ note.neatText='Previously converted text';
+ note.inkSourceId='old-reference';
+ s.study.notes.push({id:'typed-note',title:'Previous conversion',body:'Existing converted text',inkSourceId:note.id});
+ const original=JSON.stringify(s.study);
+ click(s,'back');
+ click(s,'open',note.id);
+ assert.equal(JSON.stringify(s.study),original);
+ assert.match(s.ink.render(),/inkCanvas/);
+ assert.doesNotMatch(s.ink.render(),/Polish → Notes|Make it neat|inkConvertPanel|inkSmooth/);
+ assert.equal(s.study.notes[0].body,'Existing converted text');
+ const html=source('index.html'),cache=source('sw.js');
+ assert.doesNotMatch(html,/ink-convert|Caveat/);
+ assert.doesNotMatch(cache,/ink-convert/);
+ assert.match(html,/ink-notes\.js/);
+ assert.match(cache,/ink-notes\.js/);
+ assert.doesNotMatch(source('cloud.js'),/data-ink-convert="source"/);
+});
