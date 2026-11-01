@@ -97,6 +97,23 @@ async function main(){
        window.PsychDeskCore.getData().notes.some(n=>n.body==='Switching dialogs also preserves my last sentence.'));
       await page.locator('.modal-header .close').click();
       if(!record.autosaveOnModalReplace)fatal=true;
+      // Simulate a full local-storage write failure: do not lose the note or clear its draft.
+      await page.locator('[data-cloud="newNote"]').first().click();
+      await page.locator('#noteForm [name="body"]').fill('This recovery draft survives failed storage writes.');
+      await page.evaluate(()=>{
+       window.__savedCoreSave=window.PsychDeskCore.save;
+       window.PsychDeskCore.save=()=>false;
+      });
+      await page.locator('.modal-header .close').click();
+      record.failedAutosaveProtected=await page.evaluate(()=>(
+       !window.PsychDeskCore.getData().notes.some(n=>n.body==='This recovery draft survives failed storage writes.')&&
+       Object.keys(localStorage).some(k=>k.includes('draft:new')&&localStorage.getItem(k).includes('This recovery draft'))
+      ));
+      await page.evaluate(()=>{window.PsychDeskCore.save=window.__savedCoreSave;});
+      await page.locator('[data-cloud="newNote"]').first().click();
+      record.failedDraftRecovered=(await page.locator('#noteForm [name="body"]').inputValue()).includes('This recovery draft');
+      await page.locator('.modal-header .close').click();
+      if(!record.failedAutosaveProtected||!record.failedDraftRecovered)fatal=true;
       await page.locator('#themeToggle').click();
       await page.locator('#quickNoteBtn').click();
       record.quickNoteLight=await page.evaluate(()=>{
