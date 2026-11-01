@@ -201,6 +201,7 @@ function onClick(event){
  if(!control)return;
  event.preventDefault();
  const action=control.dataset.inkConvert;
+ if(action==='focus'){byId('inkConvertPanel')?.scrollIntoView({behavior:'smooth',block:'start'});return;}
  if(action==='recognize'){void runRecognition();return;}
  const page=active(),text=currentText();
  if(!page)return;
