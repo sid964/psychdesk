@@ -70,6 +70,7 @@ function renderEditor(note){
  '<div class="ink-writing-options"><label class="ink-toggle"><input type="checkbox" id="inkPenOnly"'+(penOnly?' checked':'')+'> Pen-first mode <span>Ignore finger touches and palms</span></label>'+
  '<div class="ink-export-actions"><button type="button" data-ink="exportSvg">↓ SVG</button><button type="button" data-ink="exportPng">↓ PNG</button>'+
  '<button type="button" data-ink="delete" class="ink-danger">Delete page</button></div></div>'+
+ '<div class="ink-smart-launch"><button type="button" class="ink-smart-open" data-ink="neaten">✦ Make handwriting neat &amp; convert to notes</button><p>See a neater handwritten version, correct the words, then save an editable study note. Your original page stays safe.</p></div><div id="inkSmartMount"></div>'+ 
  '<div class="ink-page-scroll" aria-label="Scrollable handwriting page"><div class="ink-paper" id="inkPaper">'+
  '<canvas id="inkCanvas" width="'+PAGE_WIDTH+'" height="'+PAGE_HEIGHT+'" aria-label="Draw handwritten notes here with a stylus or mouse"></canvas>'+
  '</div></div>'+
@@ -288,6 +289,7 @@ function onClick(event){
  if(action==='color'){if(COLORS.includes(el.dataset.color)){color=el.dataset.color;if(tool==='eraser')tool='pen';core.render();}return;}
  if(action==='undo')return undo();
  if(action==='redo')return redoStroke();
+ if(action==='neaten')return window.PsychDeskSmartInk?.open?.();
  if(action==='exportSvg')return exportPage('svg');
  if(action==='exportPng')return exportPage('png');
  if(action==='delete'){
@@ -308,5 +310,10 @@ document.addEventListener('keydown',event=>{
 });
 window.addEventListener('psychdesk:tab-changed',e=>{if(e.tab==='ink')requestAnimationFrame(mount);else current=null;});
 window.addEventListener('psychdesk:session-reset',()=>{activeId='';current=null;history=[];redo=[];mountedCanvas=null;});
-window.PsychDeskInk={render,mount,drawStroke,canvasPoint,svgSource,nearSegment,eraserHit,saveChange,getActive:active};
+function openPage(id){
+ if(!notes().some(n=>n.id===id))return false;
+ activeId=id;history=[];redo=[];current=null;
+ core.setTab('ink');return true;
+}
+window.PsychDeskInk={render,mount,drawStroke,canvasPoint,svgSource,nearSegment,eraserHit,saveChange,getActive:active,openPage};
 })();
