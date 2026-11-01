@@ -281,3 +281,25 @@ test('Firebase account restoration reuses an authorized Drive tab session withou
  assert.equal(refreshed.window.PsychDeskCloud.isConnected(),false);
  assert.equal(tabSession.has('psychdesk-drive-tab-v1'),false);
 });
+
+test('ink handwriting pages survive account save, reload, and JSON import without altering other notes',()=>{
+ const env=environment();
+ const existing=env.core.getData();
+ existing.notes.push({id:'typed',title:'Typed note',body:'Keep this intact'});
+ existing.inkNotes.push({id:'handwriting-1',title:'Lecture sketch',subjectId:'cog',
+  createdAt:'2026-11-01T10:00:00Z',updatedAt:'2026-11-01T10:01:00Z',
+  strokes:[{kind:'pen',c:'#20252b',w:3.2,p:[[10,20,60],[30,40,88]]}]});
+ env.core.save();
+ const reloaded=environment(env.storage);
+ assert.equal(reloaded.core.getData().inkNotes[0].strokes[0].p[1][2],88);
+ assert.equal(reloaded.core.getData().notes[0].body,'Keep this intact');
+ const imported=JSON.parse(JSON.stringify(reloaded.core.getData()));
+ const fresh=environment();
+ fresh.core.replaceData(imported);
+ assert.equal(fresh.core.getData().inkNotes[0].title,'Lecture sketch');
+ assert.equal(fresh.core.getData().notes[0].body,'Keep this intact');
+ const old=backup();
+ fresh.core.replaceData(old);
+ assert.equal(fresh.core.getData().inkNotes.length,0);
+ assert.throws(()=>fresh.core.replaceData({...old,inkNotes:'malformed'}),/Invalid/);
+});

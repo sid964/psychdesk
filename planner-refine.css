@@ -1,0 +1,70 @@
+/* Psychology study planner polish — replaces cramped two-column cards and dark action slabs.
+   Neutral AMOLED design; keeps every saved subject and action intact. */
+.subject-card::after{display:none!important}
+.subject-card{isolation:isolate}
+.subject-card .colorbar{width:40px;height:4px;margin:0 0 15px;border-radius:99px;opacity:.9}
+.subject-card strong{max-width:100%!important;overflow-wrap:anywhere;text-wrap:pretty}
+.subject-card .progress{margin-top:auto;max-width:100%;height:5px}
+.subject-card .subject-links{position:relative;display:flex;gap:9px;align-items:center;justify-content:space-between;flex-wrap:nowrap;margin-top:15px}
+.subject-card .subject-resource-btn{
+ display:inline-flex;align-items:center;gap:6px;justify-content:center;
+ background:transparent!important;color:inherit!important;border:1px solid #bcbcbc!important;
+ border-radius:10px;padding:10px 14px!important;min-height:42px;
+ white-space:nowrap;line-height:1.15;
+}
+.subject-card .subject-edit-btn{
+ display:grid;place-items:center;flex:none;width:42px;height:42px;
+ background:transparent!important;border:1px solid #bcbcbc!important;
+ border-radius:11px;padding:8px!important;line-height:1;font-size:18px
+}
+.subject-card .subject-resource-btn:focus-visible,.subject-card .subject-edit-btn:focus-visible{outline:2px solid currentColor;outline-offset:3px}
+html[data-theme=dark] .subject-card{
+ background:#101010!important;
+ border:1px solid #323232!important;
+ box-shadow:none!important
+}
+html[data-theme=dark] .subject-card strong{color:#f4f4f4!important}
+html[data-theme=dark] .subject-card p{color:#a9a9a9!important}
+html[data-theme=dark] .subject-card .progress{background:#323232!important}
+html[data-theme=dark] .subject-card .progress>div{background:#d2d2d2!important}
+html[data-theme=dark] .subject-card .colorbar{background:#979797!important}
+html[data-theme=dark] .subject-card .subject-resource-btn,
+html[data-theme=dark] .subject-card .subject-edit-btn{
+ background:transparent!important;border-color:#454545!important;color:#e4e4e4!important
+}
+html[data-theme=dark] .subject-card .subject-resource-btn:hover,
+html[data-theme=dark] .subject-card .subject-edit-btn:hover{background:#202020!important;border-color:#737373!important}
+html[data-theme=dark] .resource-hint{background:#101010!important;color:#a9a9a9!important;border-color:#303030!important}
+html[data-theme=dark] .bottom-nav .nav-item.active{
+ background:transparent!important;border-radius:0!important;box-shadow:none!important;color:#f2f2f2!important
+}
+html[data-theme=dark] .bottom-nav .nav-item.active .nav-ico{
+ background:#292929!important;border-radius:12px!important;color:#fff!important
+}
+html[data-theme=dark] .bottom-nav .nav-item:not(.active) .nav-ico{background:transparent!important}
+@media(max-width:610px){
+ .subject-grid{grid-template-columns:minmax(0,1fr)!important;gap:11px!important}
+ .subject-card{min-height:155px!important;padding:19px 20px!important;border-radius:17px!important}
+ .subject-card strong{font-size:17px!important;letter-spacing:-.25px;line-height:1.32}
+ .subject-card p{font-size:12px!important;margin:1px 0 13px!important}
+ .subject-card .colorbar{width:34px;margin-bottom:12px}
+ .subject-card .progress{margin-top:3px!important}
+ .subject-card .subject-links{margin-top:13px!important}
+ .subject-card .subject-resource-btn{min-height:40px;padding:9px 12px!important;font-size:12px!important}
+ .subject-card .subject-edit-btn{width:40px;height:40px}
+ .subject-grid .subject-card{transform:none!important}
+ .bottom-nav .nav-item{padding-block:3px}
+ .bottom-nav .nav-item.active{background:transparent!important;box-shadow:none!important}
+}
+@media(min-width:611px) and (max-width:899px){
+ .subject-card{padding:19px!important}
+ .subject-card strong{font-size:16px!important}
+ .subject-card .subject-resource-btn{font-size:11px;padding:9px 11px!important}
+}
+@media(min-width:900px){
+ .subject-card{min-height:196px;padding:22px!important}
+ .subject-card strong{font-size:17px}
+}
+@media(prefers-reduced-motion:reduce){
+ .subject-card,.subject-card *{transition:none!important;animation:none!important}
+}

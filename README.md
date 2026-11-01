@@ -1,5 +1,18 @@
 # PsychDesk — subject study library
 
+## Ink Notes — stylus handwriting and planner redesign (November 2026)
+
+A dedicated **Ink Notes** workspace is available in the desktop sidebar and mobile bottom navigation. Sticky Notes remain accessible from **Tools** and the existing notebook.
+
+- **Handwriting:** use an ASUS Pen, any browser-recognized pen, a mouse, or optionally a finger. Pointer Events detect pen input and pressure where supported, and coalesced events help render smooth strokes. Pen-first mode is on by default to ignore accidental finger and palm touches. Stylus pressure accuracy and any hardware side-button action depend on device drivers and browser support.
+- **Tools:** pressure-sensitive pen, translucent highlighter, per-stroke eraser, undo/redo, and ink colors. The scrollable lined canvas uses a consistent coordinate system, so handwriting can be reopened on different screen sizes. Pen drawings are stored as editable vectors rather than raster screenshots.
+- **Data:** handwritten pages use the optional `inkNotes` array in existing local account data and Firestore snapshots. No new login, Firebase product, paid backend, storage bucket, or Google Drive permission is required. Pages include subject, title, timestamps, and strokes; older backups without ink remain valid. No handwritten content is uploaded to a separate third-party AI service.
+- **Storage safeguards:** each page is capped at 170 KB of encoded vector JSON, with a 685 KB maximum total local study snapshot. This is intentionally lower than the existing 750 KB Firestore sync limit, leaving some room for other study data; existing notes can still use more space and cause sync to pause. If a page reaches the cap, the final stroke is rejected with a warning; export it and start another page. Ink is not an unlimited, image-heavy cloud notebook. This limit is reviewed during note creation, stroke storage, and metadata edits.
+- **Export:** SVG retains vector pen geometry and approximate pressure width, PNG produces a lined snapshot. Export files are saved via browser downloads; they are not automatically uploaded to Google Drive.
+- **Design:** phone-sized study-planner subjects now use one comfortable column instead of cramped two-column cards, with no giant decorative psi watermark and consistent monochrome action buttons. Desktop keeps a multi-column layout. The excessive full-height selected mobile navigation background is removed without changing which sections are available.
+- **Testing:** `tests/ink-notes.test.cjs` validates SVG escaping, eraser targeting and save limits. The existing persistence suite covers account and backup restore, and the Chromium browser audit tests new handwriting and planner layouts. The automation does not emulate actual ASUS Pen hardware.
+
+
 ## November 2026 functional and responsive audit
 
 A repeatable Chromium browser audit is included at `tests/browser-audit.cjs`, executed by `.github/workflows/browser-audit.yml`. It checks the real GitHub Pages site read-only and serves the PR branch locally for interactive smoke tests at 320, 360, 390, 768 and 1440 px. Reports and viewport screenshots are available as GitHub Actions artifacts. Browsing the live site does not sign in or alter anyone's saved study data.

@@ -5,7 +5,7 @@
 <title>PsychDesk — Psychology Study Planner</title>
 <link rel="manifest" href="manifest.webmanifest?v=study-suite-2"><link rel="icon" href="icons/icon-192.png">
 <link rel="stylesheet" href="style.css">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght,SOFT@9..144,400,20;9..144,500,20;9..144,600,20&display=swap" rel="stylesheet"><link rel="stylesheet" href="studio-v4.css?v=4"><link rel="stylesheet" href="library.css?v=1"><link rel="stylesheet" href="amoled.css?v=3"><link rel="stylesheet" href="setup-status.css?v=2"><link rel="stylesheet" href="sticky-notes.css?v=1"><link rel="stylesheet" href="study-extras.css?v=1"><link rel="stylesheet" href="study-boards.css?v=1"><link rel="stylesheet" href="pdf-reader.css?v=2"><link rel="stylesheet" href="psychology-knowledge.css?v=2"><link rel="stylesheet" href="psychology-imports.css?v=1"><link rel="stylesheet" href="psychology-online.css?v=1"><link rel="stylesheet" href="study-connections.css?v=1"><link rel="stylesheet" href="quick-note.css?v=2"><link rel="stylesheet" href="audit-fixes.css?v=1"><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&display=swap" rel="stylesheet"><script src="theme.js?v=3"></script></head><body>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght,SOFT@9..144,400,20;9..144,500,20;9..144,600,20&display=swap" rel="stylesheet"><link rel="stylesheet" href="studio-v4.css?v=4"><link rel="stylesheet" href="library.css?v=1"><link rel="stylesheet" href="amoled.css?v=3"><link rel="stylesheet" href="setup-status.css?v=2"><link rel="stylesheet" href="sticky-notes.css?v=1"><link rel="stylesheet" href="study-extras.css?v=1"><link rel="stylesheet" href="study-boards.css?v=1"><link rel="stylesheet" href="pdf-reader.css?v=2"><link rel="stylesheet" href="psychology-knowledge.css?v=2"><link rel="stylesheet" href="psychology-imports.css?v=1"><link rel="stylesheet" href="psychology-online.css?v=1"><link rel="stylesheet" href="study-connections.css?v=1"><link rel="stylesheet" href="quick-note.css?v=2"><link rel="stylesheet" href="audit-fixes.css?v=1"><link rel="stylesheet" href="planner-refine.css?v=1"><link rel="stylesheet" href="ink-notes.css?v=1"><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&display=swap" rel="stylesheet"><script src="theme.js?v=3"></script></head><body>
 <div class="app-shell">
 <aside class="desktop-rail" aria-label="PsychDesk workspace navigation">
 <div class="rail-brand"><div class="brand-mark">ψ</div><div><strong>PsychDesk</strong><small>THE STUDY STUDIO</small></div></div>
@@ -14,6 +14,7 @@
 <button class="rail-link active" data-tab="today"><span class="rail-symbol">⌂</span> Overview <span class="rail-trail">↗</span></button>
 <button class="rail-link" data-tab="planner"><span class="rail-symbol">▤</span> Study planner</button>
 <button class="rail-link" data-tab="notes"><span class="rail-symbol">✎</span> My notes</button>
+<button class="rail-link" data-tab="ink"><span class="rail-symbol">✒</span> Ink Notes</button>
  <button class="rail-link" data-tab="stickies"><span class="rail-symbol">▧</span> Sticky Notes</button>
 <button class="rail-link" data-tab="recall"><span class="rail-symbol">◇</span> Flashcards</button>
 <button class="rail-link" data-tab="focus"><span class="rail-symbol">◷</span> Focus room</button>
@@ -35,7 +36,7 @@
  <button data-tab="today" class="nav-item active"><span class="nav-ico">⌂</span><span>Today</span></button>
  <button data-tab="planner" class="nav-item"><span class="nav-ico">▤</span><span>Plan</span></button>
  <button data-tab="notes" class="nav-item"><span class="nav-ico">✎</span><span>Notes</span></button>
- <button data-tab="stickies" class="nav-item"><span class="nav-ico">▧</span><span>Stickies</span></button>
+ <button data-tab="ink" class="nav-item"><span class="nav-ico">✒</span><span>Ink</span></button>
  <button data-tab="materials" class="nav-item"><span class="nav-ico">✧</span><span>Library</span></button>
  <button data-tab="focus" class="nav-item"><span class="nav-ico">◷</span><span>Focus</span></button>
  <button data-tab="tools" class="nav-item"><span class="nav-ico">☷</span><span>Tools</span></button>
@@ -43,11 +44,12 @@
 </div>
 <div id="modalRoot"></div><div id="toast" role="status" aria-live="polite"></div>
 <script src="https://accounts.google.com/gsi/client" async></script>
-<script src="app.js?v=audit-2026-11" defer></script>
+<script src="app.js?v=ink-2026-11" defer></script>
+<script src="ink-notes.js?v=1" defer></script>
 <script src="cloud.js?v=audit-2026-11" defer></script><script src="drive-persistence.js?v=audit-2026-11" defer></script><script src="note-history.js?v=1" defer></script><script src="quick-note.js?v=1" defer></script><script src="drive-indicator.js?v=1" defer></script><script src="sticky-notes.js?v=2" defer></script><script src="setup-status.js?v=2" defer></script>
 <script src="materials.js?v=learning-suite-1" defer></script>
 <script src="study-extras.js?v=3" defer></script>
 <script src="psychology-data.js?v=2" defer></script><script src="psychology-expanded-data.js?v=1" defer></script><script src="psychology-knowledge.js?v=2" defer></script><script src="psychology-imports.js?v=1" defer></script><script src="psychology-online.js?v=1" defer></script><script src="psychology-connections.js?v=1" defer></script><script src="psychology-academic.js?v=1" defer></script><script src="reference-manager.js?v=2" defer></script><script src="study-boards.js?v=1" defer></script><script src="pdf-reader.js?v=2" defer></script>
 <script src="firebase-config.js?v=persistent-1" defer></script>
-<script type="module" src="firebase-sync.js?v=audit-2026-11"></script>
+<script type="module" src="firebase-sync.js?v=ink-2026-11"></script>
 </body></html>

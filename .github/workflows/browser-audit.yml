@@ -9,6 +9,10 @@ on:
       - 'firebase-sync.js'
       - 'quick-note.css'
       - 'audit-fixes.css'
+      - 'planner-refine.css'
+      - 'ink-notes.css'
+      - 'ink-notes.js'
+      - 'tests/ink-notes.test.cjs'
       - 'tests/browser-audit.cjs'
       - '.github/workflows/browser-audit.yml'
   workflow_dispatch:
