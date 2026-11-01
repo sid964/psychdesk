@@ -1,0 +1,66 @@
+/* Handwriting polishing → review → typed note. Editorial and compact, AMOLED-safe. */
+.ink-convert-panel{
+ display:grid;gap:15px;margin:10px 0 28px;padding:clamp(17px,2.4vw,26px);
+ background:var(--paper,#111);border:1px solid var(--line,#333);border-radius:18px;min-width:0
+}
+.ink-convert-heading{display:flex;gap:19px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.ink-convert-heading>div{flex:1;min-width:205px}
+.ink-convert-heading h2{font:500 clamp(24px,3vw,31px)/1.25 'Fraunces',Georgia,serif;letter-spacing:-.8px;margin:7px 0}
+.ink-convert-heading p{font:400 12px/1.8 'DM Sans',sans-serif;color:var(--muted,#aaa);max-width:670px;margin:0}
+.ink-convert-start{
+ background:var(--ink,#eee);color:var(--paper,#111);padding:13px 17px;min-height:45px;border-radius:12px;
+ font:750 12px 'DM Sans',sans-serif;border:1px solid var(--ink,#eee);white-space:nowrap;letter-spacing:.05px
+}
+.ink-convert-start:disabled{opacity:.5;cursor:wait}
+.ink-convert-privacy,.ink-convert-disclaimer{
+ font:400 11px/1.75 'DM Sans',sans-serif;color:var(--muted,#aaa);margin:0
+}
+.ink-convert-privacy{max-width:860px}
+.ink-convert-message{
+ color:var(--ink,#eee);font:500 12px/1.65 'DM Sans',sans-serif;padding:11px 13px;
+ margin:0;background:var(--bg,#000);border:1px solid var(--line,#333);border-radius:10px
+}
+.ink-convert-review{display:grid;gap:13px;min-width:0}
+.ink-convert-review[hidden]{display:none!important}
+.ink-convert-review label{font:750 12px 'DM Sans',sans-serif;display:grid;gap:5px}
+.ink-convert-review label small,.ink-neat-heading small{font:400 11px/1.5 'DM Sans',sans-serif;color:var(--muted,#999)}
+#inkRecognizedText{
+ resize:vertical;min-height:112px;width:100%;min-width:0;
+ padding:15px 17px;color:var(--ink,#eee);background:var(--bg,#000);
+ border:1px solid var(--line,#333);border-radius:11px;
+ font:400 14px/1.7 'DM Sans',sans-serif
+}
+.ink-neat-heading{font:750 12px 'DM Sans',sans-serif;display:flex;flex-wrap:wrap;gap:9px;align-items:baseline}
+.ink-neat-preview{
+ background-color:#fdfcf8;color:#222;font:500 clamp(23px,3.1vw,31px)/42px 'Caveat','Segoe Print',cursive;
+ min-height:175px;max-height:380px;overflow:auto;
+ padding:20px clamp(18px,5vw,37px);border:1px solid #e2ded6;border-radius:10px;
+ white-space:pre-wrap;overflow-wrap:anywhere;
+ background-image:repeating-linear-gradient(to bottom,transparent,transparent 41px,#dfe5ec 41px,#dfe5ec 42px);
+ box-shadow:inset 4px 0 0 #b9c6da,0 5px 23px #0001;letter-spacing:.18px
+}
+.ink-convert-actions{display:flex;flex-wrap:wrap;gap:9px}
+.ink-convert-actions button{
+ min-height:44px;border-radius:11px;padding:11px 15px;flex:1;min-width:150px;
+ font:750 12px 'DM Sans',sans-serif
+}
+.ink-convert-actions .secondary{background:transparent}
+.ink-smooth-toggle{display:flex;align-items:center;gap:8px;min-height:37px;margin-left:auto;
+ font:650 12px 'DM Sans',sans-serif;white-space:nowrap;color:var(--ink,#eee)
+}
+.ink-smooth-toggle input{width:17px;height:17px;accent-color:#777}
+html[data-theme=dark] .ink-convert-panel{background:#101010!important;border-color:#303030!important}
+html[data-theme=dark] .ink-convert-start{background:#eee!important;border-color:#eee!important;color:#101010!important}
+html[data-theme=dark] .ink-convert-message{background:#171717!important;color:#dedede!important;border-color:#333!important}
+html[data-theme=dark] #inkRecognizedText{background:#090909!important;color:#f1f1f1!important;border-color:#3b3b3b!important}
+html[data-theme=dark] .ink-convert-actions .secondary{background:#191919!important;color:#eee!important;border-color:#414141!important}
+html[data-theme=dark] .ink-neat-preview{background-color:#fdfcf8!important;color:#222!important;border-color:#e2ded6!important}
+@media(max-width:650px){
+ .ink-convert-panel{padding:16px;gap:13px}
+ .ink-convert-heading>div{min-width:0}
+ .ink-convert-start{width:100%}
+ .ink-convert-actions{flex-direction:column}
+ .ink-convert-actions button{width:100%}
+ .ink-neat-preview{padding:18px;max-height:300px}
+ .ink-smooth-toggle{margin-left:0}
+}
