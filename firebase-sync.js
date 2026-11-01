@@ -55,7 +55,9 @@ async function signIn(){
  loginInProgress=true;lastError='';updateBadge();window.PsychDeskSetup?.start?.();
  try {
   const provider=new GoogleAuthProvider();
-  provider.addScope(DRIVE_FILE_SCOPE);
+  // A deployed backend requests offline Drive permission separately (only once).
+   // Avoid competing short-lived Firebase popup tokens overwriting the restored grant.
+   if(!window.PsychDeskDrivePersistence?.enabled?.())provider.addScope(DRIVE_FILE_SCOPE);
   const result=await signInWithPopup(auth,provider);
   const credential=GoogleAuthProvider.credentialFromResult(result);
   if(credential?.accessToken && result?.user?.uid){

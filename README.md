@@ -1,5 +1,18 @@
 # PsychDesk — subject study library
 
+## November 2026 functional and responsive audit
+
+A repeatable Chromium browser audit is included at `tests/browser-audit.cjs`, executed by `.github/workflows/browser-audit.yml`. It checks the real GitHub Pages site read-only and serves the PR branch locally for interactive smoke tests at 320, 360, 390, 768 and 1440 px. Reports and viewport screenshots are available as GitHub Actions artifacts. Browsing the live site does not sign in or alter anyone's saved study data.
+
+Audit improvements:
+- Mobile topbar controls now stay in a compact row on narrow displays; notebook actions fit without awkward word wrapping, with readable light-theme quick notes and neutral AMOLED accents.
+- All pending editor changes flush to existing notes when a note modal closes, not just on the 1.4-second debounce, with a browser test proving immediate close preserves new writing.
+- Firebase Google sign-in skips redundant `drive.file` token consent when optional persistent backend authorization is active. A periodic or online backend-restore event no longer resets already-connected Drive access and interrupts ongoing transfers.
+- The study-tools dictionary description no longer claims just 64 entries.
+
+Limitations: This audit cannot validate account-specific Drive consent, Firebase project settings, API billing, real private book transfers, or all external publication lookups without owner authorization. On the Spark plan, Drive access is still short-lived; server-managed refresh tokens remain gated behind secure backend deployment. No code change can make browser-only Google OAuth permission permanent.
+
+
 Live site: https://sid964.github.io/psychdesk/
 
 Subjects, notes, flashcards, focus sessions, Google-account sync, private Drive books, and persistent light/dark themes.
