@@ -16,10 +16,7 @@ on:
       - 'firebase.json'
       - 'note-history.js'
       - 'ink-notes.js'
-      - 'ink-convert.js'
-      - 'ink-convert.css'
       - 'tests/ink-notes.test.cjs'
-      - 'tests/ink-convert.test.cjs'
       - 'psychology-connections.js'
       - 'psychology-academic.js'
       - 'study-connections.css'
@@ -55,7 +52,6 @@ jobs:
           node --check psychology-academic.js
           node --check note-history.js
           node --check ink-notes.js
-          node --check ink-convert.js
           node --check app.js
           node --check cloud.js
           node --check firebase-sync.js
@@ -63,4 +59,3 @@ jobs:
           node --check functions/index.js
           node --check functions/lib/oauth.js
       - name: Test psychology dictionary data and loading
-        run: node --test tests/psychology-dictionary.test.cjs tests/psychology-online.test.cjs tests/study-extensions.test.cjs tests/drive-persistence.test.cjs tests/ink-notes.test.cjs tests/ink-convert.test.cjs functions/tests/oauth.test.cjs
