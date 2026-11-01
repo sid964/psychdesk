@@ -160,12 +160,14 @@ function openResult(id){
 function saveNote(row){
  const d=core.getData(),stamp=new Date().toISOString();
  d.notes=Array.isArray(d.notes)?d.notes:[];
- d.notes.unshift({
+ const created={
   id:core.id(),title:row.term,
   body:row.definition+'\n\nSource: '+row.source+'\nAttribution: Wikipedia contributors (CC BY-SA 4.0)',
   tags:'psychology-dictionary',subjectId:'',createdAt:stamp,updatedAt:stamp
- });
- core.save();core.toast('Saved to your notebook.');
+ };
+ d.notes.unshift(created);
+ if(core.save()===false){d.notes=d.notes.filter(n=>n!==created);core.toast('Could not save the note. Try again after freeing storage.');return;}
+ core.toast('Saved to your notebook.');
 }
 function saveFlashcard(row){
  const d=core.getData(),question='Define '+row.term+'.';
@@ -173,12 +175,14 @@ function saveFlashcard(row){
  if(d.cards.some(card=>card.question?.toLocaleLowerCase()===question.toLocaleLowerCase())){
   core.toast('Already in your flashcards.');return;
  }
- d.cards.push({
+ const created={
   id:core.id(),question,
   answer:(row.definition.slice(0,1100)+'\nSource: '+row.source+'\nAttribution: Wikipedia contributors (CC BY-SA 4.0)').slice(0,1500),
   subjectId:'',due:core.today(),interval:0,reps:0
- });
- core.save();core.toast('Flashcard saved for review.');
+ };
+ d.cards.push(created);
+ if(core.save()===false){d.cards=d.cards.filter(c=>c!==created);core.toast('Could not save flashcard. Free storage and retry.');return;}
+ core.toast('Flashcard saved for review.');
 }
 async function action(name){
  const row=selected;
