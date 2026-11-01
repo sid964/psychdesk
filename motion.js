@@ -82,23 +82,23 @@
   }
   origin=null;
  }
- function resetDrag(){if(!drag)return;const d=drag;drag=null;d.el.style.removeProperty('transform');d.el.style.removeProperty('animation');try{d.handle.releasePointerCapture(d.id);}catch{}}
+ function resetDrag(){if(!drag)return;const d=drag;drag=null;d.el.style.removeProperty('transform');try{d.handle.releasePointerCapture(d.id);}catch{}}
  function closed(){resetDrag();origin=null;}
  document.addEventListener('click',e=>{const note=e.target.closest?.('.note-card');origin=note?{rect:rect(note),time:performance.now()}:null;},true);
  document.addEventListener('pointerdown',e=>{
   const handle=e.target.closest?.('.motion-sheet-handle');
   if(!handle||e.pointerType==='pen'||!e.isPrimary||e.button!==0||preference.matches||innerWidth>649)return;
-  const el=handle.closest('.modal');if(!el)return;e.preventDefault();byElement.get(el)?.cancel();el.style.setProperty('animation','none','important');
-  drag={el,handle,id:e.pointerId,y:e.clientY,time:performance.now(),dy:0};handle.setPointerCapture(e.pointerId);
+  const el=handle.closest('.modal');if(!el)return;e.preventDefault();const offset=Math.max(0,new DOMMatrixReadOnly(getComputedStyle(el).transform).m42);byElement.get(el)?.cancel();el.style.setProperty('animation','none','important');el.style.transform='translateY('+offset+'px)';
+  drag={el,handle,id:e.pointerId,y:e.clientY,offset,time:performance.now(),dy:offset};handle.setPointerCapture(e.pointerId);
  });
- document.addEventListener('pointermove',e=>{if(!drag||drag.id!==e.pointerId)return;drag.dy=Math.max(0,e.clientY-drag.y);drag.el.style.transform='translateY('+drag.dy+'px)';});
+ document.addEventListener('pointermove',e=>{if(!drag||drag.id!==e.pointerId)return;drag.dy=Math.max(0,drag.offset+e.clientY-drag.y);drag.el.style.transform='translateY('+drag.dy+'px)';});
  function endDrag(e){
   if(!drag||drag.id!==e.pointerId)return;const d=drag,velocity=d.dy/Math.max(1,performance.now()-d.time);drag=null;
   try{d.handle.releasePointerCapture(d.id);}catch{}
   const dismiss=e.type==='pointerup'&&(d.dy>90||(d.dy>30&&velocity>.65));
   const animation=play(d.el,dismiss?[{transform:'translateY('+d.dy+'px)',opacity:1},{transform:'translateY('+Math.min(innerHeight,600)+'px)',opacity:0}]:spring('translateY',d.dy,0),{duration:dismiss?180:300,easing:dismiss?ease:'linear'});
   d.el.style.removeProperty('transform');
-  const finish=()=>{d.el.style.removeProperty('animation');if(dismiss&&d.el===document.querySelector('#modalRoot .modal'))window.PsychDeskCore.closeModal();};
+  const finish=()=>{if(dismiss&&d.el===document.querySelector('#modalRoot .modal'))window.PsychDeskCore.closeModal();};
   if(animation)animation.addEventListener('finish',finish,{once:true});else finish();
  }
  document.addEventListener('pointerup',endDrag);document.addEventListener('pointercancel',endDrag);

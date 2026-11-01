@@ -39,6 +39,7 @@ module.exports=async(page,record,dest)=>{
   const handle=page.locator('.motion-sheet-handle');const box=await handle.boundingBox();
   await page.mouse.move(box.x+box.width/2,box.y+12);await page.mouse.down();await page.mouse.move(box.x+box.width/2,box.y+28,{steps:3});await page.mouse.up();
   await page.waitForTimeout(350);assert.equal(await page.locator('#taskForm').count(),1,'Short sheet drag springs back');
+  assert.equal(await page.locator('.modal').evaluate(el=>el.getAnimations().filter(a=>a.playState==='running').length),0,'Snap-back must not replay modal entrance');
   const next=await handle.boundingBox();await page.mouse.move(next.x+next.width/2,next.y+12);await page.mouse.down();await page.mouse.move(next.x+next.width/2,next.y+152,{steps:8});await page.mouse.up();
   await page.waitForTimeout(250);assert.equal(await page.locator('#taskForm').count(),0,'Deliberate handle drag dismisses');
  }else await page.keyboard.press('Escape');
