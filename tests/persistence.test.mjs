@@ -300,6 +300,6 @@ test('ink handwriting pages survive account save, reload, and JSON import withou
  assert.equal(fresh.core.getData().notes[0].body,'Keep this intact');
  const old=backup();
  fresh.core.replaceData(old);
- assert.deepEqual(fresh.core.getData().inkNotes,[]);
+ assert.equal(fresh.core.getData().inkNotes.length,0);
  assert.throws(()=>fresh.core.replaceData({...old,inkNotes:'malformed'}),/Invalid/);
 });
