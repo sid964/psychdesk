@@ -1,5 +1,5 @@
 /* One motion language. AMOLED colors and layout remain owned by the theme. */
-:root{--motion-ease:cubic-bezier(.22,1,.36,1);--motion-spring:cubic-bezier(.2,.85,.25,1.12);--motion-fast:160ms;--motion-settle:320ms}
+:root{--motion-ease:cubic-bezier(.22,1,.36,1);--motion-spring:cubic-bezier(.2,.85,.25,1.12);--motion-fast:120ms;--motion-small:180ms;--motion-settle:280ms;--motion-enter:380ms;--motion-dialog:300ms}
 html{scroll-behavior:auto}
 /* Replace legacy entrance/idle loops; updates must not replay page entrances. */
 .page-enter :is(.hero,.stat,.subject-card,.note-card,.banner,.card),.rail-motif,.dashboard-page .hero::after{animation:none!important}
@@ -20,7 +20,7 @@ html{scroll-behavior:auto}
 .rail-trail{transition:opacity 180ms ease,transform 280ms var(--motion-ease);transform:translateX(-4px)}
 .rail-link.active .rail-trail{transform:translateX(0)}
 #modalRoot .modal-overlay{animation:motion-veil 220ms ease both!important}
-#modalRoot .modal{animation:motion-dialog 360ms var(--motion-ease) both!important;transform-origin:50% 70%}
+#modalRoot .modal{animation:motion-dialog var(--motion-dialog) var(--motion-ease) both!important;transform-origin:50% 70%}
 @keyframes motion-veil{from{opacity:0}to{opacity:1}}
 @keyframes motion-dialog{from{opacity:0;transform:translateY(22px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
 @media(max-width:649px){#modalRoot .modal{animation-name:motion-sheet!important;transform-origin:50% 100%}}
@@ -37,6 +37,25 @@ html{scroll-behavior:auto}
  #modalRoot .modal,#modalRoot .modal-overlay,.chart-bar{animation:none!important}
 }
 .sticky-hero h1 span{animation:none!important}
-.setup-panel{animation:motion-dialog 360ms var(--motion-ease) both}
+.setup-panel{animation:motion-dialog var(--motion-dialog) var(--motion-ease) both}
 .sticky-paper{transition:transform 320ms var(--motion-ease),box-shadow 320ms ease}
 @media(prefers-reduced-motion:reduce){.setup-panel{animation:none!important}}
+/* Depth is restricted to existing motifs. No fullscreen animated layer. */
+.desktop-rail::before{transform:translateY(var(--motion-depth,0px));pointer-events:none}
+.dashboard-page .hero::after{transform:translateY(calc(var(--motion-depth,0px) * -1));pointer-events:none}
+.app-shell{transition:opacity 220ms ease}
+body.modal-open .app-shell{opacity:.72}
+html[data-theme=dark] #modalRoot .modal-overlay{background:rgba(0,0,0,.56);backdrop-filter:none;-webkit-backdrop-filter:none}
+.motion-scrolled .topbar{border-bottom-color:var(--line)}
+.modal-header{position:relative}
+.motion-sheet-handle{display:none}
+@media(max-width:649px){
+ .motion-sheet-handle{display:block;position:absolute;top:-24px;left:50%;width:64px;height:24px;transform:translateX(-50%);touch-action:none;cursor:grab}
+ .motion-sheet-handle::after{content:'';position:absolute;left:14px;right:14px;top:7px;height:4px;border-radius:8px;background:currentColor;opacity:.25}
+ .modal:has(.motion-sheet-handle){padding-top:32px}
+}
+/* Keyboard and reduced-motion users retain immediate state/focus feedback. */
+@media(prefers-reduced-motion:reduce){
+ .app-shell{transition:none}
+ .desktop-rail::before,.dashboard-page .hero::after{transform:none!important}
+}

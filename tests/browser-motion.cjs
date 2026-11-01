@@ -16,6 +16,13 @@ module.exports=async(page,record,dest)=>{
  assert.equal(settled,0,'Workspace becomes still after arriving');
  const replay=await page.evaluate(()=>{window.PsychDeskCore.render();return document.querySelector('.hero').getAnimations().length});
  assert.equal(replay,0,'Ordinary updates do not replay navigation');
+ await page.evaluate(()=>window.scrollTo({top:600,behavior:'instant'}));
+ await page.waitForTimeout(120);
+ const position=await page.evaluate(()=>scrollY);
+ await page.evaluate(()=>{window.PsychDeskCore.setTab('notes');window.PsychDeskCore.setTab('planner')});
+ assert.ok(Math.abs(await page.evaluate(()=>scrollY)-position)<2,'Returning restores section scroll');
+ assert.equal(await page.locator('.hero').evaluate(el=>el.getAnimations().length),0,'Revisits do not replay the hero');
+ await page.screenshot({path:path.join(dest,'motion-scroll-'+record.viewport+'.png')});
  await page.evaluate(()=>{for(const tab of ['notes','focus','planner','notes'])window.PsychDeskCore.setTab(tab)});
  assert.match(await page.locator('#main h1').innerText(),/Study notes/);
  await page.emulateMedia({reducedMotion:'reduce'});
@@ -28,7 +35,19 @@ module.exports=async(page,record,dest)=>{
  await page.locator('[data-action="newTask"]').first().click();
  await page.waitForTimeout(450);
  await page.screenshot({path:path.join(dest,'motion-dialog-'+record.viewport+'.png')});
+ if(record.viewport===390){
+  const handle=page.locator('.motion-sheet-handle');const box=await handle.boundingBox();
+  await page.mouse.move(box.x+box.width/2,box.y+12);await page.mouse.down();await page.mouse.move(box.x+box.width/2,box.y+28,{steps:3});await page.mouse.up();
+  await page.waitForTimeout(350);assert.equal(await page.locator('#taskForm').count(),1,'Short sheet drag springs back');
+  const next=await handle.boundingBox();await page.mouse.move(next.x+next.width/2,next.y+12);await page.mouse.down();await page.mouse.move(next.x+next.width/2,next.y+152,{steps:8});await page.mouse.up();
+  await page.waitForTimeout(250);assert.equal(await page.locator('#taskForm').count(),0,'Deliberate handle drag dismisses');
+ }else await page.keyboard.press('Escape');
+ await page.evaluate(()=>{window.PsychDeskCore.openModal('First','<input aria-label=First>');window.PsychDeskCore.closeModal();window.PsychDeskCore.openModal('Second','<input aria-label=Second>')});
+ await page.waitForTimeout(400);assert.equal(await page.locator('.modal').getAttribute('aria-label'),'Second');
  await page.keyboard.press('Escape');
+ assert.equal(await page.locator('.app-shell').getAttribute('inert'),null);
+ const frameTimes=await page.evaluate(()=>new Promise(resolve=>{const deltas=[];let previous=0;function sample(t){if(previous)deltas.push(t-previous);previous=t;if(deltas.length===40)resolve(deltas);else requestAnimationFrame(sample)}requestAnimationFrame(sample)}));
+ frameTimes.sort((a,b)=>a-b);record.frameTiming={medianMs:frameTimes[20],p95Ms:frameTimes[38],environment:'headless CI, idle display cadence only'};
  await page.evaluate(()=>window.PsychDeskCore.setTab('today'));
- record.motion={entrance:true,settles:true,noReplay:true,rapidNavigation:true,reducedMotion:true,amoled:true};
+ record.motion={entrance:true,settles:true,noReplay:true,rapidNavigation:true,reducedMotion:true,amoled:true,scrollContinuity:true,sheetGesture:record.viewport===390,interruptedDialogs:true};
 };
