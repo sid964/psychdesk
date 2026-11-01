@@ -319,5 +319,10 @@ document.addEventListener('keydown',event=>{
 });
 window.addEventListener('psychdesk:tab-changed',e=>{if(e.tab==='ink')requestAnimationFrame(mount);else current=null;});
 window.addEventListener('psychdesk:session-reset',()=>{activeId='';current=null;history=[];redo=[];mountedCanvas=null;});
-window.PsychDeskInk={render,mount,drawStroke,canvasPoint,svgSource,nearSegment,eraserHit,saveChange,getActive:active};
+function openPage(id){
+ if(!notes().some(n=>n.id===id))return false;
+ activeId=id;current=null;history=[];redo=[];
+ core.setTab('ink');return true;
+}
+window.PsychDeskInk={render,mount,drawStroke,canvasPoint,svgSource,nearSegment,eraserHit,saveChange,getActive:active,openPage};
 })();
