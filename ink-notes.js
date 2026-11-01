@@ -91,9 +91,15 @@ function canvasPoint(e,canvas){
  const pressure=e.pointerType==='pen'?Math.max(0.10,Math.min(1,Number(e.pressure)||0.5)):0.55;
  return [x,y,Math.round(pressure*100)];
 }
+function safePoint(input){
+ if(!Array.isArray(input)||input.length<2)return null;
+ const x=Number(input[0]),y=Number(input[1]),p=Number(input[2]);
+ if(!Number.isFinite(x)||!Number.isFinite(y))return null;
+ return [Math.max(0,Math.min(PAGE_WIDTH,Math.round(x))),Math.max(0,Math.min(PAGE_HEIGHT,Math.round(y))),Number.isFinite(p)?Math.max(0,Math.min(100,Math.round(p))):50];
+}
 function drawStroke(ctx,stroke){
- const points=stroke?.p;
- if(!Array.isArray(points)||!points.length)return;
+ const points=Array.isArray(stroke?.p)?stroke.p.map(safePoint).filter(Boolean):[];
+ if(!points.length)return;
  const width=Math.max(1,Math.min(30,Number(stroke.w)||2.5));
  ctx.save();ctx.globalAlpha=stroke.kind==='highlighter'?0.28:1;
  ctx.strokeStyle=stroke.c||COLORS[0];ctx.fillStyle=stroke.c||COLORS[0];ctx.lineCap='round';ctx.lineJoin='round';
@@ -123,7 +129,7 @@ function nearSegment(p,a,b,distance){
 }
 function eraserHit(note,point){
  for(let i=note.strokes.length-1;i>=0;i--){
-  const s=note.strokes[i],p=s.p||[];
+  const s=note.strokes[i],p=Array.isArray(s?.p)?s.p.map(safePoint).filter(Boolean):[];
   if(p.some((v,j)=>nearSegment(point,v,p[Math.min(j+1,p.length-1)],Math.max(13,(Number(s.w)||3)/2+9))))return i;
  }
  return -1;
@@ -240,7 +246,7 @@ function svgSource(n){
  const lines='<rect width="100%" height="100%" fill="#fff"/>'+
  Array.from({length:Math.floor(PAGE_HEIGHT/42)},(_,i)=>'<line x1="0" y1="'+(i+1)*42+'" x2="'+PAGE_WIDTH+'" y2="'+(i+1)*42+'" stroke="#e9eef1" stroke-width="1"/>').join('');
  const paths=(n.strokes||[]).map(s=>{
-  const valid=COLORS.includes(s.c)?s.c:COLORS[0],pts=(s.p||[]);
+  const valid=COLORS.includes(s?.c)?s.c:COLORS[0],pts=Array.isArray(s?.p)?s.p.map(safePoint).filter(Boolean):[];
   const width=Math.max(1,Math.min(30,Number(s.w)||3));
   if(!pts.length)return '';
   if(pts.length===1)return '<circle cx="'+pts[0][0]+'" cy="'+pts[0][1]+'" r="'+width/2+'" fill="'+valid+'" opacity="'+(s.kind==='highlighter'?'0.28':'1')+'"/>';
