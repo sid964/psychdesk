@@ -145,9 +145,11 @@ function addHighlight(){
  if(note===null)return;
  const data=getData();
  if(!Array.isArray(data.pdfHighlights))data.pdfHighlights=[];
- data.pdfHighlights.push({id:core.id(),materialId:materialKey(),page:selected.page,text:selected.text.slice(0,3000),rects:selected.rects,
- note:String(note).slice(0,400),createdAt:new Date().toISOString()});
- core.save();const el=$('#readerHighlights');
+ const created={id:core.id(),materialId:materialKey(),page:selected.page,text:selected.text.slice(0,3000),rects:selected.rects,
+ note:String(note).slice(0,400),createdAt:new Date().toISOString()};
+ data.pdfHighlights.push(created);
+ if(core.save()===false){data.pdfHighlights=data.pdfHighlights.filter(v=>v!==created);core.toast('Highlight was not saved. Free browser storage and retry.');return;}
+ const el=$('#readerHighlights');
  if(el)el.innerHTML=owned().slice().reverse().map(annotationCard).join('');
  const c=$('#readerHighlightCount');if(c)c.textContent=String(owned().length);
  visibleMarks();core.toast('Highlight saved');
