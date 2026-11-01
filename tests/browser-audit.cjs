@@ -49,18 +49,24 @@ async function main(){
     const overview=await inspect(page);
     await page.screenshot({path:path.join(dest,'overview-'+vp.width+'.png'),fullPage:true,animations:'disabled'});
     const record={origin,viewport:vp.width,overview,errors};
+    async function openTab(tab){
+     let selector='[data-tab="'+tab+'"]:visible';
+     if(!await page.locator(selector).count()){
+      await page.locator('[data-tab="tools"]:visible').first().click();
+     }
+     await page.locator(selector).first().click();
+    }
     if(!live){
      const navigation=[];
      for(const tab of ['notes','dictionary','research','timeline','tools']){
-      const button=page.locator('[data-tab="'+tab+'"]').first();
-      await button.click({force:true});
+      await openTab(tab);
       await page.waitForTimeout(70);
       navigation.push({tab,heading:await page.locator('#main h1').first().textContent().catch(()=>''),visible:await page.locator('#main').isVisible()});
       if(['notes','dictionary','research'].includes(tab))await page.screenshot({path:path.join(dest,tab+'-'+vp.width+'.png'),fullPage:false,animations:'disabled'});
      }
      record.navigation=navigation;
      if(vp.width===360){
-      await page.locator('[data-tab="notes"]').first().click({force:true});
+      await openTab('notes');
       await page.locator('[data-cloud="newNote"]').first().click();
       await page.locator('#noteForm [name="body"]').fill('Browser audit draft should persist on close.');
       await page.locator('.modal-header .close').click();
@@ -70,6 +76,15 @@ async function main(){
      if(!record.autosaveOnClose&&vp.width===360)fatal=true;
      if(navigation.some(n=>!n.visible||!n.heading))fatal=true;
      if(overview.overflow>6||overview.headerOverlap.length)fatal=true;
+    }
+    if(live){
+     const navigation=[];
+     for(const tab of ['notes','dictionary','research','timeline','tools']){
+      await openTab(tab);
+      navigation.push({tab,heading:await page.locator('#main h1').first().textContent().catch(()=>''),visible:await page.locator('#main').isVisible()});
+      if(['notes','dictionary','research'].includes(tab))await page.screenshot({path:path.join(dest,tab+'-'+vp.width+'.png'),fullPage:false,animations:'disabled'});
+     }
+     record.navigation=navigation;
     }
     results.push(record);
    }catch(error){fatal=!live;results.push({origin,viewport:vp.width,error:String(error).slice(0,350),errors});}
