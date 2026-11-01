@@ -92,7 +92,7 @@ async function main(){
       // Replacing an open editor with a new dialog must also flush the last keystroke.
       await page.locator('[data-cloud="newNote"]').first().click();
       await page.locator('#noteForm [name="body"]').fill('Switching dialogs also preserves my last sentence.');
-      await page.locator('#settingsBtn').click();
+      await page.evaluate(()=>window.PsychDeskCore.settings()); // A second dialog can replace the editor programmatically.
       record.autosaveOnModalReplace=await page.evaluate(()=>
        window.PsychDeskCore.getData().notes.some(n=>n.body==='Switching dialogs also preserves my last sentence.'));
       await page.locator('.modal-header .close').click();
@@ -174,6 +174,9 @@ async function main(){
   if(!live){
    const recovery=await browser.newContext({viewport:{width:390,height:844},acceptDownloads:true});
    const page=await recovery.newPage();
+   // Isolate local-data recovery from the asynchronous Firebase onAuthStateChanged(null)
+   // transition, which would legitimately switch a signed-out browser to guest storage.
+   await page.route('**/firebase-sync.js*',route=>route.fulfill({status:200,contentType:'application/javascript',body:''}));
    const corrupted='{"version":2,"notes":[{"title":"do not erase"}],BROKEN';
    await page.addInitScript(raw=>{
     localStorage.setItem('psychdesk-last-user-v3','alice');
