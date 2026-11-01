@@ -33,16 +33,20 @@ function submit(sticky){
  const text=String($('#quickNoteText')?.value||'').trim(),custom=String($('#quickNoteTitle')?.value||'').trim(),subjectId=String($('#quickNoteSubject')?.value||'');
  if(!text){core.toast('Write a thought first.');$('#quickNoteText')?.focus();return;}
  const title=custom||titleFrom(text),d=core.getData();
+ const field=sticky?'stickies':'notes',previous=Array.isArray(d[field])?d[field].slice():[];
  if(sticky){
   const pages=window.PsychDeskStickies?.generate?.(text,title,subjectId,'cream',core.id(),[]);
   if(!pages?.length){core.toast('Could not create a sticky. Try again.');return;}
-  d.stickies ||= [];d.stickies.push(...pages);
+  d.stickies=[...previous,...pages];
  }else{
-  d.notes ||= [];
   const now=new Date().toISOString();
-  d.notes.unshift({id:core.id(),title:title.slice(0,140),body:text,tags:'',subjectId,createdAt:now,updatedAt:now});
+  d.notes=[{id:core.id(),title:title.slice(0,140),body:text,tags:'',subjectId,createdAt:now,updatedAt:now},...previous];
  }
- core.save();
+ if(core.save()===false){
+  d[field]=previous;remember();
+  core.toast('Save failed. Your quick-note draft is still available here.');
+  return;
+ }
  try{sessionStorage.removeItem(draftKey())}catch{}
  core.closeModal();core.toast(sticky?'Sticky saved to your wall':'Note saved to your notebook');
 }
