@@ -22,10 +22,11 @@ This follow-up audit builds on the earlier data-recovery work. It retains the ex
 | Notebook feedback | Closing a saved note or quick capture left an outdated list on screen | The visible notebook refreshes immediately |
 | AMOLED/navigation | A pseudo-element selector left green metric accents; A–Z wrapped in the sidebar | Explicit neutral accents, stable icon sizing and a consistent desktop action cluster |
 | Initial view | Closing a nonexistent dialog could focus/scroll the page during auth restoration | Focus returns only when a real dialog was open |
+| Handwriting input | Canvas handlers attached a frame late, and tool changes/erasing replaced the editor | Input attaches immediately; tool selection and erase retain the mounted canvas and its scroll state |
 
 ## Validation
 
-- 117 Node tests pass locally, including 14 additional behavior regressions.
+- 119 Node tests pass locally, including 16 additional behavior regressions.
 - The complete Node suite and syntax checks run in GitHub Actions for every push and pull request.
 - The browser workflow runs Chromium and Firefox at 320, 360, 390, 768, 1024 and 1440 CSS pixels. It navigates all primary areas, exercises real study CRUD, failed writes, notebook deletion, keyboard dialogs, timer refresh/recovery, handwriting undo/redo/erase, and corruption recovery.
 - Populated boards are checked against their visible bounds. Browser runtime errors, header overlap, unwanted initial scrolling, wrong AMOLED metric accents, and document-wide horizontal overflow fail the audit.
