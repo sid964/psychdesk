@@ -62,11 +62,18 @@ async function main(){
     }
     if(!live){
      const navigation=[];
-     for(const tab of ['notes','dictionary','research','timeline','tools']){
+     for(const tab of ['planner','notes','ink','dictionary','research','timeline','tools']){
       await openTab(tab);
       await page.waitForTimeout(70);
       navigation.push({tab,heading:await page.locator('#main h1').first().textContent().catch(()=>''),visible:await page.locator('#main').isVisible()});
-      if(['notes','dictionary','research'].includes(tab))await page.screenshot({path:path.join(dest,tab+'-'+vp.width+'.png'),fullPage:false,animations:'disabled'});
+      if(['planner','notes','ink','dictionary','research'].includes(tab))await page.screenshot({path:path.join(dest,tab+'-'+vp.width+'.png'),fullPage:false,animations:'disabled'});
+      if(tab==='planner'){
+       const grid=await page.locator('.subject-grid').evaluate(el=>getComputedStyle(el).gridTemplateColumns);
+       const watermark=await page.locator('.subject-card').first().evaluate(el=>getComputedStyle(el,'::after').display);
+       record.planner={grid,watermark};
+       if(vp.width<=390&&grid.split(' ').length!==1)fatal=true;
+       if(watermark!=='none')fatal=true;
+      }
      }
      record.navigation=navigation;
      if(vp.width===360){
@@ -88,6 +95,26 @@ async function main(){
       record.lightThemeContrastPass=record.quickNoteLight?.title!=='rgb(237, 237, 237)'&&
        record.quickNoteLight?.foreground!=='rgb(238, 238, 238)'&&record.quickNoteLight?.visible;
       if(!record.lightThemeContrastPass)fatal=true;
+      // Exercise the new stylus workspace without signing in or uploading anything.
+      await page.locator('#themeToggle').click();
+      await openTab('ink');
+      await page.locator('[data-ink="new"]').first().click();
+      const inkCanvas=page.locator('#inkCanvas');
+      await inkCanvas.scrollIntoViewIfNeeded();
+      const bound=await inkCanvas.boundingBox();
+      if(!bound)throw Error('Ink canvas is not visible.');
+      const px=Math.max(12,bound.x+35),py=bound.y+35;
+      await page.mouse.move(px,py);
+      await page.mouse.down();
+      await page.mouse.move(px+18,py+23,{steps:6});
+      await page.mouse.move(px+30,py+35,{steps:5});
+      await page.mouse.up();
+      record.inkStrokeSaved=await page.evaluate(()=>window.PsychDeskCore.getData().inkNotes?.[0]?.strokes?.length===1);
+      await page.screenshot({path:path.join(dest,'ink-drawing-360.png'),animations:'disabled'});
+      await page.reload({waitUntil:'domcontentloaded'});
+      await page.waitForSelector('#main .hero');
+      record.inkPersistedAcrossRefresh=await page.evaluate(()=>window.PsychDeskCore.getData().inkNotes?.[0]?.strokes?.length===1);
+      if(!record.inkStrokeSaved||!record.inkPersistedAcrossRefresh)fatal=true;
 
      }
      if(!record.autosaveOnClose&&vp.width===360)fatal=true;
