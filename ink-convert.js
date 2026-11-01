@@ -228,5 +228,5 @@ window.addEventListener('psychdesk:tab-changed',event=>{
  if(event.tab!=='ink'){requestVersion++;clearBusy();}
 });
 window.addEventListener('psychdesk:session-reset',()=>{requestVersion++;clearBusy();});
-window.PsychDeskInkConvert={panel,runRecognition,recognizeNative,groupLines,safePoints,renderLineImage,saveNeatText,toStudyNote,MODEL_ID};
+window.PsychDeskInkConvert={panel,runRecognition,recognizeNative,localTrOCR,groupLines,safePoints,renderLineImage,saveNeatText,toStudyNote,MODEL_ID};
 })();
