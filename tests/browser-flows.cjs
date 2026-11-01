@@ -1,6 +1,7 @@
 'use strict';
 const assert=require('node:assert/strict');
-module.exports=async function auditFlows(page,openTab,record){
+const path=require('node:path');
+module.exports=async function auditFlows(page,openTab,record,dest){
  page.on('dialog',dialog=>dialog.accept());
  await openTab('planner');
  await page.locator('[data-action="newTask"]').first().click();
@@ -59,6 +60,7 @@ module.exports=async function auditFlows(page,openTab,record){
   const clipped=await page.locator(surface).evaluate((el,selector)=>{const b=el.getBoundingClientRect();return [...el.querySelectorAll(selector)].filter(n=>{const r=n.getBoundingClientRect();return r.left<b.left-1||r.top<b.top-1||r.right>b.right+1||r.bottom>b.bottom+1}).length},selector);
   assert.equal(clipped,0,tab+' cards must stay inside the visible surface');
   record.populatedSurfaces.push({tab,clipped});
+  await page.screenshot({path:path.join(dest,tab+'-populated-'+record.viewport+'.png'),animations:'disabled'});
  }
  await page.locator('#themeToggle').click();
  assert.equal(await page.locator('.mind-board').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(243, 241, 236)');

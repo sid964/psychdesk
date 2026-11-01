@@ -32,7 +32,9 @@ async function inspect(page){
   }).slice(0,12).map(el=>({tag:el.tagName,cls:String(el.className).slice(0,65),left:Math.round(el.getBoundingClientRect().left),right:Math.round(el.getBoundingClientRect().right)}));
   const rail=document.querySelector('.desktop-rail');
   const railStyle=rail?getComputedStyle(rail):null;
-  return {width:W,overflow:document.documentElement.scrollWidth-W,
+  const skip=document.querySelector('.skip-link')?.getBoundingClientRect();
+  const accent=getComputedStyle(document.querySelector('.stat'),'::before').backgroundColor;
+  return {width:W,scrollY,skipVisible:!!skip&&skip.bottom>0,accent,overflow:document.documentElement.scrollWidth-W,
    rail:{overflowX:railStyle?.overflowX||'',width:rail?.clientWidth||0,scrollWidth:rail?.scrollWidth||0},
    headerOverlap:intersections,
    headerScroll:Math.round((header?.scrollWidth||0)-(header?.clientWidth||0)),
@@ -133,10 +135,17 @@ async function main(){
       await openTab('ink');
       await page.locator('[data-ink="new"]').first().click();
       const inkCanvas=page.locator('#inkCanvas');
-      await inkCanvas.scrollIntoViewIfNeeded();
+      // Firefox and Chromium center oversized canvases differently. Align the scroll
+      // container, then draw on the actual visible paper using real pointer input.
+      async function showPaper(){
+       await inkCanvas.evaluate(canvas=>{const sc=canvas.closest('.ink-page-scroll');sc.scrollTo({top:0,left:0,behavior:'instant'});sc.scrollIntoView({block:'start',behavior:'instant'});});
+      }
+      await showPaper();
       const bound=await inkCanvas.boundingBox();
       if(!bound)throw Error('Ink canvas is not visible.');
-      const px=Math.max(12,bound.x+35),py=bound.y+35;
+      const px=bound.x+35,py=bound.y+35;
+      const hit=await page.evaluate(({x,y})=>document.elementFromPoint(x,y)?.id,{x:px,y:py});
+      if(hit!=='inkCanvas')throw Error('Test pointer is outside visible paper: '+hit);
       await page.mouse.move(px,py);
       await page.mouse.down();
       await page.mouse.move(px+18,py+23,{steps:6});
@@ -148,7 +157,7 @@ async function main(){
       await page.locator('[data-ink="redo"]').click();
       record.inkRedo=await page.evaluate(()=>window.PsychDeskCore.getData().inkNotes?.[0]?.strokes?.length===1);
       await page.locator('[data-ink="eraser"]').click();
-      await page.locator('#inkCanvas').scrollIntoViewIfNeeded();
+      await showPaper();
       const eraseBounds=await page.locator('#inkCanvas').boundingBox();
       await page.mouse.click(Math.max(12,eraseBounds.x+40),eraseBounds.y+42);
       record.inkErase=await page.evaluate(()=>window.PsychDeskCore.getData().inkNotes?.[0]?.strokes?.length===0);
@@ -172,9 +181,10 @@ async function main(){
      }
      if((!record.autosaveOnClose||!record.autosaveOnModalReplace)&&vp.width===360)fatal=true;
      if(navigation.some(n=>!n.visible||!n.heading))fatal=true;
-     if(vp.width===390||vp.width===1440)await auditFlows(page,openTab,record);
+     if(vp.width===390||vp.width===1440)await auditFlows(page,openTab,record,dest);
      if(errors.length)fatal=true;
-     if(overview.overflow>6||overview.headerOverlap.length)fatal=true;
+     if(overview.overflow>6||overview.headerOverlap.length||overview.scrollY!==0||overview.skipVisible)fatal=true;
+     if(overview.accent!=='rgb(146, 146, 146)')fatal=true;
      if(vp.width>=900&&overview.rail.overflowX!=='hidden'&&overview.rail.overflowX!=='clip')fatal=true;
     }
     if(live){
@@ -187,7 +197,7 @@ async function main(){
      record.navigation=navigation;
     }
     results.push(record);
-   }catch(error){if(!live)fatal=true;results.push({origin,viewport:vp.width,error:String(error).slice(0,350),errors});}
+   }catch(error){if(!live)fatal=true;await page.screenshot({path:path.join(dest,'failure-'+vp.width+'.png'),animations:'disabled'}).catch(()=>{});results.push({origin,viewport:vp.width,error:String(error).slice(0,600),errors});}
    finally{await context.close();}
   }
   // A separate browser profile deliberately starts with unreadable account storage.

@@ -109,3 +109,12 @@ body.modal-open{overflow:hidden}
  .section-row{gap:12px;flex-wrap:wrap}
  .section-row h2{min-width:0}
 }
+
+/* Pseudo-elements cannot be matched inside :is(); keep the AMOLED accent neutral. */
+html[data-theme=dark] .stat::before{background:#929292!important;background-image:none!important}
+@media(min-width:900px){
+ .topbar .account-chip,.topbar .icon-btn{margin-left:0}
+ .rail-symbol{flex-shrink:0;white-space:nowrap;width:22px;display:inline-flex;align-items:center;justify-content:center;line-height:1}
+ .rail-link[data-tab=dictionary] .rail-symbol{font-size:12px;letter-spacing:-.5px}
+}
+@media(max-width:570px){.bottom-nav .nav-item{font-size:10px}}

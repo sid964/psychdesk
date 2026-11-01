@@ -206,10 +206,11 @@ function openModal(title,content){
  const x=$('.modal input:not([type="hidden"]),.modal textarea,.modal select')||$('.modal');x?.focus();
 }
 function closeModal(options={}){
+ const wasOpen=Boolean($('#modalRoot').innerHTML);
  const event=new Event('psychdesk:before-modal-close');event.discardNoteId=options?.discardNoteId;
  window.dispatchEvent(event);$('#modalRoot').innerHTML='';
  document.querySelector('.app-shell')?.removeAttribute?.('inert');document.body.classList.remove('modal-open');
- if(modalOpener?.isConnected)modalOpener.focus();else main.focus();modalOpener=null;
+ if(wasOpen){if(modalOpener?.isConnected)modalOpener.focus();else main.focus();}modalOpener=null;
 }
 document.addEventListener('keydown',event=>{
  if(event.key!=='Tab')return;
