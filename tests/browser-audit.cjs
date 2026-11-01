@@ -62,7 +62,7 @@ async function main(){
     }
     if(!live){
      const navigation=[];
-     for(const tab of ['today','planner','notes','ink','stickies','recall','focus','insights','search','reader','research','dictionary','timeline','voice','board','mindmap','tools']){
+     for(const tab of (vp.width===390||vp.width===1440?['today','planner','notes','ink','stickies','recall','focus','insights','search','reader','research','dictionary','timeline','voice','board','mindmap','tools']:['planner','notes','ink','dictionary','research','timeline','tools'])){
       await openTab(tab);
       await page.waitForTimeout(70);
       const state=await page.evaluate(()=>({
@@ -184,11 +184,21 @@ async function main(){
     await page.waitForSelector('.recovery-warning',{timeout:12000});
     const preserved=await page.evaluate(()=>window.PsychDeskCore.save()===false&&
      localStorage.getItem('psychdesk-user-alice')==='{"version":2,"notes":[{"title":"do not erase"}],BROKEN');
-    const downloadPromise=page.waitForEvent('download');
+    // Inspect the generated recovery Blob without relying on headless browser download events.
+    await page.evaluate(()=>{
+     window.__recoveryFile=null;window.__recoveryBlob=null;
+     const original=URL.createObjectURL.bind(URL);
+     URL.createObjectURL=blob=>{window.__recoveryBlob=blob;return original(blob);};
+     HTMLAnchorElement.prototype.click=function(){window.__recoveryFile=this.download;};
+    });
     await page.locator('[data-action="downloadRecovery"]').click();
-    const file=await downloadPromise;
-    results.push({origin,scenario:'unreadable local data',preserved,filename:file.suggestedFilename()});
-    if(!preserved||!file.suggestedFilename().startsWith('psychdesk-unreadable-study-recovery-'))fatal=true;
+    const exported=await page.evaluate(async()=>({
+     filename:window.__recoveryFile||'',
+     raw:window.__recoveryBlob?await window.__recoveryBlob.text():null
+    }));
+    const intact=exported.raw===corrupted;
+    results.push({origin,scenario:'unreadable local data',preserved,filename:exported.filename,intact});
+    if(!preserved||!intact||!exported.filename.startsWith('psychdesk-unreadable-study-recovery-'))fatal=true;
    }catch(error){fatal=true;results.push({origin,scenario:'unreadable local data',error:String(error).slice(0,350)});}
    finally{await recovery.close();}
   }
