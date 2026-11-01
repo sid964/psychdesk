@@ -32,7 +32,7 @@ const localDay=(d=new Date())=>`${d.getFullYear()}-${String(d.getMonth()+1).padS
 const addDays=(date,n)=>{let [y,m,d]=date.split('-').map(Number),x=new Date(y,m-1,d);x.setDate(x.getDate()+n);return localDay(x)};
 const niceDay=s=>{if(!s)return 'No due date';let [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d).toLocaleDateString(undefined,{month:'short',day:'numeric'})};
 const today=()=>localDay();
-const save=(silent=false)=>{try{localStorage.setItem(storageKey,JSON.stringify(data));if(!silent)window.dispatchEvent(new Event('psychdesk:changed'))}catch(e){toast('Storage is unavailable. Export your data to avoid losing it.')}};
+const save=(silent=false)=>{try{localStorage.setItem(storageKey,JSON.stringify(data));if(!silent)window.dispatchEvent(new Event('psychdesk:changed'));return true}catch(e){toast('Storage is unavailable. Export your data to avoid losing it.');return false}};
 const subj=i=>data.subjects.find(s=>s.id===i);
 const subjName=i=>subj(i)?.name||'General';
 const subjColor=i=>subj(i)?.color||'#668d83';
