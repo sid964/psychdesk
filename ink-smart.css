@@ -1,0 +1,48 @@
+/* Neat handwriting and transcription review — no rasterization or source replacement. */
+.ink-smart-launch{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;padding:15px;border:1px solid var(--line,#353535);border-radius:15px;background:var(--paper,#111)}
+.ink-smart-launch p{font-size:11px;line-height:1.65;color:var(--muted,#aaa);margin:0;flex:1;min-width:170px}
+.ink-smart-open{border-radius:11px;border:1px solid #e6e6e6;background:#efefef;color:#111;min-height:47px;padding:12px 17px;font:750 12px 'DM Sans',sans-serif}
+.ink-smart-open:hover{background:white}
+.ink-smart-panel{border:1px solid var(--line,#343434);border-radius:19px;padding:clamp(15px,2vw,25px);background:var(--paper,#111);display:grid;gap:18px;min-width:0}
+.ink-smart-head{display:flex;align-items:start;justify-content:space-between;gap:15px}
+.ink-smart-head strong{font:550 25px 'Fraunces',Georgia,serif}
+.ink-smart-head p{color:var(--muted,#aaa);line-height:1.7;font-size:12px;margin:7px 0 0}
+.ink-smart-close{flex:none;border:1px solid var(--line,#444);border-radius:11px;background:transparent;color:var(--ink,#eee);min-width:37px;min-height:37px}
+.ink-smart-status{font-size:12px;line-height:1.6;color:var(--muted,#aaa);margin:0;padding:12px 14px;background:var(--bg,#080808);border:1px solid var(--line,#353535);border-radius:11px;overflow-wrap:anywhere}
+.ink-smart-status[data-state=success]{border-color:#777}
+.ink-smart-status[data-state=warn]{border-color:#84624c}
+.ink-smart-columns{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:17px;align-items:stretch}
+.ink-smart-edit{display:grid;gap:10px;align-content:start}
+.ink-smart-edit label,.ink-smart-preview-label{font:750 11px 'DM Sans',sans-serif;letter-spacing:.25px;color:var(--ink,#eee)}
+.ink-smart-edit textarea{width:100%;min-width:0;min-height:258px;border:1px solid var(--line,#444);background:var(--bg,#080808);color:var(--ink,#eee);padding:16px;border-radius:13px;resize:vertical;font:500 14px/1.8 'DM Sans',sans-serif}
+.ink-smart-edit small{font-size:10px;line-height:1.6;color:var(--muted,#aaa)}
+.ink-smart-paper-wrap{min-width:0;display:grid;gap:10px;align-content:start}
+.ink-smart-paper{min-height:270px;background:#fff;color:#1e2b37;border:1px solid #e1e3e6;border-radius:10px;padding:20px 22px;box-shadow:0 8px 26px #0002;font:500 29px/1.37 'Caveat','Segoe Print',cursive;white-space:pre-wrap;overflow-wrap:anywhere;background-image:repeating-linear-gradient(to bottom,transparent,transparent 39px,#e7ecf1 40px);background-position:0 16px}
+.ink-smart-actions{display:flex;align-items:center;flex-wrap:wrap;gap:9px}
+.ink-smart-actions button{min-height:42px;font-size:12px;padding:11px 15px;border-radius:10px;flex:1;min-width:150px}
+.ink-smart-privacy{font-size:10px;line-height:1.75;color:var(--muted,#aaa);margin:0}
+.note-ink-source{display:inline-flex;align-items:center;border:1px solid var(--line,#444);border-radius:9px;background:transparent;color:var(--ink,#eee);font-size:11px;padding:8px 12px;min-height:37px}
+@media(max-width:780px){
+ .ink-smart-columns{grid-template-columns:1fr}
+ .ink-smart-edit textarea{min-height:180px}
+ .ink-smart-paper{min-height:230px}
+ .ink-smart-actions button{min-width:140px}
+}
+@media(max-width:490px){
+ .ink-smart-launch{padding:13px}
+ .ink-smart-open{width:100%}
+ .ink-smart-privacy{font-size:10px}
+ .ink-smart-panel{padding:15px;gap:14px}
+ .ink-smart-paper{font-size:26px;padding:15px;min-height:210px}
+ .ink-smart-actions button{width:100%;flex:1 0 100%}
+}
+html[data-theme=dark] .ink-smart-launch,html[data-theme=dark] .ink-smart-panel{
+ background:#111!important;color:#f0f0f0!important;border-color:#353535!important
+}
+html[data-theme=dark] .ink-smart-open{background:#ededed!important;color:#111!important;border-color:#ededed!important}
+html[data-theme=dark] .ink-smart-edit textarea,html[data-theme=dark] .ink-smart-status{
+ background:#0a0a0a!important;color:#eee!important;border-color:#404040!important
+}
+html[data-theme=dark] .ink-smart-paper{background-color:#fff!important;color:#1e2b37!important;border-color:#dedede!important}
+html[data-theme=dark] .ink-smart-head strong,html[data-theme=dark] .ink-smart-edit label,html[data-theme=dark] .ink-smart-preview-label{color:#f3f3f3!important}
+html[data-theme=dark] .ink-smart-close,html[data-theme=dark] .note-ink-source{background:#181818!important;color:#eee!important;border-color:#444!important}
