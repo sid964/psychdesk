@@ -158,8 +158,16 @@ async function main(){
       record.inkRedo=await page.evaluate(()=>window.PsychDeskCore.getData().inkNotes?.[0]?.strokes?.length===1);
       await page.locator('[data-ink="eraser"]').click();
       await showPaper();
-      const eraseBounds=await page.locator('#inkCanvas').boundingBox();
-      await page.mouse.click(Math.max(12,eraseBounds.x+40),eraseBounds.y+42);
+      // Use a point from the saved vector, not a guessed offset near the line.
+      const erasePoint=await inkCanvas.evaluate(canvas=>{
+       const r=canvas.getBoundingClientRect(),points=window.PsychDeskInk.getActive().strokes[0].p;
+       const p=points[Math.floor(points.length/2)];
+       const x=r.left+p[0]/canvas.width*r.width,y=r.top+p[1]/canvas.height*r.height;
+       return {x,y,hit:document.elementFromPoint(x,y)?.id};
+      });
+      record.inkEraseTarget=erasePoint;
+      if(erasePoint.hit!=='inkCanvas')throw Error('Saved stroke is outside the visible paper: '+JSON.stringify(erasePoint));
+      await page.mouse.click(erasePoint.x,erasePoint.y);
       record.inkErase=await page.evaluate(()=>window.PsychDeskCore.getData().inkNotes?.[0]?.strokes?.length===0);
       await page.locator('[data-ink="undo"]').click();
       record.inkUndoErase=await page.evaluate(()=>window.PsychDeskCore.getData().inkNotes?.[0]?.strokes?.length===1);
