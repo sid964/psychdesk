@@ -28,7 +28,11 @@ async function inspect(page){
    const st=getComputedStyle(el),r=el.getBoundingClientRect();
    return st.display!=='none'&&st.visibility!=='hidden'&&r.width>20&&(r.left< -5||r.right>W+6);
   }).slice(0,12).map(el=>({tag:el.tagName,cls:String(el.className).slice(0,65),left:Math.round(el.getBoundingClientRect().left),right:Math.round(el.getBoundingClientRect().right)}));
-  return {width:W,overflow:document.documentElement.scrollWidth-W,headerOverlap:intersections,
+  const rail=document.querySelector('.desktop-rail');
+  const railStyle=rail?getComputedStyle(rail):null;
+  return {width:W,overflow:document.documentElement.scrollWidth-W,
+   rail:{overflowX:railStyle?.overflowX||'',width:rail?.clientWidth||0,scrollWidth:rail?.scrollWidth||0},
+   headerOverlap:intersections,
    headerScroll:Math.round((header?.scrollWidth||0)-(header?.clientWidth||0)),
    offscreen,theme:document.documentElement.dataset.theme,
    loaded:Boolean(window.PsychDeskCore),heading:document.querySelector('#main h1')?.textContent?.trim()||''};
@@ -89,6 +93,7 @@ async function main(){
      if(!record.autosaveOnClose&&vp.width===360)fatal=true;
      if(navigation.some(n=>!n.visible||!n.heading))fatal=true;
      if(overview.overflow>6||overview.headerOverlap.length)fatal=true;
+     if(vp.width>=900&&overview.rail.overflowX!=='hidden'&&overview.rail.overflowX!=='clip')fatal=true;
     }
     if(live){
      const navigation=[];
