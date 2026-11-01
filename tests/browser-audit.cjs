@@ -72,6 +72,19 @@ async function main(){
       await page.locator('.modal-header .close').click();
       const copy=await page.evaluate(()=>window.PsychDeskCore.getData().notes);
       record.autosaveOnClose=copy.some(n=>n.body==='Browser audit draft should persist on close.');
+      await page.locator('#themeToggle').click();
+      await page.locator('#quickNoteBtn').click();
+      record.quickNoteLight=await page.evaluate(()=>{
+       const title=getComputedStyle(document.querySelector('.quick-capture-heading p')).color;
+       const text=getComputedStyle(document.querySelector('#quickNoteText'));
+       return {title,foreground:text.color,background:text.backgroundColor,visible:Boolean(document.querySelector('#quickNoteText'))};
+      });
+      await page.screenshot({path:path.join(dest,'quick-note-light-360.png'),animations:'disabled'});
+      await page.locator('.modal-header .close').click();
+      record.lightThemeContrastPass=record.quickNoteLight?.title!=='rgb(237, 237, 237)'&&
+       record.quickNoteLight?.foreground!=='rgb(238, 238, 238)'&&record.quickNoteLight?.visible;
+      if(!record.lightThemeContrastPass)fatal=true;
+
      }
      if(!record.autosaveOnClose&&vp.width===360)fatal=true;
      if(navigation.some(n=>!n.visible||!n.heading))fatal=true;
