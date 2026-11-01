@@ -21,6 +21,31 @@ const uidKey = (part) => `psychdesk-${part}-${user?.uid || 'guest'}`;
 const valid = (d) => Boolean(d && [1,2].includes(d.version) && ['subjects','tasks','cards','sessions'].every(k=>Array.isArray(d[k])) && (!d.notes || Array.isArray(d.notes)) && (!d.stickies || Array.isArray(d.stickies)) && ['inkNotes','research','boardItems','mindMaps','pdfHighlights','dictionaryEntries','dictionaryBookmarks','timelineEvents','timelineBookmarks','timelineAnnotations'].every(k=>!d[k]||Array.isArray(d[k])));
 const isCustomized = (d) => Boolean(d.tasks?.length || d.cards?.length || d.notes?.length || d.stickies?.length || d.inkNotes?.length || d.research?.length || d.boardItems?.length || d.mindMaps?.length || d.pdfHighlights?.length || d.dictionaryEntries?.length || d.dictionaryBookmarks?.length || d.timelineEvents?.length || d.timelineBookmarks?.length || d.timelineAnnotations?.length || d.sessions?.length || d.reviews?.length || Number(d.preferences?.dailyGoal||60)!==60 || d.subjects?.length!==5 || d.subjects?.some((s,i)=>s.name!==['Cognitive Psychology','Biological Psychology','Developmental Psychology','Social Psychology','Research Methods'][i]));
 const sanitize = (raw) => {if(!valid(raw))throw Error('Cloud data is not a valid PsychDesk backup'); return JSON.parse(JSON.stringify(raw));};
+// Firestore rejects arrays directly containing arrays, e.g. ink strokes.p =
+// [[x, y, pressure], ...]. Store the complete account snapshot as JSON text so
+// handwriting, mind maps and any future nested data survive losslessly.
+// Also read historical map-shaped records, without deleting or rewriting them.
+const CLOUD_DATA_FORMAT='psychdesk-json-v1';
+function encodeCloudData(raw){
+ const clean=sanitize(raw);
+ safeSize(clean);
+ return {dataFormat:CLOUD_DATA_FORMAT,dataJson:JSON.stringify(clean)};
+}
+function decodeCloudData(record){
+ if(!record||typeof record!=='object')throw Error('Cloud record is missing study data.');
+ if(Object.prototype.hasOwnProperty.call(record,'dataJson')){
+  if(record.dataFormat!==CLOUD_DATA_FORMAT||typeof record.dataJson!=='string')
+   throw Error('Unsupported cloud study format. Local data was not changed.');
+  if(new TextEncoder().encode(record.dataJson).length>limitBytes)
+   throw Error('Cloud study data exceeds the safe sync size. Local data was not changed.');
+  let parsed;
+  try{parsed=JSON.parse(record.dataJson)}
+  catch{throw Error('Could not decode cloud study data. Local data was not changed.');}
+  return sanitize(parsed);
+ }
+ // Original per-account Firestore documents stored the snapshot as a map.
+ return sanitize(record.data);
+}
 const safeSize = (d) => { const bytes = new TextEncoder().encode(JSON.stringify(d)).length; if(bytes > limitBytes) throw Error(`Study data is ${Math.round(bytes/1024)} KB; this version's cloud sync supports up to ${Math.floor(limitBytes/1024)} KB. Export a JSON backup before continuing.`); };
 const refFor = () => doc(db,'users',user.uid,'psychdesk','state');
 const notePending = v => { dirty=v; if(user) localStorage.setItem(uidKey('pending'), v?'1':'0'); };
@@ -115,7 +140,7 @@ async function initializeAccount(){
  const snapshot=await getDocFromServer(refFor());
  if(epoch!==accountEpoch)return;
  const remote=snapshot.exists()?snapshot.data():null;
- if(remote && !valid(remote.data))throw Error('Cloud record is not a compatible PsychDesk data snapshot');
+ const remoteData=remote?decodeCloudData(remote):null;
  const remoteRev=Number(remote?.revision)||0;
  if(remote){
   if(dirty && revision !== remoteRev){
@@ -124,7 +149,7 @@ async function initializeAccount(){
    signedInReady=true;await syncNow();
   }else{
    revision=remoteRev; localStorage.setItem(uidKey('revision'),String(revision));
-   core.replaceData(sanitize(remote.data)); notePending(false);signedInReady=true;updateBadge();
+   core.replaceData(remoteData); notePending(false);signedInReady=true;updateBadge();
   }
  }else{
   // First sign-in on an empty account: offer migration of old offline study data.
@@ -147,23 +172,27 @@ async function initializeAccount(){
   if(dirty||document.querySelector('#modalRoot .modal')){
    conflict=true;updateBadge();return;
   }
-  if(!valid(record.data)){conflict=true;lastError='Invalid remote data';updateBadge();return;}
+  let incoming;
+  try{incoming=decodeCloudData(record);}
+  catch(e){conflict=true;lastError=messageError(e);updateBadge();return;}
   revision=nextRev;localStorage.setItem(uidKey('revision'),String(revision));
-  core.replaceData(sanitize(record.data));updateBadge();
+  core.replaceData(incoming);updateBadge();
  }, e=>{if(epoch!==accountEpoch)return;lastError='Realtime sync stopped: '+messageError(e);updateBadge();});
 }
 async function syncNow(force=false){
  if(!user||!signedInReady||busy||(!dirty&&!force)||conflict&&!force)return;
  if(!navigator.onLine){lastError='Offline';updateBadge();return;}
- const startUid=user.uid, epoch=accountEpoch, ref=refFor(), oldRev=revision, seq=changes, newData=sanitize(core.getData());
- try { safeSize(newData); } catch(e){lastError=messageError(e);updateBadge();return;}
+ const startUid=user.uid, epoch=accountEpoch, ref=refFor(), oldRev=revision, seq=changes;
+ let encoded;
+ try{encoded=encodeCloudData(core.getData());}
+ catch(e){lastError=messageError(e);updateBadge();return;}
  busy=true;lastError='';updateBadge();
  try {
   const newRev=await runTransaction(db,async tx=>{
    const snap=await tx.get(ref),currentRev=snap.exists()?Number(snap.data().revision)||0:0;
    if(!force && currentRev!==oldRev) throw Error('CHANGED_ELSEWHERE');
    const nr=currentRev+1;
-   tx.set(ref,{revision:nr,data:newData,updatedAt:serverTimestamp()});
+   tx.set(ref,{revision:nr,...encoded,updatedAt:serverTimestamp()});
    return nr;
   });
   if(epoch!==accountEpoch||!user||user.uid!==startUid)return;
@@ -183,8 +212,9 @@ async function reloadCloud(){
  if(dirty && !confirm('This device has UNSYNCED changes. Loading the cloud will replace them. Export a JSON backup first if you want to preserve them. Continue?'))return;
  const epoch=accountEpoch;
  try{
-  const snap=await getDocFromServer(refFor());if(epoch!==accountEpoch)return;if(!snap.exists()||!valid(snap.data().data))throw Error('No compatible data saved to cloud yet.');
-  core.replaceData(sanitize(snap.data().data));revision=Number(snap.data().revision)||0;localStorage.setItem(uidKey('revision'),String(revision));
+  const snap=await getDocFromServer(refFor());if(epoch!==accountEpoch)return;if(!snap.exists())throw Error('No compatible data saved to cloud yet.');
+  const restored=decodeCloudData(snap.data());
+  core.replaceData(restored);revision=Number(snap.data().revision)||0;localStorage.setItem(uidKey('revision'),String(revision));
   notePending(false);conflict=false;lastError='';signedInReady=true;core.closeModal();notify('Latest cloud progress loaded');
  }catch(e){if(epoch===accountEpoch)alert('Could not reload: '+messageError(e));}
 }
