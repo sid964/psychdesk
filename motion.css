@@ -1,0 +1,42 @@
+/* One motion language. AMOLED colors and layout remain owned by the theme. */
+:root{--motion-ease:cubic-bezier(.22,1,.36,1);--motion-spring:cubic-bezier(.2,.85,.25,1.12);--motion-fast:160ms;--motion-settle:320ms}
+html{scroll-behavior:auto}
+/* Replace legacy entrance/idle loops; updates must not replay page entrances. */
+.page-enter :is(.hero,.stat,.subject-card,.note-card,.banner,.card),.rail-motif,.dashboard-page .hero::after{animation:none!important}
+:is(button,a,input,textarea,select,summary){-webkit-tap-highlight-color:transparent}
+:is(button,.resource-item,.note-card,.ink-note-card,summary){transition:transform var(--motion-settle) var(--motion-spring),background-color 180ms ease,border-color 180ms ease,color 180ms ease,box-shadow 220ms ease!important}
+:is(button,.resource-item,.note-card,.ink-note-card):active:not(:disabled){transform:scale(.97);transition-duration:80ms!important}
+:is(button,a):focus-visible{transition:outline-offset 160ms ease;outline-offset:4px}
+:is(input,textarea,select){transition:border-color 180ms ease,box-shadow 220ms ease!important}
+:is(.stat,.subject-card,.note-card,.material-card,.resource-item,.ink-note-card,.tool-card){transition:transform 320ms var(--motion-ease),border-color 200ms ease,box-shadow 320ms ease!important}
+@media(hover:hover) and (pointer:fine){
+ :is(.subject-card,.note-card,.material-card,.resource-item,.ink-note-card,.tool-card):hover{transform:translateY(-3px)}
+ :is(.primary,.secondary,.pill-btn,.icon-btn,.mini-btn):hover:not(:disabled){transform:translateY(-1px)}
+ :is(.primary,.secondary,.pill-btn,.icon-btn,.mini-btn):active:not(:disabled){transform:translateY(0) scale(.97)}
+ .rail-link:hover{transform:translateX(2px)}
+}
+.nav-ico,.rail-symbol{transition:transform 320ms var(--motion-spring),background-color 180ms ease!important}
+.rail-link.active .rail-symbol{transform:scale(1.08)}
+.rail-trail{transition:opacity 180ms ease,transform 280ms var(--motion-ease);transform:translateX(-4px)}
+.rail-link.active .rail-trail{transform:translateX(0)}
+#modalRoot .modal-overlay{animation:motion-veil 220ms ease both!important}
+#modalRoot .modal{animation:motion-dialog 360ms var(--motion-ease) both!important;transform-origin:50% 70%}
+@keyframes motion-veil{from{opacity:0}to{opacity:1}}
+@keyframes motion-dialog{from{opacity:0;transform:translateY(22px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(max-width:649px){#modalRoot .modal{animation-name:motion-sheet!important;transform-origin:50% 100%}}
+@keyframes motion-sheet{from{opacity:.4;transform:translateY(36px)}to{opacity:1;transform:translateY(0)}}
+#toast{transition:opacity 180ms ease,transform 300ms var(--motion-ease)!important;transform:translate(-50%,10px)}
+#toast.show{transform:translate(-50%,0)}
+.progress>div{transform-origin:left;transition:width 420ms var(--motion-ease)!important}
+.chart-bar{transform-origin:bottom;animation:motion-chart 480ms var(--motion-ease) both}
+@keyframes motion-chart{from{transform:scaleY(.08)}to{transform:scaleY(1)}}
+/* Direct manipulation must never lag behind a finger or stylus. */
+:is(.board-card,.mind-node,.ink-paper,.ink-paper canvas){transition:none!important}
+@media(prefers-reduced-motion:reduce){
+ *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+ #modalRoot .modal,#modalRoot .modal-overlay,.chart-bar{animation:none!important}
+}
+.sticky-hero h1 span{animation:none!important}
+.setup-panel{animation:motion-dialog 360ms var(--motion-ease) both}
+.sticky-paper{transition:transform 320ms var(--motion-ease),box-shadow 320ms ease}
+@media(prefers-reduced-motion:reduce){.setup-panel{animation:none!important}}

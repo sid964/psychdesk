@@ -1,0 +1,34 @@
+'use strict';
+const assert=require('node:assert/strict');
+const path=require('node:path');
+module.exports=async(page,record,dest)=>{
+ await page.emulateMedia({reducedMotion:'no-preference'});
+ const initial=await page.evaluate(()=>{
+  const core=window.PsychDeskCore;core.setTab('planner');
+  return {installed:!!window.PsychDeskMotion,running:document.querySelector('#main').getAnimations({subtree:true}).length,black:getComputedStyle(document.body).backgroundColor};
+ });
+ assert.equal(initial.installed,true);assert.ok(initial.running>0,'Navigation has finite entrance motion');
+ assert.equal(initial.black,'rgb(0, 0, 0)','AMOLED remains true black');
+ await page.waitForTimeout(80);
+ await page.screenshot({path:path.join(dest,'motion-arriving-'+record.viewport+'.png')});
+ await page.waitForTimeout(600);
+ const settled=await page.evaluate(()=>document.querySelector('#main').getAnimations({subtree:true}).filter(a=>a.playState==='running').length);
+ assert.equal(settled,0,'Workspace becomes still after arriving');
+ const replay=await page.evaluate(()=>{window.PsychDeskCore.render();return document.querySelector('.hero').getAnimations().length});
+ assert.equal(replay,0,'Ordinary updates do not replay navigation');
+ await page.evaluate(()=>{for(const tab of ['notes','focus','planner','notes'])window.PsychDeskCore.setTab(tab)});
+ assert.match(await page.locator('#main h1').innerText(),/Study notes/);
+ await page.emulateMedia({reducedMotion:'reduce'});
+ await page.evaluate(()=>window.PsychDeskCore.setTab('planner'));
+ assert.equal(await page.evaluate(()=>document.querySelector('#main').getAnimations({subtree:true}).length),0,'Reduced motion disables movement');
+ await page.locator('[data-action="newTask"]').first().click();
+ assert.equal(await page.locator('.modal').evaluate(el=>getComputedStyle(el).animationName),'none');
+ await page.keyboard.press('Escape');
+ await page.emulateMedia({reducedMotion:'no-preference'});
+ await page.locator('[data-action="newTask"]').first().click();
+ await page.waitForTimeout(450);
+ await page.screenshot({path:path.join(dest,'motion-dialog-'+record.viewport+'.png')});
+ await page.keyboard.press('Escape');
+ await page.evaluate(()=>window.PsychDeskCore.setTab('today'));
+ record.motion={entrance:true,settles:true,noReplay:true,rapidNavigation:true,reducedMotion:true,amoled:true};
+};
