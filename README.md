@@ -1,5 +1,16 @@
 # PsychDesk — subject study library
 
+## Ink → Neat handwriting → editable study notes (November 2026)
+
+Ink Notes now has a **Make it neat** action under the handwriting canvas. This does three things without replacing the original pen strokes:
+
+1. **Smooth strokes:** an optional, default-on **Smooth pen strokes** control draws slightly smoother curves while keeping the original pressure-aware coordinates and vector export.
+2. **Recognize and preview:** pressing **Make it neat** first tries the browser's built-in English Handwriting Recognition API (if the operating system supports it). Otherwise, the app lazily downloads and runs the MIT-licensed [TrOCR small handwritten model](https://huggingface.co/Xenova/trocr-small-handwritten) through [Transformers.js 3.8.1](https://huggingface.co/docs/transformers.js/v3.8.1/en/installation). The on-device fallback works line by line, and needs a **substantial model download (potentially more than 100 MB)** the first time; it is not preloaded on startup. No private handwriting is posted to an OCR endpoint and no Firebase Blaze/backend setup is required. Some browsers, networks, hardware or model files may not support inference; in those cases the review box remains editable for manual transcription.
+3. **Confirm before saving:** recognized words appear in a normal textarea alongside a **neat handwritten preview** rendered using the Caveat handwriting font. The preview is freshly typeset text, **not a perfect geometric reconstruction of the user's exact writing style**. The student corrects misspelled psychology terms and may explicitly save the neat version back to the ink page, or convert the corrected text to an ordinary editable notebook note. The typed note preserves the original page ID through `inkSourceId` and the existing subject, and can be edited in the normal note editor. If a linked typed note already exists, overwrite requires confirmation. Existing raw handwriting is never deleted.
+
+**Important limitations:** handwriting OCR is imperfect, particularly for psychology nomenclature, cramped text, multi-line layouts, abbreviations, and diagrams. The TrOCR fallback is a line-level model with approximate visual line grouping and up to 22 lines per run; it is not a full scientific document or equation transcription service. The recognized text is displayed for review rather than silently asserting accuracy. Conversions obey existing Firestore-snapshot size safeguards. Model downloads come from jsDelivr/Hugging Face but recognition executes inside the local browser and only begins on explicit button press. There are no paid API keys or background external data uploads. Do not use unreviewed OCR as a source of academic facts.
+
+
 ## Ink Notes — stylus handwriting and planner redesign (November 2026)
 
 A dedicated **Ink Notes** workspace is available in the desktop sidebar and mobile bottom navigation. Sticky Notes remain accessible from **Tools** and the existing notebook.
