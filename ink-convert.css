@@ -68,3 +68,8 @@ html[data-theme=dark] .ink-neat-preview{background-color:#fdfcf8!important;color
 .ink-polish-shortcut:hover{border-color:#888}
 html[data-theme=dark] .ink-polish-shortcut{background:#202020!important;color:#eee!important;border-color:#4c4c4c!important}
 @media(max-width:650px){.ink-polish-shortcut{flex:1;min-width:158px}}
+
+/* Linked notebook entries keep their handwriting source one tap away. */
+.note-ink-source{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:8px 11px;margin-left:7px;font:700 11px 'DM Sans',sans-serif;color:var(--ink,#ddd);background:transparent;border:1px solid var(--line,#454545);border-radius:9px}
+html[data-theme=dark] .note-ink-source{background:#191919!important;color:#ededed!important;border-color:#444!important}
+@media(max-width:490px){.note-ink-source{margin-top:6px;margin-left:0}}
