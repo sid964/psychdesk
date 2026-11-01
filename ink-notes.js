@@ -12,7 +12,7 @@ const data=()=>core.getData();
 const notes=()=>Array.isArray(data().inkNotes)?data().inkNotes:(data().inkNotes=[]);
 const bytes=value=>new TextEncoder().encode(JSON.stringify(value)).length;
 const titleOf=n=>String(n?.title||'Untitled page').slice(0,90);
-let activeId='',tool='pen',color=COLORS[0],penOnly=true,current=null,redo=[],lastPointer=null;
+let activeId='',tool='pen',color=COLORS[0],penOnly=true,current=null,history=[],redo=[],lastPointer=null;
 let saving=false,mountedCanvas=null;
 function active(){return notes().find(n=>n.id===activeId)||null;}
 function announce(message){const node=document.querySelector('#inkStatus');if(node)node.textContent=message;}
@@ -21,7 +21,7 @@ function newPage(){
  const note={id:core.id(),title:'Untitled ink note',subjectId:'',createdAt:now,updatedAt:now,strokes:[]};
  d.inkNotes=notes().concat(note);
  if(bytes(d)>WORKSPACE_LIMIT){d.inkNotes.pop();core.toast('Study storage is almost full. Export notes first.');return;}
- core.save();activeId=note.id;redo=[];core.render();announce('New page ready. Handwriting saves after every stroke.');
+ core.save();activeId=note.id;history=[];redo=[];core.render();announce('New page ready. Handwriting saves after every stroke.');
 }
 function saveChange(note,rollback,description){
  if(!note)return false;
@@ -62,7 +62,7 @@ function renderEditor(note){
  '<button class="ink-tool'+(tool==='highlighter'?' selected':'')+'" aria-pressed="'+(tool==='highlighter')+'" data-ink="highlighter" type="button">▰ Highlighter</button>'+
  '<button class="ink-tool'+(tool==='eraser'?' selected':'')+'" aria-pressed="'+(tool==='eraser')+'" data-ink="eraser" type="button">⌫ Eraser</button></div>'+
  '<div class="ink-palette" aria-label="Pen colors">'+COLORS.map(c=>'<button type="button" data-ink="color" data-color="'+c+'" class="ink-color'+(color===c?' selected':'')+'" aria-label="Choose '+({'#20252b':'black','#326a99':'blue','#b65252':'red','#52735e':'green'}[c])+' ink" aria-pressed="'+(color===c)+'" style="--ink-choice:'+c+'"><span></span></button>').join('')+'</div>'+
- '<div class="ink-toolset"><button type="button" data-ink="undo" aria-label="Undo last stroke"'+(note.strokes.length?'':' disabled')+'>↶ Undo</button>'+
+ '<div class="ink-toolset"><button type="button" data-ink="undo" aria-label="Undo last stroke"'+(note.strokes.length||history.length?'':' disabled')+'>↶ Undo</button>'+
  '<button type="button" data-ink="redo" aria-label="Redo stroke"'+(redo.length?'':' disabled')+'>↷ Redo</button></div>'+
  '</div>'+
  '<div class="ink-writing-options"><label class="ink-toggle"><input type="checkbox" id="inkPenOnly"'+(penOnly?' checked':'')+'> Pen-first mode <span>Ignore finger touches and palms</span></label>'+
@@ -135,22 +135,24 @@ function addPoint(e,canvas){
 }
 function inkStart(e){
  const canvas=e.currentTarget,n=active();
- if(!n||current||!e.isPrimary||e.button>0)return;
+ if(!n||current||!e.isPrimary)return;
+ const effectiveTool=e.pointerType==='pen'&&(e.button===5||(e.buttons&32))?'eraser':tool;
+ if(e.button>0&&effectiveTool!=='eraser')return;
  if(penOnly&&e.pointerType==='touch')return; // palm rejection when enabled
  if(e.pointerType==='touch'&&lastPointer?.type==='pen'&&Date.now()-lastPointer.time<800)return;
  e.preventDefault();
  lastPointer={type:e.pointerType,time:Date.now()};
  canvas.setPointerCapture?.(e.pointerId);
- if(tool==='eraser'){
+ if(effectiveTool==='eraser'){
   const at=eraserHit(n,canvasPoint(e,canvas));
   if(at!==-1){
    const removed=n.strokes.splice(at,1)[0];
-   if(saveChange(n,()=>n.strokes.splice(at,0,removed),'Erased a stroke')){redo=[];core.render();}
+   if(saveChange(n,()=>n.strokes.splice(at,0,removed),'Erased a stroke')){history.push({type:'erase',stroke:removed,index:at});redo=[];core.render();}
    else repaint();
   }
   return;
  }
- current={pointerId:e.pointerId,ownerId:n.id,stroke:{kind:tool,c:color,w:tool==='highlighter'?24:3.2,p:[]}};
+ current={pointerId:e.pointerId,ownerId:n.id,stroke:{kind:effectiveTool,c:color,w:effectiveTool==='highlighter'?24:3.2,p:[]}};
  addPoint(e,canvas);repaint();
 }
 function inkMove(e){
@@ -165,18 +167,17 @@ function inkEnd(e){
  if(!current||current.pointerId!==e.pointerId)return;
  const n=active(),stroke=current.stroke;current=null;
  if(!n||n.id!==activeId)return;
- addPoint(e,e.currentTarget); // current is null, so append final position below
  const point=canvasPoint(e,e.currentTarget),prior=stroke.p.at(-1);
  if(!prior||prior[0]!==point[0]||prior[1]!==point[1])stroke.p.push(point);
  if(stroke.p.length){
   n.strokes.push(stroke);
-  if(saveChange(n,()=>n.strokes.pop(),'Stroke saved'))redo=[];
+  if(saveChange(n,()=>n.strokes.pop(),'Stroke saved')){history.push({type:'add',stroke,index:n.strokes.length-1});redo=[];}
  }
  repaint();updateUndoButtons();
 }
 function updateUndoButtons(){
  const note=active();
- for(const [kind,disabled] of [['undo',!note?.strokes?.length],['redo',!redo.length]]){
+ for(const [kind,disabled] of [['undo',!note?.strokes?.length&&!history.length],['redo',!redo.length]]){
   const b=document.querySelector('[data-ink="'+kind+'"]');if(b)b.disabled=disabled;
  }
 }
@@ -197,14 +198,39 @@ function commitMeta(field,value){
  if(!saveChange(n,()=>{n[field]=before;},'Page updated'))core.render();
 }
 function undo(){
- const n=active();if(!n?.strokes.length)return;
- const s=n.strokes.pop();
- if(saveChange(n,()=>n.strokes.push(s),'Undone')){redo.push(s);repaint();updateUndoButtons();}
+ const n=active();if(!n)return;
+ const action=history.pop()||(n.strokes.length?{type:'add',stroke:n.strokes.at(-1),index:n.strokes.length-1}:null);
+ if(!action)return;
+ let rollback;
+ if(action.type==='add'){
+  const i=n.strokes.lastIndexOf(action.stroke);
+  if(i<0)return;
+  n.strokes.splice(i,1);
+  rollback=()=>n.strokes.splice(i,0,action.stroke);
+ }else{
+  const i=Math.min(action.index,n.strokes.length);
+  n.strokes.splice(i,0,action.stroke);
+  rollback=()=>n.strokes.splice(i,1);
+ }
+ if(saveChange(n,rollback,'Undone')){redo.push(action);repaint();updateUndoButtons();}
+ else history.push(action);
 }
 function redoStroke(){
  const n=active();if(!n||!redo.length)return;
- const s=redo.pop();n.strokes.push(s);
- if(saveChange(n,()=>n.strokes.pop(),'Redone')){repaint();updateUndoButtons();}else redo.push(s);
+ const action=redo.pop();
+ let rollback;
+ if(action.type==='add'){
+  const i=Math.min(action.index,n.strokes.length);
+  n.strokes.splice(i,0,action.stroke);
+  rollback=()=>n.strokes.splice(i,1);
+ }else{
+  const i=n.strokes.indexOf(action.stroke);
+  if(i<0){redo.push(action);return;}
+  n.strokes.splice(i,1);
+  rollback=()=>n.strokes.splice(i,0,action.stroke);
+ }
+ if(saveChange(n,rollback,'Redone')){history.push(action);repaint();updateUndoButtons();}
+ else redo.push(action);
 }
 function svgSource(n){
  const escXml=value=>String(value??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -248,8 +274,8 @@ function onClick(event){
  event.preventDefault();
  const action=el.dataset.ink;
  if(action==='new')return newPage();
- if(action==='open'){activeId=el.dataset.id;redo=[];core.render();return;}
- if(action==='back'){current=null;activeId='';redo=[];core.render();return;}
+ if(action==='open'){activeId=el.dataset.id;history=[];redo=[];core.render();return;}
+ if(action==='back'){current=null;activeId='';history=[];redo=[];core.render();return;}
  if(['pen','highlighter','eraser'].includes(action)){tool=action;core.render();return;}
  if(action==='color'){if(COLORS.includes(el.dataset.color)){color=el.dataset.color;if(tool==='eraser')tool='pen';core.render();}return;}
  if(action==='undo')return undo();
@@ -259,7 +285,7 @@ function onClick(event){
  if(action==='delete'){
   const n=active();if(!n||!confirm('Delete this ink page permanently? Export a copy first if needed.'))return;
   data().inkNotes=notes().filter(x=>x.id!==n.id);
-  core.save();activeId='';redo=[];core.render();core.toast('Ink page deleted.');
+  core.save();activeId='';history=[];redo=[];core.render();core.toast('Ink page deleted.');
  }
 }
 document.addEventListener('click',onClick);
@@ -272,6 +298,6 @@ document.addEventListener('keydown',event=>{
  if(event.target?.id==='inkTitle'&&event.key==='Enter'){event.preventDefault();event.target.blur();}
 });
 window.addEventListener('psychdesk:tab-changed',e=>{if(e.tab==='ink')requestAnimationFrame(mount);else current=null;});
-window.addEventListener('psychdesk:session-reset',()=>{activeId='';current=null;redo=[];mountedCanvas=null;});
+window.addEventListener('psychdesk:session-reset',()=>{activeId='';current=null;history=[];redo=[];mountedCanvas=null;});
 window.PsychDeskInk={render,mount,drawStroke,canvasPoint,svgSource,nearSegment,eraserHit,saveChange,getActive:active};
 })();
