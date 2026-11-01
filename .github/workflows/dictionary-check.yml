@@ -15,6 +15,8 @@ on:
       - 'firebase-config.js'
       - 'firebase.json'
       - 'note-history.js'
+      - 'ink-notes.js'
+      - 'tests/ink-notes.test.cjs'
       - 'psychology-connections.js'
       - 'psychology-academic.js'
       - 'study-connections.css'
@@ -28,6 +30,8 @@ on:
       - 'index.html'
       - 'sw.js'
       - 'tests/psychology-dictionary.test.cjs'
+      - 'ink-notes.js'
+      - 'tests/ink-notes.test.cjs'
       - '.github/workflows/dictionary-check.yml'
 jobs:
   verify:
@@ -47,10 +51,12 @@ jobs:
           node --check psychology-connections.js
           node --check psychology-academic.js
           node --check note-history.js
+          node --check ink-notes.js
+          node --check app.js
           node --check cloud.js
           node --check firebase-sync.js
           node --check drive-persistence.js
           node --check functions/index.js
           node --check functions/lib/oauth.js
       - name: Test psychology dictionary data and loading
-        run: node --test tests/psychology-dictionary.test.cjs tests/psychology-online.test.cjs tests/study-extensions.test.cjs tests/drive-persistence.test.cjs functions/tests/oauth.test.cjs
+        run: node --test tests/psychology-dictionary.test.cjs tests/psychology-online.test.cjs tests/study-extensions.test.cjs tests/drive-persistence.test.cjs tests/ink-notes.test.cjs functions/tests/oauth.test.cjs
