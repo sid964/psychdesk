@@ -110,6 +110,18 @@ async function main(){
       await page.mouse.move(px+30,py+35,{steps:5});
       await page.mouse.up();
       record.inkStrokeSaved=await page.evaluate(()=>window.PsychDeskCore.getData().inkNotes?.[0]?.strokes?.length===1);
+      await page.locator('[data-ink="undo"]').click();
+      record.inkUndo=await page.evaluate(()=>window.PsychDeskCore.getData().inkNotes?.[0]?.strokes?.length===0);
+      await page.locator('[data-ink="redo"]').click();
+      record.inkRedo=await page.evaluate(()=>window.PsychDeskCore.getData().inkNotes?.[0]?.strokes?.length===1);
+      await page.locator('[data-ink="eraser"]').click();
+      await page.locator('#inkCanvas').scrollIntoViewIfNeeded();
+      const eraseBounds=await page.locator('#inkCanvas').boundingBox();
+      await page.mouse.click(Math.max(12,eraseBounds.x+40),eraseBounds.y+42);
+      record.inkErase=await page.evaluate(()=>window.PsychDeskCore.getData().inkNotes?.[0]?.strokes?.length===0);
+      await page.locator('[data-ink="undo"]').click();
+      record.inkUndoErase=await page.evaluate(()=>window.PsychDeskCore.getData().inkNotes?.[0]?.strokes?.length===1);
+      if(!record.inkUndo||!record.inkRedo||!record.inkErase||!record.inkUndoErase)fatal=true;
       await page.screenshot({path:path.join(dest,'ink-drawing-360.png'),animations:'disabled'});
       await page.reload({waitUntil:'domcontentloaded'});
       await page.waitForSelector('#main .hero');
