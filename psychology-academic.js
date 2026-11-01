@@ -114,10 +114,12 @@ function save(index){
   core.toast('That reference is already in your Research Shelf.');return;
  }
  const now=new Date().toISOString();
- data.research.push({id:core.id(),title:record.title,authors:record.authors,year:record.year,
+ const saved={id:core.id(),title:record.title,authors:record.authors,year:record.year,
   journal:record.journal,doi:record.doi,url:record.url,notes:'Source: '+record.provider+'. Review the original article before citing.',
-  type:'journal',subjectId:'',createdAt:now,updatedAt:now});
- core.save();core.toast('Paper saved to Reference Manager.');
+  type:'journal',subjectId:'',createdAt:now,updatedAt:now};
+ data.research.push(saved);
+ if(core.save()===false){data.research=data.research.filter(x=>x!==saved);core.toast('Could not save the paper. Free storage and retry.');return;}
+ core.toast('Paper saved to Reference Manager.');
 }
 document.addEventListener('click',event=>{
  if(event.target.closest('#psyAcademicSearch')){event.preventDefault();void search();return;}
