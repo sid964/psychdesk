@@ -126,6 +126,37 @@ async function main(){
       await page.reload({waitUntil:'domcontentloaded'});
       await page.waitForSelector('#main .hero');
       record.inkPersistedAcrossRefresh=await page.evaluate(()=>window.PsychDeskCore.getData().inkNotes?.[0]?.strokes?.length===1);
+      // Browser-native recognition stub exercises the real review / conversion controls.
+      // No production model download or private notes are involved.
+      await page.evaluate(()=>{
+       window.HandwritingStroke=class{constructor(){this.points=[]}addPoint(point){this.points.push(point)}};
+       Object.defineProperty(navigator,'createHandwritingRecognizer',{
+        configurable:true,value:async()=>({
+         startDrawing:()=>({
+          addStroke:()=>{},getPrediction:async()=>[{text:'Cognitive dissonance is a psychological concept.'}],clear:()=>{}
+         }),finish:()=>{}
+        })
+       });
+      });
+      await openTab('ink');
+      await page.locator('[data-ink="open"]').first().click();
+      await page.locator('[data-ink-convert="recognize"]').click();
+      await page.waitForFunction(()=>document.querySelector('#inkRecognizedText')?.value.includes('Cognitive dissonance'),{timeout:10000});
+      record.inkRecognized=await page.locator('#inkRecognizedText').inputValue();
+      await page.locator('#inkRecognizedText').fill('Cognitive dissonance\nA feeling of psychological discomfort.');
+      record.inkNeatPreview=await page.locator('#inkNeatPreview').innerText();
+      await page.screenshot({path:path.join(dest,'ink-neat-preview-360.png'),animations:'disabled'});
+      await page.locator('[data-ink-convert="saveNeat"]').click();
+      record.inkNeatStored=await page.evaluate(()=>window.PsychDeskCore.getData().inkNotes?.[0]?.neatText?.includes('discomfort'));
+      await page.locator('[data-ink-convert="saveNote"]').click();
+      record.inkTypedNote=await page.evaluate(()=>{
+       const d=window.PsychDeskCore.getData();
+       return Boolean(d.notes?.some(n=>n.inkSourceId===d.inkNotes?.[0]?.id && n.body.includes('psychological discomfort.')));
+      });
+      record.inkOriginalPreserved=await page.evaluate(()=>window.PsychDeskCore.getData().inkNotes?.[0]?.strokes?.length===1);
+      if(!record.inkNeatStored||!record.inkTypedNote||!record.inkOriginalPreserved||
+          !record.inkNeatPreview.includes('psychological discomfort'))fatal=true;
+
       if(!record.inkStrokeSaved||!record.inkPersistedAcrossRefresh)fatal=true;
 
      }
