@@ -125,15 +125,15 @@ function duplicate(id){
  const list=bucket(id);if(!list.length)return;
  const original=list[0],text=original.rawText||list.map(n=>n.lines.join('\n')).join('\n');
  const copy=generate(text,original.title,original.subjectId,original.color,core.id());
- const data=core.getData();data.stickies=all().concat(copy);core.save();redraw();core.toast('Sticky duplicated');
+ const data=core.getData(),before=all();data.stickies=before.concat(copy);if(core.save()===false){data.stickies=before;return;}redraw();core.toast('Sticky duplicated');
 }
 function pin(id){
  const n=all().find(n=>n.id===id);if(!n)return;
- n.pinned=!n.pinned;core.save();redraw();
+ n.pinned=!n.pinned;if(core.save()===false){n.pinned=!n.pinned;return;}redraw();
 }
 function remove(id){
  if(!bucket(id).length||!confirm('Delete this sticky collection? Your original notebook notes remain unchanged.'))return;
- core.getData().stickies=all().filter(n=>(n.groupId||n.id)!==id);core.save();
+ const before=all();core.getData().stickies=before.filter(n=>(n.groupId||n.id)!==id);if(core.save()===false){core.getData().stickies=before;return;}
  if(groupId===id)newDraft();redraw();core.toast('Sticky removed');
 }
 function render(){

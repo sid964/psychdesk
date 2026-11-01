@@ -15,7 +15,7 @@ let dictQuery='',dictCategory='All',dictSavedOnly=false,dictSelected='',timeline
 function isMarked(key,id){return list(key).includes(id);}
 function toggleMark(key,id){
  const d=data(),set=new Set(list(key));if(set.has(id))set.delete(id);else set.add(id);
- d[key]=[...set];core.save();
+ const before=d[key];d[key]=[...set];if(core.save()===false)d[key]=before;
 }
 function termById(id){return glossary().find(t=>t.id===id);}
 function eventById(id){return history().find(x=>x.id===id);}
@@ -70,21 +70,21 @@ function refreshDictionary(){
 function addNotebook(title,body,tag){
  const d=data();
  d.notes=Array.isArray(d.notes)?d.notes:[];
- const stamp=new Date().toISOString();
+ const before=d.notes.slice(),stamp=new Date().toISOString();
  d.notes.unshift({id:core.id(),title:title.slice(0,140),body:body.slice(0,10000),tags:tag,subjectId:'',createdAt:stamp,updatedAt:stamp});
- core.save();core.toast('Saved to your notebook.');
+ if(core.save()===false){d.notes=before;return;}core.toast('Saved to your notebook.');
 }
 function addSticky(title,body){
  const d=data();if(!Array.isArray(d.stickies))d.stickies=[];
  const id=core.id(),cards=window.PsychDeskStickies?.generate?.(body,title,'','cream',id,[])||[];
  if(!cards.length){core.toast('Sticky note creator unavailable.');return;}
- d.stickies.push(...cards);core.save();core.toast('Handwritten sticky created.');
+ const before=d.stickies.slice();d.stickies.push(...cards);if(core.save()===false){d.stickies=before;return;}core.toast('Handwritten sticky created.');
 }
 function addFlashcard(question,answer){
  const d=data();d.cards=Array.isArray(d.cards)?d.cards:[];
  if(d.cards.some(c=>c.question?.toLocaleLowerCase()===question.toLocaleLowerCase())){core.toast('This question is already in your deck.');return;}
- d.cards.push({id:core.id(),question:question.slice(0,500),answer:answer.slice(0,1500),subjectId:'',due:core.today(),interval:0,reps:0});
- core.save();core.toast('Flashcard saved for review.');
+ const before=d.cards.slice();d.cards.push({id:core.id(),question:question.slice(0,500),answer:answer.slice(0,1500),subjectId:'',due:core.today(),interval:0,reps:0});
+ if(core.save()===false){d.cards=before;return;}core.toast('Flashcard saved for review.');
 }
 function termEditor(entry){
  const existing=Boolean(entry?.personal);
@@ -103,10 +103,10 @@ function saveTerm(event){
  if(!term||!definition){core.toast('Concept and definition are required.');return;}
  if(!id&&list('dictionaryEntries').length>=120){core.toast('Personal dictionary limit: 120 entries.');return;}
  const newEntry={id:id||core.id(),term,category:f.elements.category.value,definition,example:f.elements.example.value.trim().slice(0,700),source:validUrl(f.elements.source.value),related:[],personal:true};
- const d=data(),arr=list('dictionaryEntries'),index=arr.findIndex(x=>x.id===id);
+ const d=data(),before=list('dictionaryEntries'),arr=before.slice(),index=arr.findIndex(x=>x.id===id);
  if(index>=0)arr[index]=newEntry;else arr.push(newEntry);
- d.dictionaryEntries=arr;dictSelected=newEntry.id;
- core.save();core.closeModal();core.render();core.toast('Definition saved');
+ d.dictionaryEntries=arr;if(core.save()===false){d.dictionaryEntries=before;return;}dictSelected=newEntry.id;
+ core.closeModal();core.render();core.toast('Definition saved');
 }
 function timelineEntries(q=timelineQuery,era=timelineEra,savedOnly=timelineSavedOnly){
  const needle=q.toLocaleLowerCase().trim();
@@ -174,16 +174,16 @@ function saveEvent(e){
  if(!id&&list('timelineEvents').length>=100){core.toast('Personal timeline limit: 100 milestones.');return;}
  const row={id:id||core.id(),year,era:f.elements.era.value,title:title.slice(0,140),description:description.slice(0,1400),
   people:f.elements.people.value.trim().slice(0,220),source:validUrl(f.elements.source.value),personal:true};
- const d=data(),arr=list('timelineEvents'),index=arr.findIndex(x=>x.id===id);
+ const d=data(),before=list('timelineEvents'),arr=before.slice(),index=arr.findIndex(x=>x.id===id);
  if(index>=0)arr[index]=row;else arr.push(row);
- d.timelineEvents=arr;timelineSelected=row.id;
- core.save();core.closeModal();core.render();core.toast('Timeline milestone saved');
+ d.timelineEvents=arr;if(core.save()===false){d.timelineEvents=before;return;}timelineSelected=row.id;
+ core.closeModal();core.render();core.toast('Timeline milestone saved');
 }
 function saveEventNote(id){
  const text=($('#psyTimelineNotes')?.value||'').trim().slice(0,1700);
  const d=data(),notes=list('timelineAnnotations').filter(n=>n.eventId!==id);
  if(text)notes.push({eventId:id,text,updatedAt:new Date().toISOString()});
- d.timelineAnnotations=notes;core.save();core.toast('Reflection saved');
+ const before=d.timelineAnnotations;d.timelineAnnotations=notes;if(core.save()===false){d.timelineAnnotations=before;return;}core.toast('Reflection saved');
 }
 document.addEventListener('input',e=>{
  if(e.target?.id==='psyDictionaryQuery'){
@@ -211,7 +211,7 @@ document.addEventListener('click',e=>{
   case 'bookmark':toggleMark('dictionaryBookmarks',id);refreshDictionary();break;
   case 'addTerm':termEditor(null);break;
   case 'editTerm':{const entry=termById(id);if(entry?.personal)termEditor(entry);break;}
-  case 'deleteTerm':if(confirm('Delete this personal glossary entry?')){data().dictionaryEntries=list('dictionaryEntries').filter(x=>x.id!==id);data().dictionaryBookmarks=list('dictionaryBookmarks').filter(x=>x!==id);dictSelected='';core.save();core.render();}break;
+  case 'deleteTerm':if(confirm('Delete this personal glossary entry?')){if(!core.commitChange(()=>{data().dictionaryEntries=list('dictionaryEntries').filter(x=>x.id!==id);data().dictionaryBookmarks=list('dictionaryBookmarks').filter(x=>x!==id)}))break;dictSelected='';core.render();}break;
   case 'noteTerm':{const t=termById(id);if(t)addNotebook(t.term,t.definition+(t.example?'\n\nExample: '+t.example:''),'psychology-dictionary');break;}
   case 'stickyTerm':{const t=termById(id);if(t)addSticky(t.term,t.definition+(t.example?'\nExample: '+t.example:''));break;}
   case 'cardTerm':{const t=termById(id);if(t)addFlashcard('Define '+t.term+'.',t.definition);break;}
@@ -224,7 +224,7 @@ document.addEventListener('click',e=>{
   case 'cardEvent':{const event=eventById(id);if(event)addFlashcard('What happened in psychology in '+event.year+' involving '+event.title+'?',event.description);break;}
   case 'addEvent':eventEditor(null);break;
   case 'editEvent':{const event=eventById(id);if(event?.personal)eventEditor(event);break;}
-  case 'deleteEvent':if(confirm('Delete this personal timeline milestone?')){data().timelineEvents=list('timelineEvents').filter(x=>x.id!==id);data().timelineBookmarks=list('timelineBookmarks').filter(x=>x!==id);data().timelineAnnotations=list('timelineAnnotations').filter(x=>x.eventId!==id);timelineSelected='';core.save();core.render();}break;
+  case 'deleteEvent':if(confirm('Delete this personal timeline milestone?')){if(!core.commitChange(()=>{data().timelineEvents=list('timelineEvents').filter(x=>x.id!==id);data().timelineBookmarks=list('timelineBookmarks').filter(x=>x!==id);data().timelineAnnotations=list('timelineAnnotations').filter(x=>x.eventId!==id)}))break;timelineSelected='';core.render();}break;
  }
 });
 window.addEventListener('psychdesk:session-reset',()=>{dictQuery='';dictCategory='All';dictSavedOnly=false;dictSelected='';timelineQuery='';timelineEra='all';timelineSelected='';timelineSavedOnly=false;});

@@ -29,3 +29,14 @@
 .mind-description strong{color:#fff}
 @media(max-width:650px){.board-canvas{height:560px}.mind-board{height:520px}.board-card{width:min(175px,46%);padding:9px 11px;min-height:135px}.board-card p{font-size:16px;line-height:1.18}.mind-node{min-width:105px;max-width:132px;min-height:47px;font-size:11px;padding:7px 8px}.board-top select{width:100%;max-width:none;flex-basis:65%}}
 @media(prefers-reduced-motion:reduce){.board-card,.mind-node{transition:none}}
+
+/* Keep cards inside the board at every width; JS computes bounded positions. */
+.board-card{transform:none!important;max-height:90%}
+.board-card p{overflow:auto;user-select:text;touch-action:pan-y}
+.board-item-footer button{min-width:32px;min-height:32px}
+html[data-theme=light] .board-canvas,html[data-theme=light] .mind-board{background-color:#f3f1ec;background-image:radial-gradient(#0002 1px,transparent 1px);border-color:#c9c7c2}
+html[data-theme=light] .board-card:not(.board-attached),html[data-theme=light] .mind-node{background:#fff;color:#292929;border-color:#b8b8b8;box-shadow:0 6px 16px #00000014}
+html[data-theme=light] .mind-node.selected{background:#323232;color:#fff}
+html[data-theme=light] .mind-node.connecting{outline-color:#444}
+html[data-theme=light] :is(.board-top select,.mind-top select,.mind-bottom button,.mind-description){background:#fff;color:#333;border-color:#bbb}
+html[data-theme=light] :is(.board-empty,.board-empty strong,.mind-description strong,.mind-bottom span){color:#444}

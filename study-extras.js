@@ -236,7 +236,7 @@ function fullscreen(){
 }
 function focusChanged(e){
  const target=e.target;if(target?.id!=='focusIntention')return;
- data().focusGoal=clip(target.value,145);core.save();
+ const before=data().focusGoal;data().focusGoal=clip(target.value,145);if(core.save()===false)data().focusGoal=before;
 }
 function applySearchTab(tab){core.setTab(tab);}
 let captureShown=false;
@@ -261,6 +261,7 @@ function saveCapture(sticky){
  const title=clip($('#captureTitle')?.value?.trim()||'Shared thought',140);
  const body=clip($('#captureText')?.value?.trim()||'',4000);
  if(!body){core.toast('There is no content to save.');return;}
+ const beforeNotes=data().notes.slice(),beforeStickies=data().stickies.slice();
  if(sticky){
   const result=window.PsychDeskStickies?.generate?.(body,title,'','butter',core.id(),[]);
   if(!result?.length){core.toast('Could not create sticky note.');return;}
@@ -268,7 +269,7 @@ function saveCapture(sticky){
  }else{
   data().notes.unshift({id:core.id(),title,body,subjectId:'',tags:'quick-capture',createdAt:timestamp(),updatedAt:timestamp()});
  }
- core.save();core.closeModal();core.setTab(sticky?'stickies':'notes');core.toast('Shared content saved');
+ if(core.save()===false){data().notes=beforeNotes;data().stickies=beforeStickies;core.toast('Could not save. Your shared content is still here.');return;}core.closeModal();core.setTab(sticky?'stickies':'notes');core.toast('Shared content saved');
 }
 document.addEventListener('submit',e=>{if(e.target?.id==='researchForm')saveResearch(e);});
 document.addEventListener('input',e=>{
@@ -295,7 +296,7 @@ document.addEventListener('click',e=>{
   if(kind==='timeline'){window.PsychDeskKnowledge?.openEvent?.(id);break;}
   applySearchTab(b.dataset.tab);break;}
  case 'lookupDOI':lookup();break;
- case 'removeResearch':if(confirm('Remove this saved research reference?')){data().research=items('research').filter(p=>p.id!==b.dataset.id);core.save();core.render();}break;
+ case 'removeResearch':if(confirm('Remove this saved research reference?')){const before=items('research');data().research=before.filter(p=>p.id!==b.dataset.id);if(core.save()===false){data().research=before;break;}core.render();}break;
  case 'cite':{const p=items('research').find(r=>r.id===b.dataset.id);if(p)navigator.clipboard?.writeText(citation(p)).then(()=>core.toast('Citation copied')).catch(()=>core.toast('Clipboard unavailable.'));break;}
  case 'startVoice':startVoice();break;
  case 'stopVoice':stopVoice();break;

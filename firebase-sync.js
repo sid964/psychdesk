@@ -20,7 +20,7 @@ const status = (text, state='idle') => { if (accountBtn) { accountBtn.textConten
 const uidKey = (part) => `psychdesk-${part}-${user?.uid || 'guest'}`;
 const valid = (d) => Boolean(d && [1,2].includes(d.version) && ['subjects','tasks','cards','sessions'].every(k=>Array.isArray(d[k])) && (!d.notes || Array.isArray(d.notes)) && (!d.stickies || Array.isArray(d.stickies)) && ['inkNotes','research','boardItems','mindMaps','pdfHighlights','dictionaryEntries','dictionaryBookmarks','timelineEvents','timelineBookmarks','timelineAnnotations'].every(k=>!d[k]||Array.isArray(d[k])));
 const isCustomized = (d) => Boolean(d.tasks?.length || d.cards?.length || d.notes?.length || d.stickies?.length || d.inkNotes?.length || d.research?.length || d.boardItems?.length || d.mindMaps?.length || d.pdfHighlights?.length || d.dictionaryEntries?.length || d.dictionaryBookmarks?.length || d.timelineEvents?.length || d.timelineBookmarks?.length || d.timelineAnnotations?.length || d.sessions?.length || d.reviews?.length || Number(d.preferences?.dailyGoal||60)!==60 || d.subjects?.length!==5 || d.subjects?.some((s,i)=>s.name!==['Cognitive Psychology','Biological Psychology','Developmental Psychology','Social Psychology','Research Methods'][i]));
-const sanitize = (raw) => {if(!valid(raw))throw Error('Cloud data is not a valid PsychDesk backup'); return JSON.parse(JSON.stringify(raw));};
+const sanitize = (raw) => {if(!valid(raw))throw Error('Cloud data is not a valid PsychDesk backup'); core.validateSnapshot(raw);return JSON.parse(JSON.stringify(raw));};
 // Firestore rejects arrays directly containing arrays, e.g. ink strokes.p =
 // [[x, y, pressure], ...]. Store the complete account snapshot as JSON text so
 // handwriting, mind maps and any future nested data survive losslessly.
@@ -121,6 +121,8 @@ async function signIn(){
  }finally{loginInProgress=false;}
 }
 async function accountChanged(next){
+ // Flush the old account's editor while it still has its original owner.
+ core.closeModal();
  accountEpoch++;
  // Clear independent Drive authority and pending file operations, including sign-out in another tab.
  window.PsychDeskCloud?.resetSession?.({keepRefreshSession:Boolean(next && (!user || user.uid===next.uid))});
@@ -133,7 +135,6 @@ async function accountChanged(next){
  catch{oldGuest=null;} // Bad guest JSON must not prevent loading a valid Google account.
  if(!valid(oldGuest))oldGuest=core.getData();
  user=next;localGuest=structuredClone(oldGuest);
- core.closeModal();
  try{localStorage.setItem('psychdesk-last-user-v3',next.uid);}catch{}
  core.useStorageKey('psychdesk-user-'+next.uid);
   window.dispatchEvent(new Event('psychdesk:identity-ready'));
@@ -154,12 +155,18 @@ async function accountChanged(next){
 }
 async function initializeAccount(){
  if(!user||!navigator.onLine)return;
- const epoch=accountEpoch;
+ const epoch=accountEpoch, changesAtStart=changes;
  const snapshot=await getDocFromServer(refFor());
  if(epoch!==accountEpoch)return;
  const remote=snapshot.exists()?snapshot.data():null;
  const remoteData=remote?decodeCloudData(remote):null;
  const remoteRev=Number(remote?.revision)||0;
+ // Edits made while a slow fetch was in flight must never be replaced by its result.
+ if(changes!==changesAtStart){
+  notePending(true);conflict=true;signedInReady=true;updateBadge();
+  notify('You edited while cloud data was loading. Open Account to choose which copy to keep.');
+  return;
+ }
  if(remote){
   if(dirty && revision !== remoteRev){
    conflict=true;signedInReady=true;updateBadge();notify('Your offline changes differ from the cloud. Open Account to choose a copy.');
@@ -228,9 +235,10 @@ function scheduleSync(){if(!user||!signedInReady||conflict)return;clearTimeout(s
 async function reloadCloud(){
  if(!user||!navigator.onLine)return alert('Sign in and connect to the internet first.');
  if(dirty && !confirm('This device has UNSYNCED changes. Loading the cloud will replace them. Export a JSON backup first if you want to preserve them. Continue?'))return;
- const epoch=accountEpoch;
+ const epoch=accountEpoch, changesAtStart=changes;
  try{
   const snap=await getDocFromServer(refFor());if(epoch!==accountEpoch)return;if(!snap.exists())throw Error('No compatible data saved to cloud yet.');
+  if(changes!==changesAtStart)throw Error('You made new edits while the cloud copy was loading. Nothing was replaced. Retry when you are ready.');
   const restored=decodeCloudData(snap.data());
   core.replaceData(restored);rememberRevision(Number(snap.data().revision)||0);
   notePending(false);conflict=false;lastError='';signedInReady=true;core.closeModal();notify('Latest cloud progress loaded');
@@ -286,7 +294,10 @@ document.addEventListener('click',e=>{
 });
 window.addEventListener('psychdesk:changed',()=>{if(!user)return;changes++;notePending(true);if(signedInReady)scheduleSync();else updateBadge();});
 window.addEventListener('online',async()=>{
- lastError='';if(user&&!signedInReady)await initializeAccount();else if(user&&dirty&&!conflict)scheduleSync();updateBadge();
+ lastError='';
+ try{if(user&&!signedInReady)await initializeAccount();else if(user&&dirty&&!conflict)scheduleSync();}
+ catch(error){lastError='Could not reconnect: '+messageError(error);}
+ updateBadge();
 });
 window.addEventListener('offline',updateBadge);
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&user&&dirty&&!conflict)scheduleSync();});

@@ -166,9 +166,9 @@ function noteEditor(note){let n=note||{id:'',title:'',body:'',subjectId:'',tags:
    window.PsychDeskNoteHistory?.saveDraft(form);
    clearTimeout(autosaveTimer);autosaveTimer=setTimeout(()=>saveFromEditor(false),1400);
   });
-  const flushBeforeClose=()=>{
+  const flushBeforeClose=event=>{
    clearTimeout(autosaveTimer);
-   saveFromEditor(false);
+   if(event?.discardNoteId!==form.elements.id.value&&saveFromEditor(false))core.render();
    window.removeEventListener('psychdesk:before-modal-close',flushBeforeClose);
   };
   window.addEventListener('psychdesk:before-modal-close',flushBeforeClose);
@@ -341,7 +341,12 @@ function handle(event){let button=event.target.closest('[data-cloud]');if(!butto
  case 'newNote':noteEditor();break;
  case 'editNote':noteEditor(core.getData().notes.find(n=>n.id===uid));break;
  case 'makeStickyFromNote':window.PsychDeskStickies?.fromNote(core.getData().notes.find(n=>n.id===uid));break;
- case 'deleteNote':if(confirm('Delete this note permanently from this device? Your previous Drive backup is not changed until you upload again.')){let d=core.getData();d.notes=d.notes.filter(n=>n.id!==uid);core.save();core.closeModal();core.render();core.toast('Note deleted locally')}break;
+ case 'deleteNote':if(confirm('Delete this note? The deletion will sync to your account. Previous Drive backups are unchanged.')){
+  const d=core.getData(),original=d.notes;d.notes=d.notes.filter(n=>n.id!==uid);
+  if(core.save()===false){d.notes=original;core.toast('Could not delete this note. Your note and editor are unchanged.');break;}
+  window.PsychDeskNoteHistory?.clearDraft(uid);
+  core.closeModal({discardNoteId:uid});core.render();core.toast('Note deleted');
+ }break;
  case 'driveSettings':openSettings();break;
 
  case 'connectDrive':cloudAction('connect');break;

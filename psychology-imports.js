@@ -147,6 +147,20 @@ function parseCsvRow(line){
  }
  values.push(value);return values;
 }
+function splitRecords(buffer,csv,final=false){
+ const records=[];let start=0,quoted=false;
+ for(let i=0;i<buffer.length;i++){
+  if(csv&&buffer[i]==='"'){
+   if(quoted&&buffer[i+1]==='"'){i++;continue;}
+   quoted=!quoted;
+  }else if(buffer[i]==='\n'&&!quoted){records.push(buffer.slice(start,i).replace(/\r$/,''));start=i+1;}
+ }
+ const remaining=buffer.slice(start);
+ if(remaining.length>2*1024*1024)throw Error('A glossary row is too large (maximum 2 MB).');
+ if(final&&quoted)throw Error('A CSV field has an unclosed quotation mark.');
+ if(final&&remaining.trim())records.push(remaining.replace(/\r$/,''));
+ return {records,remaining:final?'':remaining};
+}
 function makeRecord(row){
  const term=String(row.term||row.name||'').trim().slice(0,140);
  const definition=String(row.definition||row.meaning||'').trim().slice(0,1300);
@@ -185,8 +199,9 @@ async function importFile(file){
     if(csv){
      const parts=parseCsvRow(line);
      if(!headers){
-      headers=parts.map(h=>normalize(h.replace(/^\ufeff/,'')));
-      if(!headers.includes('term')||!headers.includes('definition'))throw Error('CSV headers must contain term and definition.');
+      const names=parts.map(h=>normalize(h.replace(/^\ufeff/,'')));
+      if(!names.includes('term')||!names.includes('definition'))throw Error('CSV headers must contain term and definition.');
+      headers=names;
       return;
      }
      raw={};headers.forEach((key,i)=>raw[key]=parts[i]||'');
@@ -202,8 +217,8 @@ async function importFile(file){
    const bytes=await file.slice(offset,offset+chunkSize).arrayBuffer();
    offset+=bytes.byteLength;
    buffer+=decoder.decode(bytes,{stream:true});
-   const lines=buffer.split(/\r?\n/);buffer=lines.pop()||'';
-   for(const line of lines){
+   const split=splitRecords(buffer,csv);buffer=split.remaining;
+   for(const line of split.records){
     processLine(line);
     if(batched.length>=400){await commitBatch(db,batched);batched=[];}
    }
@@ -211,7 +226,7 @@ async function importFile(file){
    await new Promise(resolve=>setTimeout(resolve,0));
   }
   buffer+=decoder.decode();
-  if(buffer.trim())processLine(buffer);
+  for(const line of splitRecords(buffer,csv,true).records)processLine(line);
   if(batched.length)await commitBatch(db,batched);
   const count=await readCount(db);
   if(el('psyPackTotal'))el('psyPackTotal').textContent=count.toLocaleString()+' imported terms';
@@ -242,24 +257,24 @@ function selectedDetails(entry){
 function actionOnSelected(action){
  const e=selectedImport;if(!e)return;
  const d=core.getData();
- if(action==='copy'){void navigator.clipboard?.writeText(e.term+': '+e.definition);core.toast('Definition copied');return;}
+ if(action==='copy'){Promise.resolve().then(()=>{if(!navigator.clipboard)throw Error('unavailable');return navigator.clipboard.writeText(e.term+': '+e.definition)}).then(()=>core.toast('Definition copied')).catch(()=>core.toast('Could not copy. Select the definition and copy it manually.'));return;}
  if(action==='bookmark'){
   const marks=new Set(Array.isArray(d.dictionaryBookmarks)?d.dictionaryBookmarks:[]);
   if(marks.has(e.id))marks.delete(e.id);else marks.add(e.id);
-  d.dictionaryBookmarks=[...marks];core.save();selectedDetails(e);scheduleSearch(0);return;
+  const before=d.dictionaryBookmarks;d.dictionaryBookmarks=[...marks];if(core.save()===false){d.dictionaryBookmarks=before;return;}selectedDetails(e);scheduleSearch(0);return;
  }
  if(action==='note'){
   d.notes=Array.isArray(d.notes)?d.notes:[];
-  const stamp=new Date().toISOString();
+  const before=d.notes.slice(),stamp=new Date().toISOString();
   d.notes.unshift({id:core.id(),title:e.term,body:e.definition+(e.source?'\n\nSource: '+e.source:''),tags:'psychology-dictionary',subjectId:'',createdAt:stamp,updatedAt:stamp});
-  core.save();core.toast('Saved to notebook.');return;
+  if(core.save()===false){d.notes=before;return;}core.toast('Saved to notebook.');return;
  }
  if(action==='flash'){
   d.cards=Array.isArray(d.cards)?d.cards:[];
   const question='Define '+e.term+'.';
   if(d.cards.some(c=>c.question?.toLowerCase()===question.toLowerCase())){core.toast('Already in your flashcards.');return;}
-  d.cards.push({id:core.id(),question,answer:e.definition.slice(0,1500),subjectId:'',due:core.today(),interval:0,reps:0});
-  core.save();core.toast('Flashcard saved.');
+  const before=d.cards.slice();d.cards.push({id:core.id(),question,answer:e.definition.slice(0,1500),subjectId:'',due:core.today(),interval:0,reps:0});
+  if(core.save()===false){d.cards=before;return;}core.toast('Flashcard saved.');
  }
 }
 document.addEventListener('input',event=>{

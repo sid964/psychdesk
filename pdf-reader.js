@@ -6,6 +6,8 @@ const h=core.esc,$=s=>document.querySelector(s),getData=()=>core.getData();
 const CDN='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/';
 let libPromise=null,pdf=null,material=null,localFile=null,page=1,scale=1.1,generation=0,loading=false;
 let selected={text:'',rects:[],page:1},readerError='',fileText='',searchQuery='',searchHits=[],lastSearchIndex=-1;
+let renderSequence=0,searchSequence=0,activeRender=null;
+function releaseDocument(){activeRender?.cancel?.();activeRender=null;const old=pdf;pdf=null;old?.destroy?.()?.catch?.(()=>{});}
 const allHighlights=()=>Array.isArray(getData().pdfHighlights)?getData().pdfHighlights:[];
 const materialKey=()=>material?.id||(localFile?'local:'+localFile.name+':'+localFile.size+':'+(localFile.lastModified||0):'unselected');
 const owned=()=>allHighlights().filter(x=>x.materialId===materialKey());
@@ -49,7 +51,7 @@ function readerHTML(){
 async function openMaterial(id){
  const target=(getData().materials||[]).find(m=>m.id===id);
  if(!target||!['pdf','markdown'].includes(target.kind)){core.toast('Choose a PDF or Markdown book.');return;}
- generation++;const version=generation;
+ generation++;const version=generation;releaseDocument();
  material=target;localFile=null;pdf=null;fileText='';readerError='';selected={text:'',rects:[],page:1};page=1;scale=1.1;loading=true;
  core.setTab('reader');
  try{
@@ -64,13 +66,17 @@ async function openMaterial(id){
  }
 }
 async function processBlob(blob,kind,version){
- if(kind==='markdown'){fileText=(await blob.text()).slice(0,1000000);pdf=null;page=1;loading=false;if(version===generation)core.render();return;}
+ if(kind==='markdown'){
+  const text=(await blob.text()).slice(0,1000000);if(version!==generation)return;
+  fileText=text;pdf=null;page=1;loading=false;core.render();return;
+ }
  const engine=await pdfLib();
  const bytes=await blob.arrayBuffer();
  if(version!==generation)return;
  const task=engine.getDocument({data:new Uint8Array(bytes),useSystemFonts:true});
- pdf=await task.promise;
- if(version!==generation){pdf.destroy();return;}
+ const loaded=await task.promise;
+ if(version!==generation){await loaded.destroy();return;}
+ pdf=loaded;
  fileText='';loading=false;core.render();await renderPage();
 }
 async function openLocal(file){
@@ -78,8 +84,8 @@ async function openLocal(file){
  const ext=file.name.toLowerCase();
  if(!/\.(pdf|md|markdown)$/.test(ext)){core.toast('Choose a PDF or Markdown file.');return;}
  if(file.size>80*1024*1024){core.toast('The in-browser reader supports files up to 80 MB.');return;}
- generation++;const version=generation;
- material=null;localFile=file;pdf=null;fileText='';readerError='';page=1;loading=true;
+ generation++;const version=generation;releaseDocument();
+ material=null;localFile=file;pdf=null;fileText='';readerError='';page=1;loading=true;selected={text:'',rects:[],page:1};
  core.setTab('reader');
  try{await processBlob(file,/\.pdf$/.test(ext)?'pdf':'markdown',version);}
  catch(e){if(version===generation){readerError=String(e.message||e);loading=false;core.render();}}
@@ -100,11 +106,11 @@ function visibleMarks(){
 }
 async function renderPage(){
  if(!pdf)return;
- const version=generation,pageNum=page,surface=$('#readerPageSurface'),canvas=$('#readerCanvas'),layer=$('#readerTextLayer');
+ const version=generation,sequence=++renderSequence,documentPDF=pdf,pageNum=page,surface=$('#readerPageSurface'),canvas=$('#readerCanvas'),layer=$('#readerTextLayer');
  if(!surface||!canvas||!layer)return;
  const status=$('#readerRenderStatus');if(status)status.textContent='Rendering page '+pageNum+'…';
  try{
-  const engine=await pdfLib(),p=await pdf.getPage(pageNum);if(version!==generation||pageNum!==page)return;
+  const engine=await pdfLib(),p=await documentPDF.getPage(pageNum);if(version!==generation||sequence!==renderSequence||pageNum!==page)return;
   const viewport=p.getViewport({scale}),ratio=Math.min(window.devicePixelRatio||1,2);
   const ctx=canvas.getContext('2d',{alpha:false});
   canvas.width=Math.floor(viewport.width*ratio);canvas.height=Math.floor(viewport.height*ratio);
@@ -113,13 +119,15 @@ async function renderPage(){
   layer.style.width=viewport.width+'px';layer.style.height=viewport.height+'px';
   layer.style.setProperty('--scale-factor',String(viewport.scale));
   layer.replaceChildren();
-  await p.render({canvasContext:ctx,viewport,transform:ratio!==1?[ratio,0,0,ratio,0,0]:null}).promise;
-  if(version!==generation||pageNum!==page)return;
+  activeRender?.cancel?.();
+  const task=p.render({canvasContext:ctx,viewport,transform:ratio!==1?[ratio,0,0,ratio,0,0]:null});activeRender=task;
+  await task.promise;
+  if(version!==generation||sequence!==renderSequence||pageNum!==page)return;
   const t=new engine.TextLayer({textContentSource:p.streamTextContent(),container:layer,viewport});
   await t.render();
-  if(version!==generation||pageNum!==page)return;
+  if(version!==generation||sequence!==renderSequence||pageNum!==page)return;
   visibleMarks();if(status)status.textContent='';
- }catch(e){if(status)status.textContent='Could not render page: '+String(e.message||e);}
+ }catch(e){if(status&&version===generation&&sequence===renderSequence&&e.name!=='RenderingCancelledException')status.textContent='Could not render page: '+String(e.message||e);}
 }
 function capture(){
  const sel=window.getSelection?.(),layer=$('#readerTextLayer'),surface=$('#readerPageSurface');
@@ -179,7 +187,7 @@ function textToNote(text){
 }
 async function navigate(pageNumber){
  if(!pdf)return;
- const n=Math.min(Math.max(1,Number(pageNumber)||1),pdf.numPages);if(n===page)return;
+ const n=Math.min(Math.max(1,Math.floor(Number(pageNumber)||1)),pdf.numPages);if(n===page)return;
  page=n;selected={text:'',rects:[],page};core.render();await renderPage();
 }
 async function zoom(step){
@@ -190,20 +198,25 @@ async function zoom(step){
 async function findAll(){
  if(!pdf){core.toast('Open a PDF to search its pages.');return;}
  const term=prompt('Find a word or phrase in this PDF:',searchQuery);
- if(!term)return;
+ if(!term?.trim())return;
+ const documentPDF=pdf,version=generation,sequence=++searchSequence;
  searchQuery=term.toLowerCase().trim();searchHits=[];lastSearchIndex=-1;
  const max=Math.min(pdf.numPages,250),loadingEl=$('#readerRenderStatus');
  if(loadingEl)loadingEl.textContent='Searching '+max+' pages…';
- for(let i=1;i<=max;i++){
-  const pg=await pdf.getPage(i),contents=await pg.getTextContent();
+ try{for(let i=1;i<=max;i++){
+  if(version!==generation||sequence!==searchSequence)return;
+  const pg=await documentPDF.getPage(i),contents=await pg.getTextContent();
+  if(version!==generation||sequence!==searchSequence)return;
   const joined=contents.items.map(x=>x.str||'').join(' ').toLowerCase();
   if(joined.includes(searchQuery))searchHits.push(i);
   if(i%15===0)await new Promise(resolve=>setTimeout(resolve,0));
  }
  if(loadingEl)loadingEl.textContent=searchHits.length?searchHits.length+' matching pages':'No matches in first '+max+' pages';
  if(searchHits.length){lastSearchIndex=0;await navigate(searchHits[0]);}
+ }catch(error){if(version===generation&&sequence===searchSequence)core.toast('Could not search this PDF: '+String(error.message||error));}
 }
-function back(){generation++;pdf?.destroy?.();pdf=null;material=null;localFile=null;fileText='';selected={text:'',rects:[],page:1};core.setTab('reader');}
+function resetReader(){generation++;releaseDocument();material=null;localFile=null;fileText='';loading=false;readerError='';searchQuery='';searchHits=[];selected={text:'',rects:[],page:1};}
+function back(){resetReader();core.setTab('reader');}
 document.addEventListener('change',e=>{
  if(e.target.id==='localReaderFile'){openLocal(e.target.files?.[0]);}
  if(e.target.id==='readerPage')navigate(e.target.value);
@@ -227,12 +240,12 @@ document.addEventListener('click',e=>{
  case 'note':textToNote(selected.text);break;
  case 'jump':navigate(Number(b.dataset.page));break;
  case 'stickyHighlight':{const item=owned().find(x=>x.id===b.dataset.id);if(item)textToSticky(item.text);break;}
- case 'deleteHighlight':if(confirm('Remove this highlight?')){getData().pdfHighlights=allHighlights().filter(x=>x.id!==b.dataset.id);core.save();
+ case 'deleteHighlight':if(confirm('Remove this highlight?')){const before=allHighlights();getData().pdfHighlights=before.filter(x=>x.id!==b.dataset.id);if(core.save()===false){getData().pdfHighlights=before;core.toast('Could not remove highlight. Please retry.');break;}
   const list=$('#readerHighlights');if(list)list.innerHTML=owned().slice().reverse().map(annotationCard).join('');
   const count=$('#readerHighlightCount');if(count)count.textContent=String(owned().length);visibleMarks();}break;
  }
 });
-window.addEventListener('psychdesk:tab-changed',e=>{if(e.tab!=='reader'&&(pdf||loading)){generation++;pdf?.destroy?.();pdf=null;material=null;localFile=null;fileText='';loading=false;selected={text:'',rects:[],page:1};}});
-window.addEventListener('psychdesk:session-reset',()=>{generation++;pdf?.destroy?.();pdf=null;material=null;localFile=null;fileText='';selected={text:'',rects:[],page:1};});
+window.addEventListener('psychdesk:tab-changed',e=>{if(e.tab!=='reader'&&(pdf||loading||fileText))resetReader();});
+window.addEventListener('psychdesk:session-reset',resetReader);
 window.PsychDeskReader={render:readerHTML,open:openMaterial,openLocal,capture,annotationCard};
 })();

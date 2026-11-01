@@ -459,3 +459,10 @@ test('malformed imported subject color does not become arbitrary CSS or an exter
  assert.doesNotMatch(html,/url\(https:\/\/untrusted\.example/);
  assert.match(html,/#888888/);
 });
+
+test('new edits during slow initial cloud loading are preserved and flagged for resolution',async()=>{
+ const env=environment(),snapshot=deferred();const fb=firebase(env,{getDocFromServer:()=>snapshot.promise});
+ const loading=fb.change({uid:'alice'});env.core.getData().notes.push({id:'new',title:'Writing during sign-in',body:'Do not replace'});env.core.save();
+ snapshot.resolve({exists:()=>true,data:()=>({revision:4,data:backup()})});await loading;
+ assert.equal(env.core.getData().notes[0].body,'Do not replace');assert.equal(env.window.PsychDeskFirebase.getConnectionStatus().conflict,true);assert.equal(fb.api.getState().dirty,true);
+});

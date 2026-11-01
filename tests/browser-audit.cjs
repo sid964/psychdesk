@@ -2,13 +2,15 @@
    Local origin exercises UI without touching anyone's live study data.
    Live mode captures read-only metrics and screenshots from GitHub Pages. */
 'use strict';
-const { chromium }=require('playwright');
+const { chromium, firefox }=require('playwright');
+const engineName=process.argv.includes('--firefox')?'firefox':'chromium';
+const auditFlows=require('./browser-flows.cjs');
 const fs=require('node:fs');
 const path=require('node:path');
 const live=process.argv.includes('--live');
 const origin=live?'https://sid964.github.io/psychdesk/':'http://127.0.0.1:8765/';
-const viewports=[{width:320,height:700},{width:360,height:800},{width:390,height:844},{width:768,height:1024},{width:1440,height:900}];
-const dest=path.join(process.cwd(),'browser-audit-artifacts',live?'live':'local');
+const viewports=[{width:320,height:700},{width:360,height:800},{width:390,height:844},{width:768,height:1024},{width:1024,height:768},{width:1440,height:900}];
+const dest=path.join(process.cwd(),'browser-audit-artifacts',live?'live':engineName);
 fs.mkdirSync(dest,{recursive:true});
 const results=[];
 async function inspect(page){
@@ -30,7 +32,9 @@ async function inspect(page){
   }).slice(0,12).map(el=>({tag:el.tagName,cls:String(el.className).slice(0,65),left:Math.round(el.getBoundingClientRect().left),right:Math.round(el.getBoundingClientRect().right)}));
   const rail=document.querySelector('.desktop-rail');
   const railStyle=rail?getComputedStyle(rail):null;
-  return {width:W,overflow:document.documentElement.scrollWidth-W,
+  const skip=document.querySelector('.skip-link')?.getBoundingClientRect();
+  const accent=getComputedStyle(document.querySelector('.stat'),'::before').backgroundColor;
+  return {width:W,scrollY,skipVisible:!!skip&&skip.bottom>0,accent,overflow:document.documentElement.scrollWidth-W,
    rail:{overflowX:railStyle?.overflowX||'',width:rail?.clientWidth||0,scrollWidth:rail?.scrollWidth||0},
    headerOverlap:intersections,
    headerScroll:Math.round((header?.scrollWidth||0)-(header?.clientWidth||0)),
@@ -39,7 +43,7 @@ async function inspect(page){
  });
 }
 async function main(){
- const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+ const browser=await (engineName==='firefox'?firefox:chromium).launch({headless:true});
  let fatal=false;
  try{
   for(const vp of viewports){
@@ -131,10 +135,17 @@ async function main(){
       await openTab('ink');
       await page.locator('[data-ink="new"]').first().click();
       const inkCanvas=page.locator('#inkCanvas');
-      await inkCanvas.scrollIntoViewIfNeeded();
+      // Firefox and Chromium center oversized canvases differently. Align the scroll
+      // container, then draw on the actual visible paper using real pointer input.
+      async function showPaper(){
+       await inkCanvas.evaluate(canvas=>{const sc=canvas.closest('.ink-page-scroll');sc.scrollTo({top:0,left:0,behavior:'instant'});sc.scrollIntoView({block:'start',behavior:'instant'});});
+      }
+      await showPaper();
       const bound=await inkCanvas.boundingBox();
       if(!bound)throw Error('Ink canvas is not visible.');
-      const px=Math.max(12,bound.x+35),py=bound.y+35;
+      const px=bound.x+35,py=bound.y+35;
+      const hit=await page.evaluate(({x,y})=>document.elementFromPoint(x,y)?.id,{x:px,y:py});
+      if(hit!=='inkCanvas')throw Error('Test pointer is outside visible paper: '+hit);
       await page.mouse.move(px,py);
       await page.mouse.down();
       await page.mouse.move(px+18,py+23,{steps:6});
@@ -146,9 +157,17 @@ async function main(){
       await page.locator('[data-ink="redo"]').click();
       record.inkRedo=await page.evaluate(()=>window.PsychDeskCore.getData().inkNotes?.[0]?.strokes?.length===1);
       await page.locator('[data-ink="eraser"]').click();
-      await page.locator('#inkCanvas').scrollIntoViewIfNeeded();
-      const eraseBounds=await page.locator('#inkCanvas').boundingBox();
-      await page.mouse.click(Math.max(12,eraseBounds.x+40),eraseBounds.y+42);
+      await showPaper();
+      // Use a point from the saved vector, not a guessed offset near the line.
+      const erasePoint=await inkCanvas.evaluate(canvas=>{
+       const r=canvas.getBoundingClientRect(),points=window.PsychDeskInk.getActive().strokes[0].p;
+       const p=points[Math.floor(points.length/2)];
+       const x=r.left+p[0]/canvas.width*r.width,y=r.top+p[1]/canvas.height*r.height;
+       return {x,y,hit:document.elementFromPoint(x,y)?.id};
+      });
+      record.inkEraseTarget=erasePoint;
+      if(erasePoint.hit!=='inkCanvas')throw Error('Saved stroke is outside the visible paper: '+JSON.stringify(erasePoint));
+      await page.mouse.click(erasePoint.x,erasePoint.y);
       record.inkErase=await page.evaluate(()=>window.PsychDeskCore.getData().inkNotes?.[0]?.strokes?.length===0);
       await page.locator('[data-ink="undo"]').click();
       record.inkUndoErase=await page.evaluate(()=>window.PsychDeskCore.getData().inkNotes?.[0]?.strokes?.length===1);
@@ -170,7 +189,10 @@ async function main(){
      }
      if((!record.autosaveOnClose||!record.autosaveOnModalReplace)&&vp.width===360)fatal=true;
      if(navigation.some(n=>!n.visible||!n.heading))fatal=true;
-     if(overview.overflow>6||overview.headerOverlap.length)fatal=true;
+     if(vp.width===390||vp.width===1440)await auditFlows(page,openTab,record,dest);
+     if(errors.length)fatal=true;
+     if(overview.overflow>6||overview.headerOverlap.length||overview.scrollY!==0||overview.skipVisible)fatal=true;
+     if(overview.accent!=='rgb(146, 146, 146)')fatal=true;
      if(vp.width>=900&&overview.rail.overflowX!=='hidden'&&overview.rail.overflowX!=='clip')fatal=true;
     }
     if(live){
@@ -183,7 +205,7 @@ async function main(){
      record.navigation=navigation;
     }
     results.push(record);
-   }catch(error){fatal=!live;results.push({origin,viewport:vp.width,error:String(error).slice(0,350),errors});}
+   }catch(error){if(!live)fatal=true;await page.screenshot({path:path.join(dest,'failure-'+vp.width+'.png'),animations:'disabled'}).catch(()=>{});results.push({origin,viewport:vp.width,error:String(error).slice(0,600),errors});}
    finally{await context.close();}
   }
   // A separate browser profile deliberately starts with unreadable account storage.
