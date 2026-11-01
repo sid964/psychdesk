@@ -84,9 +84,15 @@ function save(){
  const data=core.getData();if(!Array.isArray(data.stickies))data.stickies=[];
  const id=groupId||core.id(),prior=bucket(id);
  const pages=generate(raw,heading,subjectId,paper,id,prior);
+ const previous=data.stickies;
  data.stickies=data.stickies.filter(n=>(n.groupId||n.id)!==id).concat(pages);
  groupId=id;
- core.save();
+ if(core.save()===false){
+  data.stickies=previous;
+  groupId=prior.length?id:'';
+  setStatus('Could not save. Your writing is still here; free up storage and retry.');
+  return false;
+ }
  redraw();
  const composerTitle=$('#stickyComposerTitle');if(composerTitle)composerTitle.textContent='Editing a sticky';
  setStatus('✓ Saved on device · Account sync follows the top status');
