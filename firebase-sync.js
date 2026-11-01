@@ -48,7 +48,16 @@ function decodeCloudData(record){
 }
 const safeSize = (d) => { const bytes = new TextEncoder().encode(JSON.stringify(d)).length; if(bytes > limitBytes) throw Error(`Study data is ${Math.round(bytes/1024)} KB; this version's cloud sync supports up to ${Math.floor(limitBytes/1024)} KB. Export a JSON backup before continuing.`); };
 const refFor = () => doc(db,'users',user.uid,'psychdesk','state');
-const notePending = v => { dirty=v; if(user) localStorage.setItem(uidKey('pending'), v?'1':'0'); };
+const notePending = v => {
+ dirty=v;
+ if(user)try{localStorage.setItem(uidKey('pending'),v?'1':'0');}
+ catch{lastError='Browser storage is unavailable. Export a safety backup before closing PsychDesk.';}
+};
+function rememberRevision(value){
+ revision=value;
+ if(user)try{localStorage.setItem(uidKey('revision'),String(value));}
+ catch{lastError='Cloud revision saved, but browser storage is unavailable. Export a backup.';}
+}
 const messageError = e => (e?.message || e?.code || String(e)).slice(0,280);
 function updateBadge(){
  if(!configured)return status('Set up Google', 'error');
@@ -117,12 +126,15 @@ async function accountChanged(next){
  window.PsychDeskCloud?.resetSession?.({keepRefreshSession:Boolean(next && (!user || user.uid===next.uid))});
  clearTimeout(syncTimer); if(unsubscribe){unsubscribe();unsubscribe=null;}
  signedInReady=false;busy=false;dirty=false;conflict=false;lastError='';revision=0;changes=0;
- if(!next){ pendingDriveCredential=null;user=null;localStorage.removeItem('psychdesk-last-user-v3');core.useStorageKey('psychdesk-v1');updateBadge();return; }
+ if(!next){ pendingDriveCredential=null;user=null;try{localStorage.removeItem('psychdesk-last-user-v3');}catch{}core.useStorageKey('psychdesk-v1');updateBadge();return; }
  // The old offline-only data stays under psychdesk-v1, even after account login.
- const oldGuest = JSON.parse(localStorage.getItem('psychdesk-v1')||'null') || core.getData();
+ let oldGuest=null;
+ try{oldGuest=JSON.parse(localStorage.getItem('psychdesk-v1')||'null');}
+ catch{oldGuest=null;} // Bad guest JSON must not prevent loading a valid Google account.
+ if(!valid(oldGuest))oldGuest=core.getData();
  user=next;localGuest=structuredClone(oldGuest);
  core.closeModal();
- localStorage.setItem('psychdesk-last-user-v3',next.uid);
+ try{localStorage.setItem('psychdesk-last-user-v3',next.uid);}catch{}
  core.useStorageKey('psychdesk-user-'+next.uid);
   window.dispatchEvent(new Event('psychdesk:identity-ready'));
   // A same-tab Drive grant should not depend on a successful Firestore data fetch.
@@ -148,7 +160,7 @@ async function initializeAccount(){
   }else if(dirty && revision === remoteRev){
    signedInReady=true;await syncNow();
   }else{
-   revision=remoteRev; localStorage.setItem(uidKey('revision'),String(revision));
+   rememberRevision(remoteRev);
    core.replaceData(remoteData); notePending(false);signedInReady=true;updateBadge();
   }
  }else{
@@ -175,7 +187,7 @@ async function initializeAccount(){
   let incoming;
   try{incoming=decodeCloudData(record);}
   catch(e){conflict=true;lastError=messageError(e);updateBadge();return;}
-  revision=nextRev;localStorage.setItem(uidKey('revision'),String(revision));
+  rememberRevision(nextRev);
   core.replaceData(incoming);updateBadge();
  }, e=>{if(epoch!==accountEpoch)return;lastError='Realtime sync stopped: '+messageError(e);updateBadge();});
 }
@@ -196,7 +208,7 @@ async function syncNow(force=false){
    return nr;
   });
   if(epoch!==accountEpoch||!user||user.uid!==startUid)return;
-  revision=newRev;localStorage.setItem(uidKey('revision'),String(revision));
+  rememberRevision(newRev);
   if(seq===changes){notePending(false)}else{notePending(true)}
   conflict=false;lastError='';
  }catch(e){
@@ -214,7 +226,7 @@ async function reloadCloud(){
  try{
   const snap=await getDocFromServer(refFor());if(epoch!==accountEpoch)return;if(!snap.exists())throw Error('No compatible data saved to cloud yet.');
   const restored=decodeCloudData(snap.data());
-  core.replaceData(restored);revision=Number(snap.data().revision)||0;localStorage.setItem(uidKey('revision'),String(revision));
+  core.replaceData(restored);rememberRevision(Number(snap.data().revision)||0);
   notePending(false);conflict=false;lastError='';signedInReady=true;core.closeModal();notify('Latest cloud progress loaded');
  }catch(e){if(epoch===accountEpoch)alert('Could not reload: '+messageError(e));}
 }
