@@ -47,6 +47,10 @@ test('pressure-bearing ink is exported as a safe vector path',()=>{
  assert.match(xml,/stroke-width=/);
  assert.match(xml,/M 14 23 L 26 38/);
  assert.match(xml,/width="1200" height="1600"/);
+ // Imported JSON is untrusted: never embed raw attacker-controlled SVG coordinates.
+ note.strokes=[{kind:'pen',c:'#20252b',w:2,p:[['0" onload="alert(1)',11,55],[30,42,70]]}];
+ const sanitized=s.ink.svgSource(note);
+ assert.doesNotMatch(sanitized,/onload|alert\(/);
 });
 test('eraser only removes nearest stroke and supports empty pages',()=>{
  const s=setup();
@@ -71,4 +75,17 @@ test('missing ink data is optional in older backups and imports remain non-destr
  assert.match(s,/inkNotes:?\[\]/);
  assert.match(firebase,/\['inkNotes','research'/);
  assert.match(firebase,/d\.inkNotes\?\.length/);
+});
+
+test('storage failure rolls back the unsaved stroke rather than reporting success',()=>{
+ const s=setup();click(s,'new');
+ const page=s.study.inkNotes[0],old=page.updatedAt;
+ page.strokes.push({kind:'pen',c:'#20252b',w:3,p:[[10,10,50],[20,20,60]]});
+ s.core.save=()=>false;
+ let rolledBack=false;
+ const success=s.ink.saveChange(page,()=>{rolledBack=true;page.strokes.pop();});
+ assert.equal(success,false);
+ assert.equal(rolledBack,true);
+ assert.equal(page.strokes.length,0);
+ assert.equal(page.updatedAt,old);
 });
