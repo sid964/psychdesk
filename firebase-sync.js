@@ -139,8 +139,14 @@ async function accountChanged(next){
   window.dispatchEvent(new Event('psychdesk:identity-ready'));
   // A same-tab Drive grant should not depend on a successful Firestore data fetch.
   void window.PsychDeskCloud?.restoreDriveSession?.();
- dirty=localStorage.getItem(uidKey('pending'))==='1';
- revision=Number(localStorage.getItem(uidKey('revision'))||0);
+ try{
+  dirty=localStorage.getItem(uidKey('pending'))==='1';
+  revision=Number(localStorage.getItem(uidKey('revision'))||0);
+ }catch{
+  dirty=true;
+  revision=0;
+  lastError='Browser storage cannot be read. Export a safety backup before syncing.';
+ }
  updateBadge();
  if(!navigator.onLine){lastError='Offline: saved on this device; reconnect to check cloud data.';updateBadge();return;}
  try { await initializeAccount(); }
@@ -160,8 +166,8 @@ async function initializeAccount(){
   }else if(dirty && revision === remoteRev){
    signedInReady=true;await syncNow();
   }else{
-   rememberRevision(remoteRev);
-   core.replaceData(remoteData); notePending(false);signedInReady=true;updateBadge();
+   core.replaceData(remoteData);
+   rememberRevision(remoteRev);notePending(false);signedInReady=true;updateBadge();
   }
  }else{
   // First sign-in on an empty account: offer migration of old offline study data.
@@ -187,8 +193,8 @@ async function initializeAccount(){
   let incoming;
   try{incoming=decodeCloudData(record);}
   catch(e){conflict=true;lastError=messageError(e);updateBadge();return;}
-  rememberRevision(nextRev);
-  core.replaceData(incoming);updateBadge();
+  try{core.replaceData(incoming);rememberRevision(nextRev);updateBadge();}
+  catch(e){conflict=true;lastError='Could not preserve this cloud update on device: '+messageError(e);updateBadge();}
  }, e=>{if(epoch!==accountEpoch)return;lastError='Realtime sync stopped: '+messageError(e);updateBadge();});
 }
 async function syncNow(force=false){
