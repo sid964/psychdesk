@@ -21,7 +21,8 @@ function newPage(){
  const note={id:core.id(),title:'Untitled ink note',subjectId:'',createdAt:now,updatedAt:now,strokes:[]};
  d.inkNotes=notes().concat(note);
  if(bytes(d)>WORKSPACE_LIMIT){d.inkNotes.pop();core.toast('Study storage is almost full. Export notes first.');return;}
- core.save();activeId=note.id;history=[];redo=[];core.render();announce('New page ready. Handwriting saves after every stroke.');
+ if(core.save()===false){d.inkNotes.pop();core.toast('Device storage is unavailable. Please export other notes first.');return;}
+ activeId=note.id;history=[];redo=[];core.render();announce('New page ready. Handwriting saves after every stroke.');
 }
 function saveChange(note,rollback,description){
  if(!note)return false;
@@ -32,8 +33,9 @@ function saveChange(note,rollback,description){
   announce('Page storage limit reached — last change was not saved.');
   return false;
  }
+ const previousTime=note.updatedAt;
  note.updatedAt=new Date().toISOString();
- core.save();
+ if(core.save()===false){rollback();note.updatedAt=previousTime;announce('Could not save — device storage is unavailable.');return false;}
  announce((description||'Saved')+' · stored on this device'+(window.PsychDeskFirebase?.getUserId?.()?' · account sync when online':''));
  return true;
 }
@@ -284,8 +286,9 @@ function onClick(event){
  if(action==='exportPng')return exportPage('png');
  if(action==='delete'){
   const n=active();if(!n||!confirm('Delete this ink page permanently? Export a copy first if needed.'))return;
-  data().inkNotes=notes().filter(x=>x.id!==n.id);
-  core.save();activeId='';history=[];redo=[];core.render();core.toast('Ink page deleted.');
+  const previous=notes();data().inkNotes=previous.filter(x=>x.id!==n.id);
+  if(core.save()===false){data().inkNotes=previous;core.toast('Could not delete ink note: storage is unavailable.');return;}
+  activeId='';history=[];redo=[];core.render();core.toast('Ink page deleted.');
  }
 }
 document.addEventListener('click',onClick);
