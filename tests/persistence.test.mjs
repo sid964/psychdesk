@@ -387,3 +387,61 @@ test('corrupted encoded cloud data never overwrites local notes',async()=>{
  assert.match(status.error,/Could not decode cloud study data/);
  assert.equal(status.synced,false);
 });
+
+
+test('corrupted account data is never overwritten by startup, account switching, edits, or an incoming backup',()=>{
+ const key='psychdesk-user-alice',raw='{"version":2,"notes":[{"body":"My irreplaceable draft"}],BROKEN';
+ const saved=new Map([['psychdesk-last-user-v3','alice'],[key,raw]]);
+ const env=environment(saved);
+ assert.equal(saved.get(key),raw);
+ assert.match(env.context.document.querySelector('#main').innerHTML,/Saved study data needs recovery/);
+ env.core.getData().notes.push({id:'new',title:'Unsaved in-memory note'});
+ assert.equal(env.core.save(),false);
+ assert.equal(saved.get(key),raw);
+ assert.throws(()=>env.core.replaceData(backup()),/Could not safely save/);
+ assert.equal(saved.get(key),raw);
+ const other=environment(new Map([['psychdesk-user-alice',raw]]));
+ other.core.useStorageKey(key);
+ assert.equal(other.storage.get(key),raw);
+ assert.equal(other.core.save(),false);
+});
+
+test('failed snapshot replacement leaves the previous in-memory notes untouched',()=>{
+ const env=environment(new Map(),true);
+ const prior=env.core.getData().notes;
+ prior.push({id:'only-copy',body:'Very important data'});
+ const replacement=backup();
+ replacement.notes=[{id:'new',body:'Other record'}];
+ assert.throws(()=>env.core.replaceData(replacement),/Could not safely save/);
+ assert.equal(env.core.getData().notes[0].body,'Very important data');
+});
+
+test('malformed guest JSON does not prevent an existing Firebase Google account from loading',async()=>{
+ const storage=new Map([['psychdesk-v1','{not-json']]);
+ const env=environment(storage),fb=firebase(env,{
+  getDocFromServer:async()=>({exists:()=>true,data:()=>({revision:3,data:backup()})})
+ });
+ await fb.change({uid:'alice',email:'alice@example.test'});
+ assert.equal(fb.api.getState().user.uid,'alice');
+ assert.equal(env.window.PsychDeskFirebase.getConnectionStatus().synced,true);
+ assert.equal(storage.get('psychdesk-v1'),'{not-json');
+});
+
+test('realtime sync does not advance revision if the remote snapshot cannot be stored safely',async()=>{
+ const env=environment();
+ let callback;
+ const fb=firebase(env,{
+  getDocFromServer:async()=>({exists:()=>true,data:()=>({revision:1,data:backup()})}),
+  onSnapshot:(_ref,handler)=>{callback=handler;return ()=>{};}
+ });
+ await fb.change({uid:'alice'});
+ const previous=env.core.getData();
+ const brokenRemote=backup();
+ brokenRemote.notes=[{id:'different',body:'Remote changed'}];
+ // Simulate write failure after initial sync without destroying the current local data.
+ env.context.localStorage.setItem=()=>{throw Error('Storage unavailable')};
+ callback({exists:()=>true,data:()=>({revision:2,data:brokenRemote}),metadata:{hasPendingWrites:false}});
+ assert.equal(fb.api.getState().revision,1);
+ assert.equal(env.core.getData().notes.length,previous.notes.length);
+ assert.equal(env.window.PsychDeskFirebase.getConnectionStatus().conflict,true);
+});
