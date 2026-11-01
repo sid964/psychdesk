@@ -9,7 +9,22 @@ const initial=()=>({version:1,subjects:[
  {id:'dev',name:'Developmental Psychology',color:colors[2]},
  {id:'soc',name:'Social Psychology',color:colors[3]},
  {id:'res',name:'Research Methods',color:colors[4]}],tasks:[],cards:[],sessions:[],reviews:[],stickies:[],inkNotes:[],research:[],boardItems:[],mindMaps:[],pdfHighlights:[],dictionaryEntries:[],dictionaryBookmarks:[],timelineEvents:[],timelineBookmarks:[],timelineAnnotations:[],preferences:{dailyGoal:60}});
-let data;try{data=JSON.parse(localStorage.getItem(storageKey)||'null')||initial();if(!Array.isArray(data.subjects)||!Array.isArray(data.tasks)||!Array.isArray(data.cards))throw Error('Invalid data');}catch(e){data=initial()}
+let blockedKey='',blockedRaw='',blockedReason='',recoveryDownloaded=false;
+function markCorrupt(key,raw,reason){
+ blockedKey=key;blockedRaw=String(raw||'');blockedReason=String(reason?.message||reason||'Cannot read study data').slice(0,170);
+ recoveryDownloaded=false;
+}
+let data;
+try{
+ const raw=localStorage.getItem(storageKey);
+ data=raw?JSON.parse(raw):initial();
+ if(!data||![1,2].includes(data.version)||!['subjects','tasks','cards','sessions'].every(k=>Array.isArray(data[k]))||
+   ['notes','stickies','inkNotes','research','boardItems','mindMaps','pdfHighlights'].some(k=>data[k]!=null&&!Array.isArray(data[k])))
+  throw Error('Saved study data has an incompatible structure');
+}catch(e){
+ let raw='';try{raw=localStorage.getItem(storageKey)||''}catch{}
+ markCorrupt(storageKey,raw,e);data=initial();
+}
 // Only public preferences belong in study sync or backups.
 function normalizePreferences(raw={}){
  const prefs={dailyGoal:Number(raw?.dailyGoal)||60};
@@ -32,7 +47,41 @@ const localDay=(d=new Date())=>`${d.getFullYear()}-${String(d.getMonth()+1).padS
 const addDays=(date,n)=>{let [y,m,d]=date.split('-').map(Number),x=new Date(y,m-1,d);x.setDate(x.getDate()+n);return localDay(x)};
 const niceDay=s=>{if(!s)return 'No due date';let [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d).toLocaleDateString(undefined,{month:'short',day:'numeric'})};
 const today=()=>localDay();
-const save=(silent=false)=>{try{localStorage.setItem(storageKey,JSON.stringify(data));if(!silent)window.dispatchEvent(new Event('psychdesk:changed'));return true}catch(e){toast('Storage is unavailable. Export your data to avoid losing it.');return false}};
+const save=(silent=false)=>{
+ if(blockedKey===storageKey){toast('Local data needs recovery. Download the original before saving.');return false;}
+ try{
+  localStorage.setItem(storageKey,JSON.stringify(data));
+  if(!silent)window.dispatchEvent(new Event('psychdesk:changed'));
+  return true;
+ }catch(e){toast('Storage is unavailable. Export your data to avoid losing it.');return false;}
+};
+function recoveryBanner(){
+ if(blockedKey!==storageKey)return '';
+ return '<section class="account-callout recovery-warning" role="alert"><strong>Saved study data needs recovery</strong>'+
+  '<p>PsychDesk could not safely load this browser\'s study record. The original has not been overwritten. '+esc(blockedReason)+
+  '</p><div class="button-row"><button type="button" class="secondary" data-action="downloadRecovery">Download original data</button>'+
+  '<button type="button" class="secondary" data-action="startRecovery">Start fresh after backup</button></div>'+
+  '<p class="note">Saving is paused to protect the original. Download it before choosing to start fresh. If you have a valid backup, you can import it afterwards.</p></section>';
+}
+function downloadRecovery(){
+ if(blockedKey!==storageKey)return;
+ const blob=new Blob([blockedRaw],{type:'application/json'});
+ const url=URL.createObjectURL(blob),link=document.createElement('a');
+ link.href=url;link.download='psychdesk-unreadable-study-recovery-'+new Date().toISOString().slice(0,10)+'.json';
+ document.body.appendChild(link);link.click();link.remove();
+ setTimeout(()=>URL.revokeObjectURL(url),5000);
+ recoveryDownloaded=true;
+ toast('Original recovery file downloaded. Keep this backup safe.');
+}
+function startRecovery(){
+ if(blockedKey!==storageKey)return;
+ if(!recoveryDownloaded){toast('Download the original data first.');return;}
+ if(!confirm('The original local record has been downloaded. Create a fresh local workspace? Your downloaded recovery file will not be changed.'))return;
+ const oldKey=blockedKey,oldRaw=blockedRaw;
+ blockedKey='';blockedRaw='';blockedReason='';recoveryDownloaded=false;
+ if(!save(true)){markCorrupt(oldKey,oldRaw,'Storage is unavailable');render();return;}
+ render();toast('Fresh local workspace ready. Your recovery file is safe.');
+}
 const subj=i=>data.subjects.find(s=>s.id===i);
 const subjName=i=>subj(i)?.name||'General';
 const subjColor=i=>subj(i)?.color||'#668d83';
@@ -45,7 +94,7 @@ const totalWeek=()=>weekDays().reduce((v,d)=>v+minutesDay(d),0);
 function streak(){let day=today(),count=0;if(minutesDay(day)===0)day=addDays(day,-1);while(minutesDay(day)>0&&count<500){count++;day=addDays(day,-1)}return count;}
 function toast(msg){let el=$('#toast');el.textContent=msg;el.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>el.classList.remove('show'),3000)}
 function setTab(t){tab=t;flip=false;selectedReviewId=null;render();const event=new Event('psychdesk:tab-changed');event.tab=t;window.dispatchEvent(event);window.scrollTo(0,0)}
-function render(){main.classList.remove('page-enter');const extra=window.PsychDeskExtras,boards=window.PsychDeskBoards;main.innerHTML=(tab==='notes'?window.PsychDeskCloud?.renderNotes():tab==='ink'?window.PsychDeskInk?.render():tab==='stickies'?window.PsychDeskStickies?.render():tab==='materials'?window.PsychDeskMaterials?.render():tab==='reader'?window.PsychDeskReader?.render():tab==='search'?extra?.renderSearch():tab==='research'?window.PsychDeskReferences?.render():tab==='dictionary'?window.PsychDeskKnowledge?.renderDictionary():tab==='timeline'?window.PsychDeskKnowledge?.renderTimeline():tab==='voice'?extra?.renderVoice():tab==='board'?boards?.renderBoard():tab==='mindmap'?boards?.renderMind():tab==='tools'?renderTools():tab==='recall'?renderRecall()+(extra?.recallPanel()||''):tab==='focus'?renderFocus()+(extra?.focusPanel()||''):tab==='insights'?renderInsights()+(extra?.insightsPanel()||''):({today:renderToday,planner:renderPlanner}[tab]||renderToday)())||'<div class="empty">Loading study tools…</div>'; document.querySelectorAll('[data-tab]').forEach(b=>{const more=['reader','research','search','board','mindmap','voice','insights','recall','dictionary','timeline'];b.classList.toggle('active',b.dataset.tab===tab||(b.dataset.tab==='tools'&&((b.classList.contains('nav-item')&&more.includes(tab))||(b.classList.contains('rail-link')&&['reader','search','board','mindmap','voice'].includes(tab)))));if(b.classList.contains('rail-link'))b.setAttribute('aria-current',b.dataset.tab===tab?'page':'false');});void main.offsetWidth;main.classList.add('page-enter');const crumb=document.querySelector('#railCurrentSection');if(crumb)crumb.textContent=({today:'Overview',planner:'Subjects & topics',notes:'Knowledge base',ink:'Ink Notes',stickies:'Sticky Notes Studio',recall:'Flashcards',focus:'Deep focus',materials:'Subject library',insights:'Study insights',reader:'Book reader',research:'Reference Manager',dictionary:'Psychology Dictionary',timeline:'History of Psychology',search:'Universal search',voice:'Voice notes',board:'Study board',mindmap:'Mind maps',tools:'Study tools'})[tab]||'Overview';if(tab==='mindmap')requestAnimationFrame(()=>window.PsychDeskBoards?.drawEdges());if(tab==='ink')requestAnimationFrame(()=>window.PsychDeskInk?.mount());}
+function render(){main.classList.remove('page-enter');const extra=window.PsychDeskExtras,boards=window.PsychDeskBoards;main.innerHTML=recoveryBanner()+(tab==='notes'?window.PsychDeskCloud?.renderNotes():tab==='ink'?window.PsychDeskInk?.render():tab==='stickies'?window.PsychDeskStickies?.render():tab==='materials'?window.PsychDeskMaterials?.render():tab==='reader'?window.PsychDeskReader?.render():tab==='search'?extra?.renderSearch():tab==='research'?window.PsychDeskReferences?.render():tab==='dictionary'?window.PsychDeskKnowledge?.renderDictionary():tab==='timeline'?window.PsychDeskKnowledge?.renderTimeline():tab==='voice'?extra?.renderVoice():tab==='board'?boards?.renderBoard():tab==='mindmap'?boards?.renderMind():tab==='tools'?renderTools():tab==='recall'?renderRecall()+(extra?.recallPanel()||''):tab==='focus'?renderFocus()+(extra?.focusPanel()||''):tab==='insights'?renderInsights()+(extra?.insightsPanel()||''):({today:renderToday,planner:renderPlanner}[tab]||renderToday)())||'<div class="empty">Loading study tools…</div>'; document.querySelectorAll('[data-tab]').forEach(b=>{const more=['reader','research','search','board','mindmap','voice','insights','recall','dictionary','timeline'];b.classList.toggle('active',b.dataset.tab===tab||(b.dataset.tab==='tools'&&((b.classList.contains('nav-item')&&more.includes(tab))||(b.classList.contains('rail-link')&&['reader','search','board','mindmap','voice'].includes(tab)))));if(b.classList.contains('rail-link'))b.setAttribute('aria-current',b.dataset.tab===tab?'page':'false');});void main.offsetWidth;main.classList.add('page-enter');const crumb=document.querySelector('#railCurrentSection');if(crumb)crumb.textContent=({today:'Overview',planner:'Subjects & topics',notes:'Knowledge base',ink:'Ink Notes',stickies:'Sticky Notes Studio',recall:'Flashcards',focus:'Deep focus',materials:'Subject library',insights:'Study insights',reader:'Book reader',research:'Reference Manager',dictionary:'Psychology Dictionary',timeline:'History of Psychology',search:'Universal search',voice:'Voice notes',board:'Study board',mindmap:'Mind maps',tools:'Study tools'})[tab]||'Overview';if(tab==='mindmap')requestAnimationFrame(()=>window.PsychDeskBoards?.drawEdges());if(tab==='ink')requestAnimationFrame(()=>window.PsychDeskInk?.mount());}
 function renderTools(){
  const tools=[['ink','✒','Ink Notes','Handwrite naturally with a stylus, pen, or touch and save your pages.'],['stickies','▧','Sticky Notes','Collect quick thoughts as handwritten-style sticky notes.'],['search','⌕','Universal search','Find any idea across notes, cards, PDFs and research.'],['reader','▤','PDF reader','Highlight, annotate and convert book passages.'],['research','▧','Reference Manager','Edit sources, look up DOIs and import RIS/BibTeX.'],['dictionary','A–Z','Psychology Dictionary','Search hundreds of psychology concepts, academic papers and your own glossary.'],['timeline','◷','Psychology Timeline','Travel through important studies, people and milestones.'],['board','✳','Study board','Arrange handwritten stickies and ideas.'],['mindmap','◇','Mind maps','Connect concepts, theories and researchers.'],['voice','◉','Voice notes','Dictate thoughts and edit your transcripts.'],['recall','◈','Smart flashcards','Practice with spaced repetition and definition extraction.'],['insights','▥','Study analytics','Review activity, study time and recall ratings.']];
  return '<section class="hero"><div class="eyebrow">YOUR CREATIVE LEARNING TOOLS</div><h1>Explore your desk.</h1><p>All the ways to collect, connect and remember ideas.</p></section><div class="study-tools-grid">'+tools.map(t=>'<button type="button" data-tab="'+t[0]+'" class="study-tool-launcher"><span>'+t[1]+'</span><strong>'+t[2]+'</strong><small>'+t[3]+'</small></button>').join('')+'</div><div class="study-panel"><div class="study-panel-heading"><h2>Desktop shortcuts</h2><span>Available throughout PsychDesk</span></div><p><strong>Ctrl / Cmd + K</strong> · Search everything</p><p><strong>Ctrl / Cmd + Alt + N</strong> · New notebook note</p><p><strong>Alt + 1–8</strong> · Switch core study sections</p></div>';
@@ -122,15 +171,17 @@ case 'filterTask':taskFilter=el.dataset.value;render();break;case 'flip':flip=tr
 case 'rate':{let c=data.cards.find(c=>c.id===i);if(c)updateReview(c,el.dataset.rating);break}
 case 'closeModal':closeModal();break;case 'timerLength':{let n=Number(el.dataset.min);if(!timer.running&&[15,25,40,50].includes(n)){timer.duration=n;timer.remaining=n*60;timer.startedTotal=n*60;saveTimer();render()}break}
 case 'startTimer':{if(timer.remaining<=0){timer.remaining=timer.duration*60;timer.startedTotal=timer.remaining}timer.running=true;timer.endsAt=Date.now()+timer.remaining*1000;saveTimer();render();break}
-case 'pause':tick();timer.running=false;saveTimer();render();break;case 'resetTimer':if(confirm('Reset the timer without logging?')){timer.running=false;timer.remaining=timer.duration*60;timer.startedTotal=timer.remaining;saveTimer();render()}break;case 'completeTimer':completeTimer();break;case 'calendar':calendar(data.tasks.find(t=>t.id===i));break;case 'export':exportBackup();break;case 'import':importAction();break;
+case 'pause':tick();timer.running=false;saveTimer();render();break;case 'resetTimer':if(confirm('Reset the timer without logging?')){timer.running=false;timer.remaining=timer.duration*60;timer.startedTotal=timer.remaining;saveTimer();render()}break;case 'completeTimer':completeTimer();break;case 'calendar':calendar(data.tasks.find(t=>t.id===i));break;case 'export':exportBackup();break;case 'import':importAction();break;case 'downloadRecovery':downloadRecovery();break;case 'startRecovery':startRecovery();break;
 }}
 document.addEventListener('click',e=>{let nav=e.target.closest('[data-tab]');if(nav){setTab(nav.dataset.tab);return}let btn=e.target.closest('[data-action]');if(btn){invoke(btn.dataset.action,btn);return}if(e.target.classList.contains('modal-overlay'))closeModal()});
 document.addEventListener('change',e=>{if(e.target.id==='subjectFilter'){subjectFilter=e.target.value;render()}if(e.target.id==='focusSubject'){timer.subjectId=e.target.value;saveTimer()}});
 function replaceData(imported){
  if(!imported||![1,2].includes(imported.version)||!['subjects','tasks','cards','sessions'].every(k=>Array.isArray(imported[k]))||
  (imported.notes&&!Array.isArray(imported.notes))|| (imported.stickies&&!Array.isArray(imported.stickies))|| ['inkNotes','research','boardItems','mindMaps','pdfHighlights','dictionaryEntries','dictionaryBookmarks','timelineEvents','timelineBookmarks','timelineAnnotations'].some(key=>imported[key]&&!Array.isArray(imported[key]))|| (imported.reviews&&!Array.isArray(imported.reviews))) throw Error('Invalid PsychDesk snapshot');
- data={...imported,materials:Array.isArray(imported.materials)?imported.materials:[],stickies:Array.isArray(imported.stickies)?imported.stickies:[],inkNotes:Array.isArray(imported.inkNotes)?imported.inkNotes:[],research:Array.isArray(imported.research)?imported.research:[],boardItems:Array.isArray(imported.boardItems)?imported.boardItems:[],mindMaps:Array.isArray(imported.mindMaps)?imported.mindMaps:[],pdfHighlights:Array.isArray(imported.pdfHighlights)?imported.pdfHighlights:[],dictionaryEntries:Array.isArray(imported.dictionaryEntries)?imported.dictionaryEntries:[],dictionaryBookmarks:Array.isArray(imported.dictionaryBookmarks)?imported.dictionaryBookmarks:[],timelineEvents:Array.isArray(imported.timelineEvents)?imported.timelineEvents:[],timelineBookmarks:Array.isArray(imported.timelineBookmarks)?imported.timelineBookmarks:[],timelineAnnotations:Array.isArray(imported.timelineAnnotations)?imported.timelineAnnotations:[],version:2,notes:imported.notes||[],reviews:imported.reviews||[],preferences:normalizePreferences(imported.preferences)};
- delete data.exportedAt;save(true);window.dispatchEvent(new Event('psychdesk:data-replaced'));render();
+ const previous=data;data={...imported,materials:Array.isArray(imported.materials)?imported.materials:[],stickies:Array.isArray(imported.stickies)?imported.stickies:[],inkNotes:Array.isArray(imported.inkNotes)?imported.inkNotes:[],research:Array.isArray(imported.research)?imported.research:[],boardItems:Array.isArray(imported.boardItems)?imported.boardItems:[],mindMaps:Array.isArray(imported.mindMaps)?imported.mindMaps:[],pdfHighlights:Array.isArray(imported.pdfHighlights)?imported.pdfHighlights:[],dictionaryEntries:Array.isArray(imported.dictionaryEntries)?imported.dictionaryEntries:[],dictionaryBookmarks:Array.isArray(imported.dictionaryBookmarks)?imported.dictionaryBookmarks:[],timelineEvents:Array.isArray(imported.timelineEvents)?imported.timelineEvents:[],timelineBookmarks:Array.isArray(imported.timelineBookmarks)?imported.timelineBookmarks:[],timelineAnnotations:Array.isArray(imported.timelineAnnotations)?imported.timelineAnnotations:[],version:2,notes:imported.notes||[],reviews:imported.reviews||[],preferences:normalizePreferences(imported.preferences)};
+ delete data.exportedAt;
+ if(!save(true)){data=previous;throw Error('Could not safely save the replacement. Your original study data is unchanged.');}
+ window.dispatchEvent(new Event('psychdesk:data-replaced'));render();
 }
 function ensureSubjectDepartments(){
  if(data.preferences.subjectPackVersion===1)return false;
@@ -145,8 +196,26 @@ function ensureSubjectDepartments(){
 function useStorageKey(key){
  if(!/^psychdesk-(?:v1|user-[A-Za-z0-9_-]+)$/.test(key))throw Error('Invalid local account');
  storageKey=key;
- try{const d=JSON.parse(localStorage.getItem(key)||'null');if(d){replaceData(d)}else{data=initial();data.version=2;data.notes=[];data.materials=[];data.stickies=[];data.inkNotes=[];save(true);render()}}
- catch(e){data=initial();data.version=2;data.notes=[];data.materials=[];data.stickies=[];save(true);render()}
+ let raw;
+ try{
+  raw=localStorage.getItem(key);
+  if(raw){
+   const d=JSON.parse(raw);
+   // Treat this as a local read, not a replacement that immediately rewrites the file.
+   if(!d||![1,2].includes(d.version)||!['subjects','tasks','cards','sessions'].every(k=>Array.isArray(d[k]))||
+       ['notes','stickies','inkNotes','research','mindMaps'].some(k=>d[k]!=null&&!Array.isArray(d[k])))
+    throw Error('Saved study data has an incompatible structure');
+   if(blockedKey===key){blockedKey='';blockedRaw='';blockedReason='';}
+   replaceData(d);
+  }else{
+   if(blockedKey===key){blockedKey='';blockedRaw='';blockedReason='';}
+   data=initial();data.version=2;data.notes=[];data.materials=[];data.stickies=[];data.inkNotes=[];save(true);render();
+  }
+ }catch(e){
+  // Crucial: never overwrite an unreadable account record with blank starter data.
+  data=initial();data.version=2;data.notes=[];data.materials=[];data.stickies=[];data.inkNotes=[];
+  markCorrupt(key,raw,e);render();
+ }
  timer.running=false;timer.remaining=timer.duration*60;timer.startedTotal=timer.remaining;saveTimer();
 }
 window.PsychDeskCore={getData:()=>data,save,render,setTab,toast,openModal,closeModal,subjectOptions,esc,id,today,settings,replaceData,useStorageKey,ensureSubjectDepartments,resourceDialog};$('#settingsBtn').addEventListener('click',settings);document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});if(ensureSubjectDepartments())save(true);render();
