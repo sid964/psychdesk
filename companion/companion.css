@@ -401,3 +401,336 @@ body.modal-open .pc-host { visibility: hidden; pointer-events: none; }
     transition:none!important;
   }
 }
+
+
+/* Living-character pass: the owner's three cel-style references remain the hero
+   artwork. Multiple timed poses and independently moving body/shadow layers
+   replace whole-character translation as the sole animation technique. */
+.pc-host {
+  --pc-speech-border:#403b35;
+  --pc-menu-surface:#090909;
+  --pc-menu-ink:#f6f4ef;
+  --pc-look-x:0px;
+}
+.pc-host .pc-ground-shadow {
+  position:absolute;
+  left:21%;
+  right:17%;
+  bottom:3%;
+  height:8%;
+  border-radius:100%;
+  background:rgba(0,0,0,.5);
+  filter:blur(3px);
+  opacity:.45;
+  pointer-events:none;
+  transform-origin:center;
+}
+.pc-host .pc-character {
+  -webkit-user-drag:none;
+  border-radius:24px;
+}
+.pc-host .pc-character:focus-visible{outline:2px solid #f3d76b;outline-offset:4px;}
+.pc-host.pc-being-petted .pc-body {
+  transform:translateY(2px) scale(.96)!important;
+  transition:transform 115ms ease-out;
+}
+.pc-host .pc-photo-pose {
+  transform-origin:50% 82%;
+  will-change:auto;
+  filter:drop-shadow(0 2px 1px rgba(0,0,0,.4));
+  backface-visibility:hidden;
+}
+.pc-host.pc-has-photo[data-state="idle"] .pc-photo-pose,
+.pc-host.pc-has-photo[data-state="resting"] .pc-photo-pose{
+  background-position:0% 0%;
+  animation:pc-alive-breathe 6.7s ease-in-out infinite;
+}
+.pc-host.pc-has-photo[data-state="looking"] .pc-photo-pose {
+  background-position:0% 0%;
+  animation:pc-alive-look 1.5s cubic-bezier(.3,.65,.2,1) both;
+}
+.pc-host.pc-has-photo[data-state="stretching"] .pc-photo-pose {
+  background-position:50% 0%;
+  animation:pc-alive-stretch 2.05s cubic-bezier(.22,.61,.28,1) both;
+}
+.pc-host.pc-has-photo[data-state="walking"] .pc-body{
+  animation:pc-alive-footfall .53s ease-in-out infinite;
+}
+.pc-host.pc-has-photo[data-state="walking"] .pc-photo-pose {
+  /* The user's walking and upright poses alternate at contact and lift-off;
+     the sprite changes are intentional cel-animation frames. */
+  animation:pc-alive-walk-frames .53s steps(1,end) infinite;
+  filter:drop-shadow(0 2px 1px rgba(0,0,0,.38));
+}
+.pc-host.pc-has-photo[data-state="walking"] .pc-ground-shadow{
+  animation:pc-alive-shadow-step .53s ease-in-out infinite;
+}
+.pc-host.pc-has-photo[data-state="waving"] .pc-photo-pose{
+  background-position:50% 0%;
+  animation:pc-alive-wave 1.05s cubic-bezier(.24,.62,.2,1) 1;
+}
+.pc-host.pc-has-photo[data-state="celebrating"] .pc-photo-pose{
+  background-position:50% 0%;
+  animation:pc-alive-celebration .66s cubic-bezier(.15,.74,.2,1) 2;
+}
+.pc-host.pc-has-photo[data-state="celebrating"] .pc-ground-shadow{
+  animation:pc-alive-shadow-hop .66s ease-in-out 2;
+}
+.pc-host.pc-has-photo[data-state="interacting"] .pc-photo-pose,
+.pc-host.pc-has-photo[data-state="pointing"] .pc-photo-pose,
+.pc-host.pc-has-photo[data-state="guiding"] .pc-photo-pose{
+  background-position:50% 0%;
+  animation:pc-alive-gesture 1.25s cubic-bezier(.24,.69,.24,1) both;
+}
+.pc-host.pc-has-photo[data-state="thinking"] .pc-photo-pose{
+  background-position:0% 0%;
+  animation:pc-alive-think 1.25s ease-in-out both;
+}
+.pc-host.pc-has-photo[data-state="sleeping"] .pc-photo-pose{
+  background-position:100% 0%;
+  animation:pc-alive-sleep 8s ease-in-out infinite;
+  filter:drop-shadow(0 2px 1px #0009) saturate(.88);
+}
+.pc-host.pc-has-photo[data-state="sleeping"] .pc-body::after {display:none;}
+.pc-host.pc-has-photo[data-state="syncing"] .pc-photo-pose{
+  background-position:0% 0%;
+  animation:pc-alive-sync 2.4s ease-in-out infinite;
+}
+.pc-host.pc-has-photo[data-state="disconnected"] .pc-photo-pose {
+  background-position:100% 0%;
+  filter:saturate(.8);
+  animation:pc-alive-sad .85s ease-out both;
+}
+.pc-host .pc-expression{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
+.pc-host .pc-expression::before {
+  content:"";
+  position:absolute;
+  right:0;
+  top:0;
+  z-index:1;
+  font:700 14px/1 system-ui,sans-serif;
+  letter-spacing:1px;
+  opacity:0;
+  transform:translateY(8px) scale(.9);
+}
+.pc-host[data-state="sleeping"] .pc-expression::before {
+  content:"z z z";color:#e4d1a9;opacity:.9;
+  animation:pc-alive-emote 4s ease-in-out infinite;
+}
+.pc-host[data-state="looking"] .pc-expression::before,
+.pc-host[data-state="thinking"] .pc-expression::before {
+  content:"?";color:#f9e0a4;opacity:.88;
+  animation:pc-alive-emote 1.4s ease-in-out 1;
+}
+.pc-host[data-state="celebrating"] .pc-expression::before {
+  content:"✧";color:#ffe88a;opacity:1;
+  animation:pc-alive-emote .55s ease-in-out 2;
+}
+.pc-host[data-state="syncing"] .pc-expression::before{
+  content:"↻";color:#f9df9c;opacity:.9;
+  animation:pc-alive-emote 1.6s linear infinite;
+}
+.pc-host[data-state="disconnected"] .pc-expression::before{
+  content:"!";color:#ffb3a0;opacity:1;
+  animation:pc-alive-emote 1.4s ease-in-out 1;
+}
+.pc-host[data-state="walking"] .pc-expression::before{content:"";}
+
+@keyframes pc-alive-breathe {
+  0%,100%{transform:translateY(0) rotate(0deg) scale(1);}
+  48%{transform:translateY(-1.8px) rotate(-.5deg) scale(1.018,.991);}
+}
+@keyframes pc-alive-look{
+  0%{transform:rotate(0) translateX(0);}
+  28%{transform:rotate(-4deg) translateX(var(--pc-look-x));}
+  60%{transform:rotate(3deg) translateX(var(--pc-look-x));}
+  100%{transform:rotate(0);}
+}
+@keyframes pc-alive-stretch {
+  0%,100%{transform:rotate(0) translateY(0) scale(1);}
+  22%{transform:rotate(-6deg) translateY(3px) scale(.94,1.04);}
+  56%{transform:rotate(5deg) translateY(-7px) scale(1.04,.97);}
+}
+@keyframes pc-alive-footfall {
+  0%,100%{transform:translateY(0) rotate(-1.5deg);}
+  27%{transform:translateY(-5px) rotate(2deg);}
+  53%{transform:translateY(-1px) rotate(1.5deg);}
+  80%{transform:translateY(-5px) rotate(-2deg);}
+}
+@keyframes pc-alive-walk-frames{
+  0%,22%{background-position:0% 0%;transform:rotate(-2deg) scaleX(.98);}
+  23%,51%{background-position:100% 0%;transform:rotate(2deg) scaleX(1.02);}
+  52%,72%{background-position:0% 0%;transform:rotate(1deg) scaleX(.98);}
+  73%,100%{background-position:100% 0%;transform:rotate(-2deg) scaleX(1.01);}
+}
+@keyframes pc-alive-shadow-step{
+  0%,50%,100%{transform:scaleX(1);opacity:.43;}
+  26%,78%{transform:scaleX(.75);opacity:.25;}
+}
+@keyframes pc-alive-wave{
+  0%,100%{transform:rotate(0) translateY(0);}
+  24%{transform:rotate(-5deg) translateY(-2px);}
+  46%{transform:rotate(4deg) translateY(0);}
+  72%{transform:rotate(-3deg) translateY(-1px);}
+}
+@keyframes pc-alive-celebration{
+  0%,100%{transform:translateY(0) rotate(0) scale(1);}
+  44%{transform:translateY(-14px) rotate(-6deg) scale(1.04,.97);}
+  72%{transform:translateY(-5px) rotate(4deg) scale(.98,1.03);}
+}
+@keyframes pc-alive-shadow-hop{
+  0%,100%{transform:scaleX(1);opacity:.44;}
+  43%{transform:scaleX(.65);opacity:.14;}
+}
+@keyframes pc-alive-gesture{
+  0%,100%{transform:rotate(0) translateY(0);}
+  40%{transform:rotate(-7deg) translateY(-4px);}
+  64%{transform:rotate(3deg) translateY(-1px);}
+}
+@keyframes pc-alive-think{
+  0%,100%{transform:rotate(0);}
+  42%{transform:rotate(-7deg) translateY(2px);}
+}
+@keyframes pc-alive-sleep{
+  0%,100%{transform:rotate(-8deg) translateY(5%) scale(1);}
+  50%{transform:rotate(-8deg) translateY(4%) scale(1.015,.985);}
+}
+@keyframes pc-alive-sync{
+  0%,100%{transform:translateY(0) rotate(0);}
+  50%{transform:translateY(-1.5px) rotate(3deg);}
+}
+@keyframes pc-alive-sad{
+  0%{transform:rotate(0);}
+  45%{transform:rotate(-7deg) translateY(4px);}
+  100%{transform:rotate(-4deg) translateY(2px);}
+}
+@keyframes pc-alive-emote{
+  0%,100%{opacity:0;transform:translateY(8px) scale(.9);}
+  28%,72%{opacity:1;transform:translateY(0) scale(1);}
+}
+
+/* Premium but restrained AMOLED pet controls. These do not style the parent app. */
+.pc-host .pc-menu {
+  --pc-divider:#29272b;
+  color:#f8f6f1;
+  background:#0a0a0c;
+  border:1px solid #3a373b;
+  border-radius:19px;
+  padding:14px;
+  box-shadow:0 16px 40px #000b, 0 0 0 1px #ffffff07 inset;
+  width:min(305px,calc(100vw - 24px));
+  font:500 13px/1.43 system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+}
+.pc-menu-head{gap:12px;padding-bottom:9px;border-bottom:1px solid #29272b;}
+.pc-menu-identity{display:flex;align-items:center;gap:9px;min-width:0;}
+.pc-menu-identity strong{display:block;color:#faf5e5;font-size:14px;line-height:1.24;}
+.pc-menu-identity small{display:block;margin-top:2px;font-size:10px;color:#a9a49e;font-weight:500;}
+.pc-menu-avatar{
+  display:grid;place-items:center;flex:0 0 35px;width:35px;height:35px;
+  background:#17140c;border:1px solid #3c3320;border-radius:12px;
+  color:#ffd76a;font-size:17px;
+}
+.pc-host .pc-menu-head>button{
+  flex:0 0 35px;
+  background:#161619;border-color:#302f33;border-radius:10px;
+  font-size:20px;line-height:1;
+}
+.pc-host .pc-menu-copy{font-size:12px;line-height:1.5;margin:11px 0;color:#aba9ac;}
+.pc-host .pc-menu-actions{gap:7px;}
+.pc-host .pc-menu-actions button,
+.pc-host .pc-feature-list button {
+  display:flex;align-items:center;
+  border:1px solid #333036;
+  background:#151416;color:#eae8ea;
+  border-radius:11px;
+  min-height:45px;
+  padding:10px 11px;
+  font-size:12px;font-weight:550;
+  text-align:left;
+}
+.pc-host .pc-menu-actions button:hover,
+.pc-host .pc-feature-list button:hover {
+ background:#242124;border-color:#a08e59;
+}
+.pc-host .pc-menu-actions button::before {
+ content:"✦";display:inline-block;flex:0 0 19px;color:#f4d272;font-size:14px;
+}
+.pc-host .pc-menu-actions button[data-pc="quick"]::before {content:"✎";}
+.pc-host .pc-menu-actions button[data-pc="drive"]::before {content:"☁";}
+.pc-host .pc-menu-actions button[data-pc="prefs"]::before {content:"⚙";}
+.pc-host .pc-menu-actions button[data-pc="greet"]::before {content:"☀";}
+.pc-host .pc-menu-actions button[data-pc="roam"]::before {content:"➜";}
+.pc-host .pc-menu .pc-field-label{color:#f0e9da;font-size:12px;}
+.pc-host .pc-choices button[aria-pressed="true"]{
+  color:#fbe3a4;background:#262013;border-color:#79673f;
+}
+.pc-host .pc-choices button{
+  min-height:40px;border-radius:10px;
+  color:#d0cdd1;
+}
+.pc-host .pc-minimize{
+ background:transparent;border-color:#302e33;color:#b4b0b6;
+}
+.pc-host .pc-hint {
+  background:#0c0c0e;
+  color:#f2efe8;
+  border:1px solid #45413a;
+  border-radius:14px;
+  padding:10px 28px 11px 12px;
+  box-shadow:0 10px 28px rgba(0,0,0,.6);
+  font-size:12px;line-height:1.5;
+  max-width:min(250px,calc(100vw - 25px));
+}
+.pc-host .pc-hint-title{
+ display:block;font:750 9px/1.5 system-ui,sans-serif;
+ letter-spacing:1.4px;color:#e7cc86;
+ margin-bottom:3px;
+}
+.pc-host .pc-hint[data-tone="success"]{border-color:#5c5a3e;}
+.pc-host .pc-hint[data-tone="warning"]{border-color:#a16f5f;}
+.pc-host .pc-hint-dismiss{color:#b7b1aa;}
+.pc-host .pc-hint-dismiss:hover{background:#242125;color:#fff;}
+.pc-host .pc-menu button:focus-visible,.pc-host .pc-hint button:focus-visible{
+ outline:2px solid #edd184;outline-offset:2px;
+}
+@media(max-width:400px){
+ .pc-host .pc-menu{width:min(284px,calc(100vw - 18px));padding:11px;}
+ .pc-host .pc-menu-actions{gap:6px;}
+ .pc-host .pc-menu-actions button{font-size:11px;min-height:44px;padding:8px;}
+ .pc-host .pc-menu-actions button::before{flex-basis:17px;font-size:12px;}
+}
+@media (prefers-reduced-motion:reduce) {
+ .pc-host .pc-photo-pose,.pc-host .pc-body,.pc-host .pc-expression::before,
+ .pc-host .pc-ground-shadow{
+  animation:none!important;transition:none!important;
+ }
+}
+
+
+/* Avoid stacking two independent bobbing animations on top of the supplied poses.
+   Only the short walking cycle intentionally uses a secondary body motion. */
+.pc-host.pc-has-photo:not([data-state="walking"]) .pc-body{animation:none!important;}
+.pc-host.pc-has-photo[data-state="resting"] .pc-photo-pose{animation-duration:8s;}
+.pc-host.pc-has-photo[data-state="looking"] .pc-photo-pose{transform-origin:52% 64%;}
+.pc-host.pc-has-photo .pc-photo-pose{image-rendering:auto;}
+/* The articulated SVG remains fully animated when a user-provided image can't load. */
+.pc-host.pc-has-pikachu:not(.pc-has-photo)[data-state="looking"] .pc-pik-face{
+ transform:translateX(var(--pc-look-x)) rotate(3deg);
+ transform-origin:50% 72%;
+}
+.pc-host.pc-has-pikachu:not(.pc-has-photo)[data-state="stretching"] .pc-body{
+ animation:pc-alive-stretch 2.05s ease-in-out both;
+}
+.pc-host.pc-has-pikachu:not(.pc-has-photo)[data-state="stretching"] .pc-pik-arm-left{
+ animation:pc-pik-wave .6s ease-in-out 3 alternate;
+}
+.pc-host.pc-has-pikachu:not(.pc-has-photo)[data-state="stretching"] .pc-pik-arm-right{
+ animation:pc-pik-wave .6s ease-in-out 3 alternate-reverse;
+}
+@media (hover:none){
+ .pc-host .pc-character{-webkit-touch-callout:none;}
+}
