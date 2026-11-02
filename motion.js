@@ -1,127 +1,153 @@
-/* Finite, interruptible motion. No timers in editing, drawing or scrolling paths. */
-(()=>{'use strict';
+/* Calm motion: one surface per navigation, no bounce, no background displacement. */
+(()=>{
+ 'use strict';
  const preference=matchMedia('(prefers-reduced-motion: reduce)');
- const css=getComputedStyle(document.documentElement);
- const token=(name,fallback)=>parseFloat(css.getPropertyValue('--motion-'+name))||fallback;
- const timing={enter:token('enter',380),small:token('small',200),dialog:token('dialog',300)};
- const ease=css.getPropertyValue('--motion-ease').trim()||'cubic-bezier(.22,1,.36,1)';
- const active=new Set(),byElement=new WeakMap(),visited=new Set(),positions=new Map(),seen=new Map();
- let depthValue='',scrolled=false,dialogElement=null;
- let lastTab=null,previous=new Map(),oldRects=new Map(),pendingTab=null,observer=null,scrollFrame=0,origin=null,drag=null,basic=false;
- const surfaces='.hero,.stat,.card,.banner,.subject-card,.note-card,.task-row,.empty,.ink-library-top,.ink-note-card,.tool-card,.psy-event-card,.ref-card';
- function play(el,frames,options={}){
+ const rootStyle=getComputedStyle(document.documentElement);
+ const duration=(name,fallback)=>parseFloat(rootStyle.getPropertyValue('--motion-'+name))||fallback;
+ const timing={navigation:duration('navigation',420),dialog:duration('dialog',380),exit:duration('exit',220),reveal:duration('reveal',360),feedback:duration('feedback',200)};
+ const ease=rootStyle.getPropertyValue('--motion-ease').trim()||'cubic-bezier(.22,.68,.2,1)';
+ const active=new Map(),seen=new Map(),positions=new Map(),completed=new Map();
+ const order=['today','planner','notes','ink','stickies','recall','focus','materials','research','dictionary','timeline','tools','insights','search','reader','voice','board','mindmap'];
+ const direct='.ink-paper,.ink-editor,.ink-toolbar,.board-card,.mind-node,.reader-pages,canvas';
+ const surfaces='.hero,.stat,.card,.banner,.subject-card,.note-card,.task-row,.empty,.tool-card,.psy-event-card,.psy-timeline-card,.ref-card,.reference-card';
+ let lastTab=null,pending=null,observer=null,dialog=null,drag=null,basic=false;
+ const exits=new Set();
+ function stop(el){const a=active.get(el);if(a){active.delete(el);a.cancel();}}
+ function cancel(scope){for(const el of [...active.keys()])if(!scope||!el.isConnected||el===scope||scope.contains(el))stop(el);}
+ function play(el,frames,ms){
   if(!el?.animate||preference.matches||document.hidden)return null;
-  const prior=byElement.get(el);
-  if(prior){
-   // Read the current compositor state before replacing an in-flight transition.
-   const current=getComputedStyle(el),first={...frames[0]};
-   for(const property of ['transform','opacity'])if(property in first)first[property]=current[property];
-   frames=[first,...frames.slice(1)];prior.cancel();
-  }
-  const animation=el.animate(frames,{duration:timing.enter,easing:ease,...options});
-  active.add(animation);byElement.set(el,animation);
-  const clean=()=>{active.delete(animation);if(byElement.get(el)===animation)byElement.delete(el);};
-  animation.addEventListener('finish',clean,{once:true});animation.addEventListener('cancel',clean,{once:true});return animation;
+  stop(el);
+  const animation=el.animate(frames,{duration:ms,easing:ease});active.set(el,animation);
+  const clean=()=>{if(active.get(el)===animation)active.delete(el);};
+  animation.addEventListener('finish',clean,{once:true});animation.addEventListener('cancel',clean,{once:true});
+  return animation;
  }
- function cancel(root){
-  for(const a of [...active]){const target=a.effect?.target;if(!root||!target?.isConnected||root.contains(target))a.cancel();}
- }
- function cancelDecorations(){cancel(document.querySelector('#main'));}
- function stopScroll(){if(scrollFrame)cancelAnimationFrame(scrollFrame);scrollFrame=0;}
- function rect(el){return el.getBoundingClientRect();}
- function visible(r){return r.bottom>0&&r.top<innerHeight&&r.width>0;}
  function key(el){const owner=el.matches('[data-id]')?el:el.querySelector('[data-id]');return el.classList[0]+':'+(owner?.dataset.id||el.textContent.trim().slice(0,100));}
- function arrive(el,index=0,scroll=false){if(basic)return;play(el,[{opacity:scroll ? .55 : 0,transform:'translateY('+ (scroll?8:12)+'px)'},{opacity:1,transform:'translateY(0)'}],{duration:scroll?280:timing.enter,delay:Math.min(index*24,96)});}
- function beforeRender(root,tab){
-  oldRects.clear();if(tab!==lastTab||preference.matches)return;
-  for(const el of [...root.querySelectorAll('.task-row,.note-card')].slice(0,100)){const r=rect(el);if(visible(r))oldRects.set(key(el),r);}
+ function disconnect(){observer?.disconnect();observer=null;}
+ function beforeRender(root){
+  // Data updates should not restart motion. Only release effects on nodes about to be removed.
+  for(const el of [...active.keys()])if(el!==root&&root.contains(el))stop(el);
  }
- function navigate(from,to){if(from!==to){positions.set(from,scrollY);pendingTab=to;}}
- function depth(){
-  scrollFrame=0;
-  if(preference.matches||basic||document.hidden)return;
-  // Only existing decorative motifs move. The page background remains #000000.
-  const value=Math.min(18,Math.max(0,scrollY)*.035).toFixed(1)+'px';
-  if(value!==depthValue){depthValue=value;document.documentElement.style.setProperty('--motion-depth',value);}
-  const next=scrollY>24;if(next!==scrolled){scrolled=next;document.documentElement.classList.toggle('motion-scrolled',next);}
+ function navigate(from,to){
+  if(from===to)return;
+  positions.set(from,scrollY);
+  const fromIndex=order.indexOf(from),toIndex=order.indexOf(to);
+  pending={tab:to,direction:fromIndex>=0&&toIndex>=0&&toIndex<fromIndex?-1:1};
  }
- function onScroll(){if(!scrollFrame&&!basic&&!preference.matches&&!document.hidden)scrollFrame=requestAnimationFrame(depth);}
- function render(root,tab){
-  cancel(root);observer?.disconnect();observer=null;
-  if(pendingTab!==null){window.scrollTo({top:positions.get(pendingTab)||0,behavior:'instant'});pendingTab=null;}
-  const changed=tab!==lastTab,first=!visited.has(tab),next=new Map();
+ function observeSections(root,tab){
+  disconnect();if(preference.matches||basic||['ink','board','mindmap','reader'].includes(tab))return;
   if(!seen.has(tab))seen.set(tab,new Set());const revealed=seen.get(tab);
-  const candidates=[...root.querySelectorAll(surfaces)].slice(0,160),selection=new Set(candidates);
+  const candidates=[...root.querySelectorAll(surfaces)].slice(0,120),selection=new Set(candidates);
   const outer=candidates.filter(el=>{for(let p=el.parentElement;p&&p!==root;p=p.parentElement)if(selection.has(p))return false;return true;});
-  // All reads precede entrance writes; below-fold content remains readable without JS.
-  const bounds=outer.map(el=>({el,r:rect(el),id:key(el)}));
-  let order=0;
-  if(!preference.matches&&!basic&&'IntersectionObserver' in window){
-   observer=new IntersectionObserver(entries=>{for(const entry of entries)if(entry.isIntersecting){observer?.unobserve(entry.target);const id=key(entry.target);if(!revealed.has(id)){revealed.add(id);arrive(entry.target,0,true);}}},{threshold:.08});
-  }
-  for(const {el,r,id} of bounds){
-   if(visible(r)){if(first&&order<16)arrive(el,order++);revealed.add(id);}
-   else if(r.top>=innerHeight&&!revealed.has(id))observer?.observe(el);
-  }
-  if(changed)play(document.querySelector('.bottom-nav .active .nav-ico'),spring('scale',.88,1),{duration:300,easing:'linear'});
-  let progressIndex=0;
-  for(const el of root.querySelectorAll('.task-row,.note-card,.answer,.check-btn,.progress>div')){
-   const progress=el.matches('.progress>div'),id=progress?'progress:'+progressIndex++:key(el);
-   const state=el.matches('.check-btn')?el.classList.contains('done'):progress?el.style.width:el.textContent.slice(0,160);
-   next.set(id,state);const r=rect(el);if(!visible(r))continue;
-   if(progress){const value=parseFloat(state),old=first?0:changed?NaN:parseFloat(previous.get(id));if(value>0&&Number.isFinite(old)&&old!==value)play(el,[{transform:'scaleX('+Math.min(1,old/value)+')'},{transform:'scaleX(1)'}]);}
-   if(!changed){
-    const old=oldRects.get(id);
-    if(el.matches('.check-btn')&&previous.has(id)&&previous.get(id)!==state)play(el,spring('scale',.8,1),{duration:300,easing:'linear'});
-    else if(old&&Math.abs(old.top-r.top)>1&&Math.abs(old.top-r.top)<400)play(el,[{transform:'translateY('+(old.top-r.top)+'px)'},{transform:'translateY(0)'}],{duration:260});
-    else if(!previous.has(id)&&el.matches('.task-row,.note-card,.answer'))arrive(el);
+  const below=[];
+  for(const el of outer){const bounds=el.getBoundingClientRect(),id=key(el);if(bounds.top<innerHeight)revealed.add(id);else if(!revealed.has(id))below.push(el);}
+  if(!below.length||!('IntersectionObserver' in window))return;
+  observer=new IntersectionObserver(entries=>{
+   for(const entry of entries)if(entry.isIntersecting){
+    observer?.unobserve(entry.target);const id=key(entry.target);
+    if(revealed.has(id))continue;revealed.add(id);
+    // Never stack an individual reveal on top of a moving section.
+    if(!active.has(root))play(entry.target,[{opacity:.86,transform:'translateY(7px)'},{opacity:1,transform:'translateY(0)'}],timing.reveal);
    }
+  },{threshold:.04});
+  below.forEach(el=>observer.observe(el));
+ }
+ function render(root,tab){
+  for(const el of [...active.keys()])if(!el.isConnected)stop(el);
+  const changed=lastTab!==null&&lastTab!==tab;
+  if(pending){window.scrollTo({top:positions.get(tab)||0,behavior:'instant'});}
+  if(changed){
+   // A persistent root means rapid navigation can continue from its current offset.
+   let offset=0;
+   if(active.has(root))offset=new DOMMatrixReadOnly(getComputedStyle(root).transform).m41;
+   const direction=pending?.direction||1,distance=innerWidth<650?22:30;
+   const start=active.has(root)?offset:direction*distance;
+   stop(root);
+   play(root,[{transform:'translateX('+start+'px)'},{transform:'translateX(0)'}],basic?260:timing.navigation);
   }
-  // Charts enter only on the first visit, and remain still during unrelated updates.
-  if(first&&!basic)for(const el of root.querySelectorAll('.chart-bar'))if(visible(rect(el)))play(el,[{transform:'scaleY(.08)'},{transform:'scaleY(1)'}],{duration:timing.enter});
-  previous=next;lastTab=tab;visited.add(tab);oldRects.clear();depth();
+  root.dataset.motionDirection=pending?.direction===-1?'backward':'forward';
+  pending=null;
+  // Completion confirmation is tied to the committed task state, not to a click.
+  for(const el of root.querySelectorAll('.check-btn[data-id]')){
+   const id=el.dataset.id,done=el.classList.contains('done');
+   if(tab===lastTab&&completed.has(id)&&completed.get(id)!==done)play(el,[{opacity:.55},{opacity:1}],timing.feedback);
+   completed.set(id,done);
+  }
+  lastTab=tab;observeSections(root,tab);
  }
- // Damped spring sampled once per interaction; WAAPI handles native display cadence.
- function spring(kind,start,end){return Array.from({length:25},(_,i)=>{const t=i/24,p=i===24?1:1-Math.exp(-7*t)*(Math.cos(10*t)+.7*Math.sin(10*t));return {offset:t,transform:kind==='scale'?'scale('+(start+(end-start)*p)+')':'translateY('+(start+(end-start)*p)+'px)'};});}
- function opened(dialog){
-  if(!dialog)return;
-  const source=origin;closed();origin=source;dialogElement=dialog;
-  const header=dialog.querySelector('.modal-header');
-  if(header&&!header.querySelector('.motion-sheet-handle')){const handle=document.createElement('span');handle.className='motion-sheet-handle';handle.setAttribute('aria-hidden','true');header.prepend(handle);}
-  dialog.style.setProperty('animation','none','important');
-  if(origin&&performance.now()-origin.time<700&&!preference.matches){
-   const target=rect(dialog),dx=Math.max(-80,Math.min(80,origin.rect.left+origin.rect.width/2-target.left-target.width/2));
-   // Carry the selected note's direction into its editor without duplicating its content.
-   play(dialog,[{opacity:.4,transform:'translate('+dx+'px,18px) scale(.97)'},{opacity:1,transform:'translate(0,0) scale(1)'}],{duration:timing.dialog});
-  }else play(dialog,[{opacity:.4,transform:innerWidth<650?'translateY(32px)':'translateY(16px) scale(.985)'},{opacity:1,transform:'translateY(0) scale(1)'}],{duration:timing.dialog});
-  origin=null;
+ function resetDrag(){
+  if(!drag)return;const d=drag;drag=null;d.el.style.removeProperty('transform');
+  try{d.handle.releasePointerCapture(d.id);}catch{}
  }
- function resetDrag(){if(!drag)return;const d=drag;drag=null;d.el.style.removeProperty('transform');try{d.handle.releasePointerCapture(d.id);}catch{}}
- function closed(){resetDrag();if(dialogElement)cancel(dialogElement);dialogElement=null;origin=null;}
- document.addEventListener('click',e=>{const note=e.target.closest?.('.note-card');origin=note?{rect:rect(note),time:performance.now()}:null;},true);
+ function closed(){
+  resetDrag();
+  if(dialog){const current=getComputedStyle(dialog).transform;cancel(dialog);if(current!=='none')dialog.style.transform=current;}
+  dialog=null;
+ }
+ function opened(el){
+  closed();for(const overlay of [...exits]){cancel(overlay);overlay.remove();exits.delete(overlay);}dialog=el;if(!el)return;
+  const header=el.querySelector('.modal-header');
+  if(header&&!header.querySelector('.motion-sheet-handle')){
+   const handle=document.createElement('span');handle.className='motion-sheet-handle';handle.setAttribute('aria-hidden','true');header.prepend(handle);
+  }
+  play(el,[{transform:'translateY(30px)'},{transform:'translateY(0)'}],timing.dialog);
+ }
+ function dismiss(overlay){
+  if(!overlay||preference.matches||document.hidden)return;
+  const surface=overlay.querySelector('.modal');if(!surface)return;
+  const y=Math.max(0,new DOMMatrixReadOnly(getComputedStyle(surface).transform).m42);
+  // Move the actual outgoing DOM only after the existing editor has flushed its draft.
+  // It is inert, has no IDs, and cannot trap focus or intercept input during its short exit.
+  overlay.classList.add('motion-dismiss-layer');overlay.setAttribute('inert','');overlay.setAttribute('aria-hidden','true');
+  overlay.querySelectorAll('[id]').forEach(el=>el.removeAttribute('id'));
+  document.body.append(overlay);exits.add(overlay);
+  const remove=()=>{cancel(overlay);overlay.remove();exits.delete(overlay);};
+  const slide=play(surface,[{transform:'translateY('+y+'px)'},{transform:'translateY('+(y+24)+'px)'}],timing.exit);
+  play(overlay,[{opacity:1},{opacity:0}],timing.exit);
+  if(slide){slide.addEventListener('finish',remove,{once:true});slide.addEventListener('cancel',remove,{once:true});}else remove();
+ }
  document.addEventListener('pointerdown',e=>{
   const handle=e.target.closest?.('.motion-sheet-handle');
-  if(!handle||e.pointerType==='pen'||!e.isPrimary||e.button!==0||preference.matches||innerWidth>649)return;
-  const el=handle.closest('.modal');if(!el)return;e.preventDefault();const offset=Math.max(0,new DOMMatrixReadOnly(getComputedStyle(el).transform).m42);byElement.get(el)?.cancel();el.style.setProperty('animation','none','important');el.style.transform='translateY('+offset+'px)';
-  drag={el,handle,id:e.pointerId,y:e.clientY,offset,time:performance.now(),lastY:e.clientY,velocity:0,dy:offset};handle.setPointerCapture(e.pointerId);
+  if(!handle){
+   // Direct manipulation begins on a settled surface, including a stylus used during navigation.
+   if(e.pointerType==='pen'||e.target.closest?.('input,textarea,select,[contenteditable=true],'+direct)){
+    stop(document.querySelector('#main'));if(dialog)stop(dialog);
+   }
+   return;
+  }
+  if(e.pointerType==='pen'||!e.isPrimary||e.button!==0||preference.matches||innerWidth>649)return;
+  const el=handle.closest('.modal');if(!el)return;
+  const offset=Math.max(0,new DOMMatrixReadOnly(getComputedStyle(el).transform).m42);stop(el);e.preventDefault();
+  drag={el,handle,id:e.pointerId,startY:e.clientY,offset,dy:offset,lastY:e.clientY,time:performance.now(),velocity:0};
+  el.style.transform='translateY('+offset+'px)';handle.setPointerCapture(e.pointerId);
  });
- document.addEventListener('pointermove',e=>{if(!drag||drag.id!==e.pointerId)return;const now=performance.now();drag.velocity=(e.clientY-drag.lastY)/Math.max(1,now-drag.time);drag.time=now;drag.lastY=e.clientY;drag.dy=Math.max(0,drag.offset+e.clientY-drag.y);drag.el.style.transform='translateY('+drag.dy+'px)';});
+ document.addEventListener('pointermove',e=>{
+  if(!drag||drag.id!==e.pointerId)return;const now=performance.now();
+  drag.velocity=(e.clientY-drag.lastY)/Math.max(1,now-drag.time);drag.time=now;drag.lastY=e.clientY;
+  drag.dy=Math.max(0,drag.offset+e.clientY-drag.startY);drag.el.style.transform='translateY('+drag.dy+'px)';
+ });
  function endDrag(e){
-  if(!drag||drag.id!==e.pointerId)return;const d=drag,travel=d.dy-d.offset,velocity=performance.now()-d.time<100?d.velocity:0;drag=null;
+  if(!drag||drag.id!==e.pointerId)return;const d=drag;drag=null;
   try{d.handle.releasePointerCapture(d.id);}catch{}
-  const dismiss=e.type==='pointerup'&&travel>20&&(d.dy>90||(d.dy>30&&velocity>.65));
-  const animation=play(d.el,dismiss?[{transform:'translateY('+d.dy+'px)',opacity:1},{transform:'translateY('+Math.min(innerHeight,600)+'px)',opacity:0}]:spring('translateY',d.dy,0),{duration:dismiss?180:300,easing:dismiss?ease:'linear'});
-  d.el.style.removeProperty('transform');
-  const finish=()=>{if(dismiss&&d.el===document.querySelector('#modalRoot .modal'))window.PsychDeskCore.closeModal();};
-  if(animation)animation.addEventListener('finish',finish,{once:true});else finish();
+  const travel=d.dy-d.offset,velocity=performance.now()-d.time<100?d.velocity:0;
+  const shouldDismiss=e.type==='pointerup'&&travel>20&&(d.dy>100||(d.dy>40&&velocity>.7));
+  if(shouldDismiss){window.PsychDeskCore.closeModal();d.el.style.removeProperty('transform');}
+  else{play(d.el,[{transform:'translateY('+d.dy+'px)'},{transform:'translateY(0)'}],timing.dialog);d.el.style.removeProperty('transform');}
  }
  document.addEventListener('pointerup',endDrag);document.addEventListener('pointercancel',endDrag);
- document.addEventListener('lostpointercapture',e=>{if(drag?.id===e.pointerId)endDrag({...e,pointerId:e.pointerId,type:'pointercancel'});});
- function quiet(){cancel();observer?.disconnect();stopScroll();resetDrag();depthValue='0px';document.documentElement.style.setProperty('--motion-depth',depthValue);}
- preference.addEventListener('change',()=>{if(preference.matches)quiet();else depth();});
- document.addEventListener('visibilitychange',()=>{if(document.hidden)quiet();else depth();});
- window.addEventListener('pagehide',quiet);window.addEventListener('pageshow',depth);window.addEventListener('scroll',onScroll,{passive:true});
- // Downgrade decorative effects during severe main-thread stalls; essential controls stay instant.
- try{if(PerformanceObserver.supportedEntryTypes.includes('longtask')){new PerformanceObserver(list=>{if(list.getEntries().some(e=>e.duration>120)){basic=true;cancelDecorations();document.documentElement.dataset.motionQuality='basic';observer?.disconnect();stopScroll();depthValue='0px';document.documentElement.style.setProperty('--motion-depth',depthValue);}}).observe({type:'longtask',buffered:false});}}catch{}
- window.PsychDeskMotion={render,beforeRender,navigate,opened,closed,cancel};
+ document.addEventListener('lostpointercapture',e=>{if(drag?.id===e.pointerId)endDrag({pointerId:e.pointerId,type:'pointercancel'});});
+ function quiet(){
+  disconnect();resetDrag();for(const overlay of [...exits]){cancel(overlay);overlay.remove();exits.delete(overlay);}cancel();
+ }
+ preference.addEventListener('change',()=>{if(preference.matches)quiet();else{const root=document.querySelector('#main');if(root)observeSections(root,lastTab);}});
+ document.addEventListener('visibilitychange',()=>{if(document.hidden)quiet();});
+ window.addEventListener('pagehide',quiet);
+ window.addEventListener('pageshow',()=>{const root=document.querySelector('#main');if(root)observeSections(root,lastTab);});
+ // Require repeated stalls before simplifying decoration; preserve essential navigation feedback.
+ let stalls=0;
+ try{if(PerformanceObserver.supportedEntryTypes.includes('longtask'))new PerformanceObserver(list=>{
+  stalls+=list.getEntries().filter(entry=>entry.duration>120).length;
+  if(stalls>=3&&!basic){basic=true;document.documentElement.dataset.motionQuality='basic';disconnect();}
+ }).observe({type:'longtask',buffered:false});}catch{}
+ window.PsychDeskMotion={beforeRender,navigate,render,opened,closed,dismiss,cancel};
 })();

@@ -1,88 +1,57 @@
-/* One motion language. AMOLED colors and layout remain owned by the theme. */
-:root{--motion-ease:cubic-bezier(.22,1,.36,1);--motion-spring:cubic-bezier(.2,.85,.25,1.12);--motion-fast:120ms;--motion-small:180ms;--motion-settle:280ms;--motion-enter:380ms;--motion-dialog:300ms}
-html{scroll-behavior:auto}
-/* Replace legacy entrance/idle loops; updates must not replay page entrances. */
-.page-enter :is(.hero,.stat,.subject-card,.note-card,.banner,.card),.rail-motif,.dashboard-page .hero::after{animation:none!important}
+/* User-selected motion language: directional surfaces, gentle stops, a still workspace. */
+:root{
+ --motion-ease:cubic-bezier(.22,.68,.2,1);
+ --motion-press:110ms;--motion-feedback:200ms;--motion-hover:240ms;
+ --motion-navigation:420ms;--motion-dialog:380ms;--motion-exit:220ms;--motion-reveal:360ms;
+}
+html{scroll-behavior:auto;overflow-x:clip}
+/* Remove competing legacy entrances, bounces, chart growth and ambient loops. */
+#main,#main *,#main *::before,#main *::after,.rail-motif,.desktop-rail::before,
+#modalRoot .modal,#modalRoot .modal-overlay,.motion-dismiss-layer,.motion-dismiss-layer .modal,
+.sticky-hero h1 span,.setup-panel,.setup-icon{animation:none!important}
+.desktop-rail::before,.dashboard-page .hero::after{transform:none!important;pointer-events:none}
+.app-shell,body.modal-open .app-shell{opacity:1;transition:none!important}
+#main{min-width:0;isolation:isolate}
 :is(button,a,input,textarea,select,summary){-webkit-tap-highlight-color:transparent}
-:is(button,.resource-item,.note-card,.ink-note-card,summary){transition:transform var(--motion-settle) var(--motion-spring),background-color 180ms ease,border-color 180ms ease,color 180ms ease,box-shadow 220ms ease!important}
-:is(button,.resource-item,.note-card,.ink-note-card):active:not(:disabled){transform:scale(.97);transition-duration:80ms!important}
-:is(button,a):focus-visible{transition:outline-offset 160ms ease;outline-offset:4px}
-:is(input,textarea,select){transition:border-color 180ms ease,box-shadow 220ms ease!important}
-:is(.stat,.subject-card,.note-card,.material-card,.resource-item,.ink-note-card,.tool-card){transition:transform 320ms var(--motion-ease),border-color 200ms ease,box-shadow 320ms ease!important}
+:is(button,summary,.resource-item,.note-card,.ink-note-card,.subject-card,.material-card,.tool-card,.ref-card,.psy-entry){
+ transition:background-color var(--motion-feedback) ease,border-color var(--motion-feedback) ease,color var(--motion-feedback) ease,box-shadow var(--motion-hover) ease!important;
+}
+/* Individual scale keeps each control's existing layout/rotation intact. */
+button{transform:none!important;scale:1;transition:scale var(--motion-press) var(--motion-ease),background-color var(--motion-feedback) ease,border-color var(--motion-feedback) ease,color var(--motion-feedback) ease!important}
+button:active:not(:disabled){scale:.98}
+:is(.nav-ico,.rail-symbol,.rail-trail){transform:none!important;transition:color var(--motion-feedback) ease,opacity var(--motion-feedback) ease!important}
+.rail-link,.rail-link:hover{transform:none!important}
 @media(hover:hover) and (pointer:fine){
- :is(.subject-card,.note-card,.material-card,.resource-item,.ink-note-card,.tool-card):hover{transform:translateY(-3px)}
- :is(.primary,.secondary,.pill-btn,.icon-btn,.mini-btn):hover:not(:disabled){transform:translateY(-1px)}
- :is(.primary,.secondary,.pill-btn,.icon-btn,.mini-btn):active:not(:disabled){transform:translateY(0) scale(.97)}
- .rail-link:hover{transform:translateX(2px)}
+ :is(.subject-card,.note-card,.material-card,.resource-item,.ink-note-card,.tool-card,.ref-card):hover{transform:none;box-shadow:inset 0 0 0 1px #ffffff24}
 }
-.nav-ico,.rail-symbol{transition:transform 320ms var(--motion-spring),background-color 180ms ease!important}
-.rail-link.active .rail-symbol{transform:scale(1.08)}
-.rail-trail{transition:opacity 180ms ease,transform 280ms var(--motion-ease);transform:translateX(-4px)}
-.rail-link.active .rail-trail{transform:translateX(0)}
-#modalRoot .modal-overlay{animation:motion-veil 220ms ease both!important}
-#modalRoot .modal{animation:motion-dialog var(--motion-dialog) var(--motion-ease) both!important;transform-origin:50% 70%}
-@keyframes motion-veil{from{opacity:0}to{opacity:1}}
-@keyframes motion-dialog{from{opacity:0;transform:translateY(22px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
-@media(max-width:649px){#modalRoot .modal{animation-name:motion-sheet!important;transform-origin:50% 100%}}
-@keyframes motion-sheet{from{opacity:.4;transform:translateY(36px)}to{opacity:1;transform:translateY(0)}}
-#toast{transition:opacity 180ms ease,transform 300ms var(--motion-ease)!important;transform:translate(-50%,10px)}
-#toast.show{transform:translate(-50%,0)}
-.progress>div{transform-origin:left;transition:none!important}
-.chart-bar{transform-origin:bottom;animation:none!important}
-@keyframes motion-chart{from{transform:scaleY(.08)}to{transform:scaleY(1)}}
-/* Direct manipulation must never lag behind a finger or stylus. */
-:is(.board-card,.mind-node,.ink-paper,.ink-paper canvas){transition:none!important}
-@media(prefers-reduced-motion:reduce){
- *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
- #modalRoot .modal,#modalRoot .modal-overlay,.chart-bar{animation:none!important}
-}
-.sticky-hero h1 span{animation:none!important}
-.setup-panel{animation:motion-dialog var(--motion-dialog) var(--motion-ease) both}
-.sticky-paper{transition:transform 320ms var(--motion-ease),box-shadow 320ms ease}
-@media(prefers-reduced-motion:reduce){.setup-panel{animation:none!important}}
-/* Depth is restricted to existing motifs. No fullscreen animated layer. */
-.desktop-rail::before{transform:translateY(var(--motion-depth,0px));pointer-events:none}
-.dashboard-page .hero::after{transform:translateY(calc(var(--motion-depth,0px) * -1));pointer-events:none}
-.app-shell{transition:opacity 220ms ease}
-body.modal-open .app-shell{opacity:.72}
-html[data-theme=dark] #modalRoot .modal-overlay{background:rgba(0,0,0,.56);backdrop-filter:none;-webkit-backdrop-filter:none}
-.motion-scrolled .topbar{border-bottom-color:var(--line)}
-.modal-header{position:relative}
-.motion-sheet-handle{display:none}
-@media(max-width:649px){
- .motion-sheet-handle{display:block;position:absolute;top:-24px;left:50%;width:64px;height:24px;transform:translateX(-50%);touch-action:none;cursor:grab}
- .motion-sheet-handle::after{content:'';position:absolute;left:14px;right:14px;top:7px;height:4px;border-radius:8px;background:currentColor;opacity:.25}
- .modal:has(.motion-sheet-handle){padding-top:32px}
-}
-/* Keyboard and reduced-motion users retain immediate state/focus feedback. */
-@media(prefers-reduced-motion:reduce){
- .app-shell{transition:none}
- .desktop-rail::before,.dashboard-page .hero::after{transform:none!important}
-}
-.mind-node:active,.board-card:active{transform:none!important}
-@media(prefers-reduced-motion:reduce){
- :is(button,.resource-item,.note-card,.ink-note-card,.subject-card,.material-card,.tool-card):is(:hover,:active){transform:none!important}
- .rail-link.active .rail-symbol{transform:none}
-}
-
-/* Shared interaction tokens extend to resource tools without animating list contents. */
-:is(.filter,.select-strip button,.review-btns button,.sticky-swatches label>span){
- transition:transform var(--motion-small) var(--motion-ease),border-color var(--motion-small) ease,background-color var(--motion-small) ease!important;
-}
+:is(input,textarea,select){transition:border-color var(--motion-feedback) ease,box-shadow var(--motion-feedback) ease!important}
 :is(button,a,summary,[tabindex="0"]):focus-visible{outline:2px solid var(--green);outline-offset:4px}
 :is(.field input,.field textarea,.field select):focus-visible{outline:2px solid var(--green);outline-offset:2px}
+/* A single subtle overlay supplies emphasis; the workspace itself is never dimmed or moved. */
+html[data-theme=dark] #modalRoot .modal-overlay,html[data-theme=dark] .motion-dismiss-layer{background:rgba(0,0,0,.28)!important}
+#modalRoot .modal-overlay,.motion-dismiss-layer{backdrop-filter:blur(3px)!important;-webkit-backdrop-filter:blur(3px)!important}
+/* Keep the veil steady while the foreground surface moves. */
+.motion-dismiss-layer{pointer-events:none!important;z-index:99!important}
 .modal{overscroll-behavior:contain;scrollbar-gutter:stable}
+.modal-header{position:relative;gap:16px;align-items:center}
 .modal-header h2{min-width:0;overflow-wrap:anywhere}
-.modal-header .close{flex-shrink:0;min-width:44px;min-height:44px}
-:is(.hero h1,.section-row h2){text-wrap:balance}
-:is(.kpi-header,.section-row)>*{min-width:0}
-@media(pointer:coarse){
- :is(.filter,.mini-btn,.icon-btn,.review-btns button,.select-strip button){min-height:44px}
+.modal-header .close{flex:0 0 44px;min-width:44px;min-height:44px}
+.motion-sheet-handle{display:none}
+@media(max-width:649px){
+ .motion-sheet-handle{display:block;position:absolute;top:-25px;left:50%;width:64px;height:24px;transform:translateX(-50%);touch-action:none;cursor:grab}
+ .motion-sheet-handle::after{content:'';position:absolute;left:14px;right:14px;top:7px;height:4px;border-radius:8px;background:currentColor;opacity:.3}
+ .modal:has(.motion-sheet-handle){padding-top:34px}
 }
-/* Pressure-sensitive surfaces and drag handles never inherit generic press transforms. */
-:is(.ink-paper,.ink-paper canvas,.board-card,.mind-node,.motion-sheet-handle){-webkit-tap-highlight-color:transparent}
-html[data-motion-quality=basic] :is(.subject-card,.note-card,.material-card,.resource-item,.ink-note-card,.tool-card):hover{transform:none}
+#toast{transition:opacity var(--motion-feedback) ease,transform var(--motion-hover) var(--motion-ease)!important;transform:translate(-50%,5px)}
+#toast.show{transform:translate(-50%,0)}
+.progress>div,.chart-bar{transition:none!important}
+/* Drawing, dragging and handwriting must follow the pointer immediately. */
+:is(.board-card,.mind-node,.ink-paper,.ink-paper canvas,.ink-toolbar button){transition:none!important;scale:1!important}
+.setup-panel{animation:calm-panel var(--motion-dialog) var(--motion-ease)!important}
+@keyframes calm-panel{from{transform:translateY(30px)}to{transform:translateY(0)}}
+.sticky-paper{transition:box-shadow var(--motion-hover) ease!important}
+.sticky-paper:hover{transform:rotate(var(--sticky-angle))!important}
 @media(prefers-reduced-motion:reduce){
- :is(.filter,.select-strip button,.review-btns button,.sticky-swatches label>span){transition:none!important}
- .rail-link:hover{transform:none!important}
+ *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+ button:active:not(:disabled){scale:1}
 }

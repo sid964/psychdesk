@@ -1,29 +1,22 @@
-# PsychDesk motion system
+# PsychDesk calm motion
 
-The primary AMOLED background remains #000000. Motion is confined to interface feedback, finite surface entrances, and existing decorative motifs; no full-screen animated backdrop is introduced.
+The user selected directional navigation, upward-sliding dialogs on every device, a light overlay with subtle blur, single-surface content transitions, one-time scroll reveals, and a still study workspace. They reported abrupt speed, stuttering, excessive scaling, and excessive dimming in the previous system.
 
-## Behavior
+## Timing and behavior
 
-- Central CSS duration/easing tokens feed the JavaScript controller. Press feedback is 80–120 ms, small responses about 180 ms, sheets/dialogs 300 ms, and navigation surfaces 380 ms with at most 96 ms stagger.
-- A sampled damped spring drives navigation icon feedback, task completion and sheet snap-back. WAAPI follows the browser's display cadence; there is no frame-rate cap.
-- Each section enters once. Returning restores its document scroll position. Existing tab/filter/editor persistence remains owned by the application.
-- Below-fold surfaces reveal once through IntersectionObserver. Content is never hidden while waiting for JavaScript, and long-form text and drawing surfaces do not move.
-- Same-section task/note reordering uses bounded transform-based FLIP. Selected note cards provide directional continuity into their editor without duplicating note content in overlays.
-- Mobile dialogs expose a dedicated drag handle. Short/cancelled drags spring back; deliberate downward drags dismiss through the existing save/close lifecycle. Scrolling, text selection and stylus events outside that handle remain untouched.
-- Existing monochrome motifs shift at most 18 px with scroll. Opening a dialog dims the inactive workspace. Both effects reverse through their current CSS state, with no colored glow or gray page replacement.
-- Severe main-thread long tasks reduce optional scroll/depth effects in supporting browsers. Essential controls remain immediate. This is a conservative fallback, not a refresh-rate measurement.
-- Reduced motion, page hiding, page restoration, rapid navigation and component replacement cancel or settle transient effects. No persistent animation loop or new dependency is added.
+- Navigation moves the existing main surface 22px on phones and 30px on larger screens, over 420ms. Forward destinations enter from the right; backward destinations enter from the left, following the established section order. Rapid navigation resumes the current offset. Content never fades out, and individual cards do not stagger during navigation.
+- Dialogs slide upward 30px over 380ms on all devices. There is no scaling, spring overshoot, or directional note-card morph. Closing moves the outgoing surface down 24px over 220ms while fading its overlay. The editor flushes through its existing close event before this begins. Outgoing DOM is inert, has no IDs, and cannot intercept input; reopening or lifecycle changes remove it immediately.
+- Overlay emphasis is black at 28% opacity with a static 3px backdrop blur. The workspace itself is neither faded nor moved. No animated blur, parallax, or depth effects remain.
+- Below-fold surfaces reveal once per section with 7px travel and opacity from 0.86 to 1 over 360ms. Initial visible content remains steady; reveals never overlap a section transition or affect handwriting, readers, or drag canvases.
+- Buttons press to 98% scale over 110ms. Cards receive a subtle inset edge on hover instead of lifting. Existing successful-save notifications remain responsible for their actual status; task confirmation follows committed state. Charts and progress indicators remain still.
+- Central tokens use a monotonic easing curve with a gentle stop and no bounce. WAAPI follows the browser's native refresh rate without a frame cap or perpetual frame loop.
 
-## Validation and boundaries
+## Accessibility and stability
 
-The existing 119 Node tests protect study functionality. The Chromium/Firefox audit covers six widths and adds motion settling, scroll continuity, rapid navigation, interrupted dialogs, reduced motion, true-black background checks and mobile handle gestures. Screenshots cover arrival, scrolled content and dialogs. Frame samples in the report measure idle headless CI cadence only; they do not establish animation FPS or guarantee 90 FPS on physical displays. Real-device stylus pressure and high-refresh-rate profiling remain device-level checks.
+Reduced motion settles active effects and disables nonessential movement. Pen input and editing/direct manipulation settle a moving surface immediately. Mobile sheet dragging is confined to its dedicated handle, with recent velocity and distance determining dismissal; cancelled gestures return without overshoot. Lifecycle cleanup removes effects and outgoing surfaces when the page hides. Repeated long tasks reduce optional reveals. No scroll listeners, repeated layout polling, new dependency, or business-data migration is introduced.
 
-Native select dropdowns, auth popups and other browser/OS surfaces keep their native behavior. The rebuild intentionally avoids gesture interception on content, cosmetic sync success states, and animated overlays containing copies of private notes.
+The associated UI refinement improves text sizing and line height, spacing, card consistency, navigation density, dialog labels, and comfortable touch targets while retaining the true-black background, typography families, and established feature structure.
 
-## Interaction refinement
+## Verification
 
-Dialog transitions now share the WAAPI lifecycle: a workspace rerender cannot cancel the foreground editor, and replacing, closing, or reducing motion settles its animation. Retargeted transitions sample their current compositor state. Sheet release velocity uses the latest pointer movement, so pausing before release does not count as a fling.
-
-Charts animate on first visits only. Progress feedback uses transforms rather than a second width transition. Saturated depth values do not repeatedly write root styles. The performance fallback also settles current workspace motion and suppresses subsequent decorative entrances. Keyboard focus outlines, coarse-pointer controls, modal close targets, heading wrapping, and modal overscroll containment improve interaction clarity without changing data or sync logic.
-
-The browser motion regression suite additionally checks foreground animation survival during workspace updates, live reduced-motion changes, and chart replay prevention. Physical stylus and high-refresh-rate measurements are still required to establish device-specific performance.
+The existing Node suite covers data and study functionality. Chromium and Firefox browser checks cover six viewport widths; motion assertions cover directional single-surface navigation, no fade or scaling, scroll continuity, reduced motion, light overlay and blur, noninteractive close lifecycle, interrupted dialogs, sheet gestures, and stylus settlement. Real-account Firebase/Drive flows, physical pen pressure, and 90/120Hz frame pacing require representative devices and account access.
