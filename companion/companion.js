@@ -365,7 +365,7 @@ document.addEventListener('click',e=>{
     '<div class="pc-settings-actions"><button type="button" class="secondary" data-companion-mode="calm">Calm (recommended)</button>'+
     '<button type="button" class="secondary" data-companion-mode="playful">Playful</button>'+
     '<button type="button" class="secondary" data-companion-mode="hidden">Hidden</button></div>'+
-    '<p class="note">Use Alt + Shift + P to restore the companion at any time. Character artwork requires separate licensing.</p></div>');
+    '<p class="note">Use Alt + Shift + P to restore the companion at any time. A custom Pikachu drawing is included; this site and repository remain publicly accessible until you restrict them.</p></div>');
   return;
  }
  const mode=e.target.closest('[data-companion-mode]')?.dataset.companionMode;
