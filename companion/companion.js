@@ -178,48 +178,69 @@ function stopRoam(){
  roamPosition={x:rect.left,y:rect.top};host.style.left=Math.round(rect.left)+'px';host.style.top=Math.round(rect.top)+'px';
  host.style.transform='none';applyPosition(true);
 }
-function startRoam(){
- if(!prefs.roam||!visible()||opened||editing||timerActive||tab==='focus'||drawingSurface()||reduced.matches||!host.animate)return false;
+function isQuietWorkspace(){
+ return !opened&&!editorFocused()&&!pointerDrawing&&!drawingSurface()&&!timerActive&&tab!=='focus'&&!document.hidden;
+}
+function safeTarget(point,bounds){
+ const centerX=point.x+bounds.w*.48,centerY=point.y+bounds.h*.48;
+ if(centerX<bounds.minX||centerY<bounds.minY)return false;
+ const el=document.elementFromPoint?.(centerX,centerY);
+ // Stay away from editors, drawing canvases, navigation, dialogs and fixed controls.
+ return !el?.closest?.('button,input,textarea,select,canvas,[contenteditable],nav,aside,header,.modal-overlay,.bottom-nav,.topbar,[role="dialog"]');
+}
+function startRoam(forceWide=false){
+ if(!prefs.roam||!visible()||!isQuietWorkspace()||reduced.matches||!host.animate)return false;
  stopRoam();const from=toCoords(),b=measure();
  if(b.maxX-b.minX<48||b.maxY-b.minY<48)return false;
- // A walk can cross the full visible workspace, never the OS, top-bar, rail or bottom-nav.
- let target=null,furthest=0;
- for(let i=0;i<9;i++){
-  const candidate={x:b.minX+Math.random()*(b.maxX-b.minX),y:b.minY+Math.random()*(b.maxY-b.minY)};
-  const distance=Math.hypot(candidate.x-from.x,candidate.y-from.y);
-  if(distance>furthest){target=candidate;furthest=distance;}
+ let destination=null,score=-Infinity;
+ const range=forceWide||prefs.mode==='playful'?Math.max(210,b.maxX-b.minX):Math.min(235,Math.max(b.w*2.5,b.maxX-b.minX*.52));
+ for(let i=0;i<14;i++){
+  const p={x:b.minX+Math.random()*(b.maxX-b.minX),y:b.minY+Math.random()*(b.maxY-b.minY)};
+  const d=Math.hypot(p.x-from.x,p.y-from.y);
+  if(d<55||(!forceWide&&prefs.mode==='calm'&&d>range))continue;
+  const penalty=safeTarget(p,b)?0:260;
+  const value=(forceWide?d:-Math.abs(d-range*.58))+Math.random()*40-penalty;
+  if(value>score){score=value;destination=p;}
  }
- if(!target||furthest<55)return false;
+ if(!destination||score< -250)return false;
  host.classList.remove('pc-just-settled');
- host.dataset.facing=target.x<from.x?'left':'right';
+ host.dataset.facing=destination.x<from.x?'left':'right';
  setState('walking');
- const dx=target.x-from.x,dy=target.y-from.y;
- const arc=(Math.random()-.5)*Math.min(54,Math.max(12,b.maxY-b.minY)*.22);
- // Compositor transforms, with browser-native scheduling and no permanent RAF.
+ const dx=destination.x-from.x,dy=destination.y-from.y;
+ const distance=Math.hypot(dx,dy);
+ const sway=(Math.random()-.5)*Math.min(44,Math.max(14,b.maxY-b.minY)*.17);
+ // Browser-native WAAPI updates frame pacing; SVG paws/feet animate independently.
  const movement=host.animate([
   {offset:0,transform:'translate3d(0px,0px,0)'},
-  {offset:.52,transform:'translate3d('+(dx*.52)+'px,'+(dy*.52+arc)+'px,0)'},
+  {offset:.28,transform:'translate3d('+(dx*.28)+'px,'+(dy*.28+sway*.35)+'px,0)'},
+  {offset:.72,transform:'translate3d('+(dx*.72)+'px,'+(dy*.72+sway*.7)+'px,0)'},
   {offset:1,transform:'translate3d('+dx+'px,'+dy+'px,0)'}
- ],{duration:Math.min(7000,Math.max(1850,furthest*13)),easing:'linear',fill:'forwards'});
+ ],{duration:Math.min(7200,Math.max(1350,distance*(prefs.mode==='playful'?11:14))),easing:'linear',fill:'forwards'});
  roamAnimation=movement;
  movement.onfinish=()=>{
   if(roamAnimation!==movement)return;
   movement.cancel();roamAnimation=null;
-  roamPosition=target;host.style.left=Math.round(target.x)+'px';host.style.top=Math.round(target.y)+'px';
-  host.style.transform='none';applyPosition(true);setState('resting');scheduleIdle();
+  roamPosition=destination;host.style.left=Math.round(destination.x)+'px';host.style.top=Math.round(destination.y)+'px';
+  host.style.transform='none';applyPosition(true);
+  setState(walkCount++%4===3?'looking':'resting',walkCount%4===0?1200:0);
+  scheduleIdle();
  };
  return true;
 }
 function scheduleIdle(){
  pauseIdle();
  if(prefs.mode==='hidden'||document.hidden||reduced.matches)return;
- const interval=prefs.mode==='playful'?24000+Math.random()*20000:82000+Math.random()*65000;
+ const interval=prefs.mode==='playful'?16000+Math.random()*14000:65000+Math.random()*35000;
  adventureTimer=setTimeout(()=>{
-  if(!visible()||opened||editing||timerActive||tab==='focus'||drawingSurface()||Date.now()-lastActivity<22000){scheduleIdle();return;}
-  if(prefs.roam&&Math.random()<(prefs.mode==='playful'?.9:.65)&&startRoam())return;
-  if(prefs.mode==='playful'&&prefs.live){
-   if(Math.random()<.4)setState('sleeping',2600);
-   else setState('waving',1600);
+  if(!visible()||!isQuietWorkspace()||Date.now()-lastActivity<16000){scheduleIdle();return;}
+  // Most idle events are brief articulated character reactions, not movement.
+  const chance=Math.random();
+  if(prefs.roam&&chance<(prefs.mode==='playful'?.52:.22)&&startRoam())return;
+  if(prefs.live){
+   if(chance<.32)setState('looking',2200);
+   else if(chance<.67)setState('stretching',2100);
+   else if(chance<.87)setState('sleeping',2800);
+   else setState('waving',1350);
   }
   scheduleIdle();
  },interval);
