@@ -41,9 +41,9 @@ const prefs=load();
 function persist(){try{localStorage.setItem(KEY,JSON.stringify(prefs));}catch{/* Local preferences are optional. */}}
 const host=document.createElement('div');host.id='psychdesk-companion';
 host.className='pc-host';host.dataset.mode=prefs.mode;host.dataset.size=prefs.size;
-host.innerHTML='<button type="button" class="pc-character" aria-label="Study companion. Open quick study help. Drag to move; Shift plus arrow keys to reposition." aria-haspopup="true" aria-expanded="false">'+
- '<span class="pc-body" aria-hidden="true"><span class="pc-orb"><span class="pc-eye pc-eye-left"></span><span class="pc-eye pc-eye-right"></span><span class="pc-mouth"></span></span><span class="pc-star pc-star-one"></span><span class="pc-star pc-star-two"></span></span>'+
- '</button><section class="pc-menu" aria-label="Pikachu companion menu" hidden></section><div class="pc-hint" hidden><span class="pc-hint-text" role="status" aria-live="polite"></span><button type="button" class="pc-hint-dismiss" aria-label="Dismiss Pikachu message">×</button></div>';
+host.innerHTML='<span class="pc-ground-shadow" aria-hidden="true"></span><button type="button" class="pc-character" aria-label="Study companion. Open quick study help. Drag to move; Shift plus arrow keys to reposition." aria-haspopup="true" aria-expanded="false">'+
+ '<span class="pc-body" aria-hidden="true"><span class="pc-orb"><span class="pc-eye pc-eye-left"></span><span class="pc-eye pc-eye-right"></span><span class="pc-mouth"></span></span><span class="pc-star pc-star-one"></span><span class="pc-star pc-star-two"></span></span><span class="pc-expression" aria-hidden="true"></span>'+
+ '</button><section class="pc-menu" role="group" aria-label="Pikachu companion controls" hidden></section><div class="pc-hint" hidden><span class="pc-hint-title" aria-hidden="true">⚡ PIKACHU</span><span class="pc-hint-text" role="status" aria-live="polite" aria-atomic="true"></span><button type="button" class="pc-hint-dismiss" aria-label="Dismiss Pikachu message">×</button></div>';
 document.body.append(host);
 const button=host.querySelector('.pc-character'),body=host.querySelector('.pc-body'),
  menu=host.querySelector('.pc-menu'),hint=host.querySelector('.pc-hint');
@@ -51,6 +51,8 @@ let tab='today',state='resting',opened=false,section='home',lastActivity=Date.no
 let connected=false,drag=null,pendingMove=0,adventureTimer=0,endingTimer=0,hintTimer=0,guideTimer=0,highlight=null,highlightTimer=0;
 let activityTimer=0,editing=false,pointerDrawing=false,disabledByContext=false;
 let roamAnimation=null,roamPosition=null,longPressTimer=0,longPressed=false,lastTap=0;
+let pendingTap=0,hoverTimer=0,walkCount=0,snoozeUntil=0,previousTab='today';
+const EMOTIONS=['resting','idle','looking','stretching','sleeping','waving','walking','celebrating','interacting','pointing','thinking','syncing','disconnected'];
 const bubbleText=hint.querySelector('.pc-hint-text');let bubbleQueue=[];
 const artwork=window.PsychDeskCompanionArtwork;
 const poseImage=artwork&&typeof artwork==='object'?document.createElement('img'):null;
@@ -72,7 +74,7 @@ if(typeof Image==='function'){
  preload.onerror=()=>host.classList.remove('pc-has-photo');
  preload.src=userPoseAtlas;
 }
-const visible=()=>prefs.mode!=='hidden'&&!document.hidden&&!disabledByContext;
+const visible=()=>prefs.mode!=='hidden'&&!document.hidden&&!disabledByContext&&Date.now()>=snoozeUntil;
 const editorFocused=()=>!!document.activeElement?.closest?.('input,textarea,select,[contenteditable="true"],[contenteditable=""],[role="textbox"]');
 const drawingSurface=()=>tab==='ink'&&!!document.querySelector('#main .ink-editor');
 function updateContext(){
@@ -84,6 +86,8 @@ function updateContext(){
  if(disabledByContext&&opened)closeMenu(false);
 }
 function clearAnimation(){clearTimeout(endingTimer);endingTimer=0;}
+function clearPendingTap(){clearTimeout(pendingTap);pendingTap=0;}
+function clearHover(){clearTimeout(hoverTimer);hoverTimer=0;}
 function applyArt(){
  if(!poseImage||host.classList.contains('pc-has-pikachu'))return;
  const url=artwork[state]||artwork.idle;
@@ -93,7 +97,7 @@ function applyArt(){
  }else{poseImage.hidden=true;host.classList.remove('pc-has-art');}
 }
 function setState(next,duration=0){
- clearAnimation();state=reduced.matches?'resting':next;host.dataset.state=state;applyArt();
+ clearAnimation();state=reduced.matches?'resting':next;host.dataset.state=state;host.dataset.motion=EMOTIONS.includes(state)?state:'resting';applyArt();
  if(duration)endingTimer=setTimeout(()=>{endingTimer=0;settle();},duration);
 }
 function settle(){
@@ -108,11 +112,11 @@ function nextBubble(){
  const item=bubbleQueue.shift();
  if(!item){dismissBubble();return;}
  dismissBubble();bubbleText.textContent=item.message;hint.hidden=false;
- hintTimer=setTimeout(nextBubble,item.ms);
+ hint.dataset.tone=item.tone||'info';hintTimer=setTimeout(nextBubble,item.ms);
 }
-function announce(message,ms=3200){
+function announce(message,ms=3200,tone='info'){
  if(!prefs.popups||!visible()||editorFocused())return;
- const item={message:String(message).slice(0,180),ms:Math.max(1800,Math.min(ms,4900))};
+ const item={message:String(message).slice(0,180),ms:Math.max(1800,Math.min(ms,4900)),tone};
  if(!hint.hidden){bubbleQueue=bubbleQueue.slice(-1);bubbleQueue.push(item);return;}
  bubbleQueue=[item];nextBubble();
 }
