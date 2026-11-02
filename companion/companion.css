@@ -133,7 +133,7 @@ body.modal-open .pc-host { visibility: hidden; pointer-events: none; }
   border-radius: 17px;
   box-shadow: 0 14px 40px rgba(0,0,0,.75);
   color: #f6f4fc;
-  max-height: min(64dvh, 470px);
+  max-height: min(64dvh, var(--pc-menu-height, 470px));
   overflow: auto;
   overscroll-behavior: contain;
   font: 500 13px/1.5 system-ui, sans-serif;
