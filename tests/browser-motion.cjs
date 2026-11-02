@@ -2,7 +2,12 @@
 const assert=require('node:assert/strict');
 const path=require('node:path');
 module.exports=async(page,record,dest)=>{
- await page.emulateMedia({reducedMotion:'no-preference'});
+ async function setMotion(reducedMotion){
+  await page.emulateMedia({reducedMotion});
+  // Emulation can resolve before media queries and their change events are delivered.
+  await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+ }
+ await setMotion('no-preference');
  const initial=await page.evaluate(()=>{
   window.PsychDeskCore.setTab('planner');
   const main=document.querySelector('#main'),animations=main.getAnimations({subtree:true});
@@ -31,13 +36,13 @@ module.exports=async(page,record,dest)=>{
  await page.screenshot({path:path.join(dest,'motion-scroll-'+record.viewport+'.png')});
  await page.evaluate(()=>{for(const tab of ['notes','focus','planner','notes'])window.PsychDeskCore.setTab(tab)});
  assert.match(await page.locator('#main h1').innerText(),/Study notes/);
- await page.emulateMedia({reducedMotion:'reduce'});
+ await setMotion('reduce');
  await page.evaluate(()=>window.PsychDeskCore.setTab('planner'));
  assert.equal(await page.evaluate(()=>document.querySelector('#main').getAnimations({subtree:true}).length),0,'Reduced motion disables navigation');
  await page.locator('[data-action="newTask"]').first().click();
- assert.equal(await page.locator('#modalRoot .modal').evaluate(el=>el.getAnimations().length),0);
+ assert.equal(await page.locator('#modalRoot .modal').evaluate(el=>el.getAnimations().length),0,'Reduced-motion dialog is still');
  await page.keyboard.press('Escape');
- await page.emulateMedia({reducedMotion:'no-preference'});
+ await setMotion('no-preference');
  const opening=await page.evaluate(()=>{
   window.PsychDeskCore.openModal('Motion check','<input aria-label="Motion check">');
   const el=document.querySelector('#modalRoot .modal');
@@ -45,6 +50,7 @@ module.exports=async(page,record,dest)=>{
  });
  assert.equal(opening.shell,'1','No second layer of workspace dimming');
  assert.match(opening.blur,/blur\(3px\)/);assert.equal(opening.veil,'rgba(0, 0, 0, 0.28)');
+ assert.ok(opening.frames?.length,'Dialog has its upward slide');
  assert.equal(opening.frames[0].transform,'translateY(30px)');
  assert.ok(opening.frames.every(frame=>!frame.transform.includes('scale')),'Dialogs never zoom or bounce');
  await page.keyboard.press('Escape');
@@ -71,10 +77,10 @@ module.exports=async(page,record,dest)=>{
  });
  assert.equal(foreground.running,'running');assert.equal(foreground.focused,true);
  await page.evaluate(()=>{window.motionPreferenceChanged=new Promise(resolve=>matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change',resolve,{once:true}))});
- await page.emulateMedia({reducedMotion:'reduce'});
+ await setMotion('reduce');
  await page.evaluate(()=>window.motionPreferenceChanged.then(()=>{delete window.motionPreferenceChanged}));
  assert.equal(await page.locator('#modalRoot .modal').evaluate(el=>el.getAnimations().length),0,'Live preference changes settle foreground movement');
- await page.keyboard.press('Escape');await page.emulateMedia({reducedMotion:'no-preference'});
+ await page.keyboard.press('Escape');await setMotion('no-preference');
  const pen=await page.evaluate(()=>{
   window.PsychDeskCore.setTab('ink');const main=document.querySelector('#main');
   main.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true,pointerType:'pen',isPrimary:true}));return main.getAnimations().length;
@@ -84,7 +90,7 @@ module.exports=async(page,record,dest)=>{
  assert.equal(await page.locator('.chart-bar').first().evaluate(el=>el.getAnimations().length),0,'Charts remain still');
  assert.equal(await page.locator('.app-shell').getAttribute('inert'),null);
  await page.waitForTimeout(450);
- assert.equal(await page.evaluate(()=>document.querySelector('#main').getAnimations({subtree:true}).length),0);
+ assert.equal(await page.evaluate(()=>document.querySelector('#main').getAnimations({subtree:true}).length),0,'Final workspace is still');
  await page.evaluate(()=>window.PsychDeskCore.setTab('today'));
  record.motion={directionalSurface:true,noFade:true,noBounce:true,settles:true,noReplay:true,rapidNavigation:true,reducedMotion:true,amoled:true,scrollContinuity:true,sheetGesture:record.viewport===390,interruptedDialogs:true,lightBlur:true,penSettles:true};
 };
