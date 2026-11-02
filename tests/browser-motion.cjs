@@ -53,7 +53,10 @@ module.exports=async(page,record,dest)=>{
   core.render();return {running:animation?.playState,focused:dialog.contains(document.activeElement)};
  });
  assert.equal(foreground.running,'running');assert.equal(foreground.focused,true);
+ // Browser media emulation resolves before the asynchronous change event in some engines.
+ await page.evaluate(()=>{window.motionPreferenceChanged=new Promise(resolve=>matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change',resolve,{once:true}))});
  await page.emulateMedia({reducedMotion:'reduce'});
+ await page.evaluate(()=>window.motionPreferenceChanged.then(()=>{delete window.motionPreferenceChanged}));
  assert.equal(await page.locator('.modal').evaluate(el=>el.getAnimations().length),0,'Changing preference settles an open dialog');
  await page.keyboard.press('Escape');
  await page.emulateMedia({reducedMotion:'no-preference'});
