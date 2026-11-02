@@ -767,3 +767,22 @@ body.modal-open .pc-host { visibility: hidden; pointer-events: none; }
 .pc-host.pc-suppressed *::before,.pc-host.pc-suppressed *::after,
 .pc-host[data-state="hidden"] *::before,.pc-host[data-state="hidden"] *::after,
 .pc-host[data-live="false"] *::before,.pc-host[data-live="false"] *::after {animation:none!important;}
+
+/* Reference cutout joints: actual bitmap ears, paws, feet and tail move separately. */
+.pc-host.pc-has-reference-rig .pc-reference-rig {overflow:visible;}
+.pc-host .pc-reference-rig .pc-pik-ear-left {transform-origin:43px 36px;transform-box:view-box;}
+.pc-host .pc-reference-rig .pc-pik-ear-right {transform-origin:79px 36px;transform-box:view-box;}
+.pc-host .pc-reference-rig .pc-pik-tail {transform-origin:91px 94px;transform-box:view-box;}
+.pc-host .pc-reference-rig .pc-pik-arm-left {transform-origin:39px 69px;transform-box:view-box;}
+.pc-host .pc-reference-rig .pc-pik-arm-right {transform-origin:82px 69px;transform-box:view-box;}
+.pc-host .pc-reference-rig .pc-pik-foot-left {transform-origin:44px 119px;transform-box:view-box;}
+.pc-host .pc-reference-rig .pc-pik-foot-right {transform-origin:87px 119px;transform-box:view-box;}
+.pc-host .pc-ref-eyelids {display:none;}
+.pc-host[data-state="sleeping"] .pc-ref-eyelids {display:block;}
+.pc-host.pc-has-reference-rig[data-state="sleeping"] .pc-body {transform:translateY(8px) rotate(-9deg) scale(1,.83);animation:none;}
+.pc-host[data-state="pet-react"] .pc-pik-arm {animation:pc-ref-paw-tap .22s ease-in-out 2 alternate;}
+.pc-host[data-state="pet-react"] .pc-body {animation:pc-pet-tap .65s ease-out both;}
+@keyframes pc-ref-paw-tap {to {transform:rotate(-22deg) translateY(-2px);}}
+@keyframes pc-pet-tap {25%{transform:scale(.96,1.03)}65%{transform:translateY(-3px)}100%{transform:none}}
+
+.pc-host.pc-has-reference-rig[data-state="sleeping"] .pc-expression::before {animation-iteration-count:1;}

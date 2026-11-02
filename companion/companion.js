@@ -70,7 +70,10 @@ photoPose.className='pc-photo-pose';photoPose.setAttribute('aria-hidden','true')
 body.append(photoPose);
 if(typeof Image==='function'){
  const preload=new Image();
- preload.onload=()=>{if(!host.isConnected)return;host.classList.add('pc-has-photo');};
+ preload.onload=()=>{if(!host.isConnected)return;
+  if(window.PsychDeskReferenceRigMarkup){body.querySelector('.pc-pikachu')?.remove();body.insertAdjacentHTML('afterbegin',window.PsychDeskReferenceRigMarkup);host.classList.add('pc-has-reference-rig');}
+  else host.classList.add('pc-has-photo');
+ };
  preload.onerror=()=>host.classList.remove('pc-has-photo');
  preload.src=userPoseAtlas;
 }
