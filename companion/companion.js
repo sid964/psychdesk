@@ -53,7 +53,7 @@ let connected=false,drag=null,pendingMove=0,adventureTimer=0,endingTimer=0,hintT
 let activityTimer=0,editing=false,pointerDrawing=false,disabledByContext=false;
 const artwork=window.PsychDeskCompanionArtwork;
 const poseImage=artwork&&typeof artwork==='object'?document.createElement('img'):null;
-if(poseImage){poseImage.className='pc-licensed-art';poseImage.alt='';poseImage.hidden=true;body.append(poseImage);}
+if(poseImage){poseImage.className='pc-licensed-art';poseImage.alt='';poseImage.hidden=true;poseImage.addEventListener('error',()=>{poseImage.hidden=true;host.classList.remove('pc-has-art');});body.append(poseImage);}
 const visible=()=>prefs.mode!=='hidden'&&!document.hidden&&!disabledByContext;
 const editorFocused=()=>!!document.activeElement?.closest?.('input,textarea,select,[contenteditable="true"],[contenteditable=""],[role="textbox"]');
 const drawingSurface=()=>tab==='ink'&&!!document.querySelector('#main .ink-editor');
@@ -115,7 +115,9 @@ function applyPosition(immediate=false){
  host.classList.toggle('pc-just-settled',!immediate&&!reduced.matches);
  host.style.left=Math.round(Math.max(b.minX,Math.min(b.maxX,p.x)))+'px';
  host.style.top=Math.round(Math.max(b.minY,Math.min(b.maxY,p.y)))+'px';
- const right=p.x+b.w/2>innerWidth/2,below=p.y<innerHeight*.55;
+ const right=p.x+b.w/2>innerWidth/2,below=innerHeight-(p.y+b.h)>p.y;
+ const capacity=below?Math.max(116,innerHeight-(p.y+b.h)-20):Math.max(116,p.y-20);
+ host.style.setProperty('--pc-menu-height',Math.floor(capacity)+'px');
  host.dataset.side=right?'right':'left';host.dataset.menuBelow=below?'true':'false';
 }
 function setXY(x,y){
@@ -270,7 +272,7 @@ document.addEventListener('keydown',e=>{
  if(e.key==='Escape'&&opened){e.stopPropagation();closeMenu();return;}
  recordActivity(e);
 },{capture:true});
-document.addEventListener('focusin',()=>{updateContext();recordActivity();});
+document.addEventListener('focusin',e=>{if(opened&&!host.contains(e.target))closeMenu(false);updateContext();recordActivity();});
 document.addEventListener('focusout',()=>queueMicrotask(updateContext));
 document.addEventListener('click',e=>{
  if(e.target.closest('[data-companion-settings]')){
@@ -293,6 +295,8 @@ window.addEventListener('psychdesk:drive-connected',()=>{
  const wasConnected=connected;connected=true;
  if(!wasConnected&&visible()&&!timerActive&&!editing){setState('interacting',1100);announce('Drive connected.',2200);}
 });
+window.addEventListener('psychdesk:drive-operation-start',()=>{if(visible()&&connected&&!timerActive&&!editing)setState('syncing');});
+window.addEventListener('psychdesk:drive-operation-end',()=>{if(state==='syncing')settle();});
 window.addEventListener('psychdesk:drive-disconnected',()=>{
  const wasConnected=connected;connected=false;
  if(wasConnected&&visible()){setState('disconnected',1600);announce('Drive disconnected. Open Drive status to reconnect.',3500);}
