@@ -1,45 +1,36 @@
-# PsychDesk floating study companion
+# PsychDesk Pikachu study companion
 
-## Artwork licensing
+## What is included
 
-The public feature currently uses an original lavender orb placeholder with animated expressions. **It does not include Pikachu.** No Pikachu/Pokémon artwork or animation rights have been supplied, so no recognizable Pokémon assets were committed. An image being publicly viewable does not mean it can be redistributed in a public GitHub repository or on GitHub Pages.
+This feature adds a recognizable, independently drawn **Pikachu character** in `companion/pikachu.js`: yellow body, red cheeks, black-tipped ears, lightning-bolt tail, expressive eyes, articulated paws, and footstep shapes. SVG parts are animated with browser CSS (ear twitches, tail swing, blink, waving paws, pointing, walking feet, clapping/celebrating, thinking, resting/sleeping, sync and disconnected expressions). It does not download or copy artwork from Pokémon game files, fan packs, or third-party graphics.
 
-Before publishing Pikachu, obtain permission for web display and public repository redistribution. Supply optimized, transparent licensed assets (such as SVG or animated WebP) for each pose. Declare the approved paths in a script before the companion script in index.html:
+**Important:** Pikachu and Pokémon are owned by their respective rightsholders; the independently authored drawing is not official or licensed. This repository and GitHub Pages website are currently public. Keeping a site for personal study does not make its publicly served copies private. Making the repository private later also does not retroactively remove copied assets or guarantee the Pages site will stop being accessible. Confirm your hosting and repository visibility separately before sharing.
 
-~~~html
-<script>
-window.PsychDeskCompanionArtwork = {
-  idle: 'companion/assets/authorized-idle.webp',
-  resting: 'companion/assets/authorized-rest.webp',
-  sleeping: 'companion/assets/authorized-sleep.webp',
-  walking: 'companion/assets/authorized-walk.webp',
-  interacting: 'companion/assets/authorized-curious.webp',
-  guiding: 'companion/assets/authorized-guide.webp',
-  celebrating: 'companion/assets/authorized-celebrate.webp',
-  syncing: 'companion/assets/authorized-sync.webp',
-  disconnected: 'companion/assets/authorized-worried.webp'
-};
-</script>
-~~~
+## Walking around the website
 
-Use same-origin paths and only publish the image files if the license permits their redistribution. The module switches art according to behavior and falls back to the original neutral mascot when no authorized art is configured. Rich ear, limb, tail, and face animations must be authored into licensed animated exports; the UI module does not generate a complex skeletal rig from one static image.
+Pikachu can walk to points **anywhere in the usable visible app viewport**, rather than being confined to a corner. He avoids the desktop navigation rail, top header, and mobile bottom navigation and stays inside the visual viewport when the mobile keyboard changes its size. Browser-native Web Animations move the entire character between stops with slight curved paths and visible alternating foot/paw motion; animation is scheduled only during walking, with no permanent JavaScript drawing loop.
 
-## Functionality
+In **Playful**, walks are more frequent; in **Calm** (default), he walks infrequently after a longer inactive period. Walking stops promptly when you interact with the page, type, scroll, open a modal, use Ink Notes, activate the Focus timer, or hide the browser tab. You can trigger an immediate walk by tapping Pikachu → **Go exploring**. The feature respects reduced-motion settings and can be switched off independently through Preferences → Roam.
 
-- Calm (default), Playful, and Hidden behavior modes with Small, Medium, or Large sizes.
-- Native pointer dragging for mouse, touch and stylus, edge docking, keyboard repositioning with Shift+Arrow, responsive viewport clamps and saved local preferences.
-- Idle breathing/blinking, walking, curious, resting, sleeping, celebrating, syncing, disconnected, and guidance expressions. Playful exploration is occasional and pauses while the user is busy. No perpetual JS render loop.
-- Automatic suppression around typing, drawing, modals and the mobile keyboard, plus hidden-tab suspension and reduced-motion support.
-- Small contextual menu: open feature guidance, create a quick note, check actual Drive connection status, or change behavior and size.
-- Guidance calls existing PsychDesk navigation and highlights the relevant existing control. It doesn't use new AI or inspect study contents.
-- Genuine achievement events fire only after successful task completion, logged focus sessions, or completion of a flashcard review queue. Verified Drive connection and operation events provide factual sync feedback.
+## Live interactions and speech bubbles
 
-## Restore and maintain
+* Tap: wave / open contextual guide menu. Double-tap: happy high-five. Long press: menu. Drag with mouse, finger, or compatible stylus: choose a resting edge. Shift+Arrow while Pikachu is focused: nudge position.
+* Menu: Find a feature, Quick note, Drive connection status, Preferences, Wave hello, Go exploring. Guidance uses existing PsychDesk navigation hooks; no AI service or study-content inspection.
+* Speech bubble: small dismissible, accessible status messages for greeting, guidance, achievement, and confirmed Drive state; a maximum of two pending follow-up messages. Bubbles stay off during typing, handwriting, modals and other suppressed contexts.
+* Settings: Calm/Playful/Hidden; three sizes; independent Roam/Bubbles/Gestures toggles; Return to saved position. Preferences persist in the companion-specific localStorage entry, not in Firebase study data.
+* True achievement signals are emitted by existing study logic only after confirmed task completion, logged focus time, or flashcard review queue completion. Drive status follows the existing verified connection events, never optimistic guesses.
+* **Alt+Shift+P** restores the companion, although your browser/OS may reserve some shortcuts.
 
-Open **Settings → Study companion** to select Calm, Playful, or Hidden. The keyboard shortcut **Alt+Shift+P** restores Calm (some system shortcuts may take precedence). Preferences are stored locally under the key psychdesk-companion-v1; they are not part of study backups, account identity, Firebase, or Drive tokens.
+## Files and integration
 
-The module is isolated in companion/companion.js and companion/companion.css. Only minimal event hooks were added to app.js and cloud.js; index.html and sw.js load and cache it.
+* `companion/pikachu.js`: self-contained character drawing
+* `companion/companion.js`: character states, events, feature registry, drag/roam behavior, accessible menu, preferences, bubble controller
+* `companion/companion.css`: AMOLED interface, walk/gesture animations, reduced-motion rules
+* `index.html`: loads the drawing before the companion module
+* `sw.js`: caches scripts and stylesheet for existing PWA behavior
 
-## Explicit limitations
+No extra npm package, game engine, API key, analytics, cloud AI, or network service is added. Existing authentication, Drive integrations, content, settings icon, and study collections are unchanged.
 
-This release does **not** represent a licensed Pikachu, a full Pokémon 2D rig, measured 90/120 Hz performance, a new AI tutor, or guaranteed avoidance of every future dynamic interface element. Actual recognizable Pikachu appearance and professionally authored character motion depend on properly authorized and supplied art assets. No private note content is transmitted to the companion.
+## Limitations
+
+This is handcrafted **vector/CSS 2D animation**, not a professional frame-by-frame anime animation or licensed official sprite sheet. Characters roam within the **visible viewport**, not off-screen down the entire scrolling document; scrolling itself pauses roaming to preserve readability. No claimed benchmarks for 90/120 Hz devices. The pet can be paused or hidden completely. Its free movement may briefly overlay noncritical content during idle time; disable Roam if you prefer an always-stationary companion.
