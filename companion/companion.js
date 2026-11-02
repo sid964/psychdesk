@@ -79,7 +79,6 @@ function setState(next,duration=0){
 }
 function settle(){
  if(prefs.mode==='hidden'||document.hidden){setState('hidden');return;}
- if(connected===false&&state==='disconnected'&&Date.now()-lastActivity<2200)return;
  setState(tab==='focus'||timerActive||editing||pointerDrawing||drawingSurface()||Date.now()-lastActivity<11000?'resting':'idle');
 }
 function announce(message,ms=3200){
@@ -103,8 +102,11 @@ function measure(){
  const bottomNav=document.querySelector('.bottom-nav');
  const navVisible=bottomNav&&getComputedStyle(bottomNav).display!=='none';
  const reserveBottom=navVisible?Math.max(88,bottomNav.getBoundingClientRect().height+16):20;
- return {minX:left+8,maxX:Math.max(left+8,left+vw-w-8),minY:top+72,
-  maxY:Math.max(top+72,top+vh-h-reserveBottom),w,h};
+ const rail=document.querySelector('.desktop-rail'),bar=document.querySelector('.topbar');
+ const railEdge=rail&&getComputedStyle(rail).display!=='none'?rail.getBoundingClientRect().right+10:left+8;
+ const minimumX=Math.max(left+8,railEdge),minimumY=Math.max(top+72,bar?.getBoundingClientRect().bottom+8||0);
+ return {minX:minimumX,maxX:Math.max(minimumX,left+vw-w-8),minY:minimumY,
+  maxY:Math.max(minimumY,top+vh-h-reserveBottom),w,h};
 }
 function toCoords(){
  const b=measure();
@@ -229,7 +231,7 @@ function endDrag(e){
  const wasMoved=drag.moved;
  if(wasMoved){
   const dx=e.clientX-drag.x,dy=e.clientY-drag.y;
-  setXY(drag.start.x+dx,drag.start.y+dy);persist();setState('resting');
+  setXY(drag.start.x+dx,drag.start.y+dy);prefs.x=prefs.x<.5?0:1;applyPosition();persist();setState('resting');
   button.dataset.wasDragged='true';setTimeout(()=>delete button.dataset.wasDragged,0);
  }
  drag=null;try{button.releasePointerCapture(e.pointerId);}catch{}
