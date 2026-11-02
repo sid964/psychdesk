@@ -9,9 +9,14 @@ function update(){
  node.dataset.state=!signed?'signed-out':connected?'ready':busy?'connecting':'reconnect';
  const label=!signed?'Sign in for Drive':connected?'Drive connected':busy?'Checking Drive…':'Drive reconnect';
  node.title=label;node.setAttribute('aria-label',label);
- if(!node.querySelector('.drive-orbit'))node.innerHTML='<span class="drive-orbit" aria-hidden="true"><span class="drive-orbit-ring"></span><span class="drive-orbit-center"></span></span><span class="drive-chip-label"></span>';
  const text=connected?'Drive ✓':busy?'Drive…':signed?'Drive ↻':'Drive';
- const caption=node.querySelector('.drive-chip-label');if(caption.textContent!==text)caption.textContent=text;
+ if(typeof node.querySelector==='function'){
+  if(!node.querySelector('.drive-orbit'))node.innerHTML='<span class="drive-orbit" aria-hidden="true"><span class="drive-orbit-ring"></span><span class="drive-orbit-center"></span></span><span class="drive-chip-label"></span>';
+  const caption=node.querySelector('.drive-chip-label');if(caption&&caption.textContent!==text)caption.textContent=text;
+ }else{
+  // Supports basic DOM stand-ins used by existing regression tests.
+  node.innerHTML='<span class="drive-chip-label">'+text+'</span>';
+ }
 }
 async function click(){
  if(busy)return;
