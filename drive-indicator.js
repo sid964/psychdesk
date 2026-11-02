@@ -5,11 +5,13 @@ const cloud=()=>window.PsychDeskCloud,auth=()=>window.PsychDeskFirebase;
 let busy=false;
 function update(){
  const node=$('#driveStatusChip');if(!node)return;
- const signed=Boolean(auth()?.getUserId?.()),connected=Boolean(cloud()?.isConnected?.());
+ const signed=Boolean(auth()?.getUserId?.()),connected=signed&&Boolean(cloud()?.isConnected?.());
  node.dataset.state=!signed?'signed-out':connected?'ready':busy?'connecting':'reconnect';
  const label=!signed?'Sign in for Drive':connected?'Drive connected':busy?'Checking Drive…':'Drive reconnect';
  node.title=label;node.setAttribute('aria-label',label);
- node.innerHTML='<span aria-hidden="true">☁</span><span class="drive-chip-label">'+(connected?'Drive ✓':busy?'Drive…':signed?'Drive ↻':'Drive')+'</span>';
+ if(!node.querySelector('.drive-orbit'))node.innerHTML='<span class="drive-orbit" aria-hidden="true"><span class="drive-orbit-ring"></span><span class="drive-orbit-center"></span></span><span class="drive-chip-label"></span>';
+ const text=connected?'Drive ✓':busy?'Drive…':signed?'Drive ↻':'Drive';
+ const caption=node.querySelector('.drive-chip-label');if(caption.textContent!==text)caption.textContent=text;
 }
 async function click(){
  if(busy)return;
@@ -26,11 +28,13 @@ async function click(){
 }
 document.addEventListener('click',event=>{if(event.target.closest('#driveStatusChip')){event.preventDefault();void click();}});
 window.addEventListener('psychdesk:drive-connected',update);
+window.addEventListener('psychdesk:drive-disconnected',update);
 window.addEventListener('psychdesk:account-ready',update);
 window.addEventListener('psychdesk:login-complete',update);
 window.addEventListener('psychdesk:session-reset',update);
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')update()});
-setInterval(update,30000);
+// Local status only; no network polling or repeated animation recreation.
+setInterval(()=>{if(!document.hidden)update();},1000);
 update();
 window.PsychDeskDriveIndicator={update};
 })();

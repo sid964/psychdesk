@@ -26,3 +26,13 @@
 .drive-status-chip>span:first-child{font-size:17px;line-height:1}
 @media(max-width:600px){.drive-status-chip{min-width:35px;width:35px;padding:7px 5px;margin-left:4px}.drive-chip-label{display:none}}
 @media(max-width:380px){.drive-status-chip{min-width:31px;width:31px;min-height:34px}}
+
+/* One shared Drive orbit in the global header, independent of page transitions. */
+.drive-orbit{position:relative;display:inline-block;width:20px;height:20px;flex:0 0 20px;color:#969696}
+.drive-orbit-ring{position:absolute;inset:1px;border:1px solid currentColor;border-radius:50%;animation:drive-orbit-turn 3.2s linear infinite;animation-play-state:paused}
+.drive-orbit-ring::after{content:'';position:absolute;top:-3px;left:5px;width:5px;height:5px;background:currentColor;border-radius:50%;box-shadow:0 0 0 2px #181818}
+.drive-orbit-center{position:absolute;inset:7px;background:currentColor;border-radius:50%}
+.drive-status-chip[data-state=ready] .drive-orbit{color:#b9e6cf}
+.drive-status-chip[data-state=ready] .drive-orbit-ring{animation-play-state:running}
+@keyframes drive-orbit-turn{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.drive-orbit-ring{animation:none!important}}
