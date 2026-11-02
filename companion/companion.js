@@ -394,7 +394,7 @@ document.addEventListener('scroll',e=>{if(e.target.closest?.('#psychdesk-compani
 window.addEventListener('resize',()=>{stopRoam();applyPosition(true);updateContext();},{passive:true});
 window.visualViewport?.addEventListener('resize',()=>{stopRoam();applyPosition(true);updateContext();},{passive:true});
 window.visualViewport?.addEventListener('scroll',()=>applyPosition(true),{passive:true});
-reduced.addEventListener?.('change',()=>{settle();scheduleIdle();});
+reduced.addEventListener?.('change',()=>{if(reduced.matches)stopRoam();settle();scheduleIdle();});
 connected=Boolean(window.PsychDeskFirebase?.getUserId?.()&&window.PsychDeskCloud?.isConnected?.());
 applyPosition(true);updateContext();settle();scheduleIdle();
 if(prefs.live&&prefs.popups&&!document.hidden){
