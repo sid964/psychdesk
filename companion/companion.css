@@ -333,3 +333,71 @@ body.modal-open .pc-host { visibility: hidden; pointer-events: none; }
 .pc-host .pc-hint,.pc-host[data-side="right"] .pc-hint {
  left:var(--pc-hint-left,0px)!important;right:auto!important;
 }
+
+
+/* User-supplied photographic/cel-animation reference poses, cropped to transparency.
+   Three equal horizontal sprite cells: standing, waving, walking. No external URL. */
+.pc-host .pc-photo-pose {
+  display:none;
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  background-image:url("./assets/pikachu-user-poses.png");
+  background-size:300% 100%;
+  background-repeat:no-repeat;
+  background-position:0% 0%;
+  image-rendering:auto;
+  pointer-events:none;
+  transform-origin:50% 84%;
+}
+.pc-host.pc-has-photo .pc-photo-pose { display:block; }
+.pc-host.pc-has-photo .pc-pikachu,
+.pc-host.pc-has-photo .pc-licensed-art,
+.pc-host.pc-has-photo .pc-orb,
+.pc-host.pc-has-photo .pc-star { display:none!important; }
+.pc-host.pc-has-photo[data-state="waving"] .pc-photo-pose,
+.pc-host.pc-has-photo[data-state="celebrating"] .pc-photo-pose,
+.pc-host.pc-has-photo[data-state="pointing"] .pc-photo-pose,
+.pc-host.pc-has-photo[data-state="guiding"] .pc-photo-pose,
+.pc-host.pc-has-photo[data-state="interacting"] .pc-photo-pose { background-position:50% 0%; }
+.pc-host.pc-has-photo[data-state="walking"] .pc-photo-pose { background-position:100% 0%; }
+.pc-host.pc-has-photo[data-state="thinking"] .pc-photo-pose { filter:brightness(.94); }
+.pc-host.pc-has-photo[data-state="sleeping"] .pc-photo-pose { transform:rotate(-8deg) translateY(5%); }
+.pc-host.pc-has-photo[data-state="sleeping"] .pc-body::after {
+  content:"z z z";
+  position:absolute;
+  right:-5px;
+  top:-7px;
+  color:#e7e2ce;
+  font:700 11px/1 system-ui,sans-serif;
+  letter-spacing:1px;
+  opacity:.75;
+  pointer-events:none;
+}
+.pc-host.pc-has-photo[data-state="disconnected"] .pc-photo-pose { filter:saturate(.65); }
+.pc-host.pc-has-photo[data-state="syncing"] .pc-photo-pose { filter:brightness(1.05); }
+.pc-host.pc-has-photo[data-state="walking"] .pc-body {
+  animation:pc-photo-step .5s ease-in-out infinite;
+}
+.pc-host.pc-has-photo[data-state="waving"] .pc-body {
+  animation:pc-photo-wave .85s cubic-bezier(.24,.6,.3,1) 1;
+}
+.pc-host.pc-has-photo[data-state="celebrating"] .pc-body {
+  animation:pc-pik-celebrate .57s cubic-bezier(.2,.7,.25,1) 2;
+}
+@keyframes pc-photo-step {
+  0%,100% { transform:translateY(0) rotate(-1deg); }
+  50% { transform:translateY(-4px) rotate(1deg); }
+}
+@keyframes pc-photo-wave {
+  0%,100% { transform:rotate(0deg); }
+  30% { transform:rotate(-5deg); }
+  60% { transform:rotate(4deg); }
+}
+@media (prefers-reduced-motion:reduce) {
+  .pc-host.pc-has-photo .pc-body,.pc-host.pc-has-photo .pc-photo-pose {
+    animation:none!important;
+    transition:none!important;
+  }
+}
