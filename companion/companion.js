@@ -51,7 +51,7 @@ let tab='today',state='resting',opened=false,section='home',lastActivity=Date.no
 let connected=false,drag=null,pendingMove=0,adventureTimer=0,endingTimer=0,hintTimer=0,guideTimer=0,highlight=null,highlightTimer=0;
 let activityTimer=0,editing=false,pointerDrawing=false,disabledByContext=false;
 let roamAnimation=null,roamPosition=null,longPressTimer=0,longPressed=false,lastTap=0;
-let pendingTap=0,hoverTimer=0,walkCount=0,snoozeUntil=0,previousTab='today';
+let pendingTap=0,hoverTimer=0,walkCount=0,previousTab='today';
 const EMOTIONS=['resting','idle','looking','stretching','sleeping','waving','walking','celebrating','interacting','pointing','thinking','syncing','disconnected'];
 const bubbleText=hint.querySelector('.pc-hint-text');let bubbleQueue=[];
 const artwork=window.PsychDeskCompanionArtwork;
@@ -74,7 +74,7 @@ if(typeof Image==='function'){
  preload.onerror=()=>host.classList.remove('pc-has-photo');
  preload.src=userPoseAtlas;
 }
-const visible=()=>prefs.mode!=='hidden'&&!document.hidden&&!disabledByContext&&Date.now()>=snoozeUntil;
+const visible=()=>prefs.mode!=='hidden'&&!document.hidden&&!disabledByContext;
 const editorFocused=()=>!!document.activeElement?.closest?.('input,textarea,select,[contenteditable="true"],[contenteditable=""],[role="textbox"]');
 const drawingSurface=()=>tab==='ink'&&!!document.querySelector('#main .ink-editor');
 function updateContext(){
@@ -158,7 +158,7 @@ function applyPosition(immediate=false){
  const capacity=below?Math.max(116,innerHeight-(p.y+b.h)-20):Math.max(116,p.y-20);
  host.style.setProperty('--pc-menu-height',Math.floor(capacity)+'px');
  host.dataset.side=right?'right':'left';host.dataset.menuBelow=below?'true':'false';
- const menuWidth=Math.min(288,innerWidth-22),bubbleWidth=Math.min(260,innerWidth-28);
+ const menuWidth=Math.min(innerWidth<=400?284:305,innerWidth-24),bubbleWidth=Math.min(250,innerWidth-25);
  const clamp=(v,a,z)=>Math.max(a,Math.min(z,v));
  host.style.setProperty('--pc-menu-left',Math.round(clamp(p.x,8,innerWidth-menuWidth-8)-p.x)+'px');
  host.style.setProperty('--pc-hint-left',Math.round(clamp(p.x,8,innerWidth-bubbleWidth-8)-p.x)+'px');
@@ -297,7 +297,7 @@ function openMenu(which='home',restoreFocus=false){
  if(restoreFocus)menu.querySelector('button')?.focus({preventScroll:true});
 }
 function setMode(mode){
- if(mode!=='hidden')stopRoam();
+ clearPendingTap();if(mode!=='hidden')stopRoam();
  prefs.mode=safe(mode,MODES,'calm');persist();host.dataset.mode=prefs.mode;
  if(prefs.mode==='hidden'){stopRoam();pauseIdle();closeMenu(false);setState('hidden');dismissBubble();}
  else{setState('resting');applyPosition();scheduleIdle();}
@@ -403,7 +403,7 @@ menu.addEventListener('click',e=>{
  if(action==='drive'){announce(driveStatus(),4300);closeMenu(false);return;}
 });
 document.addEventListener('pointerdown',e=>{
- if(opened&&!host.contains(e.target))closeMenu(false);
+ if(opened&&!host.contains(e.target)){clearPendingTap();closeMenu(false);}
  if(e.pointerType==='pen'&&e.target.closest?.('canvas,.ink-paper,.ink-editor')){pointerDrawing=true;updateContext();}
  recordActivity(e);
 },{capture:true});
@@ -445,7 +445,7 @@ window.addEventListener('psychdesk:drive-disconnected',()=>{
 });
 window.addEventListener('psychdesk:session-reset',()=>{connected=false;settle();});
 document.addEventListener('visibilitychange',()=>{
- if(document.hidden){stopRoam();pauseIdle();dismissBubble();closeMenu(false);clearAnimation();setState('hidden');}
+ if(document.hidden){clearPendingTap();stopRoam();pauseIdle();dismissBubble();closeMenu(false);clearAnimation();setState('hidden');}
  else{updateContext();settle();scheduleIdle();}
 });
 document.addEventListener('scroll',e=>{if(e.target.closest?.('#psychdesk-companion'))return;lastActivity=Date.now();stopRoam();},{passive:true,capture:true});
