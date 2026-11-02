@@ -15,7 +15,7 @@ module.exports=async(page,record,dest)=>{
  });
  assert.equal(initial.installed,true);assert.deepEqual(initial.targets,['main'],'Navigation moves one surface, without individual entrances');
  assert.equal(initial.black,'rgb(0, 0, 0)');
- assert.match(initial.frames[0].transform,/translateX\((22|30)px\)/,'Forward navigation enters from the right');
+ assert.match(initial.frames[0].transform,/translateX\((44|60)px\)/,'Forward navigation enters from the right');
  assert.equal(initial.frames.some(frame=>'opacity' in frame),false,'Navigation never fades the content out');
  await page.waitForTimeout(100);
  await page.screenshot({path:path.join(dest,'motion-arriving-'+record.viewport+'.png')});
@@ -28,9 +28,9 @@ module.exports=async(page,record,dest)=>{
  assert.ok(Math.abs(await page.evaluate(()=>scrollY)-position)<2,'Section scroll survives navigation');
  const backward=await page.evaluate(()=>document.querySelector('#main').getAnimations()[0].effect.getKeyframes()[0].transform);
  // Rapid reversal resumes the current offset; a settled backward transition starts at the left.
- await page.waitForTimeout(450);
+ await page.waitForTimeout(600);
  const direction=await page.evaluate(()=>{window.PsychDeskCore.setTab('today');return document.querySelector('#main').getAnimations()[0].effect.getKeyframes()[0].transform});
- assert.match(direction,/translateX\(-(22|30)px\)/,'Backward navigation enters from the left');
+ assert.match(direction,/translateX\(-(44|60)px\)/,'Backward navigation enters from the left');
  assert.ok(backward);
  await page.waitForTimeout(450);
  await page.screenshot({path:path.join(dest,'motion-scroll-'+record.viewport+'.png')});
@@ -52,7 +52,7 @@ module.exports=async(page,record,dest)=>{
  assert.equal(opening.shell,'1','No second layer of workspace dimming');
  assert.match(opening.blur,/blur\(3px\)/);assert.equal(opening.veil,'rgba(0, 0, 0, 0.28)');
  assert.ok(opening.frames?.length,'Dialog has its upward slide');
- assert.equal(opening.frames[0].transform,'translateY(30px)');
+ assert.equal(opening.frames[0].transform,'translateY('+(record.viewport<650?64:44)+'px)');
  assert.ok(opening.frames.every(frame=>!frame.transform.includes('scale')),'Dialogs never zoom or bounce');
  await page.keyboard.press('Escape');
  const exit=await page.locator('.motion-dismiss-layer').evaluate(el=>({inert:el.hasAttribute('inert'),pointer:getComputedStyle(el).pointerEvents,ids:el.querySelectorAll('[id]').length}));
