@@ -709,3 +709,28 @@ body.modal-open .pc-host { visibility: hidden; pointer-events: none; }
   animation:none!important;transition:none!important;
  }
 }
+
+
+/* Avoid stacking two independent bobbing animations on top of the supplied poses.
+   Only the short walking cycle intentionally uses a secondary body motion. */
+.pc-host.pc-has-photo:not([data-state="walking"]) .pc-body{animation:none!important;}
+.pc-host.pc-has-photo[data-state="resting"] .pc-photo-pose{animation-duration:8s;}
+.pc-host.pc-has-photo[data-state="looking"] .pc-photo-pose{transform-origin:52% 64%;}
+.pc-host.pc-has-photo .pc-photo-pose{image-rendering:auto;}
+/* The articulated SVG remains fully animated when a user-provided image can't load. */
+.pc-host.pc-has-pikachu:not(.pc-has-photo)[data-state="looking"] .pc-pik-face{
+ transform:translateX(var(--pc-look-x)) rotate(3deg);
+ transform-origin:50% 72%;
+}
+.pc-host.pc-has-pikachu:not(.pc-has-photo)[data-state="stretching"] .pc-body{
+ animation:pc-alive-stretch 2.05s ease-in-out both;
+}
+.pc-host.pc-has-pikachu:not(.pc-has-photo)[data-state="stretching"] .pc-pik-arm-left{
+ animation:pc-pik-wave .6s ease-in-out 3 alternate;
+}
+.pc-host.pc-has-pikachu:not(.pc-has-photo)[data-state="stretching"] .pc-pik-arm-right{
+ animation:pc-pik-wave .6s ease-in-out 3 alternate-reverse;
+}
+@media (hover:none){
+ .pc-host .pc-character{-webkit-touch-callout:none;}
+}
