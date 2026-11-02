@@ -63,3 +63,13 @@ html[data-theme=dark] #modalRoot .modal-overlay,html[data-theme=dark] .motion-di
 button:active:not(:disabled){scale:.985}
 #settingsBtn:active,.ink-toolbar button:active{scale:1!important}
 @media(prefers-reduced-motion:reduce){button:active:not(:disabled){scale:1!important}}
+
+/* Visible interaction travel without changing document layout. */
+@media(prefers-reduced-motion:no-preference){
+ button:not(#settingsBtn):not(.ink-toolbar button){transition:scale 170ms cubic-bezier(.2,.7,.2,1),background-color 220ms ease,border-color 220ms ease,color 220ms ease!important}
+ button:active:not(:disabled):not(#settingsBtn):not(.ink-toolbar button){scale:.96}
+ @media(hover:hover) and (pointer:fine){
+  :is(.subject-card,.note-card,.material-card,.resource-item,.tool-card){translate:0 0;transition:translate 300ms cubic-bezier(.2,.7,.2,1),border-color 220ms ease,box-shadow 220ms ease!important}
+  :is(.subject-card,.note-card,.material-card,.resource-item,.tool-card):hover{translate:0 -3px}
+ }
+}

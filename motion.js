@@ -2,7 +2,7 @@
 (()=>{
  'use strict';
  const preference=matchMedia('(prefers-reduced-motion: reduce)');
- const timing={navigation:460,dialog:420,exit:190,reveal:400,feedback:220};
+ const timing={navigation:560,dialog:500,exit:220,reveal:460,feedback:220};
  const active=new Map(),positions=new Map(),seen=new Map(),completed=new Map(),exits=new Set();
  const order=['today','planner','notes','ink','stickies','recall','focus','materials','research','dictionary','timeline','tools','insights','search','reader','voice','board','mindmap'];
  const direct='input,textarea,select,[contenteditable],.ink-paper,.ink-editor,.ink-toolbar,.board-card,.mind-node,.reader-pages,canvas';
@@ -36,7 +36,7 @@
   observer=new IntersectionObserver(entries=>{
    for(const entry of entries){if(!entry.isIntersecting)continue;observer?.unobserve(entry.target);
     const key=entry.target.dataset.motionKey;if(visited.has(key))continue;visited.add(key);
-    if(!active.has(root))settle(entry.target,'Y',8,timing.reveal);
+    if(!active.has(root))settle(entry.target,'Y',20,timing.reveal);
    }
   },{threshold:.06});
   [...root.children].forEach((el,i)=>{
@@ -49,12 +49,13 @@
  function render(root,tab){
   for(const el of [...active.keys()])if(!el.isConnected)stop(el);
   if(pending)window.scrollTo({top:positions.get(tab)||0,behavior:'instant'});
-  const changed=lastTab!==null&&lastTab!==tab;
+  const initial=lastTab===null;
+  const changed=lastTab!==tab;
   if(changed){
-   const start=active.has(root)?offset(root,'X'):(pending?.direction||1)*(innerWidth<650?18:26);
+   const start=active.has(root)?offset(root,'X'):(pending?.direction||1)*(innerWidth<650?44:60);
    stop(root);
    // Drawing and canvas workspaces are immediately stable on entry.
-   if(!['ink','board','mindmap','reader'].includes(tab))settle(root,'X',start,timing.navigation);
+   if(!['ink','board','mindmap','reader'].includes(tab))settle(root,initial?'Y':'X',initial?24:start,timing.navigation);
   }
   root.dataset.motionDirection=pending?.direction===-1?'backward':'forward';pending=null;
   for(const el of root.querySelectorAll('.check-btn[data-id]')){
@@ -79,7 +80,7 @@
   if(header&&!header.querySelector('.motion-sheet-handle')){
    const handle=document.createElement('span');handle.className='motion-sheet-handle';handle.setAttribute('aria-hidden','true');header.prepend(handle);
   }
-  settle(el,'Y',24,timing.dialog);
+  settle(el,'Y',innerWidth<650?64:44,timing.dialog);
  }
  function dismiss(overlay){
   if(!overlay||preference.matches||document.hidden)return;
@@ -134,5 +135,10 @@
  window.addEventListener('pageshow',()=>{const root=document.querySelector('#main');if(root)observeSections(root,lastTab);});
  // Keyboard editing settles movement as soon as input begins.
  document.addEventListener('keydown',e=>{if(e.target.closest?.(direct)){stop(document.querySelector('#main'));if(dialog)stop(dialog);}});
+ // Selection feedback works for both touch and mouse; it does not move artwork.
+ document.addEventListener('click',e=>{
+  const button=e.target.closest?.('.rail-link,.nav-item');
+  if(button)play(button,[{opacity:.55},{opacity:1}],300);
+ });
  window.PsychDeskMotion={beforeRender,navigate,render,opened,closed,dismiss,cancel};
 })();
