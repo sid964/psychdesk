@@ -137,7 +137,7 @@ function applyPosition(immediate=false){
  host.classList.toggle('pc-just-settled',!immediate&&!reduced.matches);
  host.style.left=Math.round(Math.max(b.minX,Math.min(b.maxX,p.x)))+'px';
  host.style.top=Math.round(Math.max(b.minY,Math.min(b.maxY,p.y)))+'px';
- const right=p.x+b.w/2>innerWidth/2,below=innerHeight-(p.y+b.h)>p.y;
+ const right=p.x+Math.min(296,innerWidth-22)>innerWidth-12,below=innerHeight-(p.y+b.h)>p.y;
  const capacity=below?Math.max(116,innerHeight-(p.y+b.h)-20):Math.max(116,p.y-20);
  host.style.setProperty('--pc-menu-height',Math.floor(capacity)+'px');
  host.dataset.side=right?'right':'left';host.dataset.menuBelow=below?'true':'false';
@@ -390,12 +390,19 @@ document.addEventListener('visibilitychange',()=>{
  if(document.hidden){stopRoam();pauseIdle();dismissBubble();closeMenu(false);clearAnimation();setState('hidden');}
  else{updateContext();settle();scheduleIdle();}
 });
+document.addEventListener('scroll',e=>{if(e.target.closest?.('#psychdesk-companion'))return;lastActivity=Date.now();stopRoam();},{passive:true,capture:true});
 window.addEventListener('resize',()=>{stopRoam();applyPosition(true);updateContext();},{passive:true});
 window.visualViewport?.addEventListener('resize',()=>{stopRoam();applyPosition(true);updateContext();},{passive:true});
 window.visualViewport?.addEventListener('scroll',()=>applyPosition(true),{passive:true});
 reduced.addEventListener?.('change',()=>{settle();scheduleIdle();});
 connected=Boolean(window.PsychDeskFirebase?.getUserId?.()&&window.PsychDeskCloud?.isConnected?.());
 applyPosition(true);updateContext();settle();scheduleIdle();
+if(prefs.live&&prefs.popups&&!document.hidden){
+ try{if(sessionStorage.getItem('psychdesk-pikachu-welcome-v2')!=='1'){
+  sessionStorage.setItem('psychdesk-pikachu-welcome-v2','1');
+  setState('waving',1250);announce('Pika! I’m here if you need help. ⚡',3100);
+ }}catch{/* Private browsing may block session storage. */}
+}
 window.PsychDeskCompanion={
  show:()=>setMode('calm'),
  hide:()=>setMode('hidden'),
