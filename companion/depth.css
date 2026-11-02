@@ -1,0 +1,72 @@
+/* Companion-only perspective. Nested transforms preserve existing 2D gestures and dragging. */
+.pc-host .pc-depth-scene {
+ position:absolute;inset:0;display:block;perspective:560px;perspective-origin:50% 62%;pointer-events:none;
+}
+.pc-host .pc-depth-turn,.pc-host .pc-depth-look {
+ display:block;width:100%;height:100%;transform-origin:50% 78%;transform-style:preserve-3d;
+}
+.pc-host .pc-depth-look {
+ transform:rotateX(var(--pc-depth-x,0deg)) rotateY(var(--pc-depth-y,0deg));
+ transition:transform 220ms cubic-bezier(.22,.7,.25,1);
+}
+.pc-host {--pc-depth-yaw:14deg;}
+.pc-host[data-facing="left"] {--pc-depth-yaw:-14deg;}
+.pc-host[data-state="walking"] .pc-depth-turn {animation:pc-depth-walk 800ms ease-in-out infinite;}
+.pc-host[data-state="waving"] .pc-depth-turn {animation:pc-depth-wave 1200ms cubic-bezier(.22,.65,.25,1) both;}
+.pc-host[data-state="pointing"] .pc-depth-turn {animation:pc-depth-point 1400ms ease-in-out both;}
+.pc-host[data-state="celebrating"] .pc-depth-turn {animation:pc-depth-cheer 700ms cubic-bezier(.2,.7,.25,1) 2 both;}
+.pc-host[data-state="pet-react"] .pc-depth-turn {animation:pc-depth-tap 650ms ease-out both;}
+.pc-host[data-state="thinking"] .pc-depth-turn,
+.pc-host[data-state="looking"] .pc-depth-turn {animation:pc-depth-think 1300ms ease-in-out both;}
+.pc-host[data-state="syncing"] .pc-depth-turn {animation:pc-depth-sync 1800ms ease-in-out 2;}
+.pc-host[data-state="disconnected"] .pc-depth-turn {animation:pc-depth-sad 1400ms ease-in-out both;}
+.pc-host[data-state="sleeping"] .pc-depth-turn {transform:rotateX(6deg) rotateY(-7deg);}
+.pc-host[data-state="celebrating"] .pc-ground-shadow {animation:pc-depth-shadow 700ms ease-in-out 2;}
+.pc-host[data-state="walking"] .pc-ground-shadow {animation:pc-depth-shadow 800ms ease-in-out infinite;}
+@keyframes pc-depth-walk {
+ 0%,100%{transform:rotateY(var(--pc-depth-yaw)) rotateX(2deg) translateZ(0)}
+ 50%{transform:rotateY(var(--pc-depth-yaw)) rotateX(-4deg) translateZ(7px)}
+}
+@keyframes pc-depth-wave {
+ 0%,100%{transform:none}
+ 35%{transform:rotateY(-16deg) rotateX(-5deg) translateZ(12px)}
+ 70%{transform:rotateY(10deg) translateZ(5px)}
+}
+@keyframes pc-depth-point {
+ 0%,100%{transform:none}
+ 25%,70%{transform:rotateY(var(--pc-depth-yaw)) rotateX(-3deg) translateZ(9px)}
+}
+@keyframes pc-depth-cheer {
+ 0%,100%{transform:none}
+ 43%{transform:translateZ(26px) rotateY(-18deg) rotateX(-8deg)}
+ 72%{transform:translateZ(10px) rotateY(12deg) rotateX(4deg)}
+}
+@keyframes pc-depth-tap {
+ 0%,100%{transform:none}
+ 28%{transform:translateZ(-8px) rotateX(9deg)}
+ 65%{transform:translateZ(16px) rotateX(-7deg) rotateY(9deg)}
+}
+@keyframes pc-depth-think {
+ 0%,100%{transform:none}
+ 42%{transform:rotateY(-15deg) rotateX(5deg) translateZ(5px)}
+}
+@keyframes pc-depth-sync {
+ 0%,100%{transform:rotateY(-7deg)}
+ 50%{transform:rotateY(9deg) translateZ(6px)}
+}
+@keyframes pc-depth-sad {
+ 0%,100%{transform:none}
+ 45%{transform:rotateX(10deg) rotateY(-10deg) translateZ(-6px)}
+}
+@keyframes pc-depth-shadow {
+ 0%,100%{transform:scale(1);opacity:.4}
+ 45%{transform:scale(.78);opacity:.22}
+}
+.pc-host:is([data-live="false"],[data-state="hidden"],[data-mode="hidden"]) .pc-depth-turn,
+.pc-host.pc-suppressed .pc-depth-turn {animation:none!important;transform:none!important;}
+.pc-host:is([data-live="false"],[data-state="hidden"],[data-mode="hidden"]) .pc-depth-look,
+.pc-host.pc-suppressed .pc-depth-look {transform:none!important;transition:none!important;}
+@media(prefers-reduced-motion:reduce) {
+ .pc-host .pc-depth-scene {perspective:none;}
+ .pc-host .pc-depth-turn,.pc-host .pc-depth-look {animation:none!important;transform:none!important;transition:none!important;}
+}
