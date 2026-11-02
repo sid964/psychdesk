@@ -1,77 +1,66 @@
-/* Calm motion: one surface per navigation, no bounce, no background displacement. */
+/* Motion engine v2. Presentation only: native WAAPI, no frame-rate timer. */
 (()=>{
  'use strict';
  const preference=matchMedia('(prefers-reduced-motion: reduce)');
- const rootStyle=getComputedStyle(document.documentElement);
- const duration=(name,fallback)=>parseFloat(rootStyle.getPropertyValue('--motion-'+name))||fallback;
- const timing={navigation:duration('navigation',420),dialog:duration('dialog',380),exit:duration('exit',220),reveal:duration('reveal',360),feedback:duration('feedback',200)};
- const ease=rootStyle.getPropertyValue('--motion-ease').trim()||'cubic-bezier(.22,.68,.2,1)';
- const active=new Map(),seen=new Map(),positions=new Map(),completed=new Map();
+ const timing={navigation:460,dialog:420,exit:190,reveal:400,feedback:220};
+ const active=new Map(),positions=new Map(),seen=new Map(),completed=new Map(),exits=new Set();
  const order=['today','planner','notes','ink','stickies','recall','focus','materials','research','dictionary','timeline','tools','insights','search','reader','voice','board','mindmap'];
- const direct='.ink-paper,.ink-editor,.ink-toolbar,.board-card,.mind-node,.reader-pages,canvas';
- const surfaces='.hero,.stat,.card,.banner,.subject-card,.note-card,.task-row,.empty,.tool-card,.psy-event-card,.psy-timeline-card,.ref-card,.reference-card';
- let lastTab=null,pending=null,observer=null,dialog=null,drag=null,basic=false;
- const exits=new Set();
+ const direct='input,textarea,select,[contenteditable],.ink-paper,.ink-editor,.ink-toolbar,.board-card,.mind-node,.reader-pages,canvas';
+ let lastTab=null,pending=null,observer=null,dialog=null,drag=null;
+ // Sample a critically damped spring once. Browser animation scheduling follows the display.
+ const spring=Array.from({length:33},(_,i)=>{
+  const t=i/32,x=8*t,end=1-9*Math.exp(-8);
+  return {offset:t,progress:(1-(1+x)*Math.exp(-x))/end};
+ });
  function stop(el){const a=active.get(el);if(a){active.delete(el);a.cancel();}}
- function cancel(scope){for(const el of [...active.keys()])if(!scope||!el.isConnected||el===scope||scope.contains(el))stop(el);}
+ function cancel(scope){for(const el of [...active.keys()])if(!scope||el===scope||scope.contains(el)||!el.isConnected)stop(el);}
  function play(el,frames,ms){
   if(!el?.animate||preference.matches||document.hidden)return null;
   stop(el);
-  const animation=el.animate(frames,{duration:ms,easing:ease});active.set(el,animation);
-  const clean=()=>{if(active.get(el)===animation)active.delete(el);};
-  animation.addEventListener('finish',clean,{once:true});animation.addEventListener('cancel',clean,{once:true});
-  return animation;
+  const a=el.animate(frames,{duration:ms,easing:'cubic-bezier(.2,.7,.2,1)'});active.set(el,a);
+  const clean=()=>{if(active.get(el)===a)active.delete(el);};
+  a.addEventListener('finish',clean,{once:true});a.addEventListener('cancel',clean,{once:true});return a;
  }
- function key(el){const owner=el.matches('[data-id]')?el:el.querySelector('[data-id]');return el.classList[0]+':'+(owner?.dataset.id||el.textContent.trim().slice(0,100));}
+ function settle(el,axis,start,ms){
+  const a=play(el,spring.map(({offset,progress})=>({offset,transform:`translate${axis}(${start*(1-progress)}px)`})),ms);
+  if(a)a.effect.updateTiming({easing:'linear'});return a;
+ }
+ function offset(el,axis){try{return new DOMMatrixReadOnly(getComputedStyle(el).transform)[axis==='X'?'m41':'m42'];}catch{return 0;}}
  function disconnect(){observer?.disconnect();observer=null;}
- function beforeRender(root){
-  // Data updates should not restart motion. Only release effects on nodes about to be removed.
-  for(const el of [...active.keys()])if(el!==root&&root.contains(el))stop(el);
- }
- function navigate(from,to){
-  if(from===to)return;
-  positions.set(from,scrollY);
-  const fromIndex=order.indexOf(from),toIndex=order.indexOf(to);
-  pending={tab:to,direction:fromIndex>=0&&toIndex>=0&&toIndex<fromIndex?-1:1};
- }
+ function beforeRender(root){disconnect();for(const el of [...active.keys()])if(el!==root&&root.contains(el))stop(el);}
+ function navigate(from,to){if(from===to)return;positions.set(from,scrollY);pending={direction:order.indexOf(to)<order.indexOf(from)?-1:1};}
  function observeSections(root,tab){
-  disconnect();if(preference.matches||basic||['ink','board','mindmap','reader'].includes(tab))return;
-  if(!seen.has(tab))seen.set(tab,new Set());const revealed=seen.get(tab);
-  const candidates=[...root.querySelectorAll(surfaces)].slice(0,120),selection=new Set(candidates);
-  const outer=candidates.filter(el=>{for(let p=el.parentElement;p&&p!==root;p=p.parentElement)if(selection.has(p))return false;return true;});
-  const below=[];
-  for(const el of outer){const bounds=el.getBoundingClientRect(),id=key(el);if(bounds.top<innerHeight)revealed.add(id);else if(!revealed.has(id))below.push(el);}
-  if(!below.length||!('IntersectionObserver' in window))return;
+  disconnect();if(preference.matches||['ink','board','mindmap','reader'].includes(tab)||!window.IntersectionObserver)return;
+  if(!seen.has(tab))seen.set(tab,new Set());const visited=seen.get(tab);
+  // Observe top-level sections only: never stack child entrances or hide unread content.
   observer=new IntersectionObserver(entries=>{
-   for(const entry of entries)if(entry.isIntersecting){
-    observer?.unobserve(entry.target);const id=key(entry.target);
-    if(revealed.has(id))continue;revealed.add(id);
-    // Never stack an individual reveal on top of a moving section.
-    if(!active.has(root))play(entry.target,[{opacity:.86,transform:'translateY(7px)'},{opacity:1,transform:'translateY(0)'}],timing.reveal);
+   for(const entry of entries){if(!entry.isIntersecting)continue;observer?.unobserve(entry.target);
+    const key=entry.target.dataset.motionKey;if(visited.has(key))continue;visited.add(key);
+    if(!active.has(root))settle(entry.target,'Y',8,timing.reveal);
    }
-  },{threshold:.04});
-  below.forEach(el=>observer.observe(el));
+  },{threshold:.06});
+  [...root.children].forEach((el,i)=>{
+   if(!el.matches('section,.card,.subject-grid,.summary-grid,.study-panel,.psy-layout,.ref-library,.study-tools-grid'))return;
+   const key=tab+':'+i+':'+el.className;el.dataset.motionKey=key;
+   if(el.getBoundingClientRect().top<innerHeight)visited.add(key);
+   else if(!visited.has(key))observer.observe(el);
+  });
  }
  function render(root,tab){
   for(const el of [...active.keys()])if(!el.isConnected)stop(el);
+  if(pending)window.scrollTo({top:positions.get(tab)||0,behavior:'instant'});
   const changed=lastTab!==null&&lastTab!==tab;
-  if(pending){window.scrollTo({top:positions.get(tab)||0,behavior:'instant'});}
   if(changed){
-   // A persistent root means rapid navigation can continue from its current offset.
-   let offset=0;
-   if(active.has(root))offset=new DOMMatrixReadOnly(getComputedStyle(root).transform).m41;
-   const direction=pending?.direction||1,distance=innerWidth<650?22:30;
-   const start=active.has(root)?offset:direction*distance;
+   const start=active.has(root)?offset(root,'X'):(pending?.direction||1)*(innerWidth<650?18:26);
    stop(root);
-   play(root,[{transform:'translateX('+start+'px)'},{transform:'translateX(0)'}],basic?260:timing.navigation);
+   // Drawing and canvas workspaces are immediately stable on entry.
+   if(!['ink','board','mindmap','reader'].includes(tab))settle(root,'X',start,timing.navigation);
   }
-  root.dataset.motionDirection=pending?.direction===-1?'backward':'forward';
-  pending=null;
-  // Completion confirmation is tied to the committed task state, not to a click.
+  root.dataset.motionDirection=pending?.direction===-1?'backward':'forward';pending=null;
   for(const el of root.querySelectorAll('.check-btn[data-id]')){
-   const id=el.dataset.id,done=el.classList.contains('done');
-   if(tab===lastTab&&completed.has(id)&&completed.get(id)!==done)play(el,[{opacity:.55},{opacity:1}],timing.feedback);
-   completed.set(id,done);
+   const key=el.dataset.id,done=el.classList.contains('done');
+   if(lastTab===tab&&completed.has(key)&&completed.get(key)!==done)play(el,[{opacity:.6},{opacity:1}],timing.feedback);
+   completed.set(key,done);
   }
   lastTab=tab;observeSections(root,tab);
  }
@@ -90,7 +79,7 @@
   if(header&&!header.querySelector('.motion-sheet-handle')){
    const handle=document.createElement('span');handle.className='motion-sheet-handle';handle.setAttribute('aria-hidden','true');header.prepend(handle);
   }
-  play(el,[{transform:'translateY(30px)'},{transform:'translateY(0)'}],timing.dialog);
+  settle(el,'Y',24,timing.dialog);
  }
  function dismiss(overlay){
   if(!overlay||preference.matches||document.hidden)return;
@@ -132,7 +121,7 @@
   const travel=d.dy-d.offset,velocity=performance.now()-d.time<100?d.velocity:0;
   const shouldDismiss=e.type==='pointerup'&&travel>20&&(d.dy>100||(d.dy>40&&velocity>.7));
   if(shouldDismiss){window.PsychDeskCore.closeModal();d.el.style.removeProperty('transform');}
-  else{play(d.el,[{transform:'translateY('+d.dy+'px)'},{transform:'translateY(0)'}],timing.dialog);d.el.style.removeProperty('transform');}
+  else{settle(d.el,'Y',d.dy,timing.dialog);d.el.style.removeProperty('transform');}
  }
  document.addEventListener('pointerup',endDrag);document.addEventListener('pointercancel',endDrag);
  document.addEventListener('lostpointercapture',e=>{if(drag?.id===e.pointerId)endDrag({pointerId:e.pointerId,type:'pointercancel'});});
@@ -143,11 +132,7 @@
  document.addEventListener('visibilitychange',()=>{if(document.hidden)quiet();});
  window.addEventListener('pagehide',quiet);
  window.addEventListener('pageshow',()=>{const root=document.querySelector('#main');if(root)observeSections(root,lastTab);});
- // Require repeated stalls before simplifying decoration; preserve essential navigation feedback.
- let stalls=0;
- try{if(PerformanceObserver.supportedEntryTypes.includes('longtask'))new PerformanceObserver(list=>{
-  stalls+=list.getEntries().filter(entry=>entry.duration>120).length;
-  if(stalls>=3&&!basic){basic=true;document.documentElement.dataset.motionQuality='basic';disconnect();}
- }).observe({type:'longtask',buffered:false});}catch{}
+ // Keyboard editing settles movement as soon as input begins.
+ document.addEventListener('keydown',e=>{if(e.target.closest?.(direct)){stop(document.querySelector('#main'));if(dialog)stop(dialog);}});
  window.PsychDeskMotion={beforeRender,navigate,render,opened,closed,dismiss,cancel};
 })();
