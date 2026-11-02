@@ -229,3 +229,99 @@ body.modal-open .pc-host { visibility: hidden; pointer-events: none; }
   animation:none!important;transition:none!important;scroll-behavior:auto!important;
  }
 }
+
+
+/* Pikachu: independently authored compact vector character, no sprites or engine. */
+.pc-host.pc-has-pikachu { --pc-size: 94px; }
+.pc-host.pc-has-pikachu[data-size="small"] { --pc-size: 72px; }
+.pc-host.pc-has-pikachu[data-size="large"] { --pc-size: 125px; }
+.pc-host.pc-has-pikachu .pc-orb,
+.pc-host.pc-has-pikachu .pc-star,
+.pc-host.pc-has-pikachu .pc-licensed-art { display:none!important; }
+.pc-host .pc-pikachu {
+ display:block;width:100%;height:100%;
+ overflow:visible;pointer-events:none;
+ filter:drop-shadow(0 3px 1px rgba(0,0,0,.36));
+ transform-origin:center center;
+}
+.pc-host[data-facing="left"] .pc-pikachu { transform:scaleX(-1); }
+.pc-host .pc-pik-ear, .pc-host .pc-pik-tail, .pc-host .pc-pik-arm,
+.pc-host .pc-pik-foot, .pc-host .pc-pik-eye {
+ transform-box:fill-box;
+}
+.pc-host .pc-pik-ear-left { transform-origin:80% 86%;animation:pc-pik-left-ear 8s ease-in-out infinite; }
+.pc-host .pc-pik-ear-right { transform-origin:17% 90%;animation:pc-pik-right-ear 10s ease-in-out infinite; }
+.pc-host .pc-pik-tail {transform-origin:12% 86%;animation:pc-pik-tail-sway 5.6s ease-in-out infinite;}
+.pc-host .pc-pik-arm-left {transform-origin:84% 16%;}
+.pc-host .pc-pik-arm-right {transform-origin:12% 17%;}
+.pc-host .pc-pik-foot-left {transform-origin:74% 20%;}
+.pc-host .pc-pik-foot-right {transform-origin:24% 20%;}
+.pc-host .pc-pik-eye {transform-origin:50% 50%;animation:pc-pik-blink 7.6s linear infinite;}
+.pc-host .pc-pik-happy-mouth,.pc-host .pc-pik-sleep-mouth,.pc-host .pc-pik-worried {display:none;}
+.pc-host .pc-pik-sparkles {opacity:0;}
+.pc-host.pc-has-pikachu[data-state="resting"] .pc-body,
+.pc-host.pc-has-pikachu[data-state="idle"] .pc-body { animation:pc-pik-breathe 6s ease-in-out infinite;}
+.pc-host.pc-has-pikachu[data-state="resting"] .pc-pik-arm {transform:rotate(0deg);}
+.pc-host.pc-has-pikachu[data-state="walking"] .pc-body {animation:pc-pik-step-bounce .43s ease-in-out infinite;}
+.pc-host.pc-has-pikachu[data-state="walking"] .pc-pik-foot-left {animation:pc-pik-step-left .43s ease-in-out infinite;}
+.pc-host.pc-has-pikachu[data-state="walking"] .pc-pik-foot-right {animation:pc-pik-step-right .43s ease-in-out infinite;}
+.pc-host.pc-has-pikachu[data-state="walking"] .pc-pik-arm-left {animation:pc-pik-arm-pump .43s ease-in-out infinite;}
+.pc-host.pc-has-pikachu[data-state="walking"] .pc-pik-arm-right {animation:pc-pik-arm-pump .43s ease-in-out infinite reverse;}
+.pc-host.pc-has-pikachu[data-state="walking"] .pc-pik-tail {animation:pc-pik-tail-walk .43s ease-in-out infinite;}
+.pc-host.pc-has-pikachu[data-state="waving"] .pc-body {animation:pc-pik-hello .95s ease-in-out 1;}
+.pc-host.pc-has-pikachu[data-state="waving"] .pc-pik-arm-right {animation:pc-pik-wave .28s ease-in-out 4 alternate;}
+.pc-host.pc-has-pikachu[data-state="pointing"] .pc-pik-arm-right,
+.pc-host.pc-has-pikachu[data-state="guiding"] .pc-pik-arm-right {animation:pc-pik-point .7s ease-out both;}
+.pc-host.pc-has-pikachu[data-state="pointing"] .pc-pik-head,
+.pc-host.pc-has-pikachu[data-state="guiding"] .pc-pik-face {animation:pc-pik-look .7s ease-out both;}
+.pc-host.pc-has-pikachu[data-state="thinking"] .pc-pik-arm-right {transform:rotate(-72deg);}
+.pc-host.pc-has-pikachu[data-state="thinking"] .pc-pik-ear-right {transform:rotate(12deg);animation:none;}
+.pc-host.pc-has-pikachu[data-state="celebrating"] .pc-body {animation:pc-pik-celebrate .57s cubic-bezier(.2,.7,.25,1) 2;}
+.pc-host.pc-has-pikachu[data-state="celebrating"] .pc-pik-arm-left {animation:pc-pik-clap-left .28s ease-in-out 4 alternate;}
+.pc-host.pc-has-pikachu[data-state="celebrating"] .pc-pik-arm-right {animation:pc-pik-clap-right .28s ease-in-out 4 alternate;}
+.pc-host.pc-has-pikachu[data-state="celebrating"] .pc-pik-happy-mouth {display:block;}
+.pc-host.pc-has-pikachu[data-state="celebrating"] .pc-pik-smile {display:none;}
+.pc-host.pc-has-pikachu[data-state="celebrating"] .pc-pik-sparkles {opacity:1;animation:pc-pik-glimmer .6s ease-in-out 2;}
+.pc-host.pc-has-pikachu[data-state="sleeping"] .pc-body {transform:rotate(-8deg) translateY(5px);}
+.pc-host.pc-has-pikachu[data-state="sleeping"] .pc-pik-eyes {opacity:0;}
+.pc-host.pc-has-pikachu[data-state="sleeping"] .pc-pik-smile {display:none;}
+.pc-host.pc-has-pikachu[data-state="sleeping"] .pc-pik-sleep-mouth {display:block;}
+.pc-host.pc-has-pikachu[data-state="sleeping"] .pc-pik-ear {animation:none;transform:rotate(10deg);}
+.pc-host.pc-has-pikachu[data-state="sleeping"] .pc-pik-tail {animation:none;transform:rotate(-12deg);}
+.pc-host.pc-has-pikachu[data-state="syncing"] .pc-pik-tail {animation:pc-pik-tail-sway 1.5s ease-in-out infinite;}
+.pc-host.pc-has-pikachu[data-state="syncing"] .pc-body {animation:pc-pik-breathe 3s ease-in-out infinite;}
+.pc-host.pc-has-pikachu[data-state="disconnected"] .pc-pik-smile {display:none;}
+.pc-host.pc-has-pikachu[data-state="disconnected"] .pc-pik-worried {display:block;}
+.pc-host.pc-has-pikachu[data-state="disconnected"] .pc-pik-ear {animation:none;transform:rotate(-16deg);}
+.pc-host .pc-hint {padding:10px 28px 10px 12px;pointer-events:auto;}
+.pc-host .pc-hint-dismiss {
+ position:absolute;top:3px;right:3px;width:26px;height:26px;
+ color:#c4bbc0;background:transparent;border:0;border-radius:7px;
+ font-size:19px;line-height:1;pointer-events:auto;
+}
+.pc-host .pc-hint-dismiss:focus-visible {outline:2px solid #ebdb9f;outline-offset:1px;}
+.pc-host .pc-hint-text {display:block;}
+.pc-host.pc-has-pikachu .pc-menu {border-color:#45413a;}
+.pc-host .pc-toggles {grid-template-columns:repeat(3,minmax(0,1fr));}
+@keyframes pc-pik-breathe{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+@keyframes pc-pik-blink{0%,45%,47%,100%{transform:scaleY(1)}46%{transform:scaleY(.09)}}
+@keyframes pc-pik-left-ear{0%,24%,34%,100%{transform:rotate(0)}27%,31%{transform:rotate(-8deg)}}
+@keyframes pc-pik-right-ear{0%,49%,59%,100%{transform:rotate(0)}52%,56%{transform:rotate(9deg)}}
+@keyframes pc-pik-tail-sway{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(5deg)}}
+@keyframes pc-pik-tail-walk{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(14deg)}}
+@keyframes pc-pik-step-bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes pc-pik-step-left{0%,100%{transform:rotate(-12deg)}50%{transform:rotate(15deg)}}
+@keyframes pc-pik-step-right{0%,100%{transform:rotate(14deg)}50%{transform:rotate(-12deg)}}
+@keyframes pc-pik-arm-pump{0%,100%{transform:rotate(13deg)}50%{transform:rotate(-12deg)}}
+@keyframes pc-pik-hello{0%,100%{transform:rotate(0)}40%{transform:rotate(-5deg)}}
+@keyframes pc-pik-wave{0%{transform:rotate(-18deg)}100%{transform:rotate(-88deg)}}
+@keyframes pc-pik-point{from{transform:rotate(0)}to{transform:rotate(-83deg)}}
+@keyframes pc-pik-look{from{transform:translateX(0)}to{transform:translateX(3px)}}
+@keyframes pc-pik-celebrate{0%,100%{transform:translateY(0)}42%{transform:translateY(-12px)}}
+@keyframes pc-pik-clap-left{from{transform:rotate(-16deg)}to{transform:rotate(-48deg)}}
+@keyframes pc-pik-clap-right{from{transform:rotate(16deg)}to{transform:rotate(55deg)}}
+@keyframes pc-pik-glimmer{0%,100%{opacity:.15}50%{opacity:1}}
+@media(prefers-reduced-motion:reduce){
+ .pc-host.pc-has-pikachu .pc-body,.pc-host.pc-has-pikachu .pc-pikachu *,
+ .pc-host.pc-has-pikachu .pc-pikachu {animation:none!important;transition:none!important;}
+}
