@@ -89,8 +89,10 @@
     host.appendChild(canvas);
     context = canvas.getContext('2d', { alpha: true });
     if (!context) { canvas.remove(); dispose(); return; }
-    resize = new ResizeObserver(measure);
-    resize.observe(canvas);
+    if ('ResizeObserver' in window) {
+      resize = new ResizeObserver(measure);
+      resize.observe(canvas);
+    }
     measure();
   }
   // The app replaces #main children during renders; nested canvas changes do not retrigger this.
@@ -100,6 +102,7 @@
   window.addEventListener('resize', measure, { passive: true });
   document.addEventListener('visibilitychange', () => { if (!document.hidden) schedule(); });
   reduced.addEventListener('change', () => { lastProgress = -1; schedule(); });
-  window.addEventListener('pagehide', dispose, { once: true });
+  window.addEventListener('pagehide', dispose);
+  window.addEventListener('pageshow', mount);
   mount();
 })();
