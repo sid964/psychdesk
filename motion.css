@@ -27,8 +27,8 @@ html{scroll-behavior:auto}
 @keyframes motion-sheet{from{opacity:.4;transform:translateY(36px)}to{opacity:1;transform:translateY(0)}}
 #toast{transition:opacity 180ms ease,transform 300ms var(--motion-ease)!important;transform:translate(-50%,10px)}
 #toast.show{transform:translate(-50%,0)}
-.progress>div{transform-origin:left;transition:width 420ms var(--motion-ease)!important}
-.chart-bar{transform-origin:bottom;animation:motion-chart 480ms var(--motion-ease) both}
+.progress>div{transform-origin:left;transition:none!important}
+.chart-bar{transform-origin:bottom;animation:none!important}
 @keyframes motion-chart{from{transform:scaleY(.08)}to{transform:scaleY(1)}}
 /* Direct manipulation must never lag behind a finger or stylus. */
 :is(.board-card,.mind-node,.ink-paper,.ink-paper canvas){transition:none!important}
@@ -63,4 +63,26 @@ html[data-theme=dark] #modalRoot .modal-overlay{background:rgba(0,0,0,.56);backd
 @media(prefers-reduced-motion:reduce){
  :is(button,.resource-item,.note-card,.ink-note-card,.subject-card,.material-card,.tool-card):is(:hover,:active){transform:none!important}
  .rail-link.active .rail-symbol{transform:none}
+}
+
+/* Shared interaction tokens extend to resource tools without animating list contents. */
+:is(.filter,.select-strip button,.review-btns button,.sticky-swatches label>span){
+ transition:transform var(--motion-small) var(--motion-ease),border-color var(--motion-small) ease,background-color var(--motion-small) ease!important;
+}
+:is(button,a,summary,[tabindex="0"]):focus-visible{outline:2px solid var(--green);outline-offset:4px}
+:is(.field input,.field textarea,.field select):focus-visible{outline:2px solid var(--green);outline-offset:2px}
+.modal{overscroll-behavior:contain;scrollbar-gutter:stable}
+.modal-header h2{min-width:0;overflow-wrap:anywhere}
+.modal-header .close{flex-shrink:0;min-width:44px;min-height:44px}
+:is(.hero h1,.section-row h2){text-wrap:balance}
+:is(.kpi-header,.section-row)>*{min-width:0}
+@media(pointer:coarse){
+ :is(.filter,.mini-btn,.icon-btn,.review-btns button,.select-strip button){min-height:44px}
+}
+/* Pressure-sensitive surfaces and drag handles never inherit generic press transforms. */
+:is(.ink-paper,.ink-paper canvas,.board-card,.mind-node,.motion-sheet-handle){-webkit-tap-highlight-color:transparent}
+html[data-motion-quality=basic] :is(.subject-card,.note-card,.material-card,.resource-item,.ink-note-card,.tool-card):hover{transform:none}
+@media(prefers-reduced-motion:reduce){
+ :is(.filter,.select-strip button,.review-btns button,.sticky-swatches label>span){transition:none!important}
+ .rail-link:hover{transform:none!important}
 }

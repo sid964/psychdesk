@@ -19,3 +19,11 @@ The primary AMOLED background remains #000000. Motion is confined to interface f
 The existing 119 Node tests protect study functionality. The Chromium/Firefox audit covers six widths and adds motion settling, scroll continuity, rapid navigation, interrupted dialogs, reduced motion, true-black background checks and mobile handle gestures. Screenshots cover arrival, scrolled content and dialogs. Frame samples in the report measure idle headless CI cadence only; they do not establish animation FPS or guarantee 90 FPS on physical displays. Real-device stylus pressure and high-refresh-rate profiling remain device-level checks.
 
 Native select dropdowns, auth popups and other browser/OS surfaces keep their native behavior. The rebuild intentionally avoids gesture interception on content, cosmetic sync success states, and animated overlays containing copies of private notes.
+
+## Interaction refinement
+
+Dialog transitions now share the WAAPI lifecycle: a workspace rerender cannot cancel the foreground editor, and replacing, closing, or reducing motion settles its animation. Retargeted transitions sample their current compositor state. Sheet release velocity uses the latest pointer movement, so pausing before release does not count as a fling.
+
+Charts animate on first visits only. Progress feedback uses transforms rather than a second width transition. Saturated depth values do not repeatedly write root styles. The performance fallback also settles current workspace motion and suppresses subsequent decorative entrances. Keyboard focus outlines, coarse-pointer controls, modal close targets, heading wrapping, and modal overscroll containment improve interaction clarity without changing data or sync logic.
+
+The browser motion regression suite additionally checks foreground animation survival during workspace updates, live reduced-motion changes, and chart replay prevention. Physical stylus and high-refresh-rate measurements are still required to establish device-specific performance.

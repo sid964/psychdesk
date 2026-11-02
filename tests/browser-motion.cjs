@@ -46,6 +46,22 @@ module.exports=async(page,record,dest)=>{
  await page.evaluate(()=>{window.PsychDeskCore.openModal('First','<input aria-label=First>');window.PsychDeskCore.closeModal();window.PsychDeskCore.openModal('Second','<input aria-label=Second>')});
  await page.waitForTimeout(400);assert.equal(await page.locator('.modal').getAttribute('aria-label'),'Second');
  await page.keyboard.press('Escape');
+ // An async workspace refresh must not cancel the foreground editor transition.
+ const foreground=await page.evaluate(()=>{
+  const core=window.PsychDeskCore;core.openModal('Foreground','<input aria-label=Foreground>');
+  const dialog=document.querySelector('.modal'),animation=dialog.getAnimations()[0];
+  core.render();return {running:animation?.playState,focused:dialog.contains(document.activeElement)};
+ });
+ assert.equal(foreground.running,'running');assert.equal(foreground.focused,true);
+ // Browser media emulation resolves before the asynchronous change event in some engines.
+ await page.evaluate(()=>{window.motionPreferenceChanged=new Promise(resolve=>matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change',resolve,{once:true}))});
+ await page.emulateMedia({reducedMotion:'reduce'});
+ await page.evaluate(()=>window.motionPreferenceChanged.then(()=>{delete window.motionPreferenceChanged}));
+ assert.equal(await page.locator('.modal').evaluate(el=>el.getAnimations().length),0,'Changing preference settles an open dialog');
+ await page.keyboard.press('Escape');
+ await page.emulateMedia({reducedMotion:'no-preference'});
+ await page.evaluate(()=>{window.PsychDeskCore.setTab('insights');window.PsychDeskCore.render()});
+ assert.equal(await page.locator('.chart-bar').first().evaluate(el=>el.getAnimations().length),0,'Chart does not replay on updates');
  assert.equal(await page.locator('.app-shell').getAttribute('inert'),null);
  const frameTimes=await page.evaluate(()=>new Promise(resolve=>{const deltas=[];let previous=0;function sample(t){if(previous)deltas.push(t-previous);previous=t;if(deltas.length===40)resolve(deltas);else requestAnimationFrame(sample)}requestAnimationFrame(sample)}));
  frameTimes.sort((a,b)=>a-b);record.frameTiming={medianMs:frameTimes[20],p95Ms:frameTimes[38],environment:'headless CI, idle display cadence only'};
