@@ -734,3 +734,36 @@ body.modal-open .pc-host { visibility: hidden; pointer-events: none; }
 @media (hover:none){
  .pc-host .pc-character{-webkit-touch-callout:none;}
 }
+
+/* Private state artwork overrides both the built-in atlas and vector fallback. */
+.pc-host.pc-custom-art .pc-licensed-art {display:block!important;}
+.pc-host.pc-custom-art .pc-photo-pose,
+.pc-host.pc-custom-art .pc-pikachu,
+.pc-host.pc-custom-art .pc-orb,.pc-host.pc-custom-art .pc-star {display:none!important;}
+.pc-host .pc-licensed-art {transition:opacity .15s ease;transform-origin:50% 80%;}
+.pc-host[data-state="pet-react"] .pc-body {animation:pc-paw-tap .65s ease-out both!important;}
+.pc-host[data-state="pet-react"] .pc-pik-arm-right {animation:pc-pik-wave .2s ease-in-out 2 alternate;}
+@keyframes pc-paw-tap {0%,100%{transform:scale(1)}30%{transform:translateY(2px) scale(1.035,.96)}65%{transform:translateY(-3px) scale(.99,1.025)}}
+.pc-host[data-mode="calm"][data-state="resting"] *,
+.pc-host[data-mode="calm"][data-state="idle"] *,
+.pc-host[data-live="false"] *,
+.pc-host.pc-suppressed *,
+.pc-host[data-state="hidden"] * {animation:none!important;}
+.pc-host[data-state="sleeping"] *,
+.pc-host[data-state="syncing"] * {animation-iteration-count:2;}
+.pc-host .pc-pikachu:not(:hover) .pc-pik-eye {animation-iteration-count:1;}
+.pc-host .pc-menu,.pc-host .pc-hint {background:#000;}
+.pc-host .pc-field-label {display:block;}
+.pc-host select {width:100%;min-height:40px;background:#101010;color:#eee;border:1px solid #45413a;border-radius:9px;padding:7px;}
+.pc-host .pc-import {display:block;margin-top:10px;font-size:12px;color:#e7cc86;}
+.pc-host .pc-import input {display:block;max-width:100%;margin-top:7px;font-size:11px;}
+.pc-host .pc-hint {pointer-events:none;box-sizing:border-box;}
+.pc-host .pc-hint-dismiss {pointer-events:auto;min-width:32px;min-height:32px;}
+@media(prefers-reduced-motion:reduce){
+ .pc-host[data-state="pet-react"] .pc-body {animation:none!important;}
+}
+/* A moving companion never intercepts a workspace control underneath its route. */
+.pc-host[data-state="walking"] .pc-character {pointer-events:none;}
+.pc-host.pc-suppressed *::before,.pc-host.pc-suppressed *::after,
+.pc-host[data-state="hidden"] *::before,.pc-host[data-state="hidden"] *::after,
+.pc-host[data-live="false"] *::before,.pc-host[data-live="false"] *::after {animation:none!important;}
