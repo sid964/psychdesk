@@ -2,7 +2,7 @@
 :root{
  --motion-ease:cubic-bezier(.22,.68,.2,1);
  --motion-press:110ms;--motion-feedback:200ms;--motion-hover:240ms;
- --motion-navigation:420ms;--motion-dialog:380ms;--motion-exit:220ms;--motion-reveal:360ms;
+ --motion-navigation:460ms;--motion-dialog:420ms;--motion-exit:190ms;--motion-reveal:400ms;
 }
 html{scroll-behavior:auto;overflow-x:clip}
 /* Remove competing legacy entrances, bounces, chart growth and ambient loops. */
@@ -57,3 +57,9 @@ html[data-theme=dark] #modalRoot .modal-overlay,html[data-theme=dark] .motion-di
  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
  button:active:not(:disabled){scale:1}
 }
+
+/* No extra displacement for direct manipulation or the preserved Settings artwork. */
+#settingsBtn:active{scale:1}
+button:active:not(:disabled){scale:.985}
+#settingsBtn:active,.ink-toolbar button:active{scale:1!important}
+@media(prefers-reduced-motion:reduce){button:active:not(:disabled){scale:1!important}}
