@@ -28,6 +28,7 @@ function storeDriveSession(email){
 }
 function clearDriveAuthorization({forgetSession=true}={}){
  pendingUpload=null;driveEpoch++;accessToken='';tokenExpires=0;driveVerified=false;driveFromBackend=false;driveAbort.abort();driveAbort=new AbortController();
+ window.dispatchEvent(new Event('psychdesk:drive-disconnected'));
  if(forgetSession)forgetDriveSession();
  if(pendingDriveReject){pendingDriveReject(Error('Account or Drive setup changed. Reconnect Google Drive.'));pendingDriveReject=null;}
 }
