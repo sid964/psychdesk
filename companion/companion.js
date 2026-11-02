@@ -288,6 +288,7 @@ function menuMarkup(which){
    '<button class="pc-minimize" type="button" data-pc="dock">Restore position</button>'+
    '<label class="pc-field-label" for="pc-pose-state">Private pose</label><select id="pc-pose-state">'+assets.states.map(x=>'<option>'+x+'</option>').join('')+'</select><label class="pc-import">Import PNG / WebP / SVG<input type="file" data-pc-import accept="image/png,image/webp,image/svg+xml"></label><p class="pc-menu-copy" role="status" id="pc-import-status">Files stay in this browser. Missing poses use idle, then the supplied character.</p>'+
    '<button class="pc-minimize" type="button" data-pc="reset">Reset companion settings &amp; private poses</button>'+
+   '<small class="pc-model-credit">3D model: <a href="https://sketchfab.com/Kataphoric" target="_blank" rel="noopener noreferrer">Kataphoric</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a></small>'+
    '<p class="pc-menu-copy">Drag with touch or stylus; Shift + arrows moves by keyboard. Alt + Shift + P restores a hidden companion.</p>';
  }
  return '<div class="pc-menu-head"><span class="pc-menu-identity"><span class="pc-menu-avatar" aria-hidden="true">⚡</span><span><strong>Pikachu</strong><small>Your study companion</small></span></span><button type="button" data-pc="close" aria-label="Close companion menu">×</button></div>'+
