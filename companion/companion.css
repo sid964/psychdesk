@@ -325,3 +325,11 @@ body.modal-open .pc-host { visibility: hidden; pointer-events: none; }
  .pc-host.pc-has-pikachu .pc-body,.pc-host.pc-has-pikachu .pc-pikachu *,
  .pc-host.pc-has-pikachu .pc-pikachu {animation:none!important;transition:none!important;}
 }
+
+/* Computed horizontal offsets keep menus and bubbles on-screen after free roaming. */
+.pc-host .pc-menu,.pc-host[data-side="right"] .pc-menu {
+ left:var(--pc-menu-left,0px)!important;right:auto!important;
+}
+.pc-host .pc-hint,.pc-host[data-side="right"] .pc-hint {
+ left:var(--pc-hint-left,0px)!important;right:auto!important;
+}
