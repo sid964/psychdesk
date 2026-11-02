@@ -6,22 +6,32 @@
  const timing={enter:token('enter',380),small:token('small',200),dialog:token('dialog',300)};
  const ease=css.getPropertyValue('--motion-ease').trim()||'cubic-bezier(.22,1,.36,1)';
  const active=new Set(),byElement=new WeakMap(),visited=new Set(),positions=new Map(),seen=new Map();
+ let depthValue='',scrolled=false,dialogElement=null;
  let lastTab=null,previous=new Map(),oldRects=new Map(),pendingTab=null,observer=null,scrollFrame=0,origin=null,drag=null,basic=false;
  const surfaces='.hero,.stat,.card,.banner,.subject-card,.note-card,.task-row,.empty,.ink-library-top,.ink-note-card,.tool-card,.psy-event-card,.ref-card';
  function play(el,frames,options={}){
   if(!el?.animate||preference.matches||document.hidden)return null;
-  byElement.get(el)?.cancel();
+  const prior=byElement.get(el);
+  if(prior){
+   // Read the current compositor state before replacing an in-flight transition.
+   const current=getComputedStyle(el),first={...frames[0]};
+   for(const property of ['transform','opacity'])if(property in first)first[property]=current[property];
+   frames=[first,...frames.slice(1)];prior.cancel();
+  }
   const animation=el.animate(frames,{duration:timing.enter,easing:ease,...options});
   active.add(animation);byElement.set(el,animation);
   const clean=()=>{active.delete(animation);if(byElement.get(el)===animation)byElement.delete(el);};
   animation.addEventListener('finish',clean,{once:true});animation.addEventListener('cancel',clean,{once:true});return animation;
  }
- function cancel(){for(const a of active)a.cancel();active.clear();}
+ function cancel(root){
+  for(const a of [...active]){const target=a.effect?.target;if(!root||!target?.isConnected||root.contains(target))a.cancel();}
+ }
+ function cancelDecorations(){cancel(document.querySelector('#main'));}
  function stopScroll(){if(scrollFrame)cancelAnimationFrame(scrollFrame);scrollFrame=0;}
  function rect(el){return el.getBoundingClientRect();}
  function visible(r){return r.bottom>0&&r.top<innerHeight&&r.width>0;}
  function key(el){const owner=el.matches('[data-id]')?el:el.querySelector('[data-id]');return el.classList[0]+':'+(owner?.dataset.id||el.textContent.trim().slice(0,100));}
- function arrive(el,index=0,scroll=false){play(el,[{opacity:scroll ? .55 : 0,transform:'translateY('+ (scroll?8:12)+'px)'},{opacity:1,transform:'translateY(0)'}],{duration:scroll?280:timing.enter,delay:Math.min(index*24,96)});}
+ function arrive(el,index=0,scroll=false){if(basic)return;play(el,[{opacity:scroll ? .55 : 0,transform:'translateY('+ (scroll?8:12)+'px)'},{opacity:1,transform:'translateY(0)'}],{duration:scroll?280:timing.enter,delay:Math.min(index*24,96)});}
  function beforeRender(root,tab){
   oldRects.clear();if(tab!==lastTab||preference.matches)return;
   for(const el of [...root.querySelectorAll('.task-row,.note-card')].slice(0,100)){const r=rect(el);if(visible(r))oldRects.set(key(el),r);}
@@ -31,12 +41,13 @@
   scrollFrame=0;
   if(preference.matches||basic||document.hidden)return;
   // Only existing decorative motifs move. The page background remains #000000.
-  document.documentElement.style.setProperty('--motion-depth',Math.min(18,Math.max(0,scrollY)*.035).toFixed(1)+'px');
-  document.documentElement.classList.toggle('motion-scrolled',scrollY>24);
+  const value=Math.min(18,Math.max(0,scrollY)*.035).toFixed(1)+'px';
+  if(value!==depthValue){depthValue=value;document.documentElement.style.setProperty('--motion-depth',value);}
+  const next=scrollY>24;if(next!==scrolled){scrolled=next;document.documentElement.classList.toggle('motion-scrolled',next);}
  }
  function onScroll(){if(!scrollFrame&&!basic&&!preference.matches&&!document.hidden)scrollFrame=requestAnimationFrame(depth);}
  function render(root,tab){
-  cancel();observer?.disconnect();observer=null;
+  cancel(root);observer?.disconnect();observer=null;
   if(pendingTab!==null){window.scrollTo({top:positions.get(pendingTab)||0,behavior:'instant'});pendingTab=null;}
   const changed=tab!==lastTab,first=!visited.has(tab),next=new Map();
   if(!seen.has(tab))seen.set(tab,new Set());const revealed=seen.get(tab);
@@ -66,34 +77,37 @@
     else if(!previous.has(id)&&el.matches('.task-row,.note-card,.answer'))arrive(el);
    }
   }
+  // Charts enter only on the first visit, and remain still during unrelated updates.
+  if(first&&!basic)for(const el of root.querySelectorAll('.chart-bar'))if(visible(rect(el)))play(el,[{transform:'scaleY(.08)'},{transform:'scaleY(1)'}],{duration:timing.enter});
   previous=next;lastTab=tab;visited.add(tab);oldRects.clear();depth();
  }
  // Damped spring sampled once per interaction; WAAPI handles native display cadence.
  function spring(kind,start,end){return Array.from({length:25},(_,i)=>{const t=i/24,p=i===24?1:1-Math.exp(-7*t)*(Math.cos(10*t)+.7*Math.sin(10*t));return {offset:t,transform:kind==='scale'?'scale('+(start+(end-start)*p)+')':'translateY('+(start+(end-start)*p)+'px)'};});}
  function opened(dialog){
   if(!dialog)return;
+  const source=origin;closed();origin=source;dialogElement=dialog;
   const header=dialog.querySelector('.modal-header');
   if(header&&!header.querySelector('.motion-sheet-handle')){const handle=document.createElement('span');handle.className='motion-sheet-handle';handle.setAttribute('aria-hidden','true');header.prepend(handle);}
+  dialog.style.setProperty('animation','none','important');
   if(origin&&performance.now()-origin.time<700&&!preference.matches){
    const target=rect(dialog),dx=Math.max(-80,Math.min(80,origin.rect.left+origin.rect.width/2-target.left-target.width/2));
-   dialog.style.setProperty('animation','none','important');
    // Carry the selected note's direction into its editor without duplicating its content.
    play(dialog,[{opacity:.4,transform:'translate('+dx+'px,18px) scale(.97)'},{opacity:1,transform:'translate(0,0) scale(1)'}],{duration:timing.dialog});
-  }
+  }else play(dialog,[{opacity:.4,transform:innerWidth<650?'translateY(32px)':'translateY(16px) scale(.985)'},{opacity:1,transform:'translateY(0) scale(1)'}],{duration:timing.dialog});
   origin=null;
  }
  function resetDrag(){if(!drag)return;const d=drag;drag=null;d.el.style.removeProperty('transform');try{d.handle.releasePointerCapture(d.id);}catch{}}
- function closed(){resetDrag();origin=null;}
+ function closed(){resetDrag();if(dialogElement)cancel(dialogElement);dialogElement=null;origin=null;}
  document.addEventListener('click',e=>{const note=e.target.closest?.('.note-card');origin=note?{rect:rect(note),time:performance.now()}:null;},true);
  document.addEventListener('pointerdown',e=>{
   const handle=e.target.closest?.('.motion-sheet-handle');
   if(!handle||e.pointerType==='pen'||!e.isPrimary||e.button!==0||preference.matches||innerWidth>649)return;
   const el=handle.closest('.modal');if(!el)return;e.preventDefault();const offset=Math.max(0,new DOMMatrixReadOnly(getComputedStyle(el).transform).m42);byElement.get(el)?.cancel();el.style.setProperty('animation','none','important');el.style.transform='translateY('+offset+'px)';
-  drag={el,handle,id:e.pointerId,y:e.clientY,offset,time:performance.now(),dy:offset};handle.setPointerCapture(e.pointerId);
+  drag={el,handle,id:e.pointerId,y:e.clientY,offset,time:performance.now(),lastY:e.clientY,velocity:0,dy:offset};handle.setPointerCapture(e.pointerId);
  });
- document.addEventListener('pointermove',e=>{if(!drag||drag.id!==e.pointerId)return;drag.dy=Math.max(0,drag.offset+e.clientY-drag.y);drag.el.style.transform='translateY('+drag.dy+'px)';});
+ document.addEventListener('pointermove',e=>{if(!drag||drag.id!==e.pointerId)return;const now=performance.now();drag.velocity=(e.clientY-drag.lastY)/Math.max(1,now-drag.time);drag.time=now;drag.lastY=e.clientY;drag.dy=Math.max(0,drag.offset+e.clientY-drag.y);drag.el.style.transform='translateY('+drag.dy+'px)';});
  function endDrag(e){
-  if(!drag||drag.id!==e.pointerId)return;const d=drag,travel=d.dy-d.offset,velocity=travel/Math.max(1,performance.now()-d.time);drag=null;
+  if(!drag||drag.id!==e.pointerId)return;const d=drag,travel=d.dy-d.offset,velocity=performance.now()-d.time<100?d.velocity:0;drag=null;
   try{d.handle.releasePointerCapture(d.id);}catch{}
   const dismiss=e.type==='pointerup'&&travel>20&&(d.dy>90||(d.dy>30&&velocity>.65));
   const animation=play(d.el,dismiss?[{transform:'translateY('+d.dy+'px)',opacity:1},{transform:'translateY('+Math.min(innerHeight,600)+'px)',opacity:0}]:spring('translateY',d.dy,0),{duration:dismiss?180:300,easing:dismiss?ease:'linear'});
@@ -103,11 +117,11 @@
  }
  document.addEventListener('pointerup',endDrag);document.addEventListener('pointercancel',endDrag);
  document.addEventListener('lostpointercapture',e=>{if(drag?.id===e.pointerId)endDrag({...e,pointerId:e.pointerId,type:'pointercancel'});});
- function quiet(){cancel();observer?.disconnect();stopScroll();resetDrag();document.documentElement.style.setProperty('--motion-depth','0px');}
+ function quiet(){cancel();observer?.disconnect();stopScroll();resetDrag();depthValue='0px';document.documentElement.style.setProperty('--motion-depth',depthValue);}
  preference.addEventListener('change',()=>{if(preference.matches)quiet();else depth();});
  document.addEventListener('visibilitychange',()=>{if(document.hidden)quiet();else depth();});
  window.addEventListener('pagehide',quiet);window.addEventListener('pageshow',depth);window.addEventListener('scroll',onScroll,{passive:true});
  // Downgrade decorative effects during severe main-thread stalls; essential controls stay instant.
- try{if(PerformanceObserver.supportedEntryTypes.includes('longtask')){new PerformanceObserver(list=>{if(list.getEntries().some(e=>e.duration>120)){basic=true;document.documentElement.dataset.motionQuality='basic';observer?.disconnect();stopScroll();document.documentElement.style.setProperty('--motion-depth','0px');}}).observe({type:'longtask',buffered:false});}}catch{}
+ try{if(PerformanceObserver.supportedEntryTypes.includes('longtask')){new PerformanceObserver(list=>{if(list.getEntries().some(e=>e.duration>120)){basic=true;cancelDecorations();document.documentElement.dataset.motionQuality='basic';observer?.disconnect();stopScroll();depthValue='0px';document.documentElement.style.setProperty('--motion-depth',depthValue);}}).observe({type:'longtask',buffered:false});}}catch{}
  window.PsychDeskMotion={render,beforeRender,navigate,opened,closed,cancel};
 })();
