@@ -228,18 +228,26 @@ function menuMarkup(which){
     MODES.map(x=>'<button type="button" data-pc-mode="'+x+'" aria-pressed="'+(prefs.mode===x)+'">'+x[0].toUpperCase()+x.slice(1)+'</button>').join('')+'</div>'+
    '<div class="pc-field-label">Size</div><div class="pc-choices" role="group" aria-label="Character size">'+
     SIZES.map(x=>'<button type="button" data-pc-size="'+x+'" aria-pressed="'+(prefs.size===x)+'">'+x[0].toUpperCase()+x.slice(1)+'</button>').join('')+'</div>'+
-   '<p class="pc-menu-copy">Drag to move, or use Shift + arrow keys while focused. Alt + Shift + P restores a hidden companion.</p>';
+   '<div class="pc-field-label">Interaction</div><div class="pc-choices pc-toggles" role="group" aria-label="Interaction preferences">'+
+   '<button type="button" data-pc-toggle="roam" aria-pressed="'+prefs.roam+'">Roam '+(prefs.roam?'On':'Off')+'</button>'+
+   '<button type="button" data-pc-toggle="popups" aria-pressed="'+prefs.popups+'">Bubbles '+(prefs.popups?'On':'Off')+'</button>'+
+   '<button type="button" data-pc-toggle="live" aria-pressed="'+prefs.live+'">Gestures '+(prefs.live?'On':'Off')+'</button></div>'+
+   '<button class="pc-minimize" type="button" data-pc="dock">Return to saved position</button>'+
+   '<p class="pc-menu-copy">Drag with touch or stylus; Shift + arrows moves by keyboard. Alt + Shift + P restores a hidden companion.</p>';
  }
  return '<div class="pc-menu-head"><strong>Study companion</strong><button type="button" data-pc="close" aria-label="Close companion menu">×</button></div>'+
   '<p class="pc-menu-copy">'+(featureById[tab]?.[2]||'Here when you need a hand.')+'</p>'+
   '<div class="pc-menu-actions"><button type="button" data-pc="help">Find a feature</button>'+
   '<button type="button" data-pc="quick">+ Quick note</button>'+
   '<button type="button" data-pc="drive">Drive connection</button>'+
-  '<button type="button" data-pc="prefs">Preferences</button></div>'+
+  '<button type="button" data-pc="prefs">Preferences</button>'+ 
+  '<button type="button" data-pc="greet">Wave hello</button>'+ 
+  '<button type="button" data-pc="roam">Go exploring</button></div>'+
   '<button type="button" class="pc-minimize" data-pc="minimize">Hide companion</button>';
 }
 function openMenu(which='home',restoreFocus=false){
  if(prefs.mode==='hidden'&&which!=='prefs')return;
+ stopRoam();dismissBubble();
  section=which;opened=true;pauseIdle();clearHighlight();updateContext();
  if(disabledByContext&&which!=='prefs')return;
  menu.innerHTML=menuMarkup(which);menu.hidden=false;
@@ -247,6 +255,7 @@ function openMenu(which='home',restoreFocus=false){
  if(restoreFocus)menu.querySelector('button')?.focus({preventScroll:true});
 }
 function setMode(mode){
+ if(mode!=='hidden')stopRoam();
  prefs.mode=safe(mode,MODES,'calm');persist();host.dataset.mode=prefs.mode;
  if(prefs.mode==='hidden'){stopRoam();pauseIdle();closeMenu(false);setState('hidden');dismissBubble();}
  else{setState('resting');applyPosition();scheduleIdle();}
@@ -322,6 +331,8 @@ menu.addEventListener('click',e=>{
  if(mode){setMode(mode);if(mode!=='hidden')openMenu('prefs');return;}
  const size=e.target.closest('[data-pc-size]')?.dataset.pcSize;
  if(size){setSize(size);openMenu('prefs');return;}
+ const toggle=e.target.closest('[data-pc-toggle]')?.dataset.pcToggle;
+ if(['roam','popups','live'].includes(toggle)){prefs[toggle]=!prefs[toggle];persist();if(!prefs.roam)stopRoam();if(!prefs.popups){dismissBubble();bubbleQueue=[];}openMenu('prefs',true);scheduleIdle();return;}
  const action=e.target.closest('[data-pc]')?.dataset.pc;
  if(!action)return;
  if(action==='greet'){closeMenu(false);setState('waving',1400);announce('Pika! Happy studying! ⚡',2600);return;}
