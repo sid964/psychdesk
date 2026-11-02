@@ -66,3 +66,14 @@ Validation: Node suite and JavaScript syntax checks; no added browser/screenshot
 `reference-rig.js` now builds a native SVG cutout rig using the supplied standing image in the existing atlas. Separate clipped ears, paws, feet and tail use the existing gesture animations rather than moving a whole still image. Wave, point, thinking, double-paw celebration, walking and tap states animate those joints; sleep lowers the body and adds a closed-eye overlay. The earlier vector is retained if the atlas cannot load, and imported private state artwork continues to take priority.
 
 This is a lightweight cutout rig from a 136-pixel reference cel, not a newly painted animation sequence. Higher-resolution source art and dedicated frames remain optional quality improvements. No new third-party artwork was downloaded and no licensing claim is made. Persistent browser-local assets, isolated bubble queue, study data, and the homepage Settings icon are preserved.
+
+
+## Actual 3D model integration
+
+`webgl.js` renders the approved Pikachu geometry and UV textures using native WebGL. It does not use a game engine, an external CDN, or paid services. The previously added CSS perspective module is no longer loaded. The existing character remains a fallback when WebGL, gzip decoding, asset loading or the graphics context is unavailable; browser-private imported art still overrides the built-in character.
+
+The model is Pikachu by Kataphoric, listed as CC BY 4.0 in the source asset metadata, retrieved from SamsungInternet/ar-demos. Credits and modification details are in `assets/PIKACHU-CREDITS.md` and linked in the companion preferences. No claim of an official commission or ownership of the Pokémon character is made.
+
+The approved studio scene is converted to compact mesh data and four PNG textures. Native rendering uses a nine-part procedural deformation map for head, ears, paws, tail and feet. Waving, pointing, thinking, celebration, walking, tap, sync and sleep states deform the 3D geometry; sleep is a lowered resting pose rather than a dedicated curled model or facial animation. It is not a hand-authored animation clip pack.
+
+The renderer uses the existing companion state machine and existing button hit area. It draws a static frame at rest, runs finite interaction windows, caps render resolution at 2× device pixel ratio and suspends in hidden, modal, editor and private-art contexts. Reduced motion and Live Off use a static neutral pose. No account, study-data, auth, Drive or homepage Settings-icon code changes are required.

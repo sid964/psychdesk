@@ -1,0 +1,9 @@
+/* Actual 3D surface keeps the companion's existing button and accessible controls. */
+.pc-host .pc-webgl {position:absolute;inset:0;display:block;width:100%;height:100%;pointer-events:none;background:transparent;}
+.pc-host.pc-has-webgl .pc-body {animation:none!important;transform:none!important;}
+.pc-host.pc-has-webgl :is(.pc-pikachu,.pc-photo-pose,.pc-orb,.pc-star,.pc-licensed-art) {display:none!important;}
+.pc-host.pc-has-webgl.pc-custom-art .pc-webgl {display:none!important;}
+.pc-host.pc-has-webgl.pc-custom-art .pc-licensed-art {display:block!important;}
+.pc-host.pc-has-webgl .pc-character {overflow:visible;}
+.pc-host .pc-model-credit {display:block;margin-top:10px;font:500 10px/1.5 system-ui,sans-serif;color:#aaa;}
+.pc-host .pc-model-credit a {color:#e7cc86;text-decoration:underline;}
