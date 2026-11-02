@@ -17,7 +17,7 @@
 .modal :is(.field input,.field textarea,.field select){min-height:46px;line-height:1.5}
 .modal .modal-header{margin-bottom:22px;padding-bottom:16px}
 .modal .modal-footer{gap:10px;margin-top:24px}
-html[data-theme=dark] :is(.modal,.modal-header,.modal-footer){background:#0c0c0c!important;background-image:none!important;border-color:#303030!important}
+html[data-theme=dark] :is(.modal-overlay .modal,.modal-header,.modal-footer){background:#0c0c0c!important;background-image:none!important;border-color:#303030!important}
 @media(min-width:900px){
  .desktop-rail{padding:28px 16px 20px;min-height:0}
  .rail-brand{margin:0 8px 30px;gap:12px}
@@ -53,3 +53,5 @@ html[data-theme=dark] :is(.modal,.modal-header,.modal-footer){background:#0c0c0c
 }
 @media(max-width:345px){.bottom-nav .nav-item{font-size:9px}.modal h2{font-size:24px}}
 @media(pointer:coarse){:is(.filter,.mini-btn,.check-btn,.review-btns button,.select-strip button){min-height:44px}.check-btn{min-width:40px}}
+
+html[data-theme=dark] .modal :is(input,textarea)::placeholder{color:#a0a0a0!important;opacity:1}

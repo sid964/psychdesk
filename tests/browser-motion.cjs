@@ -46,8 +46,9 @@ module.exports=async(page,record,dest)=>{
  const opening=await page.evaluate(()=>{
   window.PsychDeskCore.openModal('Motion check','<input aria-label="Motion check">');
   const el=document.querySelector('#modalRoot .modal');
-  return {frames:el.getAnimations()[0]?.effect.getKeyframes(),blur:getComputedStyle(el.parentElement).backdropFilter,veil:getComputedStyle(el.parentElement).backgroundColor,shell:getComputedStyle(document.querySelector('.app-shell')).opacity};
+  return {surface:getComputedStyle(el).backgroundColor,frames:el.getAnimations()[0]?.effect.getKeyframes(),blur:getComputedStyle(el.parentElement).backdropFilter,veil:getComputedStyle(el.parentElement).backgroundColor,shell:getComputedStyle(document.querySelector('.app-shell')).opacity};
  });
+ assert.equal(opening.surface,'rgb(12, 12, 12)','Dialog surface stays neutral without a green tint');
  assert.equal(opening.shell,'1','No second layer of workspace dimming');
  assert.match(opening.blur,/blur\(3px\)/);assert.equal(opening.veil,'rgba(0, 0, 0, 0.28)');
  assert.ok(opening.frames?.length,'Dialog has its upward slide');
