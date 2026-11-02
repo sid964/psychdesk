@@ -13,7 +13,7 @@ html{scroll-behavior:auto;overflow-x:clip}
 .app-shell,body.modal-open .app-shell{opacity:1;transition:none!important}
 #main{min-width:0;isolation:isolate}
 :is(button,a,input,textarea,select,summary){-webkit-tap-highlight-color:transparent}
-:is(button,summary,.resource-item,.note-card,.ink-note-card,.subject-card,.material-card,.tool-card,.ref-card,.psy-entry){
+:is(.stat,.banner,.card,.task-row,button,summary,.resource-item,.note-card,.ink-note-card,.subject-card,.material-card,.tool-card,.ref-card,.psy-entry){
  transition:background-color var(--motion-feedback) ease,border-color var(--motion-feedback) ease,color var(--motion-feedback) ease,box-shadow var(--motion-hover) ease!important;
 }
 /* Individual scale keeps each control's existing layout/rotation intact. */
@@ -21,6 +21,8 @@ button{transform:none!important;scale:1;transition:scale var(--motion-press) var
 button:active:not(:disabled){scale:.98}
 :is(.nav-ico,.rail-symbol,.rail-trail){transform:none!important;transition:color var(--motion-feedback) ease,opacity var(--motion-feedback) ease!important}
 .rail-link,.rail-link:hover{transform:none!important}
+:is(.stat,.banner,.task-row):hover{transform:none!important}
+.subject-resource-btn span{transform:none!important;transition:none!important}
 @media(hover:hover) and (pointer:fine){
  :is(.subject-card,.note-card,.material-card,.resource-item,.ink-note-card,.tool-card,.ref-card):hover{transform:none;box-shadow:inset 0 0 0 1px #ffffff24}
 }

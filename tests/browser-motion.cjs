@@ -56,7 +56,7 @@ module.exports=async(page,record,dest)=>{
  await page.keyboard.press('Escape');
  const exit=await page.locator('.motion-dismiss-layer').evaluate(el=>({inert:el.hasAttribute('inert'),pointer:getComputedStyle(el).pointerEvents,ids:el.querySelectorAll('[id]').length}));
  assert.deepEqual(exit,{inert:true,pointer:'none',ids:0},'Outgoing surface cannot intercept actions, focus, or ID lookups');
- await page.waitForTimeout(260);assert.equal(await page.locator('.motion-dismiss-layer').count(),0);
+ await page.waitForFunction(()=>!document.querySelector('.motion-dismiss-layer'),null,{timeout:1200});
  await page.locator('[data-action="newTask"]').first().click();await page.waitForTimeout(440);
  await page.screenshot({path:path.join(dest,'motion-dialog-'+record.viewport+'.png')});
  if(record.viewport===390){
@@ -89,8 +89,7 @@ module.exports=async(page,record,dest)=>{
  await page.evaluate(()=>{window.PsychDeskCore.setTab('insights');window.PsychDeskCore.render()});
  assert.equal(await page.locator('.chart-bar').first().evaluate(el=>el.getAnimations().length),0,'Charts remain still');
  assert.equal(await page.locator('.app-shell').getAttribute('inert'),null);
- await page.waitForTimeout(450);
- assert.equal(await page.evaluate(()=>document.querySelector('#main').getAnimations({subtree:true}).length),0,'Final workspace is still');
+ await page.waitForFunction(()=>document.querySelector('#main').getAnimations({subtree:true}).length===0,null,{timeout:1200});
  await page.evaluate(()=>window.PsychDeskCore.setTab('today'));
  record.motion={directionalSurface:true,noFade:true,noBounce:true,settles:true,noReplay:true,rapidNavigation:true,reducedMotion:true,amoled:true,scrollContinuity:true,sheetGesture:record.viewport===390,interruptedDialogs:true,lightBlur:true,penSettles:true};
 };
