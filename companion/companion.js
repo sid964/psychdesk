@@ -59,6 +59,19 @@ if(typeof window.PsychDeskPikachuMarkup==='string'){
  body.insertAdjacentHTML('beforeend',window.PsychDeskPikachuMarkup);
  host.classList.add('pc-has-pikachu');button.setAttribute('aria-label','Pikachu study companion. Tap for help, double-tap to high-five or drag to move.');
 }
+// Three frames are cut from the user's supplied images and packed into one small
+// transparent PNG: standing (left), waving/jumping (middle), walking (right).
+// Load once; retain the existing vector as a fallback if a cache is unavailable.
+const userPoseAtlas='companion/assets/pikachu-user-poses.png';
+const photoPose=document.createElement('span');
+photoPose.className='pc-photo-pose';photoPose.setAttribute('aria-hidden','true');
+body.append(photoPose);
+if(typeof Image==='function'){
+ const preload=new Image();
+ preload.onload=()=>{if(!host.isConnected)return;host.classList.add('pc-has-photo');};
+ preload.onerror=()=>host.classList.remove('pc-has-photo');
+ preload.src=userPoseAtlas;
+}
 const visible=()=>prefs.mode!=='hidden'&&!document.hidden&&!disabledByContext;
 const editorFocused=()=>!!document.activeElement?.closest?.('input,textarea,select,[contenteditable="true"],[contenteditable=""],[role="textbox"]');
 const drawingSurface=()=>tab==='ink'&&!!document.querySelector('#main .ink-editor');
