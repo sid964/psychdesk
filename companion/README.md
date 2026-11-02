@@ -38,3 +38,24 @@ The original reference images are relatively small and come from three different
 ### Animation and asset limits
 
 The current atlas remains a small set of extracted poses from the images supplied in the conversation. Changing between these poses produces a cel-animation effect, but the individual bitmap limbs are not a full 2D bone rig. The separately drawn SVG fallback has animated ear, limb and tail shapes. No 90/120 Hz performance benchmarks are claimed. The uploaded references are used on the owner's instructions; underlying Pokémon IP rights and public distribution permission were not independently verified.
+
+## Private poses and interaction upgrade (v4)
+
+The existing user-supplied atlas is retained. No additional Pokémon assets are downloaded or committed by this upgrade. Supplied references are not evidence of a Pokémon license; the repository and Pages remain public. Local imports below are private to the browser, not access control for the hosted website.
+
+Open **Preferences → Private pose**, select a state, then import a transparent PNG, WebP or SVG under 350 KB. Imports persist in the separate `psychdesk-companion-art-v1` localStorage key, never in Firebase, Drive, study exports or Git. Missing or broken poses try the idle pose and then the existing supplied atlas/vector fallback. SVGs are decoded as images, never injected into the document. Browser quota failures retain previous settings. Reset clears companion preferences and imported poses only.
+
+Supported state names: `idle`, `resting`, `sleeping`, `walking`, `waving`, `pointing`, `thinking`, `celebrating`, `syncing`, `disconnected`, `pet-react`. For developer-supplied local paths, set `window.PsychDeskCompanionArtwork = {idle: 'companion/private/idle.webp', waving: 'companion/private/waving.svg'}` before companion startup. Keep private files out of Git. This optional map accepts relative/same-origin image paths; no remote service is used.
+
+- Calm has no automatic roaming or curious idle motion. Playful can take occasional walks and suggest a quick note; explicit **Go exploring** works in either visible mode.
+- Tap gives a soft squash/bounce followed by the menu and greeting wave. Double-tap gives a high-five. Long-press opens controls; keyboard Enter/Space opens the menu, Escape closes it, Shift+arrows moves it, and Alt+Shift+P restores a hidden pet.
+- Dragging now keeps the dropped position, including the middle of the workspace. Restore position returns to the default dock. Automatic destinations avoid controls; the walking character does not intercept controls along its route.
+- Help uses a thinking pose; feature guidance highlights navigation and faces toward it. Real task, focus-log and review-completion events celebrate. Verified Drive events show syncing/connected/disconnected feedback. Focus stays quiet; editing, handwriting and modals suppress the overlay.
+- Bubbles last 2–4 seconds, queue at most two pending messages, discard stale messages on suppression, and avoid covering actionable controls. All speech uses a polite live region; no critical full-screen alerts are introduced.
+- Private pose loading and speech queuing are isolated in `assets-loader.js` and `bubbles.js`. Modal visibility is observed only through body class changes. Hidden tabs cancel activity and pause animations. Live Off disables gestures and automatic idle activity. Reduced motion keeps semantic state without animation.
+
+### Remaining artwork dependency
+
+The three supplied still poses cannot depict every distinct paw, thinking or curled-sleep pose. Their current transitions use pose swaps and body motion. The existing SVG fallback has separate animated ears, paws and tail; imported SVGs render as self-contained images, not as a limb rig controlled by PsychDesk. To replace approximate poses, import dedicated artwork for the state names above. No claim is made that the three stills have become a complete hand-drawn animation sequence.
+
+Validation: Node suite and JavaScript syntax checks; no added browser/screenshot workflow. Existing repository CI continues to run unchanged, with companion scripts added to its syntax coverage.

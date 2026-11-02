@@ -40,7 +40,7 @@ function load(){
 const prefs=load();
 function persist(){try{localStorage.setItem(KEY,JSON.stringify(prefs));}catch{/* Local preferences are optional. */}}
 const host=document.createElement('div');host.id='psychdesk-companion';
-host.className='pc-host';host.dataset.mode=prefs.mode;host.dataset.size=prefs.size;
+host.className='pc-host';host.dataset.mode=prefs.mode;host.dataset.size=prefs.size;host.dataset.live=String(prefs.live);
 host.innerHTML='<span class="pc-ground-shadow" aria-hidden="true"></span><button type="button" class="pc-character" aria-label="Study companion. Open quick study help. Drag to move; Shift plus arrow keys to reposition." aria-haspopup="true" aria-expanded="false">'+
  '<span class="pc-body" aria-hidden="true"><span class="pc-orb"><span class="pc-eye pc-eye-left"></span><span class="pc-eye pc-eye-right"></span><span class="pc-mouth"></span></span><span class="pc-star pc-star-one"></span><span class="pc-star pc-star-two"></span></span><span class="pc-expression" aria-hidden="true"></span>'+
  '</button><section class="pc-menu" role="group" aria-label="Pikachu companion controls" hidden></section><div class="pc-hint" hidden><span class="pc-hint-title" aria-hidden="true">⚡ PIKACHU</span><span class="pc-hint-text" role="status" aria-live="polite" aria-atomic="true"></span><button type="button" class="pc-hint-dismiss" aria-label="Dismiss Pikachu message">×</button></div>';
@@ -48,15 +48,15 @@ document.body.append(host);
 const button=host.querySelector('.pc-character'),body=host.querySelector('.pc-body'),
  menu=host.querySelector('.pc-menu'),hint=host.querySelector('.pc-hint');
 let tab='today',state='resting',opened=false,section='home',lastActivity=Date.now(),timerActive=false;
-let connected=false,drag=null,pendingMove=0,adventureTimer=0,endingTimer=0,hintTimer=0,guideTimer=0,highlight=null,highlightTimer=0;
+let connected=false,drag=null,pendingMove=0,adventureTimer=0,endingTimer=0,guideTimer=0,highlight=null,highlightTimer=0;
 let activityTimer=0,editing=false,pointerDrawing=false,disabledByContext=false;
 let roamAnimation=null,roamPosition=null,longPressTimer=0,longPressed=false,lastTap=0;
 let pendingTap=0,hoverTimer=0,walkCount=0,previousTab='today';
-const EMOTIONS=['resting','idle','looking','stretching','sleeping','waving','walking','celebrating','interacting','pointing','thinking','syncing','disconnected'];
-const bubbleText=hint.querySelector('.pc-hint-text');let bubbleQueue=[];
-const artwork=window.PsychDeskCompanionArtwork;
-const poseImage=artwork&&typeof artwork==='object'?document.createElement('img'):null;
-if(poseImage){poseImage.className='pc-licensed-art';poseImage.alt='';poseImage.hidden=true;poseImage.addEventListener('error',()=>{poseImage.hidden=true;host.classList.remove('pc-has-art');});body.append(poseImage);}
+const EMOTIONS=['resting','idle','looking','stretching','sleeping','waving','walking','celebrating','interacting','pointing','thinking','syncing','disconnected','pet-react'];
+const bubbleText=hint.querySelector('.pc-hint-text');
+const assets=window.PsychDeskCompanionAssets;
+const poseImage=document.createElement('img');
+if(poseImage){poseImage.className='pc-licensed-art';poseImage.alt='';poseImage.hidden=true;poseImage.addEventListener('load',()=>{poseImage.hidden=false;host.classList.add('pc-custom-art');});poseImage.addEventListener('error',tryNextArt);body.append(poseImage);}
 if(typeof window.PsychDeskPikachuMarkup==='string'){
  body.insertAdjacentHTML('beforeend',window.PsychDeskPikachuMarkup);
  host.classList.add('pc-has-pikachu');button.setAttribute('aria-label','Pikachu study companion. Tap for help, double-tap to high-five or drag to move.');
@@ -75,7 +75,7 @@ if(typeof Image==='function'){
  preload.src=userPoseAtlas;
 }
 const visible=()=>prefs.mode!=='hidden'&&!document.hidden&&!disabledByContext;
-const editorFocused=()=>!!document.activeElement?.closest?.('input,textarea,select,[contenteditable="true"],[contenteditable=""],[role="textbox"]');
+const editorFocused=()=>!host.contains(document.activeElement)&&!!document.activeElement?.closest?.('input,textarea,select,[contenteditable="true"],[contenteditable=""],[role="textbox"]');
 const drawingSurface=()=>tab==='ink'&&!!document.querySelector('#main .ink-editor');
 function updateContext(){
  editing=editorFocused();
@@ -88,47 +88,51 @@ function updateContext(){
 function clearAnimation(){clearTimeout(endingTimer);endingTimer=0;}
 function clearPendingTap(){clearTimeout(pendingTap);pendingTap=0;}
 function clearHover(){clearTimeout(hoverTimer);hoverTimer=0;}
-function applyArt(){
- if(!poseImage||host.classList.contains('pc-has-pikachu'))return;
- const url=artwork[state]||artwork.idle;
- if(typeof url==='string'&&/^(?:\.{0,2}\/|[a-z0-9_\/-])/i.test(url)&&!url.startsWith('//')){
-  if(poseImage.getAttribute('src')!==url)poseImage.src=url;
-  poseImage.hidden=false;host.classList.add('pc-has-art');
- }else{poseImage.hidden=true;host.classList.remove('pc-has-art');}
+let artCandidates=[],artIndex=0,artKey='';
+function tryNextArt(){
+ const url=artCandidates[artIndex++];
+ if(url){poseImage.src=url;return;}
+ poseImage.hidden=true;host.classList.remove('pc-custom-art');
 }
+function applyArt(){
+ const candidates=assets?.candidates(state)||[];
+ const key=JSON.stringify(candidates);if(key===artKey)return;artKey=key;
+ artCandidates=candidates;artIndex=0;tryNextArt();
+}
+
 function setState(next,duration=0){
- clearAnimation();state=reduced.matches?'resting':next;host.dataset.state=state;host.dataset.motion=EMOTIONS.includes(state)?state:'resting';applyArt();
+ clearAnimation();state=next;host.dataset.state=state;host.dataset.motion=EMOTIONS.includes(state)?state:'resting';applyArt();
  if(duration)endingTimer=setTimeout(()=>{endingTimer=0;settle();},duration);
 }
 function settle(){
  if(prefs.mode==='hidden'||document.hidden){setState('hidden');return;}
  setState(tab==='focus'||timerActive?'sleeping':editing||pointerDrawing||drawingSurface()||Date.now()-lastActivity<11000?'resting':'idle');
 }
-function dismissBubble(){
- clearTimeout(hintTimer);hintTimer=0;hint.hidden=true;bubbleText.textContent='';
+const bubbles=window.PsychDeskCompanionBubbles({hint,text:bubbleText,
+ allowed:()=>prefs.popups&&visible()&&!opened&&!editorFocused()&&!timerActive&&tab!=='focus',
+ place:()=>{applyPosition(true);avoidBubbleControls();}
+});
+function dismissBubble(){bubbles.clear();}
+function announce(message,ms=3200,tone='guidance'){bubbles.say(message,ms,tone);}
+function avoidBubbleControls(){
+ const rect=hint.getBoundingClientRect();
+ const blocked=[...document.querySelectorAll('button,input,textarea,select,canvas,[contenteditable],nav,[role="dialog"]')].some(el=>{
+  if(host.contains(el)||!el.getClientRects().length)return false;
+  const r=el.getBoundingClientRect();return r.left<rect.right&&r.right>rect.left&&r.top<rect.bottom&&r.bottom>rect.top;
+ });
+ // Status speech never covers an actionable control; it can be dropped safely.
+ if(blocked)hint.hidden=true;
 }
-function nextBubble(){
- if(!prefs.popups||!visible()||opened||editorFocused()){dismissBubble();bubbleQueue=[];return;}
- const item=bubbleQueue.shift();
- if(!item){dismissBubble();return;}
- dismissBubble();bubbleText.textContent=item.message;hint.hidden=false;
- hint.dataset.tone=item.tone||'info';hintTimer=setTimeout(nextBubble,item.ms);
-}
-function announce(message,ms=3200,tone='info'){
- if(!prefs.popups||!visible()||editorFocused())return;
- const item={message:String(message).slice(0,180),ms:Math.max(1800,Math.min(ms,4900)),tone};
- if(!hint.hidden){bubbleQueue=bubbleQueue.slice(-1);bubbleQueue.push(item);return;}
- bubbleQueue=[item];nextBubble();
-}
-hint.querySelector('.pc-hint-dismiss').addEventListener('click',()=>{bubbleQueue=[];dismissBubble();});
+hint.querySelector('.pc-hint-dismiss').addEventListener('click',dismissBubble);
+
 function clearHighlight(){
- clearTimeout(highlightTimer);if(highlight){highlight.classList.remove('pc-guided-target');highlight=null;}
+ clearTimeout(highlightTimer);if(highlight){const r=highlight.getBoundingClientRect(),p=toCoords();host.dataset.facing=r.left<p.x?'left':'right';highlight.classList.remove('pc-guided-target');highlight=null;}
 }
 function markNav(id){
  clearHighlight();
  const nodes=[...document.querySelectorAll('[data-tab]')].filter(e=>e.dataset.tab===id&&e.getClientRects().length&&getComputedStyle(e).visibility!=='hidden');
  highlight=nodes.find(e=>e.classList.contains('rail-link')||e.classList.contains('nav-item'))||nodes[0]||document.getElementById('railCurrentSection');
- if(highlight){highlight.classList.add('pc-guided-target');highlightTimer=setTimeout(clearHighlight,2400);}
+ if(highlight){const r=highlight.getBoundingClientRect(),p=toCoords();host.dataset.facing=r.left<p.x?'left':'right';highlight.classList.add('pc-guided-target');highlightTimer=setTimeout(clearHighlight,2400);}
 }
 function measure(){
  const w=button.offsetWidth||82,h=button.offsetHeight||90;
@@ -184,6 +188,8 @@ function isQuietWorkspace(){
 function safeTarget(point,bounds){
  const centerX=point.x+bounds.w*.48,centerY=point.y+bounds.h*.48;
  if(centerX<bounds.minX||centerY<bounds.minY)return false;
+ const points=[[point.x,point.y],[point.x+bounds.w,point.y],[point.x,point.y+bounds.h],[point.x+bounds.w,point.y+bounds.h],[centerX,centerY]];
+ if(points.some(([x,y])=>document.elementFromPoint?.(x,y)?.closest?.('button,input,textarea,select,canvas,[contenteditable],nav,header,[role="dialog"]')))return false;
  const el=document.elementFromPoint?.(centerX,centerY);
  // Stay away from editors, drawing canvases, navigation, dialogs and fixed controls.
  return !el?.closest?.('button,input,textarea,select,canvas,[contenteditable],nav,aside,header,.modal-overlay,.bottom-nav,.topbar,[role="dialog"]');
@@ -198,7 +204,8 @@ function startRoam(forceWide=false){
   const p={x:b.minX+Math.random()*(b.maxX-b.minX),y:b.minY+Math.random()*(b.maxY-b.minY)};
   const d=Math.hypot(p.x-from.x,p.y-from.y);
   if(d<55||(!forceWide&&prefs.mode==='calm'&&d>range))continue;
-  const penalty=safeTarget(p,b)?0:260;
+  if(!safeTarget(p,b))continue;
+  const penalty=0;
   const value=(forceWide?d:-Math.abs(d-range*.58))+Math.random()*40-penalty;
   if(value>score){score=value;destination=p;}
  }
@@ -230,6 +237,7 @@ function startRoam(forceWide=false){
 function scheduleIdle(){
  pauseIdle();
  if(prefs.mode==='hidden'||document.hidden||reduced.matches)return;
+ if(prefs.mode!=='playful'||!prefs.live)return;
  const interval=prefs.mode==='playful'?16000+Math.random()*14000:65000+Math.random()*35000;
  adventureTimer=setTimeout(()=>{
   if(!visible()||!isQuietWorkspace()||Date.now()-lastActivity<16000){scheduleIdle();return;}
@@ -240,7 +248,7 @@ function scheduleIdle(){
    if(chance<.32)setState('looking',2200);
    else if(chance<.67)setState('stretching',2100);
    else if(chance<.87)setState('sleeping',2800);
-   else setState('waving',1350);
+   else {setState('waving',1350);announce('Want to add a quick note?',3000,'idle');}
   }
   scheduleIdle();
  },interval);
@@ -274,7 +282,9 @@ function menuMarkup(which){
    '<button type="button" data-pc-toggle="roam" aria-pressed="'+prefs.roam+'">Roam '+(prefs.roam?'On':'Off')+'</button>'+
    '<button type="button" data-pc-toggle="popups" aria-pressed="'+prefs.popups+'">Bubbles '+(prefs.popups?'On':'Off')+'</button>'+
    '<button type="button" data-pc-toggle="live" aria-pressed="'+prefs.live+'">Gestures '+(prefs.live?'On':'Off')+'</button></div>'+
-   '<button class="pc-minimize" type="button" data-pc="dock">Return to saved position</button>'+
+   '<button class="pc-minimize" type="button" data-pc="dock">Restore position</button>'+
+   '<label class="pc-field-label" for="pc-pose-state">Private pose</label><select id="pc-pose-state">'+assets.states.map(x=>'<option>'+x+'</option>').join('')+'</select><label class="pc-import">Import PNG / WebP / SVG<input type="file" data-pc-import accept="image/png,image/webp,image/svg+xml"></label><p class="pc-menu-copy" role="status" id="pc-import-status">Files stay in this browser. Missing poses use idle, then the supplied character.</p>'+
+   '<button class="pc-minimize" type="button" data-pc="reset">Reset companion settings &amp; private poses</button>'+
    '<p class="pc-menu-copy">Drag with touch or stylus; Shift + arrows moves by keyboard. Alt + Shift + P restores a hidden companion.</p>';
  }
  return '<div class="pc-menu-head"><span class="pc-menu-identity"><span class="pc-menu-avatar" aria-hidden="true">⚡</span><span><strong>Pikachu</strong><small>Your study companion</small></span></span><button type="button" data-pc="close" aria-label="Close companion menu">×</button></div>'+
@@ -291,8 +301,9 @@ function openMenu(which='home',restoreFocus=false){
  if(prefs.mode==='hidden'&&which!=='prefs')return;
  stopRoam();dismissBubble();
  section=which;opened=true;pauseIdle();clearHighlight();updateContext();
- if(disabledByContext&&which!=='prefs')return;
+ if(disabledByContext){opened=false;return;}
  menu.innerHTML=menuMarkup(which);menu.hidden=false;
+ if(which==='home'&&prefs.live)setState('waving',1100);
  button.setAttribute('aria-expanded','true');host.classList.add('pc-menu-open');
  if(restoreFocus)menu.querySelector('button')?.focus({preventScroll:true});
 }
@@ -300,10 +311,10 @@ function setMode(mode){
  clearPendingTap();if(mode!=='hidden')stopRoam();
  prefs.mode=safe(mode,MODES,'calm');persist();host.dataset.mode=prefs.mode;
  if(prefs.mode==='hidden'){stopRoam();pauseIdle();closeMenu(false);setState('hidden');dismissBubble();}
- else{setState('resting');applyPosition();scheduleIdle();}
+ else{host.dataset.live=String(prefs.live);settle();applyPosition();scheduleIdle();}
 }
 function setSize(size){
- prefs.size=safe(size,SIZES,'medium');host.dataset.size=prefs.size;persist();applyPosition(true);
+ prefs.size=safe(size,SIZES,'medium');host.dataset.size=prefs.size;host.dataset.live=String(prefs.live);persist();applyPosition(true);
 }
 function guide(id){
  const feature=featureById[id];if(!feature)return;
@@ -317,14 +328,14 @@ function driveStatus(){
  return !linked?'Sign in to PsychDesk first to use Google Drive.':ok?'Google Drive reports a verified connection.':'Drive is not connected. Use the Drive status button to reconnect.';
 }
 function celebrate(kind){
- if(!visible()||editing||pointerDrawing||reduced.matches)return;
- setState('celebrating',1450);
+ if(!visible()||editing||pointerDrawing)return;
+ if(prefs.live)setState('celebrating',1450);
  announce(kind==='task'?'Study topic completed. Nice work!':kind==='focus'?'Focused session logged. Well done!':'Flashcard session complete!',2600,'success');
 }
 button.addEventListener('pointerdown',e=>{
  if(!e.isPrimary||e.button!==0)return;
  clearPendingTap();stopRoam();longPressed=false;host.classList.add('pc-being-petted');
- if(prefs.live){clearTimeout(longPressTimer);longPressTimer=setTimeout(()=>{if(drag&&!drag.moved){longPressed=true;setState('thinking',1200);openMenu('home',true);}},610);}
+ {clearTimeout(longPressTimer);longPressTimer=setTimeout(()=>{if(drag&&!drag.moved){longPressed=true;if(prefs.live)setState('thinking',1200);openMenu('home',true);}},610);}
  drag={id:e.pointerId,x:e.clientX,y:e.clientY,start:toCoords(),moved:false};
  try{button.setPointerCapture(e.pointerId);}catch{}
 });
@@ -342,11 +353,12 @@ function endDrag(e){
  if(!drag||e.pointerId!==drag.id)return;
  if(pendingMove){cancelAnimationFrame(pendingMove);pendingMove=0;}
  const wasMoved=drag.moved;
- if(wasMoved){
+ if(wasMoved&&e.type!=='pointercancel'){
   const dx=e.clientX-drag.x,dy=e.clientY-drag.y;
-  setXY(drag.start.x+dx,drag.start.y+dy);prefs.x=prefs.x<.5?0:1;applyPosition();persist();setState('resting');
-  button.dataset.wasDragged='true';setTimeout(()=>delete button.dataset.wasDragged,0);
+  setXY(drag.start.x+dx,drag.start.y+dy);applyPosition();persist();setState('resting');
+  button.dataset.wasDragged='true';setTimeout(()=>delete button.dataset.wasDragged,450);
  }
+ if(e.type==='pointercancel'){longPressed=true;settle();}
  drag=null;try{button.releasePointerCapture(e.pointerId);}catch{}
 }
 button.addEventListener('pointerup',endDrag);
@@ -370,7 +382,7 @@ button.addEventListener('click',e=>{
   clearPendingTap();closeMenu(false);setState('celebrating',1300);announce('High five! ⚡',1900,'success');return;
  }
  if(opened){closeMenu();return;}
- if(prefs.live){setState('waving',1050);}
+ if(prefs.live){setState('pet-react',900);}
  // A short delay lets double taps trigger a distinct happy reaction rather than menu flashes.
  if(e.detail===0||!prefs.live)openMenu('home',true);
  else pendingTap=setTimeout(()=>{pendingTap=0;if(!drag&&!disabledByContext)openMenu('home',true);},295);
@@ -389,19 +401,31 @@ menu.addEventListener('click',e=>{
  const size=e.target.closest('[data-pc-size]')?.dataset.pcSize;
  if(size){setSize(size);openMenu('prefs');return;}
  const toggle=e.target.closest('[data-pc-toggle]')?.dataset.pcToggle;
- if(['roam','popups','live'].includes(toggle)){prefs[toggle]=!prefs[toggle];persist();if(!prefs.roam)stopRoam();if(!prefs.popups){dismissBubble();bubbleQueue=[];}openMenu('prefs',true);scheduleIdle();return;}
+ if(['roam','popups','live'].includes(toggle)){prefs[toggle]=!prefs[toggle];host.dataset.live=String(prefs.live);persist();if(!prefs.roam||!prefs.live)stopRoam();if(!prefs.popups){dismissBubble();dismissBubble();}openMenu('prefs',true);scheduleIdle();return;}
  const action=e.target.closest('[data-pc]')?.dataset.pc;
  if(!action)return;
  clearPendingTap();
  if(action==='greet'){closeMenu(false);setState('waving',1400);announce('Pika! Happy studying! ⚡',2600);return;}
  if(action==='roam'){closeMenu(false);if(!startRoam(true))announce('I’ll explore when the desk is quiet.',2600);return;}
- if(action==='dismiss-speech'){bubbleQueue=[];dismissBubble();return;}
+ if(action==='dismiss-speech'){dismissBubble();dismissBubble();return;}
  if(action==='close'||action==='minimize'){if(action==='minimize')setMode('hidden');else closeMenu();return;}
+ if(action==='help')setState('thinking',1800);
  if(action==='back'||action==='help'||action==='prefs'){openMenu(action==='back'?'home':action,true);return;}
- if(action==='dock'){stopRoam();roamPosition=null;applyPosition();closeMenu(false);return;}
+ if(action==='dock'){stopRoam();roamPosition=null;prefs.x=.96;prefs.y=.72;persist();applyPosition();closeMenu(false);return;}
+ if(action==='reset'){
+  stopRoam();assets.reset();Object.assign(prefs,{mode:'calm',size:'medium',roam:true,popups:true,live:true,x:.96,y:.72});persist();roamPosition=null;artKey='';setSize('medium');setMode('calm');openMenu('prefs',true);return;
+ }
  if(action==='quick'){closeMenu(false);window.PsychDeskQuickNote?.open?.();return;}
- if(action==='drive'){announce(driveStatus(),4300);closeMenu(false);return;}
+ if(action==='drive'){closeMenu(false);announce(driveStatus(),3500,'sync');return;}
 });
+menu.addEventListener('change',async e=>{
+ if(!e.target.matches('[data-pc-import]'))return;
+ const status=menu.querySelector('#pc-import-status'),state=menu.querySelector('#pc-pose-state').value;
+ try{await assets.import(state,e.target.files?.[0]);artKey='';applyArt();status.textContent='Private '+state+' pose saved in this browser.';}
+ catch(error){status.textContent=error.message;}
+});
+// Observe only modal class changes, not workspace content or study data.
+new MutationObserver(updateContext).observe(document.body,{attributes:true,attributeFilter:['class']});
 document.addEventListener('pointerdown',e=>{
  if(opened&&!host.contains(e.target)){clearPendingTap();closeMenu(false);}
  if(e.pointerType==='pen'&&e.target.closest?.('canvas,.ink-paper,.ink-editor')){pointerDrawing=true;updateContext();}
@@ -435,17 +459,17 @@ window.addEventListener('psychdesk:achievement',e=>celebrate(e.detail?.type));
 window.addEventListener('psychdesk:drive-connected',()=>{
  if(!window.PsychDeskCloud?.isConnected?.())return;
  const wasConnected=connected;connected=true;
- if(!wasConnected&&visible()&&!timerActive&&!editing){setState('interacting',1100);announce('Drive connected.',2200);}
+ if(!wasConnected&&visible()&&!timerActive&&!editing){if(prefs.live)setState('celebrating',1100);announce('Drive connected.',2200,'sync');}
 });
-window.addEventListener('psychdesk:drive-operation-start',()=>{if(visible()&&connected&&!timerActive&&!editing)setState('syncing');});
+window.addEventListener('psychdesk:drive-operation-start',()=>{if(visible()&&connected&&!timerActive&&!editing)setState('syncing',12000);});
 window.addEventListener('psychdesk:drive-operation-end',()=>{if(state==='syncing')settle();});
 window.addEventListener('psychdesk:drive-disconnected',()=>{
  const wasConnected=connected;connected=false;
- if(wasConnected&&visible()){setState('disconnected',1600);announce('Drive disconnected. Open Drive status to reconnect.',3500);}
+ if(wasConnected&&visible()){setState('disconnected',1600);announce('Drive disconnected. Open Drive status to reconnect.',3500,'warning');}
 });
 window.addEventListener('psychdesk:session-reset',()=>{connected=false;settle();});
 document.addEventListener('visibilitychange',()=>{
- if(document.hidden){clearPendingTap();stopRoam();pauseIdle();dismissBubble();closeMenu(false);clearAnimation();setState('hidden');}
+ if(document.hidden){clearPendingTap();clearTimeout(activityTimer);clearTimeout(longPressTimer);clearHover();clearHighlight();stopRoam();pauseIdle();dismissBubble();closeMenu(false);clearAnimation();setState('hidden');}
  else{updateContext();settle();scheduleIdle();}
 });
 document.addEventListener('scroll',e=>{if(e.target.closest?.('#psychdesk-companion'))return;lastActivity=Date.now();stopRoam();},{passive:true,capture:true});
@@ -455,7 +479,7 @@ window.visualViewport?.addEventListener('scroll',()=>applyPosition(true),{passiv
 reduced.addEventListener?.('change',()=>{if(reduced.matches)stopRoam();settle();scheduleIdle();});
 connected=Boolean(window.PsychDeskFirebase?.getUserId?.()&&window.PsychDeskCloud?.isConnected?.());
 applyPosition(true);updateContext();settle();scheduleIdle();
-if(prefs.live&&prefs.popups&&!document.hidden){
+if(prefs.live&&prefs.popups&&visible()){
  try{if(sessionStorage.getItem('psychdesk-pikachu-welcome-v2')!=='1'){
   sessionStorage.setItem('psychdesk-pikachu-welcome-v2','1');
   setState('waving',1250);announce('Pika! I’m here if you need help. ⚡',3100);

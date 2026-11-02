@@ -1,0 +1,4 @@
+
+# Optional companion artwork must remain local.
+companion/private/*
+!companion/private/README.md
