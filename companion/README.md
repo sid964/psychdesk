@@ -1,79 +1,13 @@
-# PsychDesk Pikachu study companion
+# Neko — PsychDesk's screen cat
 
-## User-supplied character artwork
+The companion uses the open-source Oneko cat sprite sheet and animation layout from https://github.com/adryd325/oneko.js. The full upstream license is included in `assets/ONEKO-LICENSE.txt`; original cat artwork traces to Masayuki Koba's X11 oneko.
 
-The companion now renders three **user-provided reference images**, trimmed to transparent backgrounds and packaged into a small local sprite atlas in `companion/assets/pikachu-user-poses.png`. The atlas contains standing (left), waving/jumping (middle), and forward-leaning walking/crawling (right) poses. It replaces the hand-drawn Pikachu illustration in normal operation; the vector remains a fallback if the atlas fails to load.
+Neko walks across the usable screen in eight directions, pauses, looks around, scratches and sleeps. Playful is the initial behavior, with a first walk soon after startup and short rests between later walks. Android and desktop both get autonomous movement. Calm rests until you interact. Hidden removes the pet. Reduced motion disables roaming and frame animation.
 
-The pose images were supplied by the site owner for this integration. Their originality, underlying Pokémon rights, and redistribution permissions have **not** been independently verified. Pokémon/Pikachu remain associated with their respective rights holders. Note that `sid964/psychdesk` and the GitHub Pages site are currently public. Making the repository private later does not necessarily make Pages private or remove copies from caches or previous commits.
+Tap for quick controls, double-tap to pet, long-press for the menu, or drag to move. Keyboard Enter/Space opens controls; Shift + arrows repositions; Alt + Shift + P restores a hidden cat. Preferences include size, roaming, reactions, optional bubbles, position restore and reset. Automatic bubbles are off initially.
 
-## How the images behave
+Typing, handwriting, dialogs and focus sessions keep the workspace quiet. Walk destinations avoid actionable controls, headers and navigation. The pet pauses when hovered, dragged, scrolled or interrupted, and resumes wandering when the workspace is quiet. Activity stops in hidden tabs. The cat's sprite timer runs only during walking or short reactions, with no permanent render loop.
 
-- **Idle / resting:** standing portrait.
-- **Tap / greeting / celebration:** waving/jumping portrait with brief motion.
-- **Walk / explore:** forward-leaning portrait, used while moving around the usable viewport.
-- **Guide / point:** waving portrait accompanies the existing navigation highlight.
-- **Sleep / focus:** standing portrait rests quietly, with a small sleep indicator.
-- **Drive sync / disconnect:** restrained expression feedback, only from verified app events.
+`companion.js` retains the scoped menu, app-event hooks and safe movement. `cat.js` renders the sprite animation. `bubbles.js` retains the optional bounded speech queue. Styles are scoped to the pet. Preferences use `psychdesk-companion-neko-v1`, separate from study records and previous character settings.
 
-The three user-provided poses now drive a small **cel-style animated character**. Walking alternates between upright and forward-leaning poses at contact and lift-off, while the body and ground shadow respond separately. Idle, stretch, glance, greeting, celebration, thinking, focus sleep, syncing and disconnected states use different timing, scale, tilt and expressions. This feels more alive than simply dragging a still image, while remaining lightweight. **It is not a hand-rigged animation of every photographic ear, paw and tail, nor new original animation footage.** The articulated SVG remains available as a fallback when image loading fails.
-
-## Controls and integration
-
-Calm, Playful, and Hidden behavior modes remain available. Tap Pikachu for the study menu and **Go exploring**, **Wave hello**, Quick Note, Drive status, navigation guidance, and preferences. Drag with mouse, touch, or stylus to reposition; double-tap for a high-five; long-press for the menu. Roaming, bubbles, and gestures can be toggled independently. The companion pauses around typing, handwriting, dialogs, active study, and browser backgrounding; reduced-motion preference is respected.
-
-Changes are scoped to the companion scripts/styles, the local asset, the `index.html` cache-busting versions, and `sw.js`. Existing Firebase, Drive, notes, study collections, settings logo, and navigation hooks remain unchanged.
-
-## Known limitations
-
-The original reference images are relatively small and come from three different scenes, so the transparent matte may contain small edge artifacts when zoomed. Pose transitions are state swaps, not skeletal animation. If you prefer high-detail cinematic motion, additional artwork frames can be supplied later without rebuilding the companion.
-
-## Living-character experience (v3)
-
-- **Calm stays quiet:** after extended inactivity Pikachu occasionally looks around, stretches, rests, or takes a short walk. **Playful** makes these interactions more frequent and enables longer walks.
-- **Go exploring** can send Pikachu across the usable viewport. Walking selects destinations away from editors, nav controls, headers and dialogs, pauses for interaction/scroll/focus/handwriting, and respects reduced motion. Movement uses browser-native Web Animations rather than a continuous JavaScript render loop.
-- **Tap to interact:** a single tap plays a wave before opening the menu, while a quick double tap gives a cheerful high-five. Long press opens the controls immediately; mouse hover makes Pikachu look toward the pointer. Status speech bubbles are dismissible, tagged by type, and limited in length.
-- **AMOLED UI polish:** smaller, grouped controls with improved focus indicators, a readable identity header, tuned bubble anchoring, subtle golden accents and no new full-screen gradients or global visual changes. The existing homepage Settings icon is untouched.
-- **Privacy/data:** the pet still stores only its own local preferences; no study note content, Firebase tokens or Google Drive contents are read by the character. Its guidance uses existing PsychDesk actions.
-
-### Animation and asset limits
-
-The current atlas remains a small set of extracted poses from the images supplied in the conversation. Changing between these poses produces a cel-animation effect, but the individual bitmap limbs are not a full 2D bone rig. The separately drawn SVG fallback has animated ear, limb and tail shapes. No 90/120 Hz performance benchmarks are claimed. The uploaded references are used on the owner's instructions; underlying Pokémon IP rights and public distribution permission were not independently verified.
-
-## Private poses and interaction upgrade (v4)
-
-The existing user-supplied atlas is retained. No additional Pokémon assets are downloaded or committed by this upgrade. Supplied references are not evidence of a Pokémon license; the repository and Pages remain public. Local imports below are private to the browser, not access control for the hosted website.
-
-Open **Preferences → Private pose**, select a state, then import a transparent PNG, WebP or SVG under 350 KB. Imports persist in the separate `psychdesk-companion-art-v1` localStorage key, never in Firebase, Drive, study exports or Git. Missing or broken poses try the idle pose and then the existing supplied atlas/vector fallback. SVGs are decoded as images, never injected into the document. Browser quota failures retain previous settings. Reset clears companion preferences and imported poses only.
-
-Supported state names: `idle`, `resting`, `sleeping`, `walking`, `waving`, `pointing`, `thinking`, `celebrating`, `syncing`, `disconnected`, `pet-react`. For developer-supplied local paths, set `window.PsychDeskCompanionArtwork = {idle: 'companion/private/idle.webp', waving: 'companion/private/waving.svg'}` before companion startup. Keep private files out of Git. This optional map accepts relative/same-origin image paths; no remote service is used.
-
-- Calm has no automatic roaming or curious idle motion. Playful can take occasional walks and suggest a quick note; explicit **Go exploring** works in either visible mode.
-- Tap gives a soft squash/bounce followed by the menu and greeting wave. Double-tap gives a high-five. Long-press opens controls; keyboard Enter/Space opens the menu, Escape closes it, Shift+arrows moves it, and Alt+Shift+P restores a hidden pet.
-- Dragging now keeps the dropped position, including the middle of the workspace. Restore position returns to the default dock. Automatic destinations avoid controls; the walking character does not intercept controls along its route.
-- Help uses a thinking pose; feature guidance highlights navigation and faces toward it. Real task, focus-log and review-completion events celebrate. Verified Drive events show syncing/connected/disconnected feedback. Focus stays quiet; editing, handwriting and modals suppress the overlay.
-- Bubbles last 2–4 seconds, queue at most two pending messages, discard stale messages on suppression, and avoid covering actionable controls. All speech uses a polite live region; no critical full-screen alerts are introduced.
-- Private pose loading and speech queuing are isolated in `assets-loader.js` and `bubbles.js`. Modal visibility is observed only through body class changes. Hidden tabs cancel activity and pause animations. Live Off disables gestures and automatic idle activity. Reduced motion keeps semantic state without animation.
-
-### Remaining artwork dependency
-
-The three supplied still poses cannot depict every distinct paw, thinking or curled-sleep pose. Their current transitions use pose swaps and body motion. The existing SVG fallback has separate animated ears, paws and tail; imported SVGs render as self-contained images, not as a limb rig controlled by PsychDesk. To replace approximate poses, import dedicated artwork for the state names above. No claim is made that the three stills have become a complete hand-drawn animation sequence.
-
-Validation: Node suite and JavaScript syntax checks; no added browser/screenshot workflow. Existing repository CI continues to run unchanged, with companion scripts added to its syntax coverage.
-
-
-## Articulated reference rig (v5)
-
-`reference-rig.js` now builds a native SVG cutout rig using the supplied standing image in the existing atlas. Separate clipped ears, paws, feet and tail use the existing gesture animations rather than moving a whole still image. Wave, point, thinking, double-paw celebration, walking and tap states animate those joints; sleep lowers the body and adds a closed-eye overlay. The earlier vector is retained if the atlas cannot load, and imported private state artwork continues to take priority.
-
-This is a lightweight cutout rig from a 136-pixel reference cel, not a newly painted animation sequence. Higher-resolution source art and dedicated frames remain optional quality improvements. No new third-party artwork was downloaded and no licensing claim is made. Persistent browser-local assets, isolated bubble queue, study data, and the homepage Settings icon are preserved.
-
-
-## Actual 3D model integration
-
-`webgl.js` renders the approved Pikachu geometry and UV textures using native WebGL. It does not use a game engine, an external CDN, or paid services. The previously added CSS perspective module is no longer loaded. The existing character remains a fallback when WebGL, gzip decoding, asset loading or the graphics context is unavailable; browser-private imported art still overrides the built-in character.
-
-The model is Pikachu by Kataphoric, listed as CC BY 4.0 in the source asset metadata, retrieved from SamsungInternet/ar-demos. Credits and modification details are in `assets/PIKACHU-CREDITS.md` and linked in the companion preferences. No claim of an official commission or ownership of the Pokémon character is made.
-
-The approved studio scene is converted to compact mesh data and four PNG textures. Native rendering uses a nine-part procedural deformation map for head, ears, paws, tail and feet. Waving, pointing, thinking, celebration, walking, tap, sync and sleep states deform the 3D geometry; sleep is a lowered resting pose rather than a dedicated curled model or facial animation. It is not a hand-authored animation clip pack.
-
-The renderer uses the existing companion state machine and existing button hit area. It draws a static frame at rest, runs finite interaction windows, caps render resolution at 2× device pixel ratio and suspends in hidden, modal, editor and private-art contexts. Reduced motion and Live Off use a static neutral pose. No account, study-data, auth, Drive or homepage Settings-icon code changes are required.
+No WebGL, 3D model, external CDN, game engine or paid service is used. Existing study features, Firebase, Drive, data, navigation and the homepage Settings icon are preserved.
