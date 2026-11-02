@@ -59,3 +59,10 @@ Supported state names: `idle`, `resting`, `sleeping`, `walking`, `waving`, `poin
 The three supplied still poses cannot depict every distinct paw, thinking or curled-sleep pose. Their current transitions use pose swaps and body motion. The existing SVG fallback has separate animated ears, paws and tail; imported SVGs render as self-contained images, not as a limb rig controlled by PsychDesk. To replace approximate poses, import dedicated artwork for the state names above. No claim is made that the three stills have become a complete hand-drawn animation sequence.
 
 Validation: Node suite and JavaScript syntax checks; no added browser/screenshot workflow. Existing repository CI continues to run unchanged, with companion scripts added to its syntax coverage.
+
+
+## Articulated reference rig (v5)
+
+`reference-rig.js` now builds a native SVG cutout rig using the supplied standing image in the existing atlas. Separate clipped ears, paws, feet and tail use the existing gesture animations rather than moving a whole still image. Wave, point, thinking, double-paw celebration, walking and tap states animate those joints; sleep lowers the body and adds a closed-eye overlay. The earlier vector is retained if the atlas cannot load, and imported private state artwork continues to take priority.
+
+This is a lightweight cutout rig from a 136-pixel reference cel, not a newly painted animation sequence. Higher-resolution source art and dedicated frames remain optional quality improvements. No new third-party artwork was downloaded and no licensing claim is made. Persistent browser-local assets, isolated bubble queue, study data, and the homepage Settings icon are preserved.
