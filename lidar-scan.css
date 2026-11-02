@@ -1,0 +1,19 @@
+/* Scroll-scrubbed LiDAR point cloud; decorative only, no content motion. */
+#main .dashboard-page > .hero{position:relative;isolation:isolate}
+#main .dashboard-page > .hero > :not(.lidar-scan){position:relative;z-index:1}
+#main .dashboard-page > .hero .lidar-scan{
+ position:absolute;z-index:0;top:50%;right:0;
+ width:min(46%,420px);height:205px;transform:translateY(-50%);
+ display:block;pointer-events:none;user-select:none;opacity:.70;
+ -webkit-user-select:none;
+}
+html:not([data-theme="dark"]) #main .dashboard-page > .hero .lidar-scan{display:none}
+@media(max-width:899px){
+ #main .dashboard-page > .hero .lidar-scan{width:38%;height:150px;right:0;opacity:.24}
+}
+@media(max-width:520px){
+ #main .dashboard-page > .hero .lidar-scan{width:34%;height:116px;right:-7px;opacity:.20}
+}
+@media(prefers-reduced-motion:reduce){
+ #main .dashboard-page > .hero .lidar-scan{opacity:.30}
+}
