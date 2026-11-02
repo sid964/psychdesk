@@ -210,7 +210,7 @@ function closeModal(options={}){
  window.PsychDeskMotion?.closed();
  const wasOpen=Boolean($('#modalRoot').innerHTML);
  const event=new Event('psychdesk:before-modal-close');event.discardNoteId=options?.discardNoteId;
- window.dispatchEvent(event);$('#modalRoot').innerHTML='';
+ window.dispatchEvent(event);window.PsychDeskMotion?.dismiss?.($('#modalRoot .modal-overlay'));$('#modalRoot').innerHTML='';
  document.querySelector('.app-shell')?.removeAttribute?.('inert');document.body.classList.remove('modal-open');
  if(wasOpen){if(modalOpener?.isConnected)modalOpener.focus();else main.focus();}modalOpener=null;
 }

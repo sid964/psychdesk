@@ -1,0 +1,57 @@
+/* Readable study surfaces, comfortable controls, and predictable navigation. */
+#main{font-size:14px;line-height:1.55}
+.hero p{font-size:15px;line-height:1.65;max-width:60ch}
+:is(.note,.subtle,.resource-copy small,.task-sub,.note-meta){font-size:12px;line-height:1.65}
+:is(.task-name,.note-card strong,.resource-copy strong){line-height:1.5}
+:is(.section-row,.kpi-header){gap:12px;align-items:center}
+:is(.section-row,.kpi-header)>*{min-width:0}
+.section-row h2{line-height:1.25;margin-block:0}
+:is(.hero h1,.section-row h2){text-wrap:balance}
+:is(.card,.stat,.subject-card,.note-card,.resource-item,.tool-card){border-radius:16px}
+:is(.primary,.secondary,.pill-btn){min-height:44px;line-height:1.35}
+:is(.filter,.mini-btn,.review-btns button,.select-strip button){min-height:40px;line-height:1.35}
+:is(.task-main,.resource-copy,.note-card,.ref-card){min-width:0}
+:is(.task-name,.note-card strong,.ref-title,.resource-copy strong){overflow-wrap:anywhere}
+.modal .field label{font-size:12px;line-height:1.45;margin-bottom:8px}
+.modal .field{margin-bottom:18px}
+.modal :is(.field input,.field textarea,.field select){min-height:46px;line-height:1.5}
+.modal .modal-header{margin-bottom:22px;padding-bottom:16px}
+.modal .modal-footer{gap:10px;margin-top:24px}
+html[data-theme=dark] :is(.modal-overlay .modal,.modal-header,.modal-footer){background:#0c0c0c!important;background-image:none!important;border-color:#303030!important}
+@media(min-width:900px){
+ .desktop-rail{padding:28px 16px 20px;min-height:0}
+ .rail-brand{margin:0 8px 30px;gap:12px}
+ .rail-section-label{margin-left:14px;margin-bottom:12px;font-size:10px;line-height:1.5}
+ .rail-nav{gap:4px}
+ .rail-link{min-height:46px;padding:11px 13px;gap:12px;font-size:13px;line-height:1.4;border-radius:12px}
+ .rail-symbol{flex:0 0 22px;font-size:20px}
+ .rail-trail{margin-left:auto}
+ .rail-lower{min-height:0;padding:24px 14px 0}
+ .rail-quote{font-size:23px}
+ .rail-footer{margin-top:22px}
+ main{padding-top:30px}
+ .hero h1{font-size:clamp(48px,4.7vw,68px);line-height:1.12;letter-spacing:-2px}
+ .dashboard-page .hero{padding-top:20px;padding-bottom:32px}
+ .stat{padding:24px 22px;min-height:142px}
+ .stat .stat-label{font-size:10px;line-height:1.5;letter-spacing:1px}
+ .subject-card{min-height:200px}
+ .section-row{margin-top:30px;margin-bottom:16px}
+}
+@media(max-width:899px){
+ .bottom-nav{height:calc(76px + env(safe-area-inset-bottom));padding:8px 4px calc(8px + env(safe-area-inset-bottom));align-items:stretch}
+ .bottom-nav .nav-item{min-height:52px;gap:5px;padding:4px 0;font-size:10px;line-height:1.2;border-radius:12px;justify-content:center}
+ .bottom-nav .nav-ico{font-size:21px;line-height:25px;min-height:25px}
+ main{padding-bottom:calc(100px + env(safe-area-inset-bottom))}
+ .hero h1{font-size:clamp(32px,8.6vw,44px);line-height:1.16;letter-spacing:-1px}
+ .hero p{font-size:14px}
+ .section-row h2{font-size:24px}
+ .task-name{font-size:13px}
+ .subject-card strong{font-size:15px}
+ .subject-card p{font-size:12px;line-height:1.5}
+ .card{padding:20px}
+ .notes-toolbar-actions button{font-size:12px}
+}
+@media(max-width:345px){.bottom-nav .nav-item{font-size:9px}.modal h2{font-size:24px}}
+@media(pointer:coarse){:is(.filter,.mini-btn,.check-btn,.review-btns button,.select-strip button){min-height:44px}.check-btn{min-width:40px}}
+
+html[data-theme=dark] .modal :is(input,textarea)::placeholder{color:#a0a0a0!important;opacity:1}
