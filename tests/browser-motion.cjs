@@ -15,7 +15,7 @@ module.exports=async(page,record,dest)=>{
  });
  assert.equal(initial.installed,true);assert.deepEqual(initial.targets,['main'],'Navigation moves one surface, without individual entrances');
  assert.equal(initial.black,'rgb(0, 0, 0)');
- assert.match(initial.frames[0].transform,/translateX\((22|30)px\)/,'Forward navigation enters from the right');
+ assert.match(initial.frames[0].transform,/translateX\((44|60)px\)/,'Forward navigation enters from the right');
  assert.equal(initial.frames.some(frame=>'opacity' in frame),false,'Navigation never fades the content out');
  await page.waitForTimeout(100);
  await page.screenshot({path:path.join(dest,'motion-arriving-'+record.viewport+'.png')});
@@ -30,7 +30,7 @@ module.exports=async(page,record,dest)=>{
  // Rapid reversal resumes the current offset; a settled backward transition starts at the left.
  await page.waitForTimeout(450);
  const direction=await page.evaluate(()=>{window.PsychDeskCore.setTab('today');return document.querySelector('#main').getAnimations()[0].effect.getKeyframes()[0].transform});
- assert.match(direction,/translateX\(-(22|30)px\)/,'Backward navigation enters from the left');
+ assert.match(direction,/translateX\(-(44|60)px\)/,'Backward navigation enters from the left');
  assert.ok(backward);
  await page.waitForTimeout(450);
  await page.screenshot({path:path.join(dest,'motion-scroll-'+record.viewport+'.png')});
