@@ -141,6 +141,10 @@ function applyPosition(immediate=false){
  const capacity=below?Math.max(116,innerHeight-(p.y+b.h)-20):Math.max(116,p.y-20);
  host.style.setProperty('--pc-menu-height',Math.floor(capacity)+'px');
  host.dataset.side=right?'right':'left';host.dataset.menuBelow=below?'true':'false';
+ const menuWidth=Math.min(288,innerWidth-22),bubbleWidth=Math.min(260,innerWidth-28);
+ const clamp=(v,a,z)=>Math.max(a,Math.min(z,v));
+ host.style.setProperty('--pc-menu-left',Math.round(clamp(p.x,8,innerWidth-menuWidth-8)-p.x)+'px');
+ host.style.setProperty('--pc-hint-left',Math.round(clamp(p.x,8,innerWidth-bubbleWidth-8)-p.x)+'px');
 }
 function setXY(x,y){
  const b=measure();roamPosition=null;
@@ -155,7 +159,7 @@ function stopRoam(){
  roamAnimation.onfinish=null;roamAnimation.cancel();roamAnimation=null;
  host.classList.remove('pc-just-settled');
  roamPosition={x:rect.left,y:rect.top};host.style.left=Math.round(rect.left)+'px';host.style.top=Math.round(rect.top)+'px';
- host.style.transform='none';
+ host.style.transform='none';applyPosition(true);
 }
 function startRoam(){
  if(!prefs.roam||!visible()||opened||editing||timerActive||tab==='focus'||drawingSurface()||reduced.matches||!host.animate)return false;
@@ -185,7 +189,7 @@ function startRoam(){
   if(roamAnimation!==movement)return;
   movement.cancel();roamAnimation=null;
   roamPosition=target;host.style.left=Math.round(target.x)+'px';host.style.top=Math.round(target.y)+'px';
-  host.style.transform='none';setState('resting');scheduleIdle();
+  host.style.transform='none';applyPosition(true);setState('resting');scheduleIdle();
  };
  return true;
 }
