@@ -1,0 +1,14 @@
+#psychdeskTour{box-sizing:border-box;width:min(460px,calc(100% - 32px));max-height:calc(100dvh - 32px);overflow:auto;margin:auto;padding:26px;border:1px solid #363636;border-radius:22px;background:#000;color:#f4f1e9;font:400 16px/1.65 'DM Sans',sans-serif;box-shadow:0 24px 80px #0009}
+#psychdeskTour::backdrop{background:#0007;backdrop-filter:blur(5px)}
+#psychdeskTour .tour-top,#psychdeskTour .tour-actions{display:flex;align-items:center;justify-content:space-between;gap:12px}
+#tourCount{font-size:11px;letter-spacing:.1em;color:#bbb}
+#psychdeskTour button{font:inherit;font-size:14px;min-height:44px;padding:10px 16px;border:1px solid #444;border-radius:12px;background:#111;color:#eee;cursor:pointer}
+#psychdeskTour button:disabled{opacity:.35;cursor:default}
+#psychdeskTour [data-tour=skip]{border:0;background:transparent;padding-inline:8px}
+#psychdeskTour [data-tour=next]{background:#e7eddf;color:#172218;border-color:#e7eddf}
+#psychdeskTour h2{font:500 30px/1.25 'Fraunces',Georgia,serif;margin:28px 0 16px}
+#tourText{color:#ddd;margin:0 0 20px}#tourHint{color:#aaa;font-size:13px;margin:0 0 28px}
+#psychdeskTour progress{display:block;width:100%;height:3px;margin-top:16px;accent-color:#cbdac3}
+#psychdeskTour :focus-visible{outline:2px solid #cbdac3;outline-offset:4px}#psychdeskTour h2:focus{outline:none}
+@media(prefers-reduced-motion:no-preference){#psychdeskTour[open]{animation:tour-arrive .28s ease-out}@keyframes tour-arrive{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}}
+@media(max-width:380px){#psychdeskTour{padding:20px}#psychdeskTour h2{font-size:26px}}
