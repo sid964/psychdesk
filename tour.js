@@ -1,107 +1,181 @@
+/* Hands-on onboarding. Uses real UI actions; never creates sample study records. */
 (()=>{
 'use strict';
-const key='psychdesk-tour-v1';
-const steps=[
- {title:'Your notebook is here',text:'Tap the highlighted Notes button to open your notebook.',selector:'[data-tab="notes"]',tab:'notes'},
- {title:'Write with your stylus',text:'Here in Tools, tap Handwritten notes to open Ink Notes. Sticky notes live beside it.',selector:'#main [data-tab="ink"]',prepare:'tools',tab:'ink'},
- {title:'Choose one small task',text:'Tap Plan to see your subjects and study tasks.',selector:'[data-tab="planner"]',tab:'planner'},
- {title:'Make time to focus',text:'Tap Focus to visit your timer. You decide when to start a session.',selector:'[data-tab="focus"]',tab:'focus'},
- {title:'The rest of your study kit',text:'Tap Tools to find flashcards, sticky notes, the Dictionary, Reference Manager, Timeline and progress insights.',selector:'[data-tab="tools"]',tab:'tools'},
- {title:'Capture a thought anywhere',text:'This + Note button opens the quick editor. Choose “Try writing” to leave the tour and write, or Next to keep looking.',selector:'#quickNoteBtn',tryNote:true},
- {title:'Your account and files',text:'This is your Google account button. Drive sits beside it and shows your file connection. Sign in whenever you are ready.',selector:'#accountBtn'},
- {title:'You can come back anytime',text:'Open Settings → Replay quick tour whenever you want another look. Ready to capture your first thought?',selector:'#settingsBtn'}
-];
-let panel,ring,target,index=0,previousFocus,raf=0,opened=false;
+const KEY='psychdesk-tour-v1';
+const $=s=>document.querySelector(s);
 const core=()=>window.PsychDeskCore;
-function seen(){try{return localStorage.getItem(key)==='done'}catch{return true}}
-function visible(selector){return [...document.querySelectorAll(selector)].find(el=>{const r=el.getBoundingClientRect();return r.width>0&&r.height>0&&getComputedStyle(el).visibility!=='hidden'})}
-function clearTarget(){if(target)target.classList.remove('tour-target');target=null}
-function position(){
- if(!panel)return;
- const r=target?.getBoundingClientRect();
- const w=innerWidth,h=innerHeight,p=panel.getBoundingClientRect();
- if(r){Object.assign(ring.style,{display:'block',left:(r.left-5)+'px',top:(r.top-5)+'px',width:(r.width+10)+'px',height:(r.height+10)+'px'})}else ring.style.display='none';
- let top=r?(r.bottom+18+p.height<h-12?r.bottom+18:r.top-p.height-18):(h-p.height)/2;
- // If a large target leaves no room, keep the card inside the viewport.
- top=Math.max(12,Math.min(top,h-p.height-12));
- let left=r?r.left+r.width/2-p.width/2:(w-p.width)/2;
- left=Math.max(12,Math.min(left,w-p.width-12));
- panel.style.top=top+'px';panel.style.left=left+'px';
-}
-function schedule(){cancelAnimationFrame(raf);raf=requestAnimationFrame(position)}
-function draw(){
- clearTarget();opened=false;
- const s=steps[index];
- if(s.prepare)core().setTab(s.prepare);
- target=visible(s.selector);target?.classList.add('tour-target');
- target?.scrollIntoView({block:'center',inline:'nearest',behavior:'instant'});
- panel.querySelector('#tourCount').textContent='SHOW ME AROUND · '+(index+1)+' / '+steps.length;
- panel.querySelector('#tourTitle').textContent=s.title;
- panel.querySelector('#tourText').textContent=s.text;
- panel.querySelector('[data-tour=back]').disabled=index===0;
- panel.querySelector('[data-tour=next]').textContent=index===steps.length-1?'Finish':'Next →';
- const action=panel.querySelector('[data-tour=try]');
- action.hidden=!s.tab&&!s.tryNote;
- action.textContent=s.tryNote?'Try writing':'Open this section';
- panel.querySelector('progress').value=index+1;
- panel.querySelector('#tourTitle').focus({preventScroll:true});schedule();setTimeout(schedule,500);
-}
-function activate(){
- const s=steps[index];
- if(s.tryNote){finish();document.querySelector('#quickNoteBtn')?.click();return}
- if(!s.tab)return;
- core().setTab(s.tab);opened=true;clearTarget();
- target=visible('#main h1');target?.classList.add('tour-target');
- panel.querySelector('#tourText').textContent='You’re here! '+({notes:'This is your notebook.',ink:'This is your handwriting workspace.',planner:'Your subjects and tasks live here.',focus:'Your timer is ready when you are.',tools:'Scroll through the tools after the tour to explore them.'}[s.tab]||'')+' Choose Next to continue.';
- panel.querySelector('[data-tour=try]').hidden=true;
+const chapters=[
+ {title:'Catch a thought',text:'Tap the glowing + Note button. Your writing space opens right here.',selector:'#quickNoteBtn',kind:'capture'},
+ {title:'Find your writing',text:'Tap Notes to visit your notebook. This is where your saved thoughts live.',selector:'.rail-nav [data-tab="notes"],.bottom-nav [data-tab="notes"]',tab:'notes'},
+ {title:'Pick a tool to explore',text:'Choose a highlighted tool: handwriting, sticky notes, flashcards or something you are curious about.',prepare:'tools',selector:'#main .study-tool-launcher',kind:'tools'},
+ {title:'Give today a small goal',text:'Tap Plan to see where you organize subjects and study tasks.',selector:'.rail-nav [data-tab="planner"],.bottom-nav [data-tab="planner"]',tab:'planner'},
+ {title:'Make space to focus',text:'Tap Focus to see your timer. Start a session whenever you are ready.',selector:'.rail-nav [data-tab="focus"],.bottom-nav [data-tab="focus"]',tab:'focus'},
+ {title:'Make this space yours',text:'Tap Settings to find account sync, Drive, backups and this tour.',selector:'#settingsBtn',kind:'settings'}
+];
+let panel,ring,target,region,index=-1,phase='',opener,frame=0,observer,active=false,generation=0;
+let modalState=new Map(),highlighted=[],timers=new Set();
+const later=(fn,ms=0)=>{const token=generation;const id=setTimeout(()=>{timers.delete(id);if(active&&token===generation)fn()},ms);timers.add(id)};
+function visible(el){if(!el||el.closest('[hidden],[inert]'))return false;const r=el.getBoundingClientRect();return r.width>0&&r.height>0&&getComputedStyle(el).visibility!=='hidden'}
+function find(selector){return [...document.querySelectorAll(selector)].find(visible)}
+function clearHighlights(){highlighted.forEach(el=>el.classList.remove('tour-target'));highlighted=[]}
+function select(el,area=el){
+ clearHighlights();target=el;region=area;
+ if(el){el.classList.add('tour-target');highlighted.push(el)}
+ if(chapters[index]?.kind==='tools'&&phase==='action'){
+  document.querySelectorAll('#main .study-tool-launcher').forEach(el=>{el.classList.add('tour-target');highlighted.push(el)});
+ }
  schedule();
 }
-function click(e){
- if(!panel)return;
- if(panel.contains(e.target))return;
- // Only the featured navigation action runs; no study records are changed.
- e.preventDefault();e.stopImmediatePropagation();
- if(target?.contains(e.target)&&!opened)activate();
+function layout(){
+ if(!active)return;
+ const vv=window.visualViewport,w=vv?.width||innerWidth,h=vv?.height||innerHeight,ox=vv?.offsetLeft||0,oy=vv?.offsetTop||0;
+ const box=panel.getBoundingClientRect(),r=target?.isConnected?target.getBoundingClientRect():null;
+ let x=ox+(w-box.width)/2,y=oy+(h-box.height)/2;
+ if(r){
+  const top=Math.max(oy+6,r.top-5),left=Math.max(ox+6,r.left-5);
+  const bottom=Math.min(oy+h-6,r.bottom+5),right=Math.min(ox+w-6,r.right+5);
+  Object.assign(ring.style,{display:bottom>top&&right>left?'block':'none',top:top+'px',left:left+'px',width:Math.max(0,right-left)+'px',height:Math.max(0,bottom-top)+'px'});
+  const gap=16;
+  if(right+gap+box.width<ox+w-12){x=right+gap;y=top}
+  else if(left-gap-box.width>ox+12){x=left-gap-box.width;y=top}
+  else if(bottom+gap+box.height<oy+h-12){x=left;y=bottom+gap}
+  else if(top-gap-box.height>oy+12){x=left;y=top-gap-box.height}
+  else{x=ox+(w-box.width)/2;y=oy+h-box.height-12}
+ }else ring.style.display='none';
+ panel.style.left=Math.max(ox+12,Math.min(x,ox+w-box.width-12))+'px';
+ panel.style.top=Math.max(oy+12,Math.min(y,oy+h-box.height-12))+'px';
 }
-function keydown(e){
- if(!panel)return;
- if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();finish();return}
- if(e.key==='Tab'){
-  const controls=[...panel.querySelectorAll('button')].filter(b=>!b.hidden&&!b.disabled);
-  if(target?.matches('button')&&!opened&&(steps[index].tab||steps[index].tryNote))controls.unshift(target);
-  const current=controls.indexOf(document.activeElement);
-  e.preventDefault();controls[(current+(e.shiftKey?-1:1)+controls.length)%controls.length].focus();
+function schedule(){cancelAnimationFrame(frame);frame=requestAnimationFrame(layout)}
+function content(title,text,status=''){
+ $('#tourTitle').textContent=title;$('#tourText').textContent=text;
+ $('#tourStatus').textContent=status;
+ $('#tourStatus').hidden=!status;
+ schedule();
+}
+function buttons(label,skip=true){
+ $('#tourNext').textContent=label;$('#tourStepSkip').hidden=!skip;
+ $('#tourBack').hidden=index<0;$('#tourBack').disabled=index===0;
+}
+function closeOwnedModal(){
+ if(phase==='write'||chapters[index]?.kind==='settings'&&phase==='done')core().closeModal();
+}
+function show(n){
+ generation++;closeOwnedModal();index=n;phase='action';select(null);
+ $('#tourCount').textContent=(n+1)+' OF '+chapters.length;
+ $('#tourProgress').value=n+1;
+ const s=chapters[n];
+ if(s.prepare)core().setTab(s.prepare);
+ content(s.title,s.text,'Tap the highlighted control');
+ buttons('Show me');
+ const aim=()=>{
+  if(phase!=='action')return;
+  const el=find(s.selector);
+  select(el,s.kind==='tools'?$('#main'):el);
+  el?.scrollIntoView({block:'center',inline:'nearest',behavior:'instant'});
+  if(!el){content(s.title,'This control is not visible right now. You can skip this step and continue.');$('#tourNext').textContent='Continue'}
+  schedule();
+ };
+ aim();later(aim,450);
+ $('#tourTitle').focus({preventScroll:true});
+}
+function done(title,text){
+ phase='done';content(title,text,'✓ You found it');
+ buttons(index===chapters.length-1?'Finish tour':'Continue',false);
+ if(chapters[index].kind==='settings')select(find('#modalRoot .modal-header'),$('#modalRoot .modal'));
+ else select(find('#main h1'));
+ $('#tourNext').focus({preventScroll:true});later(schedule,450);
+}
+function inspect(){
+ if(!active||index<0)return;
+ const s=chapters[index];
+ // The existing modal's focus scope is shared with the tour controls.
+ document.querySelectorAll('#modalRoot [aria-modal="true"]').forEach(el=>{modalState.set(el,'true');el.setAttribute('aria-modal','false')});
+ if(s.kind==='capture'&&phase==='action'&&$('#quickNoteText')){
+  phase='write';select($('#quickNoteText'),$('#modalRoot .modal'));
+  content('Try one thought','Write something if you like. Save to Notebook or make a Sticky using the buttons in the editor. You can also continue with your draft.','Your own words · writing is optional');
+  buttons('Continue with draft',true);
+  $('#quickNoteText').focus();schedule();
+ }else if(s.kind==='capture'&&phase==='write'&&!$('#quickNoteText')){
+  done('That is quick capture','You can reach + Note from any section. Now let’s find your notebook.');
+ }else if(s.kind==='settings'&&phase==='action'&&$('#modalRoot .modal')){
+  done('Your settings, all together','Google login and Drive controls are here. Replay this tour from Quick tour whenever you need it.');
+ }
+ schedule();
+}
+function nav(e){
+ if(!active||phase!=='action')return;
+ const s=chapters[index];if(!s)return;
+ if(s.tab===e.tab||s.kind==='tools'&&e.tab!=='tools'){
+  const names={notes:'Your notebook',planner:'Your study plan',focus:'Your focus room'};
+  later(()=>done(names[e.tab]||'Your chosen tool','This is the real workspace. '+(e.tab==='focus'?'The timer has not been started. ':e.tab==='notes'?'Your saved notes appear here. ':'')+'You can explore it freely after the tour.'),60);
  }
 }
+function advance(){
+ if(index<0){show(0);return}
+ if(phase==='action'){
+  if(target?.isConnected){target.click();later(inspect,50)}
+  else if(index<chapters.length-1)show(index+1);else finish();
+ }else if(index<chapters.length-1)show(index+1);else finish();
+}
+function click(e){
+ if(!active||panel.contains(e.target))return;
+ if(region?.contains(e.target)){
+  // Writing and saving in the real quick editor are explicitly visitor actions.
+  if(phase==='write'){later(inspect,50);return}
+  if(phase==='action'){
+   const s=chapters[index];
+   if(s.kind!=='tools'||e.target.closest('.study-tool-launcher')){later(inspect,50);return}
+  }
+ }
+ e.preventDefault();e.stopImmediatePropagation();
+}
+function keys(e){
+ if(!active)return;
+ if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();finish();return}
+ if(e.key==='Tab'){
+  e.preventDefault();e.stopImmediatePropagation();
+  const selector='button:not([disabled]),input:not([disabled]),textarea,select,summary,a[href]';
+  const controls=[...(region&&phase!=='done'?[...(region.matches(selector)?[region]:[]),...region.querySelectorAll(selector)]:[]),...panel.querySelectorAll('button')].filter(visible);
+  const i=controls.indexOf(document.activeElement);
+  controls[(i+(e.shiftKey?-1:1)+controls.length)%controls.length]?.focus();
+ }else if(panel.contains(e.target)){e.stopPropagation()}
+}
 function finish(){
- try{localStorage.setItem(key,'done')}catch{}
- clearTarget();cancelAnimationFrame(raf);panel?.remove();ring?.remove();panel=ring=null;
- document.removeEventListener('click',click,true);document.removeEventListener('keydown',keydown,true);
- window.removeEventListener('resize',schedule);window.removeEventListener('scroll',schedule,true);
- if(previousFocus?.isConnected)previousFocus.focus({preventScroll:true});
+ if(!active)return;
+ closeOwnedModal();active=false;generation++;
+ try{localStorage.setItem(KEY,'done')}catch{}
+ timers.forEach(clearTimeout);timers.clear();cancelAnimationFrame(frame);
+ observer?.disconnect();clearHighlights();panel.remove();ring.remove();panel=ring=target=region=null;
+ document.body.classList.remove('tour-active');
+ modalState.forEach((value,el)=>{if(el.isConnected)el.setAttribute('aria-modal',value)});modalState.clear();
+ document.removeEventListener('click',click,true);document.removeEventListener('keydown',keys,true);
+ window.removeEventListener('psychdesk:tab-changed',nav);window.removeEventListener('scroll',schedule,true);window.removeEventListener('resize',schedule);
+ window.visualViewport?.removeEventListener('resize',schedule);window.visualViewport?.removeEventListener('scroll',schedule);
+ if(opener?.isConnected&&!opener.closest('[inert]'))opener.focus({preventScroll:true});
 }
 function start(){
- if(panel||!core())return;
- cleanup();previousFocus=document.activeElement;index=0;
+ if(active||!core())return;
+ // Never replace an existing writing or account dialog.
+ if($('#modalRoot')?.children.length)return;
+ cleanup();active=true;index=-1;phase='welcome';opener=document.activeElement;
+ panel=document.createElement('section');panel.id='psychdeskTour';panel.setAttribute('role','dialog');panel.setAttribute('aria-labelledby','tourTitle');panel.setAttribute('aria-describedby','tourText');
+ panel.innerHTML='<header><span id="tourCount">A QUICK LOOK AROUND</span><button type="button" data-tour="exit" aria-label="Close tour">×</button></header><progress id="tourProgress" max="6" value="0" aria-label="Tour progress"></progress><h2 id="tourTitle" tabindex="-1"></h2><p id="tourText"></p><p id="tourStatus" role="status" hidden></p><footer><button type="button" id="tourBack" data-tour="back" hidden>Back</button><button type="button" id="tourNext" data-tour="next">Let’s try it →</button></footer><button type="button" id="tourStepSkip" data-tour="skip" hidden>Skip this step</button>';
  ring=document.createElement('div');ring.id='tourSpotlight';ring.setAttribute('aria-hidden','true');
- panel=document.createElement('section');panel.id='psychdeskTour';panel.setAttribute('role','dialog');panel.setAttribute('aria-label','Interactive website tour');
- panel.innerHTML='<div class="tour-top"><span id="tourCount"></span><button type="button" data-tour="skip">Skip</button></div><progress max="8" value="1" aria-label="Tour progress"></progress><h2 id="tourTitle" tabindex="-1"></h2><p id="tourText"></p><button type="button" data-tour="try">Open this section</button><div class="tour-actions"><button type="button" data-tour="back">Back</button><button type="button" data-tour="next">Next →</button></div>';
- panel.addEventListener('click',e=>{
-  const action=e.target.closest('[data-tour]')?.dataset.tour;
-  if(action==='skip')finish();
-  else if(action==='try')activate();
-  else if(action==='back'&&index>0){index--;draw()}
-  else if(action==='next'){if(index===steps.length-1)finish();else{index++;draw()}}
- });
- document.body.append(ring,panel);
- document.addEventListener('click',click,true);document.addEventListener('keydown',keydown,true);
- window.addEventListener('resize',schedule);window.addEventListener('scroll',schedule,true);draw();
+ document.body.append(ring,panel);document.body.classList.add('tour-active');
+ content('Learn by doing','Open a note, find your notebook and try a study tool. Six tiny steps, at your pace. You can leave anytime.');
+ panel.addEventListener('click',e=>{const a=e.target.closest('[data-tour]')?.dataset.tour;if(a==='exit')finish();else if(a==='next')advance();else if(a==='back'&&index>0)show(index-1);else if(a==='skip'){if(index<chapters.length-1)show(index+1);else finish()}});
+ document.addEventListener('click',click,true);document.addEventListener('keydown',keys,true);
+ window.addEventListener('psychdesk:tab-changed',nav);window.addEventListener('scroll',schedule,true);window.addEventListener('resize',schedule);
+ window.visualViewport?.addEventListener('resize',schedule);window.visualViewport?.addEventListener('scroll',schedule);
+ observer=new MutationObserver(inspect);
+ observer.observe($('#modalRoot'),{childList:true,subtree:true});
+ $('#tourTitle').focus();schedule();
 }
 document.addEventListener('click',e=>{if(e.target.closest('[data-action="replayTour"]')){core()?.closeModal();start()}});
 window.PsychDeskTour={start};
 function offer(){
- if(seen()||!core()||document.hidden||document.querySelector('#modalRoot')?.children.length||document.querySelector('dialog[open]'))return;
- start();
+ let seen=true;try{seen=localStorage.getItem(KEY)==='done'}catch{}
+ if(!seen&&core()&&!document.hidden&&!$('#modalRoot')?.children.length&&!document.querySelector('dialog[open]'))start();
 }
 const timer=setInterval(offer,1500),stop=setTimeout(cleanup,60000);
 function cleanup(){clearInterval(timer);clearTimeout(stop)}
