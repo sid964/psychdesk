@@ -24,10 +24,13 @@ function renderBoard(){
  '<p class="study-legal">Drag cards by their handles. Positions and card text sync with your study account; the original sticky notes remain unchanged.</p>'+
  '<div class="board-canvas" id="boardCanvas" aria-label="Drag-and-drop study board">'+(items.length?items.map(boardCard).join(''):'<div class="board-empty">✳<br><strong>Your board starts here.</strong><br>Add an idea or pin one of your handwritten sticky notes.</div>')+'</div>';
 }
+function ideaEditor(title,label,value,max,onSave){
+ const ownerAtOpen=d();
+ core.openModal(title,'<form id="studioIdeaForm"><div class="field"><label for="studioIdeaText">'+h(label)+'</label>'+(max>100?'<textarea id="studioIdeaText" rows="5" maxlength="'+max+'" required placeholder="One idea is enough. Start anywhere…">'+h(value||'')+'</textarea>':'<input id="studioIdeaText" maxlength="'+max+'" required value="'+h(value||'')+'" placeholder="e.g. Memory systems">')+'</div><button type="submit" class="primary">Keep this idea →</button></form>');
+ $('#studioIdeaForm').addEventListener('submit',event=>{event.preventDefault();if(ownerAtOpen!==d()){core.toast('Workspace changed. Copy your idea and reopen this editor before saving.');return;}const text=$('#studioIdeaText').value.trim().slice(0,max);if(!text)return;if(onSave(text)===false)return;core.closeModal();core.render();});
+}
 function boardAdd(){
- const text=prompt('Write a short idea for your board (up to 500 characters):','');
- if(!text?.trim())return;
- if(commit(()=>{d().boardItems=board().concat({id:core.id(),kind:'note',text:text.trim().slice(0,500),x:12+(board().length%5)*14,y:12+(board().length%4)*17,createdAt:new Date().toISOString()})}))core.render();
+ ideaEditor('A new idea','What is on your mind?','',500,text=>commit(()=>{d().boardItems=board().concat({id:core.id(),kind:'note',text,x:12+(board().length%5)*14,y:12+(board().length%4)*17,createdAt:new Date().toISOString()})}));
 }
 function boardPin(){
  const id=$('#pinSticky')?.value;
@@ -80,17 +83,12 @@ function drawEdges(){
  }).join('');
 }
 function makeMap(){
- const title=prompt('Name your new psychology mind map:','Memory systems');
- if(!title?.trim())return;
- const map={id:core.id(),title:title.trim().slice(0,90),nodes:[],edges:[]};
- if(!commit(()=>{d().mindMaps=maps().concat(map)}))return;currentMap=map.id;selectedNode='';linkFrom='';core.render();
+ ideaEditor('Start a mind map','What connects these ideas?','',90,title=>{const map={id:core.id(),title,nodes:[],edges:[]};if(!commit(()=>{d().mindMaps=maps().concat(map)}))return false;currentMap=map.id;selectedNode='';linkFrom='';return true;});
 }
 function addNode(){
  const map=mapSelect();if(!map)return;
- const text=prompt('Concept, theory, researcher or finding:','');
- if(!text?.trim())return;
  if(map.nodes.length>=55){core.toast('Maps are limited to 55 concepts for performance.');return;}
- if(!commit(()=>map.nodes.push({id:core.id(),label:text.trim().slice(0,90),x:9+(map.nodes.length%5)*17,y:11+(Math.floor(map.nodes.length/5)%4)*20})))return;core.render();
+ ideaEditor('Add a concept','Concept, theory, researcher or finding','',90,text=>{const target=maps().find(m=>m.id===map.id);if(!target||target.nodes.length>=55)return false;return commit(()=>target.nodes.push({id:core.id(),label:text,x:9+(target.nodes.length%5)*17,y:11+(Math.floor(target.nodes.length/5)%4)*20}));});
 }
 function selectNode(id){
  const map=mapSelect();if(!map)return;
@@ -110,8 +108,7 @@ function selectNode(id){
 }
 function renameNode(){
  const node=mapSelect()?.nodes.find(n=>n.id===selectedNode);if(!node)return;
- const value=prompt('Rename this concept:',node.label);if(!value?.trim())return;
- if(commit(()=>{node.label=value.trim().slice(0,90)}))core.render();
+ const mapId=mapSelect().id;ideaEditor('Rename this concept','Concept name',node.label,90,value=>{const target=maps().find(m=>m.id===mapId)?.nodes.find(n=>n.id===node.id);if(!target)return false;return commit(()=>{target.label=value});});
 }
 function removeNode(){
  const map=mapSelect();if(!map||!selectedNode)return;
@@ -162,9 +159,7 @@ document.addEventListener('click',e=>{
   switch(b.dataset.board){
   case 'add':boardAdd();break;case 'pin':boardPin();break;
   case 'edit':{const item=board().find(x=>x.id===b.dataset.id);if(!item)return;
-   const value=prompt('Edit idea:',item.kind==='sticky'?(allStickies().find(n=>n.id===item.stickyId)?.title||''):item.text);
-   if(!value?.trim())return;
-   if(commit(()=>{item.kind='note';delete item.stickyId;item.text=value.trim().slice(0,500)}))core.render();break;}
+   ideaEditor('Edit your idea','Your idea',item.kind==='sticky'?(allStickies().find(n=>n.id===item.stickyId)?.title||''):item.text,500,value=>{const target=board().find(x=>x.id===item.id);if(!target)return false;return commit(()=>{target.kind='note';delete target.stickyId;target.text=value});});break;}
   case 'remove':if(commit(()=>{d().boardItems=board().filter(x=>x.id!==b.dataset.id)}))core.render();break;
   case 'clear':if(confirm('Clear this board? Original stickies remain saved.')){if(commit(()=>{d().boardItems=[]}))core.render();}break;
   }

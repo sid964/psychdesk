@@ -1,0 +1,23 @@
+/* Covers optional activities, real collection exploration, layouts, and idea editors. */
+const {chromium}=require('playwright');const assert=require('node:assert/strict');
+const tabs=['today','university','psychology','planner','notes','ink','stickies','materials','reader','recall','focus','research','dictionary','timeline','search','voice','board','mindmap','tools','insights'];
+(async()=>{const browser=await chromium.launch({...(process.env.CHROMIUM_PATH?{executablePath:process.env.CHROMIUM_PATH}:{}),headless:true});try{
+for(const width of [320,390,768,1440]){
+ const p=await browser.newPage({viewport:{width,height:900},reducedMotion:'reduce'});await p.goto('http://127.0.0.1:8765/');await p.waitForSelector('.study-home');await p.waitForFunction(()=>!!window.PsychDeskStudio);
+ const before=await p.evaluate(()=>JSON.stringify(PsychDeskCore.getData()));
+ for(const tab of tabs){await p.evaluate(t=>PsychDeskCore.setTab(t),tab);assert.equal(await p.locator('#main').getAttribute('data-study-layout'),tab);assert(await p.locator('#main h1').count());
+  const spark=p.locator('.studio-spark');if(await spark.count()){await spark.locator('summary').click();const heading=await spark.locator('h2').textContent();const next=spark.locator('button');if(await next.isVisible()){await next.click();assert.notEqual(await spark.locator('h2').textContent(),heading);}await spark.locator('summary').click();}
+  assert(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),tab+' overflow at '+width);
+  if(['stickies','research','dictionary','focus'].includes(tab))await p.screenshot({path:'/tmp/studio-'+tab+'-'+width+'.png',fullPage:true});
+ }
+ for(const tab of ['dictionary','timeline']){await p.evaluate(t=>PsychDeskCore.setTab(t),tab);const selector=tab==='dictionary'?'#psyDefinitionDetail':'#psyEventDetail';await p.locator('.studio-surprise').click();const first=await p.locator(selector).textContent();await p.locator('.studio-surprise').click();assert.notEqual(await p.locator(selector).textContent(),first);}
+ assert.equal(await p.evaluate(()=>JSON.stringify(PsychDeskCore.getData())),before,'Exploration must not change study data');
+ await p.evaluate(()=>PsychDeskCore.setTab('stickies'));assert.equal(await p.locator('#stickySubject').isVisible(),false);await p.locator('#stickyText').fill('One little thought');await p.locator('.studio-disclosure summary').click();assert.equal(await p.locator('#stickySubject').isVisible(),true);
+ await p.evaluate(()=>PsychDeskCore.setTab('board'));await p.locator('[data-board="add"]').click();await p.locator('#studioIdeaText').fill('A small idea for the board');
+ await p.evaluate(()=>{window.studioOriginalSet=Storage.prototype.setItem;const key=PsychDeskCore.getStorageKey();Storage.prototype.setItem=function(k,v){if(k===key)throw new DOMException('Full','QuotaExceededError');return window.studioOriginalSet.call(this,k,v)}});await p.locator('#studioIdeaForm button').click();assert.equal(await p.locator('#studioIdeaText').inputValue(),'A small idea for the board');assert.equal(await p.evaluate(()=>PsychDeskCore.getData().boardItems.length),0);
+ await p.evaluate(()=>{Storage.prototype.setItem=window.studioOriginalSet});await p.locator('#studioIdeaForm button').click();assert.equal(await p.locator('.board-card').count(),1);
+ await p.evaluate(()=>PsychDeskCore.setTab('mindmap'));await p.locator('[data-mind="newMap"]').click();await p.locator('#studioIdeaText').fill('My learning map');await p.locator('#studioIdeaForm button').click();await p.locator('[data-mind="newNode"]').click();await p.locator('#studioIdeaText').fill('Memory');await p.evaluate(()=>{window.studioOriginalSet=Storage.prototype.setItem;const key=PsychDeskCore.getStorageKey();Storage.prototype.setItem=function(k,v){if(k===key)throw new DOMException('Full','QuotaExceededError');return window.studioOriginalSet.call(this,k,v)}});await p.locator('#studioIdeaForm button').click();assert.equal(await p.locator('#studioIdeaText').inputValue(),'Memory');assert.equal(await p.evaluate(()=>PsychDeskCore.getData().mindMaps[0].nodes.length),0);await p.evaluate(()=>{Storage.prototype.setItem=window.studioOriginalSet});await p.locator('#studioIdeaForm button').click();assert.equal(await p.locator('.mind-node').count(),1);
+ await p.evaluate(()=>PsychDeskCore.setTab('recall'));await p.locator('.studio-disclosure summary').filter({hasText:'Make cards from notes'}).click();assert.equal(await p.locator('#cardSource').isVisible(),true);
+ console.log('PASS studio',width,'20 sections, prompts, exploration, writing layouts, save failure, board/map creation');await p.close();
+}
+}finally{await browser.close()}})().catch(error=>{console.error(error);process.exitCode=1});

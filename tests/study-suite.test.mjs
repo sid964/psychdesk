@@ -6,16 +6,16 @@ const code=file=>readFileSync(new URL('../'+file,import.meta.url),'utf8');
 function makeEnv(){
  const storage={subjects:[{id:'cog',name:'Cognitive Psychology'}],notes:[],cards:[],tasks:[],materials:[],stickies:[],pdfHighlights:[],research:[],boardItems:[],mindMaps:[],sessions:[],reviews:[]};
  let saves=0,tab='today',prompts=[];
- const callbacks={};
+ const callbacks={},ideaInput={value:''},ideaForm={addEventListener:(type,cb)=>{callbacks['idea:'+type]=cb}};
  const core={
   esc:value=>String(value??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;'),
   getData:()=>storage,commitChange:fn=>{fn(storage);saves++;return true},save:()=>{saves++},render:()=>{},setTab:name=>{tab=name},toast:()=>{},
   id:(()=>{let i=0;return()=>String(++i)})(),today:()=>'2026-10-31',openModal:()=>{},closeModal:()=>{}
  };
- const doc={addEventListener:(type,cb)=>{callbacks['doc:'+type]=cb},querySelector:()=>null,activeElement:{tagName:'BODY'},fullscreenElement:null};
+ const doc={addEventListener:(type,cb)=>{callbacks['doc:'+type]=cb},querySelector:s=>s==='#studioIdeaForm'?ideaForm:s==='#studioIdeaText'?ideaInput:null,activeElement:{tagName:'BODY'},fullscreenElement:null};
  const window={PsychDeskCore:core,addEventListener:(type,cb)=>{callbacks['window:'+type]=cb}};
  const env=vm.createContext({window,document:doc,Date,console,URL,URLSearchParams,confirm:()=>true,prompt:()=>prompts.shift()||null,setTimeout:()=>1,clearTimeout:()=>{},setInterval:()=>1,clearInterval:()=>{},navigator:{language:'en-IN'},location:{search:'',pathname:'/psychdesk/'},history:{replaceState(){}}});
- return {storage,core,window,callbacks,env,setPrompts:p=>{prompts=[...p]},get saves(){return saves},get tab(){return tab}};
+ return {storage,core,window,callbacks,env,submitIdea:text=>{ideaInput.value=text;callbacks['idea:submit']({preventDefault(){}})},setPrompts:p=>{prompts=[...p]},get saves(){return saves},get tab(){return tab}};
 }
 test('universal search indexes every requested study category without leaking HTML',()=>{
  const a=makeEnv();
@@ -46,6 +46,8 @@ test('board and mind maps are backed by structured account data',()=>{
  vm.runInContext(code('study-boards.js'),a.env);
  a.setPrompts(['Learning and Memory']);
  a.callbacks['doc:click']({target:{closest(selector){if(selector==='[data-board],[data-mind],[data-mind-node]')return {dataset:{mind:'newMap'}};return null;}},preventDefault(){}});
+ assert.equal(a.storage.mindMaps.length,0);
+ a.submitIdea('Learning and Memory');
  assert.equal(a.storage.mindMaps.length,1);
  assert.equal(a.storage.mindMaps[0].title,'Learning and Memory');
  assert.match(a.window.PsychDeskBoards.renderMind(),/Learning and Memory/);

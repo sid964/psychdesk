@@ -143,10 +143,12 @@ function render(){
  const swatches=palette.map(p=>'<label title="'+p[0]+' paper"><input type="radio" name="stickyPaper" value="'+p[0]+'"'+(paper===p[0]?' checked':'')+'><span style="background:'+p[1]+'"></span><small>'+p[0]+'</small></label>').join('');
  return '<section class="hero sticky-hero"><div class="eyebrow">A LITTLE SPACE FOR BIG IDEAS</div><h1>Sticky Notes <span>✳</span></h1><p>Write freely. Every idea becomes handwritten paper, right as you type.</p></section>'+
  '<div class="sticky-workspace"><section class="sticky-compose"><div class="sticky-compose-head"><div><small>YOUR PAPER DESK</small><h2 id="stickyComposerTitle">'+(groupId?'Editing a sticky':'Write a new sticky')+'</h2></div><button data-sticky="new" class="secondary">+ New</button></div>'+
- '<label for="stickyTitle">Title <small>optional</small></label><input id="stickyTitle" maxlength="70" placeholder="e.g. Classical conditioning" value="'+esc(heading)+'">'+
- '<label for="stickySubject">Subject</label><select id="stickySubject"><option value="">General notes</option>'+subjects+'</select>'+
  '<label for="stickyText">Your thoughts</label><textarea id="stickyText" maxlength="'+LIMIT+'" rows="9" placeholder="Type or paste a theory, definition, example or bullet points…">'+esc(raw)+'</textarea>'+
  '<div class="sticky-input-meta"><span id="stickySaveStatus" role="status">Auto-save after you pause typing.</span><span id="stickyCharCount">'+raw.length+'/'+LIMIT+'</span></div>'+
+ '<details class="studio-disclosure"><summary>Title & subject · optional</summary>'+
+ '<label for="stickyTitle">Title <small>optional</small></label><input id="stickyTitle" maxlength="70" placeholder="e.g. Classical conditioning" value="'+esc(heading)+'">'+
+ '<label for="stickySubject">Subject</label><select id="stickySubject"><option value="">General notes</option>'+subjects+'</select>'+
+ '</details>'+
  '<div class="sticky-palette"><span>Paper color</span><div class="sticky-swatches">'+swatches+'</div></div>'+
  '<div class="sticky-compose-actions"><button data-sticky="save" class="primary">Save now</button><button data-sticky="notes" class="secondary">Open notebook ↗</button></div>'+
  '<p class="sticky-fineprint">Saved locally and synced with your PsychDesk account when signed in. Longer writing automatically flows onto more cards.</p></section>'+

@@ -263,3 +263,6 @@ same editor from the study desk. Quick capture remains available in the header.
 initial focus, collapsed details, close-save, metadata preservation, reload and
 axe checks for the open editor. Use the Playwright/axe environment documented in
 the usability audit.
+
+See [STUDIO-LAYOUTS.md](STUDIO-LAYOUTS.md) for the section-by-section interactive
+layout changes, data behavior and browser checks.
