@@ -33,7 +33,7 @@ async function inspect(page){
   const rail=document.querySelector('.desktop-rail');
   const railStyle=rail?getComputedStyle(rail):null;
   const skip=document.querySelector('.skip-link')?.getBoundingClientRect();
-  const accent=getComputedStyle(document.querySelector('.stat'),'::before').backgroundColor;
+  const accent=getComputedStyle(document.querySelector('.stat, .study-desk-sheet'),'::before').backgroundColor;
   return {width:W,scrollY,skipVisible:!!skip&&skip.bottom>0,accent,overflow:document.documentElement.scrollWidth-W,
    rail:{overflowX:railStyle?.overflowX||'',width:rail?.clientWidth||0,scrollWidth:rail?.scrollWidth||0},
    headerOverlap:intersections,

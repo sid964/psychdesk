@@ -244,3 +244,11 @@ navigation at four widths with
 
 The subsequent accessibility, planner and flashcard improvements, with checks and
 limitations, are recorded in [AUDIT-USABILITY-2026-11-03.md](AUDIT-USABILITY-2026-11-03.md).
+
+The opening screen is now a study desk: the next unfinished topic (or a syllabus
+entry point), both preparation paths, a Psychometrics practice prompt, a notebook
+shortcut and recall access. Study-topic actions open Focus with that topic’s
+subject and preserve an already-running timer. Progress totals are secondary.
+The prompt is a fixed starter exercise, not a personalized recommendation.
+Run `tests/study-desk-browser.cjs` with the same Playwright environment as the
+other browser checks to exercise the entry flow at four viewport widths.
