@@ -252,3 +252,14 @@ subject and preserve an already-running timer. Progress totals are secondary.
 The prompt is a fixed starter exercise, not a personalized recommendation.
 Run `tests/study-desk-browser.cjs` with the same Playwright environment as the
 other browser checks to exercise the entry flow at four viewport widths.
+
+Typed notes now open as a writing-first notebook page. The editor focuses the
+writing area immediately; titles, subjects and tags are optional details below
+it. Existing metadata and version history remain intact, and the existing draft,
+autosave and close-flush protection still applies. “Just start writing” opens the
+same editor from the study desk. Quick capture remains available in the header.
+
+`tests/notebook-writing-browser.cjs` checks both themes at four widths, including
+initial focus, collapsed details, close-save, metadata preservation, reload and
+axe checks for the open editor. Use the Playwright/axe environment documented in
+the usability audit.

@@ -75,3 +75,28 @@ html[data-theme="light"] .study-desk-sheet :is(.eyebrow,.note){color:#465e51!imp
 .focus-study-context{margin-bottom:20px}
 .focus-study-context h2{font:500 25px/1.4 'Fraunces',Georgia,serif;overflow-wrap:anywhere}
 html[data-theme="light"] .focus-study-context .note{color:#465e51!important}
+/* Open a page, write first, organize later. */
+.notebook-start{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-top:24px}
+.notebook-find{display:grid;grid-template-columns:2fr 1fr;gap:14px}
+.notebook-footnote{margin-top:28px}
+.modal:has(.notebook-page){max-width:820px}
+.notebook-page .notebook-welcome{font:500 19px/1.5 'Fraunces',Georgia,serif;margin:0 0 10px}
+.notebook-page .note-autosave-status{font-size:12px;margin:0 0 14px;color:var(--muted)}
+.notebook-writing>label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+.modal .notebook-page .notebook-paper{min-height:42dvh!important;width:100%;padding:16px 20px!important;border-radius:12px!important;border:1px solid #48433a!important;font:400 17px/32px 'DM Sans',sans-serif!important;resize:vertical;background-color:#181713!important;background-image:repeating-linear-gradient(to bottom,transparent 0,transparent 31px,#ffffff13 31px,#ffffff13 32px)!important;background-origin:content-box;color:#f4f0e6!important;caret-color:currentColor}
+.modal .notebook-paper:focus-visible{outline:2px solid #c4b998!important;outline-offset:3px}
+html[data-theme="light"] .modal .notebook-page .notebook-paper{background-color:#fffdf4!important;background-image:repeating-linear-gradient(to bottom,transparent 0,transparent 31px,#425a7220 31px,#425a7220 32px)!important;border-color:#cfc6ad!important;color:#2c302b!important}
+.modal .notebook-paper::placeholder{color:#b5ad9c!important;opacity:1}
+html[data-theme="light"] .modal .notebook-paper::placeholder{color:#666457!important}
+.notebook-finish{display:flex;align-items:center;gap:16px;margin:16px 0}
+.notebook-finish .primary{min-width:100px}
+.notebook-details,.notebook-page .note-history-panel{border-top:1px solid var(--border);padding-top:14px;margin-top:16px}
+.notebook-details summary,.notebook-page .note-history-panel summary{cursor:pointer;min-height:44px;font-size:12px;line-height:1.6}
+.notebook-details .field:first-of-type{margin-top:14px}
+.notebook-delete{margin-top:16px}
+.desk-write{margin-top:20px}
+@media(max-width:600px){.notebook-find{grid-template-columns:1fr;gap:0}.notebook-finish{align-items:flex-start;flex-direction:column;gap:8px}.modal .notebook-page .notebook-paper{padding:12px!important;min-height:40dvh!important;font-size:16px!important}}
+@media(prefers-reduced-motion:no-preference){.notebook-start .primary:hover{transform:translateY(-2px)}}
+html[data-theme="light"] .notebook-page :is(.note,.note-autosave-status){color:#465e51!important}
+html[data-theme="dark"] .modal .notebook-page textarea.notebook-paper{background-color:#211f19!important;background-image:repeating-linear-gradient(to bottom,transparent 0,transparent 31px,#e9dcb720 31px,#e9dcb720 32px)!important;color:#f4f0e6!important;border-color:#5a5241!important}
+.modal:has(.notebook-page) h2{overflow-wrap:anywhere}
