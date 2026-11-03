@@ -34,3 +34,15 @@
 .tool-group .study-tool-launcher>span{font-size:20px}
 .tool-group .study-tool-launcher strong{font-size:18px}
 @media(max-width:390px){.tool-group .study-tool-launcher{min-height:96px;padding:16px}}
+/* Contrast corrections preserve the existing light palette and component shapes. */
+html[data-theme="light"] :is(.empty,.ink-empty p,.sticky-empty strong){color:#46564e!important}
+html[data-theme="light"] :is(.filter,.select-strip button){color:#43564b!important}
+html[data-theme="light"] .account-chip{color:#34483c!important}
+html[data-theme="light"] .bottom-nav .nav-item{color:#43544b!important}
+html[data-theme="light"] .bottom-nav .nav-item.active{color:#182f22!important}
+#main h1:focus{outline:none}
+html[data-theme="light"] :is(.filter.active,.select-strip button.active){color:#fff!important}
+html[data-theme="light"] .sticky-empty{background:#fafbf9;border-color:#b8c4bc}
+html[data-theme="light"] .sticky-empty p{color:#46564e}
+html[data-theme="light"] #accountBtn{color:#23372b!important}
+html[data-theme="light"] .select-strip button.active{color:#23372b!important}

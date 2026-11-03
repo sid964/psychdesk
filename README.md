@@ -241,3 +241,6 @@ The desktop rail groups preparation and daily study; secondary features remain
 available in the purpose-grouped Tools screen. Check reachability and selected
 navigation at four widths with
 `NODE_PATH=/workspace/psychdesk-tools/node_modules CHROMIUM_PATH=/usr/bin/chromium node tests/navigation-browser.cjs`.
+
+The subsequent accessibility, planner and flashcard improvements, with checks and
+limitations, are recorded in [AUDIT-USABILITY-2026-11-03.md](AUDIT-USABILITY-2026-11-03.md).

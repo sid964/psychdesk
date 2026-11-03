@@ -165,8 +165,8 @@ function recallPanel(){
  const notes=items('notes'),stickies=items('stickies');
  return '<section class="study-panel study-recall-panel"><div class="study-panel-heading"><h2>Make cards from notes</h2><span>Exact definitions · no AI</span></div>'+
  '<p>Choose a notebook entry, sticky note, or paste definitions formatted as “Term: explanation”. Review the generated cards before adding them.</p>'+
- '<select id="cardSource"><option value="">Paste my own text</option>'+notes.map(n=>'<option value="note:'+h(n.id)+'">'+h(clip(n.title,70))+'</option>').join('')+stickies.map(n=>'<option value="sticky:'+h(n.id)+'">Sticky: '+h(clip(n.title,65))+'</option>').join('')+'</select>'+
- '<textarea id="cardSourceText" rows="4" maxlength="12000" placeholder="Classical conditioning: Learning through association of stimuli.&#10;Operant conditioning: Learning through consequences."></textarea>'+
+ '<select id="cardSource" aria-label="Flashcard source"><option value="">Paste my own text</option>'+notes.map(n=>'<option value="note:'+h(n.id)+'">'+h(clip(n.title,70))+'</option>').join('')+stickies.map(n=>'<option value="sticky:'+h(n.id)+'">Sticky: '+h(clip(n.title,65))+'</option>').join('')+'</select>'+
+ '<textarea aria-label="Text to turn into flashcards" id="cardSourceText" rows="4" maxlength="12000" placeholder="Classical conditioning: Learning through association of stimuli.&#10;Operant conditioning: Learning through consequences."></textarea>'+
  '<div class="study-form-actions"><button data-extras="previewCards" class="primary">Preview flashcards</button><span id="generatedCardCount"></span></div><div id="generatedCardPreview"></div></section>';
 }
 function previewCards(){
@@ -203,7 +203,7 @@ function insightsPanel(){
  const last=reviews.slice(-80),good=last.filter(r=>['good','easy'].includes(r.rating)).length,retention=last.length?Math.round(good/last.length*100):null;
  const streak=(()=>{let num=0;for(let i=days.length-1;i>=0;i--){if(!days[i].mins&&i===days.length-1)continue;if(!days[i].mins)break;num++;}return num})();
  return '<section class="study-panel study-insights-more"><div class="study-panel-heading"><h2>Consistency calendar</h2><span>12 weeks · actual logged minutes</span></div>'+
- '<div class="study-heatmap">'+days.map(d=>'<span class="study-heat" style="--heat-opacity:'+Math.max(.12,Math.round(d.mins/max*85)/100)+'" title="'+d.date+' · '+d.mins+' min" aria-label="'+d.date+': '+d.mins+' minutes"></span>').join('')+'</div>'+
+ '<div class="study-heatmap">'+days.map(d=>'<span role="img" class="study-heat" style="--heat-opacity:'+Math.max(.12,Math.round(d.mins/max*85)/100)+'" title="'+d.date+' · '+d.mins+' min" aria-label="'+d.date+': '+d.mins+' minutes"></span>').join('')+'</div>'+
  '<div class="study-analytic-row"><div><strong>'+streak+'</strong><span>logged-day streak</span></div><div><strong>'+reviews.length+'</strong><span>total card reviews</span></div><div><strong>'+(retention===null?'—':retention+'%')+'</strong><span>Good / Easy ratings, last 80</span></div></div><p class="study-legal">Ratings show how you assessed your recall, not a scientifically validated memory-retention prediction.</p></section>';
 }
 function focusPanel(){
