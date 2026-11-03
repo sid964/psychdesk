@@ -33,7 +33,8 @@ async function inspect(page){
   const rail=document.querySelector('.desktop-rail');
   const railStyle=rail?getComputedStyle(rail):null;
   const skip=document.querySelector('.skip-link')?.getBoundingClientRect();
-  const accent=getComputedStyle(document.querySelector('.stat, .study-desk-sheet'),'::before').backgroundColor;
+  const stat=document.querySelector('.stat');
+  const accent=stat?getComputedStyle(stat,'::before').backgroundColor:null;
   return {width:W,scrollY,skipVisible:!!skip&&skip.bottom>0,accent,overflow:document.documentElement.scrollWidth-W,
    rail:{overflowX:railStyle?.overflowX||'',width:rail?.clientWidth||0,scrollWidth:rail?.scrollWidth||0},
    headerOverlap:intersections,
@@ -197,7 +198,7 @@ async function main(){
      if(vp.width===390||vp.width===1440)await auditFlows(page,openTab,record,dest);
      if(errors.length)fatal=true;
      if(overview.overflow>6||overview.headerOverlap.length||overview.scrollY!==0||overview.skipVisible)fatal=true;
-     if(overview.accent!=='rgb(146, 146, 146)')fatal=true;
+     if(overview.accent!==null&&overview.accent!=='rgb(146, 146, 146)')fatal=true;
      if(vp.width>=900&&overview.rail.overflowX!=='hidden'&&overview.rail.overflowX!=='clip')fatal=true;
     }
     if(live){

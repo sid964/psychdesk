@@ -72,3 +72,6 @@ html[data-theme="dark"] .study-desk-sheet{background:#111;border-color:#333}
 @media(max-width:500px){.desk-path-grid{grid-template-columns:1fr}.desk-path{padding:22px}.desk-instruction{font-size:14px}}
 html[data-theme="light"] .study-desk-sheet :is(.eyebrow,.note){color:#465e51!important}
 #main .study-home .hero .lidar-scan{display:none!important}
+.focus-study-context{margin-bottom:20px}
+.focus-study-context h2{font:500 25px/1.4 'Fraunces',Georgia,serif;overflow-wrap:anywhere}
+html[data-theme="light"] .focus-study-context .note{color:#465e51!important}
