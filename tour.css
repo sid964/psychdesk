@@ -12,3 +12,13 @@
 #psychdeskTour :focus-visible{outline:2px solid #cbdac3;outline-offset:4px}#psychdeskTour h2:focus{outline:none}
 @media(prefers-reduced-motion:no-preference){#psychdeskTour[open]{animation:tour-arrive .28s ease-out}@keyframes tour-arrive{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}}
 @media(max-width:380px){#psychdeskTour{padding:20px}#psychdeskTour h2{font-size:26px}}
+
+#psychdeskTour{position:fixed;z-index:2147483647;margin:0;width:min(360px,calc(100% - 24px));max-height:calc(100dvh - 24px);padding:20px}
+#psychdeskTour h2{font-size:25px;margin:18px 0 12px}
+#psychdeskTour #tourText{font-size:14px;margin-bottom:16px}
+#psychdeskTour .tour-actions{margin-top:16px}
+#psychdeskTour [hidden]{display:none!important}
+#psychdeskTour [data-tour=try]{width:100%}
+#tourSpotlight{position:fixed;z-index:2147483646;pointer-events:none;border:2px solid #d3e8c4;border-radius:12px;box-shadow:0 0 0 9999px #0009;box-sizing:border-box}
+.tour-target{outline:2px solid #d3e8c4!important;outline-offset:4px}
+@media(prefers-reduced-motion:no-preference){#psychdeskTour{animation:tour-arrive .28s ease-out}}
