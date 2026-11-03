@@ -67,7 +67,7 @@ async function main(){
     if(!live){
      if(vp.width===390||vp.width===1440)await require('./browser-motion.cjs')(page,record,dest);
      const navigation=[];
-     for(const tab of (vp.width===390||vp.width===1440?['today','planner','notes','ink','stickies','recall','focus','insights','search','reader','research','dictionary','timeline','voice','board','mindmap','tools']:['planner','notes','ink','dictionary','research','timeline','tools'])){
+     for(const tab of (vp.width===390||vp.width===1440?['today','university','psychology','planner','notes','ink','stickies','recall','focus','insights','search','reader','research','dictionary','timeline','voice','board','mindmap','tools']:['university','psychology','planner','notes','ink','dictionary','research','timeline','tools'])){
       await openTab(tab);
       await page.waitForTimeout(70);
       const state=await page.evaluate(()=>({

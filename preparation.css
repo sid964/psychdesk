@@ -1,0 +1,36 @@
+/* Study workspaces reuse the studio typography, surfaces and theme tokens. */
+.prep-entry{margin:0 0 24px}
+.prep-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.prep-actions button{white-space:normal;text-align:left;min-height:44px}
+.prep-switch{margin-bottom:28px}
+.prep-switch [aria-current="page"]{outline:2px solid currentColor;outline-offset:2px}
+.prep-grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:28px}
+.prep-grid>*{min-width:0}
+.prep-steps{display:grid;gap:14px}
+.prep-steps h3{margin:0 0 10px;font-size:17px}
+.prep-support{margin-top:18px}
+.prep-support h2{font-size:20px}
+.prep-support summary{cursor:pointer;min-height:30px;font-weight:600}
+.prep-grid p{line-height:1.65;overflow-wrap:anywhere}
+.prep-grid button:focus-visible,.prep-actions button:focus-visible{outline:2px solid currentColor;outline-offset:4px}
+@media(max-width:800px){.prep-grid{grid-template-columns:minmax(0,1fr);gap:20px}.prep-actions button{flex:1 1 180px}}
+.prep-syllabus{margin:32px 0}
+.prep-unit{margin-top:22px}
+.prep-unit h3{font-size:16px;line-height:1.5}
+.prep-topic-list{padding:0;list-style:none}
+.prep-topic-list li{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px solid var(--border)}
+.prep-topic-list li span{min-width:0;overflow-wrap:anywhere;line-height:1.6}
+.prep-topic-list button{flex-shrink:0;min-height:44px}
+.prep-exam-note{margin-top:18px}
+@media(max-width:500px){.prep-topic-list li{align-items:flex-start;flex-direction:column;gap:4px}.prep-syllabus .section-row{flex-wrap:wrap}}
+
+/* Keep the familiar navigation surfaces, with fewer competing destinations. */
+.bottom-nav{grid-template-columns:repeat(5,minmax(0,1fr))}
+.tool-group{margin-bottom:30px}
+.tool-group>h2{margin-bottom:8px}
+.tool-group .study-tools-grid{margin-top:16px}
+.rail-nav .rail-section-label{margin:14px 12px 4px;font-size:10px;letter-spacing:.12em}
+.tool-group .study-tool-launcher{min-height:112px;padding:18px;gap:7px}
+.tool-group .study-tool-launcher>span{font-size:20px}
+.tool-group .study-tool-launcher strong{font-size:18px}
+@media(max-width:390px){.tool-group .study-tool-launcher{min-height:96px;padding:16px}}

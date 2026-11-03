@@ -203,3 +203,41 @@ GitHub Pages publishes the root of main. Refresh after deployment. The new servi
 Run **node --test tests/*.test.mjs** with Node.js 24. Tests cover persistent public setup, account isolation, subject migration, material restore, chunked uploads, interrupted-upload recovery, file validation, unsafe-link rejection, dark mode and removal of AI entry points. Google services are mocked; live consent and transfers depend on the configured project and network.
 
 Never commit private keys, tokens, study exports or confidential client records to this public repository.
+
+## Preparation workspaces
+
+Overview, the desktop rail, and Study tools now link to **University exam prep**
+and **Overall psychology prep**. They use the existing visual theme and share
+notes, topics, flashcards and focus sessions.
+
+University prep includes the supplied M.A. I Semester I syllabus: Cognitive
+Processes (PSY-MJ-101), Psychometrics (PSY-MJ-102), Statistics for Psychology
+(PSY-MJ-103), Research Methods in Psychology (PSY-RM-104), and Sports Psychology
+(PSY-EL-108). Expand a course to inspect its four units. **Add to plan** creates
+only the chosen topic and, if needed, its subject. **Planned · Edit** opens the
+existing task editor for scheduling. Completion is tracked through the existing
+planner. Topics use stable identifiers to prevent repeated additions; backups
+and account sync use the existing task and subject collections. Labels are
+condensed from user-supplied screenshots, not a replacement for the official
+syllabus. No exam dates or mark weights are assumed. Statistics examination
+restrictions are shown separately from the full learning syllabus.
+
+The sequence encourages retrieval before rereading, spaced flashcard review,
+and comparison/application of ideas. Further reading is linked in each workspace;
+it is not a claim that a particular interface layout improves exam results.
+
+With the local server running, verify the syllabus flows with:
+`NODE_PATH=/workspace/psychdesk-tools/node_modules CHROMIUM_PATH=/usr/bin/chromium node tests/preparation-browser.cjs`.
+This checks all 20 units, adding one topic, persistence after reload, scheduling,
+completion and overflow at four viewport sizes. Screenshots go to
+`/tmp/psychdesk-preparation`. The existing full browser audit also visits both
+preparation workspaces at all six viewport sizes.
+
+The preparation layout research and the scope of the follow-up refinement are
+documented in [STUDY-LAYOUT-RESEARCH.md](STUDY-LAYOUT-RESEARCH.md).
+
+Navigation now keeps five mobile destinations (Today, Plan, Notes, Focus, Tools).
+The desktop rail groups preparation and daily study; secondary features remain
+available in the purpose-grouped Tools screen. Check reachability and selected
+navigation at four widths with
+`NODE_PATH=/workspace/psychdesk-tools/node_modules CHROMIUM_PATH=/usr/bin/chromium node tests/navigation-browser.cjs`.
