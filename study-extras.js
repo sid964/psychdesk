@@ -208,9 +208,9 @@ function insightsPanel(){
 }
 function focusPanel(){
  const goal=String(data().focusGoal||'');
- return '<div class="study-panel study-focus-extras"><div class="study-panel-heading"><h2>Your focus environment</h2><span>Custom session intention · original ambient sound</span></div>'+
- '<label class="study-voice-label">What will you work on?<input id="focusIntention" maxlength="145" value="'+h(goal)+'" placeholder="e.g. Read chapter 3 and write a summary"></label>'+
- '<div class="study-sound-controls"><button data-extras="sound" data-mode="off" class="'+(ambientMode==='off'?'active':'')+'">Quiet</button><button data-extras="sound" data-mode="rain" class="'+(ambientMode==='rain'?'active':'')+'">Rain</button><button data-extras="sound" data-mode="brown" class="'+(ambientMode==='brown'?'active':'')+'">Brown noise</button><button data-extras="fullscreen" class="secondary">⛶ Fullscreen focus</button></div><p>Sounds are generated in your browser. They stop when you switch modes or leave the page.</p></div>';
+ return '<div class="study-panel study-focus-extras"><div class="study-panel-heading"><h2>Session options</h2><span>Optional goal and background audio</span></div>'+
+ '<label class="study-voice-label">Session goal (optional)<input id="focusIntention" maxlength="145" value="'+h(goal)+'" placeholder="e.g. Read chapter 3 and write a summary"></label>'+
+ '<div class="study-sound-controls"><button data-extras="sound" data-mode="off" class="'+(ambientMode==='off'?'active':'')+'">Off</button><button data-extras="sound" data-mode="rain" class="'+(ambientMode==='rain'?'active':'')+'">Rain</button><button data-extras="sound" data-mode="brown" class="'+(ambientMode==='brown'?'active':'')+'">Brown noise</button><button data-extras="fullscreen" class="secondary">⛶ Fullscreen focus</button></div><p>Sounds are generated in your browser. They stop when you switch modes or leave the page.</p></div>';
 }
 function stopAmbient(){try{ambient?.source?.stop();ambient?.context?.close()}catch{}ambient=null;ambientMode='off';}
 function sound(mode){
