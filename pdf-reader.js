@@ -73,7 +73,7 @@ function readerHTML(){
  return '<section class="hero reader-hero"><div class="eyebrow">YOUR READING ROOM</div><h1>'+h(bookTitle())+'</h1><p>Select text to highlight, save an excerpt or create study material.</p></section>'+
  '<div class="reader-toolbar"><button data-reader="back">← Bookshelf</button><button data-reader="prev">←</button><span>Page <input type="number" id="readerPage" min="1" max="'+count+'" value="'+page+'"> / '+count+'</span><button data-reader="next">→</button>'+
  '<button data-reader="zoomOut">−</button><span>'+Math.round(scale*100)+'%</span><button data-reader="zoomIn">+</button>'+
- '<button data-reader="search">Find in book</button></div>'+
+ '<button data-reader="search">Find in book</button><button data-reader="prepareChapter" class="reader-prep-action">Prepare chapter</button></div>'+
  '<div class="reader-mobile-switch" role="group" aria-label="Reader view"><button type="button" data-reader="viewRead" aria-pressed="'+(mobileMode==='read')+'">Reading</button><button type="button" data-reader="viewNotes" aria-pressed="'+(mobileMode==='notes')+'">My notes</button></div>'+ '<div class="reader-layout'+(mobileMode==='notes'?' reader-notes-mode':'')+'"><section class="reader-page-area"><div id="readerRenderStatus" role="status">'+(loading?'Loading page…':readerError?h(readerError):'')+'</div>'+
  (fileText?'<div id="readerMarkdown" class="reader-markdown" tabindex="0">'+h(fileText)+'</div>':'<div class="reader-canvas-scroll"><div id="readerPageSurface" class="reader-page-surface"><canvas id="readerCanvas"></canvas><div class="reader-text-layer" id="readerTextLayer"></div><div class="reader-mark-layer" id="readerMarkLayer"></div></div></div>')+
  '</section><aside class="reader-sidebar"><section class="reader-notebook-panel" aria-label="Notes for this book"><h3>My notes <span class="reader-linked-count" id="readerLinkedCount">'+linkedNotes().length+'</span></h3><p>Keep your thoughts beside the text. Each saved note links to this book and page.</p><label for="readerNoteDraft" class="reader-linked-count">Add a reading note</label><textarea id="readerNoteDraft" maxlength="2500" placeholder="What does this passage mean to you?">'+h(readDraft())+'</textarea><div class="reader-note-save"><button type="button" data-reader="saveReaderNote">Save to Notebook</button></div><div class="reader-notes-list" id="readerLinkedNotes">'+linkedNotesHTML()+'</div></section><div class="study-panel-heading"><h2>Reading tools</h2><span id="readerSelectedCount">Select words on the page</span></div>'+
@@ -233,6 +233,45 @@ async function zoom(step){
  scale=Math.max(.6,Math.min(2.5,Math.round((scale+step)*10)/10));
  core.render();
 }
+async function prepareChapter(){
+ if(!pdf&&!fileText){core.toast('Open a book before preparing a chapter.');return;}
+ const owner=core.getStorageKey(),version=generation,start=page,materialId=material?.id||'';
+ const status=$('#readerRenderStatus');
+ if(status)status.textContent='Extracting a short chapter locally…';
+ try{
+  const parts=[];
+  let from=start,to=start,truncated=false,bytes=0;
+  if(fileText){
+   parts.push(fileText.slice(0,42000));
+   truncated=fileText.length>42000;
+  }else{
+   to=Math.min(pdf.numPages,start+5);
+   for(let i=start;i<=to;i++){
+    if(version!==generation||owner!==core.getStorageKey())return;
+    const p=await pdf.getPage(i),content=await p.getTextContent();
+    const joined=content.items.map(x=>String(x.str||'')+(x.hasEOL?'\n':' ')).join('').trim();
+    if(!joined)continue;
+    const fragment='[Page '+i+']\n'+joined+'\n';
+    const space=42000-bytes;
+    if(space<=0){truncated=true;break;}
+    const piece=fragment.slice(0,space);parts.push(piece);bytes+=piece.length;
+    if(piece.length<fragment.length){truncated=true;break;}
+   }
+  }
+  if(version!==generation||owner!==core.getStorageKey())return;
+  const text=parts.join('\n').trim();
+  if(!text){core.toast('No selectable chapter text found. A scanned PDF needs OCR outside PsychDesk.');return;}
+  if(truncated)core.toast('Text was limited to the first 42,000 characters.');
+  const prep=window.PsychDeskPreparation;
+  if(!prep){core.toast('Chapter preparation is unavailable. Refresh the website.');return;}
+  await prep.prepare({title:bookTitle(),text,origin:materialId?'drive-library':'local-reader',materialId,
+   subjectId:material?.subjectId||'',pageStart:from,pageEnd:to});
+ }catch(error){
+  if(version===generation&&owner===core.getStorageKey())core.toast('Could not read this chapter: '+String(error.message||error).slice(0,110));
+ }finally{
+  if(version===generation&&status?.isConnected)status.textContent='';
+ }
+}
 async function findAll(){
  if(!pdf){core.toast('Open a PDF to search its pages.');return;}
  const term=prompt('Find a word or phrase in this PDF:',searchQuery);
@@ -283,6 +322,7 @@ document.addEventListener('click',e=>{
  case 'zoomOut':zoom(-.2);break;
  case 'zoomIn':zoom(.2);break;
  case 'search':findAll();break;
+ case 'prepareChapter':void prepareChapter();break;
  case 'mark':addHighlight();break;
  case 'sticky':textToSticky(selected.text);break;
  case 'card':textToCards(selected.text);break;
