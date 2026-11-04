@@ -1,0 +1,178 @@
+/* PsychDesk — living motion layer.
+   The native motion runtime owns interaction animations. This stylesheet only
+   animates a handful of decorative SVG parts and nonessential visual accents.
+   No rAF loop, layout animation, networking or new dependencies. */
+@media (prefers-reduced-motion: no-preference) {
+ html[data-motion="gentle"] .garden-world .garden-canopy{
+  animation-name:living-canopy!important;
+  animation-duration:6.1s!important;
+ }
+ html[data-motion="gentle"] .garden-world .garden-tree:nth-child(even) .garden-canopy{
+  animation-duration:8.4s!important;animation-delay:-3s!important;
+ }
+ html[data-motion="gentle"] .garden-world .garden-needles{
+  animation-name:living-pine!important;animation-duration:8.8s!important;
+ }
+ html[data-motion="gentle"] .garden-world .garden-shrub-crown{
+  animation-name:living-shrub!important;animation-duration:5.7s!important;
+ }
+ html[data-motion="gentle"] .garden-world .garden-flower-sway{
+  animation-name:living-flower!important;animation-duration:4.5s!important;
+ }
+ html[data-motion="gentle"] .garden-world .garden-grass-sway{
+  animation-name:living-grass!important;animation-duration:4.4s!important;
+ }
+ html[data-motion="gentle"] .garden-world .garden-cloud{
+  animation-name:living-clouds!important;animation-duration:22s!important;
+ }
+ html[data-motion="gentle"] .garden-world .garden-wind{
+  animation-duration:6.5s!important;
+ }
+ html[data-motion="gentle"] .garden-world .garden-butterfly{
+  animation-name:living-butterfly!important;animation-duration:6.8s!important;
+ }
+ html[data-motion="gentle"] .garden-world .garden-butterfly-second{
+  animation-name:living-second-butterfly!important;animation-duration:11.3s!important;animation-delay:-4.2s!important;
+ }
+ html[data-motion="gentle"] .garden-world .garden-drift-leaf-d{
+  animation-delay:-7s!important;animation-duration:13.7s!important;
+ }
+ html[data-motion="gentle"] .garden-world .garden-sky-motes .garden-mote{
+  transform-box:fill-box;transform-origin:center;
+  animation:living-pollen 7.1s ease-in-out infinite;
+ }
+ html[data-motion="gentle"] .garden-world .garden-mote-b{animation-duration:8.6s!important;animation-delay:-4s!important}
+ html[data-motion="gentle"] .garden-world .garden-mote-c{animation-duration:6.3s!important;animation-delay:-2.8s!important}
+ html[data-motion="gentle"] .garden-world .garden-mote-d{animation-duration:9.2s!important;animation-delay:-6s!important}
+ html[data-motion="gentle"] .garden-world .garden-smoke{
+  transform-box:fill-box;transform-origin:center;
+  animation:living-smoke 7.2s ease-out infinite;
+ }
+ html[data-motion="gentle"] .garden-world .garden-smoke-b{animation-delay:-2.5s!important}
+ html[data-motion="gentle"] .garden-world .garden-smoke-c{animation-delay:-5s!important}
+ html[data-motion="gentle"] .garden-landing .garden-ambient::before{
+  content:"";position:absolute;inset:-22% -10%;pointer-events:none;
+  background:radial-gradient(ellipse at 60% 35%,rgba(255,247,203,.13),transparent 47%);
+  animation:living-sunwash 18s ease-in-out infinite alternate;
+ }
+ html[data-theme="dark"][data-motion="gentle"] .garden-landing .garden-ambient::before{
+  background:radial-gradient(ellipse at 60% 35%,rgba(159,202,140,.07),transparent 47%);
+ }
+ /* The small study symbols breathe gently in the peripheral home cards.
+    Stronger specificity deliberately overrules the old blanket animation ban. */
+ html[data-motion="gentle"] #main .garden-book-icon span{
+  animation:living-book-icon 6.6s ease-in-out infinite!important;
+ }
+ html[data-motion="gentle"] #main .garden-story-mark{
+  display:inline-block;
+  animation:living-story-mark 10s ease-in-out infinite!important;
+ }
+ html[data-motion="gentle"]:not(.psychdesk-ambient-off) .desktop-rail .rail-motif{
+  animation:living-rail 10s ease-in-out infinite!important;
+  transform-origin:50% 50%;
+ }
+ /* A brief hover lift is a reaction, not a new automatic content entrance. */
+ @media (hover:hover) and (pointer:fine) {
+  html[data-motion="gentle"] #main .garden-home .garden-notebook,
+  html[data-motion="gentle"] #main .garden-home .garden-seed{
+   translate:0 0;
+   transition:translate 280ms cubic-bezier(.2,.72,.24,1),border-color 220ms ease,box-shadow 280ms ease!important;
+  }
+  html[data-motion="gentle"] #main .garden-home .garden-notebook:hover,
+  html[data-motion="gentle"] #main .garden-home .garden-seed:hover{
+   translate:0 -3px;
+  }
+  html[data-motion="gentle"] .rail-link:hover .rail-symbol,
+  html[data-motion="gentle"] .nav-item:hover .nav-ico{
+   scale:1.1;
+   transition:scale 210ms cubic-bezier(.2,.72,.24,1)!important;
+  }
+ }
+}
+
+/* Pause every decorative effect together on the existing lifecycle, when
+   out of view, or when the user chooses interaction-only/off motion. */
+html.psychdesk-ambient-off .garden-landing .garden-ambient::before,
+.garden-landing.garden-motion-paused .garden-ambient::before,
+html.garden-document-hidden .garden-landing .garden-ambient::before,
+html.psychdesk-ambient-off #main .garden-book-icon span,
+html.psychdesk-ambient-off #main .garden-story-mark,
+html.psychdesk-ambient-off .desktop-rail .rail-motif,
+.garden-motion-paused .garden-art .garden-smoke,
+.garden-motion-paused .garden-art .garden-mote{
+ animation-play-state:paused!important;
+}
+@keyframes living-canopy{
+ 0%,100%{transform:rotate(-3.2deg) translateX(-1px)}
+ 32%{transform:rotate(4.5deg) translateX(2px)}
+ 58%{transform:rotate(-1.8deg)}
+ 80%{transform:rotate(3deg)}
+}
+@keyframes living-pine{
+ 0%,100%{transform:rotate(-2deg)}
+ 30%{transform:rotate(3.4deg)}
+ 60%{transform:rotate(-1.7deg)}
+ 78%{transform:rotate(2.5deg)}
+}
+@keyframes living-shrub{
+ 0%,100%{transform:rotate(-3deg)}
+ 38%{transform:rotate(4.8deg)}
+ 70%{transform:rotate(-2deg)}
+}
+@keyframes living-flower{
+ 0%,100%{transform:rotate(-7deg)}
+ 38%{transform:rotate(8deg)}
+ 75%{transform:rotate(-3deg)}
+}
+@keyframes living-grass{
+ 0%,100%{transform:rotate(-7deg)}
+ 45%{transform:rotate(9deg)}
+ 75%{transform:rotate(-2deg)}
+}
+@keyframes living-clouds{
+ 0%{transform:translate(-12px,1px)}
+ 50%{transform:translate(10px,-3px)}
+ 100%{transform:translate(25px,0)}
+}
+@keyframes living-butterfly{
+ 0%,100%{transform:translate(-4px,1px) rotate(-8deg)}
+ 25%{transform:translate(-18px,-17px) rotate(9deg)}
+ 55%{transform:translate(12px,-24px) rotate(-12deg)}
+ 80%{transform:translate(5px,-6px) rotate(7deg)}
+}
+@keyframes living-second-butterfly{
+ 0%,100%{transform:translate(0,0) rotate(5deg)}
+ 25%{transform:translate(24px,-20px) rotate(-9deg)}
+ 55%{transform:translate(43px,-4px) rotate(8deg)}
+ 78%{transform:translate(16px,13px) rotate(-6deg)}
+}
+@keyframes living-pollen{
+ 0%,100%{transform:translate(0,8px) scale(.7);opacity:.15}
+ 34%{transform:translate(9px,-5px) scale(1);opacity:.85}
+ 65%{transform:translate(-8px,-14px) scale(.82);opacity:.45}
+}
+@keyframes living-smoke{
+ 0%{transform:translate(0,8px) scale(.7);opacity:0}
+ 25%{opacity:.42}
+ 70%{opacity:.22}
+ 100%{transform:translate(12px,-31px) scale(1.8);opacity:0}
+}
+@keyframes living-sunwash{
+ 0%{transform:translateX(-8%) scale(.98);opacity:.4}
+ 100%{transform:translateX(13%) scale(1.1);opacity:1}
+}
+@keyframes living-book-icon{
+ 0%,100%{translate:0 0;opacity:.8}
+ 45%{translate:0 -3px;opacity:1}
+}
+@keyframes living-story-mark{
+ 0%,100%{transform:rotate(-6deg) scale(.96);opacity:.7}
+ 50%{transform:rotate(10deg) scale(1.06);opacity:1}
+}
+@keyframes living-rail{
+ 0%,100%{rotate:-7deg;opacity:.66}
+ 50%{rotate:8deg;opacity:.94}
+}
+@media (prefers-reduced-motion:reduce){
+ .garden-sky-motes,.garden-cottage-smoke{display:none!important}
+}
