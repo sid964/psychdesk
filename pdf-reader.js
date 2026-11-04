@@ -10,6 +10,10 @@ let renderSequence=0,searchSequence=0,activeRender=null;
 function releaseDocument(){activeRender?.cancel?.();activeRender=null;const old=pdf;pdf=null;old?.destroy?.()?.catch?.(()=>{});}
 const allHighlights=()=>Array.isArray(getData().pdfHighlights)?getData().pdfHighlights:[];
 const materialKey=()=>material?.id||(localFile?'local:'+localFile.name+':'+localFile.size+':'+(localFile.lastModified||0):'unselected');
+const bookmarkKey=()=> 'psychdesk-reader-page:'+core.getStorageKey()+':'+materialKey();
+function readPageBookmark(total){try{const n=Number(localStorage.getItem(bookmarkKey()));return Number.isInteger(n)&&n>=1&&n<=total?n:1}catch{return 1}}
+function savePageBookmark(){if(!pdf||materialKey()==='unselected')return;try{localStorage.setItem(bookmarkKey(),String(page))}catch{}}
+
 const owned=()=>allHighlights().filter(x=>x.materialId===materialKey());
 const allowLink=u=>{try{const a=new URL(u);return /^https?:$/.test(a.protocol)?a.href:''}catch{return''}};
 async function pdfLib(){
@@ -77,6 +81,7 @@ async function processBlob(blob,kind,version){
  const loaded=await task.promise;
  if(version!==generation){await loaded.destroy();return;}
  pdf=loaded;
+ page=readPageBookmark(loaded.numPages);selected={text:'',rects:[],page};
  fileText='';loading=false;core.render();await renderPage();
 }
 async function openLocal(file){
@@ -188,7 +193,7 @@ function textToNote(text){
 async function navigate(pageNumber){
  if(!pdf)return;
  const n=Math.min(Math.max(1,Math.floor(Number(pageNumber)||1)),pdf.numPages);if(n===page)return;
- page=n;selected={text:'',rects:[],page};core.render();await renderPage();
+ page=n;selected={text:'',rects:[],page};savePageBookmark();core.render();await renderPage();
 }
 async function zoom(step){
  if(!pdf)return;
