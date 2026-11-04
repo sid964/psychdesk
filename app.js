@@ -269,6 +269,7 @@ function renderFocus(extrasMarkup=''){
   </div>
   <p class="focus-room-timer-help">Finish &amp; log records completed study time. Pausing or resetting does not create a session.</p>
  </section>
+ ${window.PsychDeskPhase4?.render?.()||''}
  ${topic?`<section class="focus-room-topic"><div><span class="focus-room-field-label">CURRENT TOPIC</span><h2>${esc(topic.title)}</h2></div><button type="button" data-tab="notes">Open notes ↗</button></section>`:''}
  ${extrasMarkup?`<details class="focus-room-optional"><summary>Session options <span>Intention &amp; ambient audio</span></summary>${extrasMarkup}</details>`:''}
  <section class="focus-room-summary" aria-label="Today's logged study sessions">
