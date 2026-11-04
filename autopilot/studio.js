@@ -93,7 +93,7 @@ function makeDiscoveryCard(id){
 }
 function garden(){
  const saved=safeSaved(),items=saved.map(x=>discoveries.find(c=>c.id===x.id)).filter(Boolean);
- core.openModal('Your Memory Garden','<div class="studio-garden"><p>Your own peaceful collection. Each idea you save becomes another flower in the garden.</p>'+(items.length?items.map((c,i)=>'<button class="studio-garden-item" data-auto="related" data-id="'+h(c.id)+'"><span>✿</span><strong>'+h(c.term)+'</strong><small>'+h(c.category)+'</small></button>').join(''):'<p>Save a daily discovery to start growing your collection.</p>')+'</div>');
+ core.openModal('Your Memory Garden','<div class="studio-garden garden-collection"><p>A small sanctuary for things you are curious about. Every saved idea adds a flower; nothing disappears when you take a break.</p><div class="garden-modal-illustration">'+(window.PsychDeskGarden?.scene(saved,discoveries)||'')+'</div><h3>The ideas you kept</h3>'+(items.length?items.map((c,i)=>'<button class="studio-garden-item" data-auto="related" data-id="'+h(c.id)+'"><span>✿</span><strong>'+h(c.term)+'</strong><small>'+h(c.category)+'</small></button>').join(''):'<p>Save a daily discovery to start growing your collection.</p>')+'</div>');
 }
 function getDb(){
  if(!('indexedDB' in window))return Promise.reject(Error('IndexedDB unavailable'));
