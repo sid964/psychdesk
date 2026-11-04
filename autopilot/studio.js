@@ -21,27 +21,57 @@ const safeLink=s=>{try{const u=new URL(s);return u.protocol==='https:'?u.href:'#
 const safeSaved=()=>read('saved',[]).filter(x=>x&&typeof x.id==='string').slice(0,300);
 const discovery=()=>{if(!discoveries.length)return null;const start=new Date(2026,0,1).getTime(),index=Math.floor((new Date(date()+'T12:00:00').getTime()-start)/86400000);return discoveries[((index%discoveries.length)+discoveries.length)%discoveries.length]};
 const info=()=>core.getData();
-function welcome(){const hour=new Date().getHours();return hour<11?'A gentle morning to explore.':hour<17?'A little curiosity for your afternoon.':hour<21?'Find a moment for a new idea.':'A quiet moment for your mind.'}
+
+function welcome(){
+ const hour=new Date().getHours();
+ return hour<11?'A fresh morning for a new thought.':hour<17?'An open afternoon for curious minds.':hour<21?'A little space to unwind and wonder.':'One quiet idea before the day ends.';
+}
 function discoveryMarkup(){
  const c=discovery();
- if(!c)return '<p class="studio-loading">Preparing your psychology discovery…</p>';
+ if(!c)return '<div class="studio-discovery-loading"><span class="studio-kicker">A LITTLE PSYCHOLOGY</span><h2>A new idea is on its way.</h2><p>Your curiosity has a place here.</p></div>';
  const saved=safeSaved().some(x=>x.id===c.id);
- return '<span class="studio-kicker">TODAY’S LITTLE DISCOVERY · '+h(c.category)+'</span><h2>'+h(c.title)+'</h2><p class="studio-concept">'+h(c.term)+'</p><p>'+h(c.definition)+'</p><div class="studio-actions"><button type="button" class="primary" data-auto="explore">Explore the idea</button><button type="button" class="secondary" data-auto="save">'+(saved?'Saved ✓':'Save discovery')+'</button></div>';
+ return '<div class="studio-feature-top"><span class="studio-kicker">A LITTLE PSYCHOLOGY <span aria-hidden="true">/</span> '+h(c.category)+'</span><span class="studio-feature-mark" aria-hidden="true">✳</span></div>'+
+ '<div class="studio-feature-body"><p class="studio-feature-label">TODAY’S QUESTION</p><h2>'+h(c.title)+'</h2><p class="studio-concept">'+h(c.term)+'</p><p class="studio-feature-definition">'+h(c.definition)+'</p>'+
+ '<div class="studio-feature-example"><span>IN EVERYDAY LIFE</span><p>'+h(c.example)+'</p></div></div>'+
+ '<div class="studio-feature-footer"><span class="studio-feature-credit">Sourced from '+h(c.source?.publisher||'OpenStax')+'</span>'+
+ '<div class="studio-actions"><button type="button" class="primary" data-auto="explore">Explore this idea <span aria-hidden="true">↗</span></button><button type="button" class="secondary" data-auto="save">'+(saved?'Saved ✓':'Save for later')+'</button></div></div>';
 }
 function postcard(){
  const old=safeSaved().find(x=>x.savedAt&&Date.now()-Date.parse(x.savedAt)>2*86400000);
  const c=old&&discoveries.find(v=>v.id===old.id);
- return c?'<section class="studio-postcard"><span class="studio-kicker">A MEMORY POSTCARD</span><h3>Remember '+h(c.term)+'?</h3><p>Can you describe the idea before opening it again?</p><button data-auto="postcard" data-id="'+h(c.id)+'" class="link-btn">Look back at this idea →</button></section>':'';
+ return c?'<section class="studio-postcard"><div><span class="studio-kicker">AN IDEA FROM YOUR COLLECTION</span><h3>Remember '+h(c.term)+'?</h3><p>See what comes to mind before looking it up.</p></div><button data-auto="postcard" data-id="'+h(c.id)+'" class="secondary">Revisit idea ↗</button></section>':'';
 }
 function renderHome(){
  const d=info(),recent=(d.notes||[]).slice().sort((a,b)=>String(b.updatedAt||b.createdAt||'').localeCompare(String(a.updatedAt||a.createdAt||'')))[0];
  const saved=safeSaved().length;
- const continuation=recent?'<div class="studio-continue-card"><span class="studio-kicker">YOUR OPEN NOTEBOOK</span><h3>'+h(recent.title||'Untitled note')+'</h3><p>'+h((recent.body||'').slice(0,135))+'</p><button class="secondary" data-cloud="editNote" data-id="'+h(recent.id)+'">Continue writing →</button></div>':'<div class="studio-continue-card"><span class="studio-kicker">YOUR NOTEBOOK IS READY</span><h3>Start wherever you are.</h3><p>One thought, one definition, or something you want to remember.</p><button type="button" class="secondary" data-auto="capture">Write a thought →</button></div>';
- return '<div class="studio-home"><section class="studio-welcome"><div class="studio-kicker">YOUR PERSONAL PSYCHOLOGY STUDIO</div><h1>psychdesk<span class="studio-period">.</span></h1><p class="studio-lead">Your little corner of psychology.</p><p class="studio-greeting">'+h(welcome())+'</p></section><section class="studio-discovery" id="studio-discovery">'+discoveryMarkup()+'</section><section class="studio-home-secondary">'+continuation+'<div class="studio-notebook-shortcuts"><span class="studio-kicker">GO WHERE YOUR CURIOSITY TAKES YOU</span><button class="studio-shortcut" data-tab="notes"><span>✎</span> Notebooks <span>↗</span></button><button class="studio-shortcut" data-tab="materials"><span>▤</span> Your library <span>↗</span></button><button class="studio-shortcut" data-tab="dictionary"><span>ψ</span> Explore concepts <span>↗</span></button><div class="studio-quiet-actions"><button type="button" data-auto="quiet">Enter Quiet Room</button><button type="button" data-auto="inbox">Prepared notes</button><button type="button" data-auto="import">Import text / PDF</button></div></div></section>'+postcard()+'<section class="studio-saved-nook"><button data-auto="garden"><span>✿</span> Your Memory Garden <small>'+saved+' saved discoveries</small></button><button data-auto="letter">This week’s learning letter →</button></section></div>';
+ const day=new Date().toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'});
+ const subject=recent?(d.subjects||[]).find(s=>s.id===recent.subjectId):null;
+ const excerpt=recent?String(recent.body||'').replace(/\s+/g,' ').trim().slice(0,115):'';
+ const continuation=recent?
+ '<section class="studio-resume"><div class="studio-panel-top"><span class="studio-kicker">BACK TO YOUR NOTEBOOK</span><span class="studio-mini-symbol" aria-hidden="true">↗</span></div><h3>'+h(recent.title||'Untitled page')+'</h3>'+
+ '<p class="studio-resume-excerpt">'+h(excerpt||'Your saved page is here, ready whenever you are.')+'</p>'+
+ '<div class="studio-resume-foot"><span>'+h(subject?.name||'Your notes')+'</span><button type="button" class="studio-text-action" data-cloud="editNote" data-id="'+h(recent.id)+'">Continue writing <span aria-hidden="true">→</span></button></div></section>':
+ '<section class="studio-resume"><div class="studio-panel-top"><span class="studio-kicker">YOUR NOTEBOOK</span><span class="studio-mini-symbol" aria-hidden="true">✎</span></div><h3>A thought is a good start.</h3><p class="studio-resume-excerpt">No folders or titles required. Just write something down.</p><div class="studio-resume-foot"><span>Make it yours</span><button type="button" class="studio-text-action" data-auto="capture">Start writing <span aria-hidden="true">→</span></button></div></section>';
+ return '<div class="studio-home studio-home-v2">'+
+ '<header class="studio-intro"><div class="studio-intro-copy"><span class="studio-kicker">YOUR PERSONAL PSYCHOLOGY STUDIO</span><h1>Make room for <em>curiosity.</em></h1><p>'+h(welcome())+'</p></div><div class="studio-intro-end"><span class="studio-day">'+h(day)+'</span><button type="button" data-auto="capture" class="studio-quick-capture"><span aria-hidden="true">＋</span> Capture a thought</button></div></header>'+
+ '<div class="studio-content-grid"><section class="studio-discovery" id="studio-discovery" aria-label="Daily psychology discovery">'+discoveryMarkup()+'</section>'+
+ '<aside class="studio-utility-column" aria-label="Continue and explore">'+continuation+
+ '<section class="studio-tool-panel"><div class="studio-panel-top"><span class="studio-kicker">FOLLOW YOUR CURIOSITY</span><span class="studio-mini-symbol" aria-hidden="true">✳</span></div><h3>What feels interesting?</h3>'+
+ '<div class="studio-quick-grid">'+
+ '<button type="button" data-tab="notes"><span class="studio-tool-glyph" aria-hidden="true">✎</span><span>Write notes</span><span class="studio-tool-arrow" aria-hidden="true">↗</span></button>'+
+ '<button type="button" data-tab="ink"><span class="studio-tool-glyph" aria-hidden="true">⌁</span><span>Use your pen</span><span class="studio-tool-arrow" aria-hidden="true">↗</span></button>'+
+ '<button type="button" data-tab="materials"><span class="studio-tool-glyph" aria-hidden="true">▤</span><span>Your library</span><span class="studio-tool-arrow" aria-hidden="true">↗</span></button>'+
+ '<button type="button" data-tab="dictionary"><span class="studio-tool-glyph" aria-hidden="true">ψ</span><span>Find a concept</span><span class="studio-tool-arrow" aria-hidden="true">↗</span></button>'+
+ '</div><details class="studio-quiet-tools"><summary>More ways to study <span aria-hidden="true">⌄</span></summary><div><button type="button" data-auto="quiet">Quiet Room</button><button type="button" data-auto="inbox">Prepared material</button><button type="button" data-auto="import">Import a PDF or text</button></div></details></section></aside></div>'+
+ postcard()+
+ '<section class="studio-saved-nook"><div class="studio-collection-copy"><span class="studio-kicker">A COLLECTION THAT GROWS WITH YOU</span><h3>Keep the ideas that stay with you.</h3><p>'+saved+' saved '+(saved===1?'discovery':'discoveries')+'. No streaks, no pressure.</p></div><div class="studio-collection-actions"><button type="button" data-auto="garden">Open Memory Garden <span aria-hidden="true">↗</span></button><button type="button" data-auto="letter">Your weekly letter <span aria-hidden="true">↗</span></button></div></section>'+
+ '<footer class="studio-home-signoff">Come back whenever something makes you wonder.</footer></div>';
 }
 function refreshHome(){
  const node=$('#studio-discovery');if(node)node.innerHTML=discoveryMarkup();
- const home=$('.studio-home');if(home){const prior=home.querySelector('.studio-postcard');prior?.remove();const fragment=postcard();if(fragment){const r=home.querySelector('.studio-saved-nook');r?.insertAdjacentHTML('beforebegin',fragment);}}
+ const home=$('.studio-home');
+ if(home){home.querySelector('.studio-postcard')?.remove();const fragment=postcard();if(fragment)home.querySelector('.studio-saved-nook')?.insertAdjacentHTML('beforebegin',fragment);
+ const saved=safeSaved().length;const line=home.querySelector('.studio-collection-copy p');if(line)line.textContent=saved+' saved '+(saved===1?'discovery':'discoveries')+'. No streaks, no pressure.';}
 }
 fetch('./automation/data/curated-concepts.json?v=1',{cache:'force-cache'}).then(r=>{if(!r.ok)throw Error('No curated discovery file');return r.json()}).then(j=>{discoveries=(j.concepts||[]).filter(x=>x.id&&x.title&&x.source?.url&&x.verification==='editor-reviewed');refreshHome()}).catch(()=>{const t=$('#studio-discovery');if(t)t.innerHTML='<span class="studio-kicker">A LITTLE PSYCHOLOGY</span><h2>Discoveries are temporarily unavailable.</h2><p>Your notes and other study tools still work.</p>'});
 function explore(id){
