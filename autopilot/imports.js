@@ -2,13 +2,14 @@
 (()=>{'use strict';
 const core=window.PsychDeskCore;if(!core)return;
 const h=core.esc, $=s=>document.querySelector(s);
-let active=0,draft=null;
+let active=0,draft=null,request=0;
 const VALID=/\.(?:txt|md|markdown|pdf)$/i;
 function open(){
- active++;draft=null;const ticket=active;
+ active++;request++;draft=null;const ticket=active;
  core.openModal('Prepare a document','<div class="studio-outline-editor"><p>Choose a text, Markdown, or text-based PDF. Extract a short chapter locally and preview a study outline and draft flashcards before saving anything.</p><label for="studioImportFile" class="studio-file-label">Choose a file</label><input id="studioImportFile" type="file" accept=".txt,.md,.markdown,.pdf,application/pdf,text/plain,text/markdown"><div class="phase2-page-range"><label>PDF from page <input id="studioImportFrom" type="number" min="1" max="9999" value="1"></label><label>Through page <input id="studioImportTo" type="number" min="1" max="9999" value="8"></label></div><p id="studioImportStatus" role="status">Up to 12 pages per selection; text/Markdown files use the beginning of the document.</p><div id="studioImportPreview" hidden><label for="studioImportText">Extracted text (editable)</label><textarea id="studioImportText" rows="14" maxlength="100000" spellcheck="false"></textarea><div class="studio-actions"><button type="button" class="primary" id="studioPrepareImport">Prepare chapter</button><button type="button" class="secondary" id="studioSaveImport">Save text as note</button><button type="button" class="secondary" id="studioCopyImport">Copy text</button></div><p class="note">The original file remains where you selected it. For storing the original PDF, use the existing Subject Library and Drive tools.</p></div></div>');
  const file=$('#studioImportFile');
  if(file)file.addEventListener('change',()=>loadFile(file.files?.[0],ticket));
+ for(const id of ['#studioImportFrom','#studioImportTo'])$(id)?.addEventListener('change',()=>{if(file?.files?.[0])void loadFile(file.files[0],ticket);});
  $('#studioPrepareImport')?.addEventListener('click',()=>prepareNow(ticket));
  $('#studioSaveImport')?.addEventListener('click',()=>save(ticket));
  $('#studioCopyImport')?.addEventListener('click',()=>{const text=$('#studioImportText')?.value||'';if(text&&navigator.clipboard?.writeText)navigator.clipboard.writeText(text).then(()=>core.toast('Extracted text copied')).catch(()=>core.toast('Copy unavailable'));});
@@ -40,7 +41,7 @@ async function extractPDF(file){
  }finally{await pdf.destroy().catch(()=>{});}
 }
 async function loadFile(file,ticket){
- const status=$('#studioImportStatus'),owner=core.getStorageKey();
+ const status=$('#studioImportStatus'),owner=core.getStorageKey(),requestId=++request;
  const preview=$('#studioImportPreview');
  if(!status||!file)return;
  preview.hidden=true;draft=null;
@@ -50,14 +51,14 @@ async function loadFile(file,ticket){
   let result;
   if(/\.pdf$/i.test(file.name))result=await extractPDF(file);
   else {const full=await file.text();result={body:full.slice(0,42000),pagesRead:null,totalPages:null,pageStart:0,pageEnd:0,truncated:full.length>42000};}
-  if(ticket!==active||core.getStorageKey()!==owner||!$('#studioImportText'))return;
+  if(ticket!==active||requestId!==request||core.getStorageKey()!==owner||!$('#studioImportText'))return;
   if(!result.body.trim())throw Error('The document contains no readable text.');
   draft={owner,fileName:file.name,kind:/\.pdf$/i.test(file.name)?'pdf':'text',pages:result.pagesRead,pageStart:result.pageStart,pageEnd:result.pageEnd,sourceBytes:file.size,truncated:result.truncated};
   $('#studioImportText').value=result.body;
   preview.hidden=false;
   status.textContent='Extracted '+result.body.length.toLocaleString()+' characters'+(result.pagesRead?' from pages '+result.pageStart+'–'+result.pageEnd+' of '+result.totalPages:'')+(result.truncated?' · limited to 12 pages or 42,000 characters':'')+'. Review before preparing or saving.';
  }catch(error){
-  if(ticket!==active||!$('#studioImportStatus'))return;
+  if(ticket!==active||requestId!==request||!$('#studioImportStatus'))return;
   status.textContent='Could not extract text: '+String(error?.message||error).slice(0,250)+'. Your file was not modified or uploaded.';
  }
 }
