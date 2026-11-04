@@ -37,10 +37,26 @@ function analyze(source){
   ['counsel',['therapy','counseling','counselling','cbt','psychotherapy']],
   ['abnormal',['disorder','psychopathology','symptoms','diagnosis']]
  ];
- const corpus=word((source.title||'')+' '+text.slice(0,30000)), scored=tags.map(([id,keys])=>({id,hits:keys.reduce((n,k)=>n+(corpus.includes(word(k))?1:0),0)})).sort((a,b)=>b.hits-a.hits);
+ const corpus=word((source.title||'')+' '+text.slice(0,30000));
+ const title=word(source.title||'');
+ const contains=term=>(' '+corpus+' ').includes(' '+word(term)+' ');
+ const categoryScores=new Map(tags.map(([id,keys])=>[id,{hits:keys.reduce((n,k)=>n+(contains(k)?1:0),0),matched:keys.filter(contains)}]));
+ const subjectList=Array.isArray(source.subjects)?source.subjects.filter(s=>s&&typeof s.id==='string'&&typeof s.name==='string').slice(0,80):[];
+ const stop=new Set(['psychology','psychological','study','studies','and','the','of','for','introduction','course','semester','unit','subject','topics']);
+ const scored=(subjectList.length?subjectList.map(s=>{
+  const normalized=word(s.name);
+  const words=[...new Set(normalized.split(' ').filter(t=>t.length>=4&&!stop.has(t)))];
+  const keywordMatches=words.filter(contains);
+  const titleMatches=words.filter(w=>(' '+title+' ').includes(' '+w+' '));
+  const legacy=categoryScores.get(s.id)||{hits:0,matched:[]};
+  const matched=[...new Set([...legacy.matched,...keywordMatches])];
+  const hits=legacy.hits+keywordMatches.length+titleMatches.length;
+  return {id:s.id,hits,matched};
+ }):tags.map(([id])=>({id,hits:categoryScores.get(id)?.hits||0,matched:categoryScores.get(id)?.matched||[]})))
+ .sort((a,b)=>b.hits-a.hits||a.id.localeCompare(b.id));
  const guess=scored[0]?.hits>=2&&scored[0].hits>scored[1]?.hits?scored[0].id:'';
- const confidence=guess?Math.min(.96,.6+scored[0].hits*.12):0;
+ const confidence=guess?Math.min(.96,.58+scored[0].hits*.11):0;
  const outline=headings.slice(0,40);
- return {sourceId:source.id,revision:source.revision,terms:terms.slice(0,60),cards:cards.slice(0,25),outline,questions:questions.slice(0,25),years:dates.slice(0,30),researchers:people.slice(0,30),dois:dois.slice(0,20),suggestion:{subjectId:guess,confidence},type:/\blecture|transcript\b/i.test(source.title||'')?'lecture':outline.some(s=>/^chapter\b/i.test(s))?'chapter':'note',excerpt:clean(text).slice(0,320)};
+ return {sourceId:source.id,revision:source.revision,terms:terms.slice(0,60),cards:cards.slice(0,25),outline,questions:questions.slice(0,25),years:dates.slice(0,30),researchers:people.slice(0,30),dois:dois.slice(0,20),suggestion:{subjectId:guess,confidence,matched:guess?scored[0].matched.slice(0,8):[]},type:/\blecture|transcript\b/i.test(source.title||'')?'lecture':outline.some(s=>/^chapter\b/i.test(s))?'chapter':'note',excerpt:clean(text).slice(0,320)};
 }
 self.onmessage=e=>{const {jobId,source}=e.data||{};try{self.postMessage({jobId,result:analyze(source)})}catch(error){self.postMessage({jobId,error:String(error?.message||error)})}};

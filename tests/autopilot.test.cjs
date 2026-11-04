@@ -4,11 +4,11 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const vm=require('node:vm');
 const source=fs.readFileSync('autopilot/worker.js','utf8');
-function analyze(input){
+function analyze(input,subjects=[]){
  let output;
  const self={postMessage:x=>{output=x;}};
  vm.runInNewContext(source,{self});
- self.onmessage({data:{jobId:'test',source:{id:'n1',revision:'r1',title:'Lecture 4',text:input}}});
+ self.onmessage({data:{jobId:'test',source:{id:'n1',revision:'r1',title:'Lecture 4',text:input,subjects}}});
  assert.equal(output.jobId,'test');
  assert.ok(!output.error,output.error);
  return output.result;
@@ -31,4 +31,20 @@ test('Finds references without networking or modifying the text source',()=>{
  assert.ok(r.years.includes('1927'));
  assert.ok(r.dois.includes('10.1000/xyz123'));
  assert.equal(r.cards[0].answer,'A capacity-limited system for holding and manipulating information.');
+});
+
+test('Matches real user-defined psychology course names and reports supporting keywords',()=>{
+ const r=analyze('Attention and memory are related to working memory. Cognition and attention are studied here.',[
+  {id:'custom-memory',name:'Cognition and Memory'},{id:'stats',name:'Statistics Methods'}
+ ]);
+ assert.equal(r.suggestion.subjectId,'custom-memory');
+ assert.ok(r.suggestion.confidence>=.65);
+ assert.ok(r.suggestion.matched.includes('memory'));
+});
+test('Does not suggest a subject if keywords are insufficient or tied',()=>{
+ const r=analyze('A brief hello to the class about an unrelated idea.',[
+  {id:'memory',name:'Memory Research'},{id:'development',name:'Child Development'}
+ ]);
+ assert.equal(r.suggestion.subjectId,'');
+ assert.equal(r.suggestion.confidence,0);
 });
