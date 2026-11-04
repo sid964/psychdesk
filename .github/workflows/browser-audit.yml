@@ -36,7 +36,7 @@ jobs:
           node-version: '24'
       - name: Install browser test runner
         run: |
-          npm install --no-save --no-package-lock playwright@1.56.1
+          npm install --no-save --no-package-lock playwright@1.56.1 axe-core@4.10.3
           npx playwright install --with-deps ${{ matrix.browser }}
       - name: Start app locally
         run: |
@@ -44,6 +44,18 @@ jobs:
           for n in $(seq 1 30); do curl -fsS http://127.0.0.1:8765/index.html >/dev/null && break; sleep 1; done
       - name: Audit local desktop and mobile experience
         run: node tests/browser-audit.cjs ${{ matrix.browser == 'firefox' && '--firefox' || '' }}
+      - name: Audit learning, flashcards, planner and keyboard navigation
+        if: matrix.browser == 'chromium'
+        run: node tests/review-workflow-browser.cjs
+      - name: Audit syllabus workflows and data persistence
+        if: matrix.browser == 'chromium'
+        run: node tests/preparation-browser.cjs
+      - name: Audit 20 study screens in both themes with axe
+        if: matrix.browser == 'chromium'
+        run: node tests/accessibility-browser.cjs
+      - name: Audit expanded study controls in both themes with axe
+        if: matrix.browser == 'chromium'
+        run: node tests/studio-expanded-browser.cjs
       - name: Observe live GitHub Pages without modifying user data
         if: always() && matrix.browser == 'chromium'
         continue-on-error: true
