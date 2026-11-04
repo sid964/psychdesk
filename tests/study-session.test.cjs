@@ -34,7 +34,7 @@ test('reader resume keeps page and opens the original library material',()=>{
  e.api.resume();
  assert.deepEqual(e.calls,[['reader','book-1',24]]);
  assert.match(e.api.homeButton(),/Continue reading/);
- assert.doesNotMatch([...e.map.values()].join(''),'Private content');
+ assert.doesNotMatch([...e.map.values()].join(''),/Private content/);
 });
 test('remembering a note does not require rewriting account study data',()=>{
  const e=setup();
