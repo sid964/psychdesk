@@ -53,7 +53,7 @@ async function main(){
    const errors=[];page.on('pageerror',e=>errors.push(String(e.message).slice(0,200)));
    try{
     await page.goto(origin,{waitUntil:'domcontentloaded',timeout:25000});
-    await page.waitForSelector('#main .hero',{timeout:16000});
+    await page.waitForSelector('#main .hero, #main .studio-home-v2',{timeout:16000});
     await page.waitForTimeout(500);
     const overview=await inspect(page);
     await page.screenshot({path:path.join(dest,'overview-'+vp.width+'.png'),fullPage:true,animations:'disabled'});
@@ -180,7 +180,7 @@ async function main(){
       if(!record.inkUndo||!record.inkRedo||!record.inkErase||!record.inkUndoErase)fatal=true;
       await page.screenshot({path:path.join(dest,'ink-drawing-360.png'),animations:'disabled'});
       await page.reload({waitUntil:'domcontentloaded'});
-      await page.waitForSelector('#main .hero');
+      await page.waitForSelector('#main .hero, #main .studio-home-v2');
       record.inkPersistedAcrossRefresh=await page.evaluate(()=>window.PsychDeskCore.getData().inkNotes?.[0]?.strokes?.length===1);
       // No on-device OCR or handwriting-to-text conversion should be loaded.
       await openTab('ink');
