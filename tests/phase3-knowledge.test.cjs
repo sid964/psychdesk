@@ -22,7 +22,7 @@ function setup(){
 }
 test('phase 3 suggests existing sources without changing any records',()=>{
  const e=setup(),before=JSON.stringify(e.data);
- assert.match(e.api.render(),/Just one next step/); // Overview defaults to a single calm action.
+ assert.match(e.api.render(),/Start a session in the Focus Room/); // Safe fallback when Phase 6 is absent.
  e.api.setSection('connect');
  const html=e.api.render();
  assert.match(html,/Connected notes/);
