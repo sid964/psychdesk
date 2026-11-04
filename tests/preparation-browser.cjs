@@ -7,7 +7,7 @@ fs.mkdirSync(artifacts,{recursive:true});
 (async()=>{const browser=await chromium.launch({...(process.env.CHROMIUM_PATH?{executablePath:process.env.CHROMIUM_PATH}:{}),headless:true});try{
 for(const width of [320,390,768,1440]){
  const context=await browser.newContext({viewport:{width,height:900}}),page=await context.newPage();
- await page.goto('http://127.0.0.1:8765/');await page.waitForSelector('#main .hero');
+ await page.goto('http://127.0.0.1:8765/');await page.waitForSelector('#main .hero, #main .studio-home-v2');
  await page.evaluate(()=>window.PsychDeskCore.setTab('university'));
  assert.equal(await page.locator('.prep-syllabus details').count(),5);
  assert(await page.evaluate(()=>document.querySelector('.prep-grid').getBoundingClientRect().top<document.querySelector('.prep-syllabus').getBoundingClientRect().top));
@@ -16,7 +16,7 @@ for(const width of [320,390,768,1440]){
  await page.locator('.prep-syllabus summary').first().click();
  await page.locator('[data-action="addSyllabusTopic"]').first().click();
  assert.equal(await page.evaluate(()=>window.PsychDeskCore.getData().tasks.filter(t=>t.id==='syllabus-PSY-MJ-101-0-0').length),1);
- await page.reload();await page.waitForSelector('#main .hero');
+ await page.reload();await page.waitForSelector('#main .hero, #main .studio-home-v2');
  await page.evaluate(()=>window.PsychDeskCore.setTab('university'));
  assert.equal(await page.locator('[data-id="syllabus-PSY-MJ-101-0-0"]').count(),3);
  await page.locator('.prep-syllabus summary').first().click();
