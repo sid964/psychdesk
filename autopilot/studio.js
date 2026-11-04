@@ -4,7 +4,7 @@
 const core=window.PsychDeskCore;if(!core)return;
 const h=core.esc, $=s=>document.querySelector(s);
 const SCHEMA='psychdesk-autopilot-v1';
-let discoveries=[],tab='today',working=false,scanTimer=0,scrollTimer=0,worker=null;
+let discoveries=[],tab='today',working=false,scanTimer=0,scrollTimer=0,worker=null,pendingOutline=null;
 const handlers=new Map();
 const on=(name,fn)=>{const list=handlers.get(name)||[];list.push(fn);handlers.set(name,list)};
 const emit=(name,payload={})=>{for(const fn of handlers.get(name)||[])try{fn(payload)}catch(e){console.warn('Autopilot event',name,e)}};
@@ -156,9 +156,34 @@ async function inbox(){
  catch(e){core.openModal('Prepared notes','<p>Automatic preparation needs IndexedDB, which is unavailable here. Your original notes remain safe.</p>');return;}
  const bodies=artifacts.map(a=>{
   const note=info().notes.find(n=>n.id===a.sourceId),r=a.result,possible=info().subjects.find(x=>x.id===r.suggestion.subjectId);
-  return '<details class="studio-result"><summary>'+h(note?.title||'Untitled note')+' <small>'+r.cards.length+' draft cards</small></summary>'+(possible?'<p>Suggested notebook: '+h(possible.name)+' · confidence '+Math.round(r.suggestion.confidence*100)+'% (keyword rule)</p>':'<p>Not classified with enough confidence — safely left in its original notebook.</p>')+(r.outline.length?'<h4>Extracted headings</h4><ol>'+r.outline.slice(0,12).map(x=>'<li>'+h(x)+'</li>').join('')+'</ol>':'')+(r.researchers.length?'<p>Names mentioned: '+h(r.researchers.join(', '))+'</p>':'')+(r.dois.length?'<p>DOIs found: '+h(r.dois.join(', '))+'</p>':'')+(r.cards.length?'<h4>Draft flashcards</h4>'+r.cards.slice(0,5).map(x=>'<p><strong>'+h(x.question)+'</strong> — '+h(x.answer)+'</p>').join('')+'<button type="button" class="primary" data-auto="approve" data-key="'+h(a.key)+'">Add reviewed cards to deck</button>':'<p>No explicit definition statements were found. Nothing was invented.</p>')+'</details>';
+  const mentioned=discoveries.filter(c=>new RegExp('(^|[^a-z])'+c.term.replace(/[.*+?^${}()|[\]\\]/g,'\\  return '<details class="studio-result"><summary>'+h(note?.title||'Untitled note')+' <small>'+r.cards.length+' draft cards</small></summary>'+')+'(?=$|[^a-z])','i').test((note?.title||'')+' '+(note?.body||''))).slice(0,5);
+  return '<details class="studio-result"><summary>'+h(note?.title||'Untitled note')+' <small>'+r.cards.length+' draft cards</small></summary>'+(possible?'<p>Suggested notebook: '+h(possible.name)+' · confidence '+Math.round(r.suggestion.confidence*100)+'% (keyword rule)</p>':'<p>Not classified with enough confidence — safely left in its original notebook.</p>')+(r.outline.length?'<h4>Extracted headings</h4><ol>'+r.outline.slice(0,12).map(x=>'<li>'+h(x)+'</li>').join('')+'</ol><button type="button" class="secondary" data-auto="outline" data-key="'+h(a.key)+'">Review editable outline</button>':'')+(mentioned.length?'<p>Known concepts mentioned: '+mentioned.map(c=>'<button class="link-btn" data-auto="related" data-id="'+h(c.id)+'">'+h(c.term)+'</button>').join(' ')+'</p>':'')+(r.researchers.length?'<p>Names mentioned: '+h(r.researchers.join(', '))+'</p>':'')+(r.dois.length?'<p>Research DOIs: '+r.dois.slice(0,5).map(doi=>'<button type="button" class="link-btn" data-auto="reference" data-doi="'+h(doi)+'">'+h(doi)+' · find reference ↗</button>').join(' ')+'</p>':'')+(r.cards.length?'<h4>Draft flashcards</h4>'+r.cards.slice(0,5).map(x=>'<p><strong>'+h(x.question)+'</strong> — '+h(x.answer)+'</p>').join('')+'<button type="button" class="primary" data-auto="approve" data-key="'+h(a.key)+'">Add reviewed cards to deck</button>':'<p>No explicit definition statements were found. Nothing was invented.</p>')+'</details>';
  }).join('');
  core.openModal('Prepared study material','<div class="studio-prepared"><p>Local, deterministic suggestions. Your original notes are unchanged. Flashcards are drafts until you approve them.</p>'+(artifacts.length?bodies:'<p>Nothing prepared yet. Save or edit a note containing a clear definition, such as “Operant conditioning: learning through consequences.”</p>')+'<button class="secondary" data-auto="rescan">Check notes again</button></div>');
+}
+async function draftOutline(keyValue){
+ const a=await operate('artifacts','get',keyValue).catch(()=>null);
+ if(!a||a.scope!==scope())return;
+ const note=info().notes.find(n=>n.id===a.sourceId);
+ if(!note||rev(note)!==a.revision){core.toast('Source changed; check notes again');return;}
+ const r=a.result;
+ const body=[...r.outline.map(x=>'# '+x),...r.terms.map(x=>'- Term: '+x),...r.questions.map(x=>'- Question: '+x)].join('\n').slice(0,12500);
+ if(!body){core.toast('No explicit outline items found');return;}
+ pendingOutline={sourceId:note.id,revision:a.revision,title:'Study outline · '+String(note.title||'Untitled').slice(0,100)};
+ core.openModal('Review extracted outline','<div class="studio-outline-editor"><p>Only headings, key terms and questions detected in your source. Edit freely; no new scientific explanations are supplied.</p><textarea id="studioOutlineText" rows="15" maxlength="15000">'+h(body)+'</textarea><div class="studio-actions"><button type="button" class="primary" data-auto="saveOutline">Save as a separate note</button></div></div>');
+}
+function saveOutline(){
+ const draft=pendingOutline;const text=String($('#studioOutlineText')?.value||'').trim();
+ if(!draft||!text)return;
+ const original=info().notes.find(n=>n.id===draft.sourceId);
+ if(!original||rev(original)!==draft.revision){core.toast('Source has changed; reopen the outline');return;}
+ if(info().notes.some(n=>n.derivedKind==='study-outline'&&n.sourceNoteId===draft.sourceId&&n.sourceRevision===draft.revision)){core.toast('This version already has an outline');return;}
+ const item={id:core.id(),title:draft.title,body:text,subjectId:original.subjectId||'',tags:'study-outline',createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),derivedKind:'study-outline',sourceNoteId:original.id,sourceRevision:draft.revision};
+ if(core.commitChange(d=>d.notes.unshift(item))){pendingOutline=null;core.closeModal();core.toast('Separate study outline saved');}
+}
+function sendReference(doi){
+ if(!/^10\.\d{4,9}\/[-._;()/:a-z0-9]+$/i.test(doi||''))return;
+ core.closeModal();core.setTab('research');const field=$('#refLookupInput');if(field){field.value=doi;field.focus();core.toast('DOI is ready. Select Find DOI to review metadata.');}
 }
 async function approve(keyValue){
  const artifact=await operate('artifacts','get',keyValue).catch(()=>null);
@@ -222,6 +247,9 @@ document.addEventListener('click',event=>{
  else if(a==='quiet')quiet(!document.body.classList.contains('psychdesk-quiet'));
  else if(a==='inbox')inbox();
  else if(a==='approve')approve(b.dataset.key);
+ else if(a==='outline')draftOutline(b.dataset.key);
+ else if(a==='saveOutline')saveOutline();
+ else if(a==='reference')sendReference(b.dataset.doi);
  else if(a==='letter')letter();
  else if(a==='compare')compare();
  else if(a==='rescan'){scanSoon();core.toast('Local check queued. Open prepared material shortly.');}
