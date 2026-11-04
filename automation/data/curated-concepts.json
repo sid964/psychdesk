@@ -1,0 +1,260 @@
+{
+  "licenseNotice": "Original concise explanations. Academic source pages: OpenStax Psychology 2e, CC BY 4.0.",
+  "concepts": [
+    {
+      "id": "classical-conditioning",
+      "title": "Why can a sound make you expect something?",
+      "category": "Learning",
+      "term": "Classical conditioning",
+      "definition": "Learning an association between stimuli can cause a previously neutral cue to elicit a learned response.",
+      "explanation": "A familiar sound may begin to predict an event after repeated pairings.",
+      "example": "Your phone's notification sound can create an expectation of a message.",
+      "source": {
+        "title": "OpenStax Psychology 2e — classical conditioning",
+        "url": "https://openstax.org/books/psychology-2e/pages/6-2-classical-conditioning",
+        "publisher": "OpenStax"
+      },
+      "related": [
+        "operant-conditioning",
+        "stimulus-generalization"
+      ],
+      "verification": "editor-reviewed"
+    },
+    {
+      "id": "stimulus-generalization",
+      "title": "Why do similar cues evoke similar responses?",
+      "category": "Learning",
+      "term": "Stimulus generalization",
+      "definition": "A conditioned response can occur to stimuli resembling the learned cue.",
+      "explanation": "Generalization allows a learned response to extend beyond one precise stimulus.",
+      "example": "A pet responds to several similar food-container sounds.",
+      "source": {
+        "title": "OpenStax Psychology 2e — classical conditioning",
+        "url": "https://openstax.org/books/psychology-2e/pages/6-2-classical-conditioning",
+        "publisher": "OpenStax"
+      },
+      "related": [
+        "classical-conditioning"
+      ],
+      "verification": "editor-reviewed"
+    },
+    {
+      "id": "extinction",
+      "title": "Can a learned association become weaker?",
+      "category": "Learning",
+      "term": "Extinction",
+      "definition": "A conditioned response weakens when a conditioned cue repeatedly occurs without the expected unconditioned stimulus.",
+      "explanation": "Extinction describes a change in responding rather than necessarily erasing the original learning.",
+      "example": "The sound that once predicted a snack stops prompting anticipation.",
+      "source": {
+        "title": "OpenStax Psychology 2e — classical conditioning",
+        "url": "https://openstax.org/books/psychology-2e/pages/6-2-classical-conditioning",
+        "publisher": "OpenStax"
+      },
+      "related": [
+        "classical-conditioning"
+      ],
+      "verification": "editor-reviewed"
+    },
+    {
+      "id": "spontaneous-recovery",
+      "title": "Why can an old response return after a pause?",
+      "category": "Learning",
+      "term": "Spontaneous recovery",
+      "definition": "An extinguished conditioned response may reappear after a rest period.",
+      "explanation": "Extinction does not always permanently remove the prior association.",
+      "example": "A cue that seemed unimportant yesterday briefly brings back an old expectation.",
+      "source": {
+        "title": "OpenStax Psychology 2e — classical conditioning",
+        "url": "https://openstax.org/books/psychology-2e/pages/6-2-classical-conditioning",
+        "publisher": "OpenStax"
+      },
+      "related": [
+        "extinction"
+      ],
+      "verification": "editor-reviewed"
+    },
+    {
+      "id": "operant-conditioning",
+      "title": "How do consequences change our habits?",
+      "category": "Learning",
+      "term": "Operant conditioning",
+      "definition": "Behaviour changes as a function of the consequences that follow it.",
+      "explanation": "Reinforcement makes a response more likely; punishment makes it less likely.",
+      "example": "Positive feedback following a helpful action may encourage doing it again.",
+      "source": {
+        "title": "OpenStax Psychology 2e — operant conditioning",
+        "url": "https://openstax.org/books/psychology-2e/pages/6-3-operant-conditioning",
+        "publisher": "OpenStax"
+      },
+      "related": [
+        "classical-conditioning",
+        "positive-reinforcement"
+      ],
+      "verification": "editor-reviewed"
+    },
+    {
+      "id": "positive-reinforcement",
+      "title": "What does positive reinforcement actually mean?",
+      "category": "Learning",
+      "term": "Positive reinforcement",
+      "definition": "Adding a consequence after a behaviour increases the likelihood of that behaviour.",
+      "explanation": "Positive means an event is added, not necessarily that it feels nice to everyone.",
+      "example": "Receiving appreciation after helping may make helping more likely.",
+      "source": {
+        "title": "OpenStax Psychology 2e — operant conditioning",
+        "url": "https://openstax.org/books/psychology-2e/pages/6-3-operant-conditioning",
+        "publisher": "OpenStax"
+      },
+      "related": [
+        "operant-conditioning"
+      ],
+      "verification": "editor-reviewed"
+    },
+    {
+      "id": "negative-reinforcement",
+      "title": "Is removing something always punishment?",
+      "category": "Learning",
+      "term": "Negative reinforcement",
+      "definition": "Removing an aversive condition after a behaviour increases that behaviour.",
+      "explanation": "Negative means removing a condition; reinforcement still increases responding.",
+      "example": "Fastening a seat belt stops an irritating reminder, encouraging fastening it.",
+      "source": {
+        "title": "OpenStax Psychology 2e — operant conditioning",
+        "url": "https://openstax.org/books/psychology-2e/pages/6-3-operant-conditioning",
+        "publisher": "OpenStax"
+      },
+      "related": [
+        "operant-conditioning"
+      ],
+      "verification": "editor-reviewed"
+    },
+    {
+      "id": "sensation-perception",
+      "title": "Does sensing something mean noticing it?",
+      "category": "Perception",
+      "term": "Sensation and perception",
+      "definition": "Sensation detects stimulus energy; perception organizes and interprets sensory information.",
+      "explanation": "The same sensory input can be interpreted using experience and context.",
+      "example": "Smelling cinnamon is sensation; recognizing a favourite baked food is perception.",
+      "source": {
+        "title": "OpenStax Psychology 2e — sensation versus perception",
+        "url": "https://openstax.org/books/psychology-2e/pages/5-1-sensation-versus-perception",
+        "publisher": "OpenStax"
+      },
+      "related": [
+        "sensory-adaptation",
+        "top-down-processing"
+      ],
+      "verification": "editor-reviewed"
+    },
+    {
+      "id": "sensory-adaptation",
+      "title": "Why does a constant smell fade from awareness?",
+      "category": "Perception",
+      "term": "Sensory adaptation",
+      "definition": "Sensitivity to an unchanging stimulus often decreases with continuing exposure.",
+      "explanation": "This helps explain why some persistent sensations become less noticeable.",
+      "example": "After a few minutes in a room, you may hardly notice its scent.",
+      "source": {
+        "title": "OpenStax Psychology 2e — sensation versus perception",
+        "url": "https://openstax.org/books/psychology-2e/pages/5-1-sensation-versus-perception",
+        "publisher": "OpenStax"
+      },
+      "related": [
+        "sensation-perception"
+      ],
+      "verification": "editor-reviewed"
+    },
+    {
+      "id": "top-down-processing",
+      "title": "How do expectations shape what you see?",
+      "category": "Perception",
+      "term": "Top-down processing",
+      "definition": "Perception can be influenced by prior knowledge, goals, and expectations.",
+      "explanation": "Interpreting sensory input draws on more than the raw features of the stimulus.",
+      "example": "You recognize unclear handwriting more easily when you know the sentence topic.",
+      "source": {
+        "title": "OpenStax Psychology 2e — sensation versus perception",
+        "url": "https://openstax.org/books/psychology-2e/pages/5-1-sensation-versus-perception",
+        "publisher": "OpenStax"
+      },
+      "related": [
+        "sensation-perception"
+      ],
+      "verification": "editor-reviewed"
+    },
+    {
+      "id": "encoding-storage-retrieval",
+      "title": "What happens when you remember a fact?",
+      "category": "Memory",
+      "term": "Encoding, storage, and retrieval",
+      "definition": "Remembering involves encoding information, retaining it, and retrieving it later.",
+      "explanation": "These are distinct functions of a memory system.",
+      "example": "Studying a definition, keeping it over time, and recalling it in an exam involve these stages.",
+      "source": {
+        "title": "OpenStax Psychology 2e — how memory functions",
+        "url": "https://openstax.org/books/psychology-2e/pages/8-1-how-memory-functions",
+        "publisher": "OpenStax"
+      },
+      "related": [
+        "episodic-semantic-memory"
+      ],
+      "verification": "editor-reviewed"
+    },
+    {
+      "id": "episodic-semantic-memory",
+      "title": "Remembering an event versus knowing a fact",
+      "category": "Memory",
+      "term": "Episodic and semantic memory",
+      "definition": "Episodic memory concerns personal events, while semantic memory concerns general knowledge and meanings.",
+      "explanation": "Both are forms of declarative memory but represent different kinds of content.",
+      "example": "Recalling your last birthday differs from knowing what a birthday is.",
+      "source": {
+        "title": "OpenStax Psychology 2e — how memory functions",
+        "url": "https://openstax.org/books/psychology-2e/pages/8-1-how-memory-functions",
+        "publisher": "OpenStax"
+      },
+      "related": [
+        "encoding-storage-retrieval"
+      ],
+      "verification": "editor-reviewed"
+    },
+    {
+      "id": "rehearsal",
+      "title": "Why does linking ideas support memory?",
+      "category": "Memory",
+      "term": "Elaborative rehearsal",
+      "definition": "Elaborative rehearsal connects new material with information already known.",
+      "explanation": "Meaningful links can improve retention compared with repeating an item without context.",
+      "example": "Relating a new research term to a familiar experiment may help you remember it.",
+      "source": {
+        "title": "OpenStax Psychology 2e — how memory functions",
+        "url": "https://openstax.org/books/psychology-2e/pages/8-1-how-memory-functions",
+        "publisher": "OpenStax"
+      },
+      "related": [
+        "encoding-storage-retrieval"
+      ],
+      "verification": "editor-reviewed"
+    },
+    {
+      "id": "emotion-components",
+      "title": "Is an emotion just a feeling?",
+      "category": "Emotion",
+      "term": "Components of emotion",
+      "definition": "Emotional experience involves subjective feelings together with expression, appraisal, and physiological changes.",
+      "explanation": "The components may influence each other, and their timing can vary.",
+      "example": "Feeling nervous before a presentation can involve thoughts, bodily changes, and facial expression.",
+      "source": {
+        "title": "OpenStax Psychology 2e — emotion",
+        "url": "https://openstax.org/books/psychology-2e/pages/10-4-emotion",
+        "publisher": "OpenStax"
+      },
+      "related": [
+        "encoding-storage-retrieval"
+      ],
+      "verification": "editor-reviewed"
+    }
+  ]
+}
