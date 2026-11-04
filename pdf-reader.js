@@ -6,7 +6,7 @@ const h=core.esc,$=s=>document.querySelector(s),getData=()=>core.getData();
 const CDN='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/';
 let libPromise=null,pdf=null,material=null,localFile=null,page=1,scale=1.1,generation=0,loading=false;
 let selected={text:'',rects:[],page:1},readerError='',fileText='',searchQuery='',searchHits=[],lastSearchIndex=-1;
-let renderSequence=0,searchSequence=0,activeRender=null;
+let renderSequence=0,searchSequence=0,activeRender=null,requestedPage=0,mobileMode='read';
 function releaseDocument(){activeRender?.cancel?.();activeRender=null;const old=pdf;pdf=null;old?.destroy?.()?.catch?.(()=>{});}
 const allHighlights=()=>Array.isArray(getData().pdfHighlights)?getData().pdfHighlights:[];
 const materialKey=()=>material?.id||(localFile?'local:'+localFile.name+':'+localFile.size+':'+(localFile.lastModified||0):'unselected');
@@ -24,6 +24,36 @@ async function pdfLib(){
  return libPromise;
 }
 function bookTitle(){return material?.title||localFile?.name||'Your book';}
+
+const readerDraftKey=()=> 'psychdesk-reader-note-draft:'+core.getStorageKey()+':'+materialKey();
+function readDraft(){try{return (sessionStorage.getItem(readerDraftKey())||'').slice(0,2500)}catch{return ''}}
+function linkedNotes(){
+ return (getData().notes||[]).filter(n=>n.sourceInfo?.kind==='reader-note'&&n.sourceInfo.materialId===materialKey())
+  .sort((a,b)=>String(b.updatedAt||b.createdAt||'').localeCompare(String(a.updatedAt||a.createdAt||''))).slice(0,12);
+}
+function linkedNotesHTML(){
+ const notes=linkedNotes();
+ return notes.length?notes.map(n=>'<button type="button" data-reader="editReaderNote" data-id="'+h(n.id)+'"><strong>'+h(n.title||'Untitled note')+'</strong><small>Page '+h(n.sourceInfo?.page||1)+' · '+h(String(n.body||'').replace(/\s+/g,' ').slice(0,100))+'</small></button>').join(''):
+ '<p>No notes for this book yet. Write one above while you read.</p>';
+}
+function refreshReaderNotes(){
+ const list=$('#readerLinkedNotes');if(list)list.innerHTML=linkedNotesHTML();
+ const count=$('#readerLinkedCount');if(count)count.textContent=String(linkedNotes().length);
+}
+function saveReaderNote(){
+ const editor=$('#readerNoteDraft'),body=String(editor?.value||'').trim();
+ if(!body){core.toast('Write a note before saving.');return;}
+ if(body.length>2500){core.toast('Please shorten the note to 2500 characters.');return;}
+ const now=new Date().toISOString();
+ const entry={id:core.id(),title:(body.split(/\r?\n/).find(Boolean)||'Reading note').slice(0,140),body,
+  subjectId:material?.subjectId||'',tags:'reading',createdAt:now,updatedAt:now,
+  sourceInfo:{kind:'reader-note',materialId:materialKey(),page,bookTitle:bookTitle().slice(0,140)}};
+ if(!core.commitChange(data=>data.notes.unshift(entry))){core.toast('Note could not be saved. Your draft is still here.');return;}
+ try{sessionStorage.removeItem(readerDraftKey())}catch{}
+ if(editor)editor.value='';
+ refreshReaderNotes();core.toast('Reading note saved to Notebook');
+}
+
 function shelf(){
  const items=(getData().materials||[]).filter(m=>m.kind==='pdf'||m.kind==='markdown');
  return '<section class="hero"><div class="eyebrow">READ · MARK · REMEMBER</div><h1>Book reader.</h1><p>Read your books in PsychDesk and turn selected text into lasting study notes.</p></section>'+ (readerError?'<div class="reader-error" role="alert">'+h(readerError)+' <button data-reader="driveSettings">Check Drive connection</button>'+(material?.url&&allowLink(material.url)?' <a href="'+h(allowLink(material.url))+'" target="_blank" rel="noopener noreferrer">Open in Google Drive ↗</a>':'')+'</div>':'')+
@@ -44,19 +74,21 @@ function readerHTML(){
  '<div class="reader-toolbar"><button data-reader="back">← Bookshelf</button><button data-reader="prev">←</button><span>Page <input type="number" id="readerPage" min="1" max="'+count+'" value="'+page+'"> / '+count+'</span><button data-reader="next">→</button>'+
  '<button data-reader="zoomOut">−</button><span>'+Math.round(scale*100)+'%</span><button data-reader="zoomIn">+</button>'+
  '<button data-reader="search">Find in book</button></div>'+
- '<div class="reader-layout"><section class="reader-page-area"><div id="readerRenderStatus" role="status">'+(loading?'Loading page…':readerError?h(readerError):'')+'</div>'+
+ '<div class="reader-mobile-switch" role="group" aria-label="Reader view"><button type="button" data-reader="viewRead" aria-pressed="'+(mobileMode==='read')+'">Reading</button><button type="button" data-reader="viewNotes" aria-pressed="'+(mobileMode==='notes')+'">My notes</button></div>'+ '<div class="reader-layout'+(mobileMode==='notes'?' reader-notes-mode':'')+'"><section class="reader-page-area"><div id="readerRenderStatus" role="status">'+(loading?'Loading page…':readerError?h(readerError):'')+'</div>'+
  (fileText?'<div id="readerMarkdown" class="reader-markdown" tabindex="0">'+h(fileText)+'</div>':'<div class="reader-canvas-scroll"><div id="readerPageSurface" class="reader-page-surface"><canvas id="readerCanvas"></canvas><div class="reader-text-layer" id="readerTextLayer"></div><div class="reader-mark-layer" id="readerMarkLayer"></div></div></div>')+
- '</section><aside class="reader-sidebar"><div class="study-panel-heading"><h2>Reading tools</h2><span id="readerSelectedCount">Select words on the page</span></div>'+
+ '</section><aside class="reader-sidebar"><section class="reader-notebook-panel" aria-label="Notes for this book"><h3>My notes <span class="reader-linked-count" id="readerLinkedCount">'+linkedNotes().length+'</span></h3><p>Keep your thoughts beside the text. Each saved note links to this book and page.</p><label for="readerNoteDraft" class="reader-linked-count">Add a reading note</label><textarea id="readerNoteDraft" maxlength="2500" placeholder="What does this passage mean to you?">'+h(readDraft())+'</textarea><div class="reader-note-save"><button type="button" data-reader="saveReaderNote">Save to Notebook</button></div><div class="reader-notes-list" id="readerLinkedNotes">'+linkedNotesHTML()+'</div></section><div class="study-panel-heading"><h2>Reading tools</h2><span id="readerSelectedCount">Select words on the page</span></div>'+
  '<div class="reader-selection" id="readerSelectedText">Highlight a definition, explanation or interesting passage.</div>'+
  '<div class="reader-side-actions"><button data-reader="mark" class="primary">Highlight selection</button><button data-reader="sticky">Make sticky</button><button data-reader="card">Create flashcards</button><button data-reader="note">Save as notebook note</button></div>'+
  '<div class="reader-highlight-list"><h3>Saved highlights <span id="readerHighlightCount">'+owned().length+'</span></h3><div id="readerHighlights">'+owned().slice().reverse().map(annotationCard).join('')+'</div></div>'+
  '<p class="study-legal">Highlights are stored with your study data; full PDF bytes stay in Drive or your selected local file. Scanned PDFs need selectable text/OCR for text extraction.</p></aside></div>';
 }
-async function openMaterial(id){
+async function openMaterial(id,resumePage=0){
  const target=(getData().materials||[]).find(m=>m.id===id);
  if(!target||!['pdf','markdown'].includes(target.kind)){core.toast('Choose a PDF or Markdown book.');return;}
  generation++;const version=generation;releaseDocument();
- material=target;localFile=null;pdf=null;fileText='';readerError='';selected={text:'',rects:[],page:1};page=1;scale=1.1;loading=true;
+ material=target;localFile=null;pdf=null;fileText='';readerError='';selected={text:'',rects:[],page:1};page=1;scale=1.1;loading=true;mobileMode='read';
+ requestedPage=Number.isInteger(resumePage)&&resumePage>0?resumePage:0;
+ window.PsychDeskSession?.readerOpened(target.id,requestedPage||1);
  core.setTab('reader');
  try{
   if(!target.driveId)throw Error('The library item has no Drive file ID. You can open it externally.');
@@ -81,8 +113,9 @@ async function processBlob(blob,kind,version){
  const loaded=await task.promise;
  if(version!==generation){await loaded.destroy();return;}
  pdf=loaded;
- page=readPageBookmark(loaded.numPages);selected={text:'',rects:[],page};
- fileText='';loading=false;core.render();await renderPage();
+ page=requestedPage?Math.max(1,Math.min(requestedPage,loaded.numPages)):readPageBookmark(loaded.numPages);
+ selected={text:'',rects:[],page};savePageBookmark();window.PsychDeskSession?.readerPage(page);
+ fileText='';loading=false;core.render();
 }
 async function openLocal(file){
  if(!file)return;
@@ -90,7 +123,7 @@ async function openLocal(file){
  if(!/\.(pdf|md|markdown)$/.test(ext)){core.toast('Choose a PDF or Markdown file.');return;}
  if(file.size>80*1024*1024){core.toast('The in-browser reader supports files up to 80 MB.');return;}
  generation++;const version=generation;releaseDocument();
- material=null;localFile=file;pdf=null;fileText='';readerError='';page=1;loading=true;selected={text:'',rects:[],page:1};
+ material=null;localFile=file;pdf=null;fileText='';readerError='';page=1;loading=true;requestedPage=0;mobileMode='read';selected={text:'',rects:[],page:1};
  core.setTab('reader');
  try{await processBlob(file,/\.pdf$/.test(ext)?'pdf':'markdown',version);}
  catch(e){if(version===generation){readerError=String(e.message||e);loading=false;core.render();}}
@@ -188,17 +221,17 @@ function textToCards(text,subject){
 }
 function textToNote(text){
  if(!text.trim()){core.toast('Select a passage first.');return;}
- window.PsychDeskCloud?.noteEditor?.({id:'',title:'Reading highlight · '+bookTitle().slice(0,80),body:text,subjectId:material?.subjectId||'',tags:'pdf highlight'});
+ window.PsychDeskCloud?.noteEditor?.({id:'',title:'Reading highlight · '+bookTitle().slice(0,80),body:'Source: '+bookTitle()+' · page '+selected.page+'\n\n'+text,subjectId:material?.subjectId||'',tags:'pdf highlight'});
 }
 async function navigate(pageNumber){
  if(!pdf)return;
  const n=Math.min(Math.max(1,Math.floor(Number(pageNumber)||1)),pdf.numPages);if(n===page)return;
- page=n;selected={text:'',rects:[],page};savePageBookmark();core.render();await renderPage();
+ page=n;selected={text:'',rects:[],page};savePageBookmark();window.PsychDeskSession?.readerPage(page);core.render();
 }
 async function zoom(step){
  if(!pdf)return;
  scale=Math.max(.6,Math.min(2.5,Math.round((scale+step)*10)/10));
- core.render();await renderPage();
+ core.render();
 }
 async function findAll(){
  if(!pdf){core.toast('Open a PDF to search its pages.');return;}
@@ -220,18 +253,29 @@ async function findAll(){
  if(searchHits.length){lastSearchIndex=0;await navigate(searchHits[0]);}
  }catch(error){if(version===generation&&sequence===searchSequence)core.toast('Could not search this PDF: '+String(error.message||error));}
 }
-function resetReader(){generation++;releaseDocument();material=null;localFile=null;fileText='';loading=false;readerError='';searchQuery='';searchHits=[];selected={text:'',rects:[],page:1};}
+function resetReader(){generation++;releaseDocument();material=null;localFile=null;fileText='';loading=false;readerError='';searchQuery='';searchHits=[];requestedPage=0;mobileMode='read';selected={text:'',rects:[],page:1};}
 function back(){resetReader();core.setTab('reader');}
 document.addEventListener('change',e=>{
  if(e.target.id==='localReaderFile'){openLocal(e.target.files?.[0]);}
  if(e.target.id==='readerPage')navigate(e.target.value);
 });
+document.addEventListener('input',e=>{if(e.target.id==='readerNoteDraft'){try{sessionStorage.setItem(readerDraftKey(),e.target.value.slice(0,2500))}catch{}}});
+// Called after core replaces the reader DOM, including when a notebook modal closes.
+window.addEventListener('psychdesk:changed',()=>{if($('#readerLinkedNotes'))refreshReaderNotes();});
 document.addEventListener('pointerup',e=>{if(e.target.closest('#readerTextLayer,#readerMarkdown'))setTimeout(capture,0);});
 document.addEventListener('keyup',e=>{if(e.target.closest?.('#readerTextLayer,#readerMarkdown'))setTimeout(capture,0);});
 document.addEventListener('click',e=>{
  const b=e.target.closest('[data-reader]');if(!b)return;e.preventDefault();
  switch(b.dataset.reader){
  case 'openBook':openMaterial(b.dataset.id);break;
+ case 'viewRead':case 'viewNotes':{
+  mobileMode=b.dataset.reader==='viewNotes'?'notes':'read';
+  $('.reader-layout')?.classList.toggle('reader-notes-mode',mobileMode==='notes');
+  document.querySelectorAll('.reader-mobile-switch button').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.reader===(mobileMode==='notes'?'viewNotes':'viewRead'))));
+  break;
+ }
+ case 'saveReaderNote':saveReaderNote();break;
+ case 'editReaderNote':{const n=linkedNotes().find(x=>x.id===b.dataset.id);if(n)window.PsychDeskCloud?.noteEditor?.(n);break;}
  case 'driveSettings':cloud?.openSettings?.();break;
  case 'back':back();break;
  case 'prev':navigate(page-1);break;
@@ -252,5 +296,5 @@ document.addEventListener('click',e=>{
 });
 window.addEventListener('psychdesk:tab-changed',e=>{if(e.tab!=='reader'&&(pdf||loading||fileText))resetReader();});
 window.addEventListener('psychdesk:session-reset',resetReader);
-window.PsychDeskReader={render:readerHTML,open:openMaterial,openLocal,capture,annotationCard};
+window.PsychDeskReader={render:readerHTML,open:openMaterial,openLocal,capture,annotationCard,afterRender:tab=>{if(tab==='reader'&&pdf)void renderPage()}};
 })();

@@ -35,7 +35,7 @@ module.exports=async(page,record,dest)=>{
  await page.waitForTimeout(450);
  await page.screenshot({path:path.join(dest,'motion-scroll-'+record.viewport+'.png')});
  await page.evaluate(()=>{for(const tab of ['notes','focus','planner','notes'])window.PsychDeskCore.setTab(tab)});
- assert.match(await page.locator('#main h1').innerText(),/Your notebook/);
+ assert.match(await page.locator('#main h1').innerText(),/^(Notes\.|Your notebook)/,'Navigation ends on the notebook screen');
  await setMotion('reduce');
  await page.evaluate(()=>window.PsychDeskCore.setTab('planner'));
  assert.equal(await page.evaluate(()=>document.querySelector('#main').getAnimations({subtree:true}).length),0,'Reduced motion disables navigation');
