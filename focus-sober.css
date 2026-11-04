@@ -1,0 +1,223 @@
+/* Focus room — sober timer-first interface. The Focus Garden illustration is intentionally removed.
+   The timer, local persistence, audio and study-session logging remain in the existing modules. */
+.focus-room{
+ --fr-surface:#fffdfa;
+ --fr-muted:#736f69;
+ --fr-ink:#302f2c;
+ --fr-line:#dedbd6;
+ --fr-soft:#f1f0ec;
+ --fr-accent:#404d43;
+ width:min(100%,940px);margin:0 auto;padding-bottom:36px;
+ color:var(--fr-ink);font-family:'DM Sans',system-ui,sans-serif;
+}
+html[data-theme=dark] .focus-room{
+ --fr-surface:#0b0b0b;
+ --fr-muted:#a4a5a1;
+ --fr-ink:#eeefeb;
+ --fr-line:#2b2b2a;
+ --fr-soft:#141514;
+ --fr-accent:#a8b6a8;
+}
+.focus-room *, .focus-room *::before, .focus-room *::after{box-sizing:border-box}
+.focus-room-intro{padding:24px 0 29px}
+.focus-room-overline{
+ color:var(--fr-muted);font-size:10px;font-weight:750;
+ letter-spacing:1.7px;line-height:1.5;
+}
+.focus-room-intro h1{
+ margin:12px 0 9px;color:var(--fr-ink);
+ font:500 clamp(38px,4.8vw,58px)/1.12 'Fraunces',Georgia,serif;letter-spacing:-1.7px;
+}
+.focus-room-intro p{margin:0;color:var(--fr-muted);font-size:14px;line-height:1.7}
+.focus-room-panel,.focus-room-summary,.focus-room-topic,.focus-room-optional{
+ border:1px solid var(--fr-line);
+ background:var(--fr-surface);
+ border-radius:18px;box-shadow:none;
+}
+.focus-room-panel{padding:clamp(20px,3vw,32px)}
+.focus-room-panel-top{
+ display:flex;align-items:center;justify-content:space-between;
+ gap:12px;margin-bottom:26px;
+ color:var(--fr-muted);letter-spacing:1.35px;font-size:10px;font-weight:800;
+}
+.focus-room-status{
+ background:var(--fr-soft);border-radius:100px;border:1px solid var(--fr-line);
+ letter-spacing:.15px;font-size:11px;font-weight:650;
+ padding:7px 12px;color:var(--fr-ink);white-space:nowrap;
+}
+.focus-room-layout{
+ display:grid;grid-template-columns:minmax(225px,.92fr) minmax(0,1.08fr);
+ align-items:center;gap:clamp(24px,4vw,55px);min-width:0;
+}
+.focus-room-clock-column{
+ display:grid;place-items:center;min-width:0;padding:5px 0;
+}
+.focus-room .timer-ring.focus-room-ring{
+ width:235px;height:235px;max-width:100%;aspect-ratio:1;
+ margin:0;padding:5px;border:0;position:relative;
+ display:grid;place-items:center;border-radius:50%;
+ background:conic-gradient(from -90deg,var(--fr-accent) var(--focus-progress,0%),var(--fr-line) var(--focus-progress,0%) 100%);
+ box-shadow:none;
+}
+.focus-room .timer-ring.focus-room-ring::before{content:none!important}
+.focus-room-clock-inner{
+ width:100%;height:100%;display:flex;flex-direction:column;
+ align-items:center;justify-content:center;gap:8px;
+ border-radius:50%;background:var(--fr-surface);
+}
+.focus-room .timer-ring .focus-clock{
+ margin:0!important;color:var(--fr-ink)!important;
+ font:400 clamp(43px,4.6vw,58px)/1 'Fraunces',Georgia,serif!important;
+ letter-spacing:-1.8px;font-variant-numeric:tabular-nums;
+}
+.focus-room-clock-inner>span{
+ color:var(--fr-muted);font-size:9px;font-weight:800;
+ letter-spacing:1.9px;
+}
+.focus-room-settings{min-width:0}
+.focus-room-field{margin-bottom:22px;min-width:0}
+.focus-room-field-label{
+ display:block;margin-bottom:11px;color:var(--fr-muted);
+ font-size:10px;font-weight:800;letter-spacing:1.25px;
+}
+.focus-room .select-strip{
+ display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+ gap:8px;margin:0;max-width:none;
+}
+.focus-room .select-strip button{
+ min-width:0;min-height:47px;margin:0;
+ padding:9px 4px;border:1px solid var(--fr-line);
+ border-radius:10px;background:var(--fr-soft);
+ color:var(--fr-ink);font-size:12px;font-weight:700;white-space:nowrap;
+}
+.focus-room .select-strip button.active{
+ border-color:var(--fr-accent);background:var(--fr-accent);color:var(--fr-surface);
+}
+html[data-theme=dark] .focus-room .select-strip button{
+ background:var(--fr-soft)!important;border-color:var(--fr-line)!important;
+ color:var(--fr-ink)!important;
+}
+html[data-theme=dark] .focus-room .select-strip button.active{
+ background:#d0d9cd!important;border-color:#d0d9cd!important;color:#111411!important;
+}
+.focus-room .select-strip button:disabled{opacity:.55}
+.focus-room-field select{
+ display:block;width:100%;max-width:100%;min-height:47px;
+ border:1px solid var(--fr-line);border-radius:10px;
+ background:var(--fr-soft);color:var(--fr-ink);
+ padding:10px 13px;font-size:13px;
+}
+html[data-theme=dark] .focus-room-field select{
+ background:var(--fr-soft)!important;color:var(--fr-ink)!important;border-color:var(--fr-line)!important;
+}
+.focus-room-actions{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px;align-items:center}
+.focus-room-actions button{min-height:46px;font-size:12px;font-weight:750;border-radius:10px;padding:10px 17px}
+.focus-room .focus-room-primary{
+ background:var(--fr-accent)!important;color:var(--fr-surface)!important;
+ border:1px solid var(--fr-accent)!important;min-width:0;
+}
+html[data-theme=dark] .focus-room .focus-room-primary{
+ background:#d6e0d3!important;border-color:#d6e0d3!important;color:#141714!important;
+}
+.focus-room .focus-room-finish{
+ border:1px solid var(--fr-line)!important;background:var(--fr-soft)!important;
+ color:var(--fr-ink)!important;min-width:112px;
+}
+.focus-room .focus-room-finish:disabled{opacity:.35!important;cursor:not-allowed}
+.focus-room .focus-room-reset{
+ grid-column:1/-1;justify-self:end;min-height:38px;
+ padding:7px 10px;background:transparent!important;border:0!important;
+ color:var(--fr-muted)!important;
+}
+.focus-room-timer-help{
+ border-top:1px solid var(--fr-line);margin:24px 0 0;padding:16px 0 0;
+ color:var(--fr-muted);font-size:11px;line-height:1.7;
+}
+.focus-room-topic{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:19px 22px;margin-top:14px}
+.focus-room-topic h2{
+ font:500 20px/1.3 'Fraunces',Georgia,serif;color:var(--fr-ink);margin:4px 0 0;
+ overflow-wrap:anywhere;
+}
+.focus-room-topic button{
+ flex:none;border:1px solid var(--fr-line);border-radius:9px;
+ background:var(--fr-soft);color:var(--fr-ink);
+ padding:10px 13px;font-size:11px;font-weight:750;
+}
+.focus-room-optional{overflow:hidden;margin-top:14px}
+.focus-room-optional>summary{
+ padding:19px 22px;color:var(--fr-ink);
+ font-size:13px;font-weight:750;cursor:pointer;list-style:none;
+ display:flex;justify-content:space-between;align-items:center;gap:15px;
+}
+.focus-room-optional>summary::-webkit-details-marker{display:none}
+.focus-room-optional>summary::after{content:'+';font-size:23px;font-weight:300;color:var(--fr-muted);margin-left:5px}
+.focus-room-optional[open]>summary::after{content:'−'}
+.focus-room-optional>summary span{color:var(--fr-muted);font-size:11px;font-weight:450;margin-left:auto;text-align:right}
+.focus-room-optional[open]>summary{border-bottom:1px solid var(--fr-line)}
+.focus-room .study-focus-extras{
+ padding:20px 22px 22px;border:0!important;border-radius:0;
+ box-shadow:none!important;background:transparent!important;
+ color:var(--fr-ink);margin:0;
+}
+.focus-room .study-focus-extras .study-panel-heading{margin:0 0 12px}
+.focus-room .study-focus-extras .study-panel-heading h2{font:500 20px/1.3 'Fraunces',Georgia,serif;color:var(--fr-ink);margin:0 0 7px}
+.focus-room .study-focus-extras .study-panel-heading span,
+.focus-room .study-focus-extras p{font-size:11px;line-height:1.7;color:var(--fr-muted)}
+.focus-room .study-voice-label{display:block;font-size:12px;font-weight:650;color:var(--fr-ink);margin:15px 0}
+.focus-room #focusIntention{
+ width:100%;min-height:44px;background:var(--fr-soft);color:var(--fr-ink);
+ border:1px solid var(--fr-line);border-radius:9px;padding:10px 12px;margin-top:8px;
+}
+.focus-room .study-sound-controls{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+.focus-room .study-sound-controls button{
+ min-height:40px;border-radius:8px;padding:8px 12px;border:1px solid var(--fr-line);
+ background:var(--fr-soft);color:var(--fr-ink);font-size:11px;
+}
+.focus-room .study-sound-controls button.active{
+ border-color:var(--fr-accent);color:var(--fr-ink);
+ box-shadow:inset 0 0 0 1px var(--fr-accent);
+}
+.focus-room-summary{margin-top:14px;padding:22px 26px}
+.focus-room-summary-title{display:flex;justify-content:space-between;align-items:center;gap:16px}
+.focus-room-summary-title h2{
+ font:500 25px/1.18 'Fraunces',Georgia,serif;color:var(--fr-ink);margin:6px 0 0;
+}
+.focus-room-tally{display:flex;align-items:baseline;gap:8px;white-space:nowrap}
+.focus-room-tally strong{font:500 33px/1 'Fraunces',Georgia,serif;color:var(--fr-ink);font-variant-numeric:tabular-nums}
+.focus-room-tally span{font-size:9px;color:var(--fr-muted);font-weight:800;letter-spacing:1.2px}
+.focus-room-session-list{margin-top:16px;border-top:1px solid var(--fr-line)}
+.focus-room-session{display:flex;justify-content:space-between;gap:14px;padding:11px 0;border-bottom:1px solid var(--fr-line);font-size:12px;color:var(--fr-ink)}
+.focus-room-session>span{min-width:0;overflow-wrap:anywhere}
+.focus-room-session strong{white-space:nowrap}
+.focus-room-empty{margin:16px 0 0;font-size:12px;color:var(--fr-muted)}
+@media(max-width:800px){
+ .focus-room-layout{grid-template-columns:1fr;gap:23px}
+ .focus-room-clock-column{padding:0 0 6px}
+ .focus-room .timer-ring.focus-room-ring{width:210px;height:210px}
+ .focus-room-settings{width:100%}
+ .focus-room-actions{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+ .focus-room .focus-room-finish{min-width:0}
+}
+@media(max-width:570px){
+ .focus-room-intro{padding:15px 0 22px}
+ .focus-room-intro h1{font-size:43px;letter-spacing:-1.3px}
+ .focus-room-intro p{font-size:12px}
+ .focus-room-panel{padding:19px 17px;border-radius:15px}
+ .focus-room-panel-top{margin-bottom:18px}
+ .focus-room .timer-ring.focus-room-ring{width:192px;height:192px}
+ .focus-room .timer-ring .focus-clock{font-size:50px!important}
+ .focus-room-layout{gap:20px}
+ .focus-room .select-strip{gap:5px}
+ .focus-room .select-strip button{font-size:11px;min-height:44px}
+ .focus-room-optional>summary{padding:17px 16px;font-size:12px}
+ .focus-room-optional>summary span{font-size:10px}
+ .focus-room-summary{padding:20px 17px}
+}
+@media(max-width:360px){
+ .focus-room-actions{grid-template-columns:1fr}
+ .focus-room .focus-room-reset{grid-column:1}
+ .focus-room-optional>summary span{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+ .focus-room *, .focus-room *::before, .focus-room *::after{animation:none!important;transition:none!important}
+}
