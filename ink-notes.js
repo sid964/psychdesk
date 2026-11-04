@@ -81,8 +81,8 @@ function renderEditor(note){
 function render(){
  const note=active();
  if(activeId&&!note){activeId='';redo=[];}
- return '<section class="hero ink-hero"><div class="eyebrow">INK NOTES · HANDWRITING</div><h1>Write it your way.</h1>'+
- '<p>A calm writing space built for your stylus, tablet, or 2-in-1 laptop.</p></section>'+
+ return '<section class="hero ink-hero"><div class="eyebrow">INK NOTES · HANDWRITING</div><h1>Ink notes.</h1>'+
+ '<p>Write or sketch with a stylus, touchscreen, or mouse.</p></section>'+
  (active()?renderEditor(active()):renderLibrary());
 }
 function canvasPoint(e,canvas){

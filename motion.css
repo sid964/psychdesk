@@ -6,12 +6,12 @@
 }
 html{scroll-behavior:auto;overflow-x:clip}
 /* Remove competing legacy entrances, bounces, chart growth and ambient loops. */
-/* Keep the legacy workspace still, but do not blanket-disable the home garden or the Focus Garden.
+/* Keep the legacy workspace still, but do not blanket-disable the animated homepage garden.
    Complex :not() selectors leave the garden and its SVG descendants free to sway. */
 #main,
-#main :not(.garden-landing):not(.garden-landing *):not(.focus-garden-scene):not(.focus-garden-scene *),
-#main :not(.garden-landing):not(.garden-landing *):not(.focus-garden-scene):not(.focus-garden-scene *)::before,
-#main :not(.garden-landing):not(.garden-landing *):not(.focus-garden-scene):not(.focus-garden-scene *)::after,
+#main :not(.garden-landing):not(.garden-landing *),
+#main :not(.garden-landing):not(.garden-landing *)::before,
+#main :not(.garden-landing):not(.garden-landing *)::after,
 .rail-motif,.desktop-rail::before,
 #modalRoot .modal,#modalRoot .modal-overlay,.motion-dismiss-layer,.motion-dismiss-layer .modal,
 .sticky-hero h1 span,.setup-panel,.setup-icon{animation:none!important}

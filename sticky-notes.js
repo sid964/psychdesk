@@ -141,7 +141,7 @@ function render(){
  const subjects=d.subjects.map(s=>'<option value="'+esc(s.id)+'"'+(subjectId===s.id?' selected':'')+'>'+esc(s.name)+'</option>').join('');
  const filters=d.subjects.map(s=>'<option value="'+esc(s.id)+'"'+(filter===s.id?' selected':'')+'>'+esc(s.name)+'</option>').join('');
  const swatches=palette.map(p=>'<label title="'+p[0]+' paper"><input type="radio" name="stickyPaper" value="'+p[0]+'"'+(paper===p[0]?' checked':'')+'><span style="background:'+p[1]+'"></span><small>'+p[0]+'</small></label>').join('');
- return '<section class="hero sticky-hero"><div class="eyebrow">A LITTLE SPACE FOR BIG IDEAS</div><h1>Sticky Notes <span>✳</span></h1><p>Write freely. Every idea becomes handwritten paper, right as you type.</p></section>'+
+ return '<section class="hero sticky-hero"><div class="eyebrow">QUICK CAPTURE</div><h1>Sticky Notes <span>✳</span></h1><p>Write short notes and display them as handwritten paper.</p></section>'+
  '<div class="sticky-workspace"><section class="sticky-compose"><div class="sticky-compose-head"><div><small>YOUR PAPER DESK</small><h2 id="stickyComposerTitle">'+(groupId?'Editing a sticky':'Write a new sticky')+'</h2></div><button data-sticky="new" class="secondary">+ New</button></div>'+
  '<label for="stickyText">Your thoughts</label><textarea id="stickyText" maxlength="'+LIMIT+'" rows="9" placeholder="Type or paste a theory, definition, example or bullet points…">'+esc(raw)+'</textarea>'+
  '<div class="sticky-input-meta"><span id="stickySaveStatus" role="status">Auto-save after you pause typing.</span><span id="stickyCharCount">'+raw.length+'/'+LIMIT+'</span></div>'+

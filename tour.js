@@ -5,12 +5,12 @@ const KEY='psychdesk-tour-v1';
 const $=s=>document.querySelector(s);
 const core=()=>window.PsychDeskCore;
 const chapters=[
- {title:'Catch a thought',text:'Tap the glowing + Note button. Your writing space opens right here.',selector:'#quickNoteBtn',kind:'capture'},
- {title:'Find your writing',text:'Tap Notes to visit your notebook. This is where your saved thoughts live.',selector:'.rail-nav [data-tab="notes"],.bottom-nav [data-tab="notes"]',tab:'notes'},
- {title:'Pick a tool to explore',text:'Choose a highlighted tool: handwriting, sticky notes, flashcards or something you are curious about.',prepare:'tools',selector:'#main .study-tool-launcher',kind:'tools'},
- {title:'Give today a small goal',text:'Open your planner to organize subjects and study topics.',prepare:'tools',selector:'.rail-nav [data-tab="planner"],.bottom-nav [data-tab="planner"],#main .study-tool-launcher[data-tab="planner"]',tab:'planner'},
- {title:'Make space to focus',text:'Visit your focus room. You can begin a session whenever you are ready.',prepare:'tools',selector:'.rail-nav [data-tab="focus"],.bottom-nav [data-tab="focus"],#main .study-tool-launcher[data-tab="focus"]',tab:'focus'},
- {title:'Make this space yours',text:'Tap Settings to find account sync, Drive, backups and this tour.',selector:'#settingsBtn',kind:'settings'}
+ {title:'Create a note',text:'Use + Note to capture a thought or a lecture point.',selector:'#quickNoteBtn',kind:'capture'},
+ {title:'Open notes',text:'Tap Notes to visit your notebook. This is where your saved thoughts live.',selector:'.rail-nav [data-tab="notes"],.bottom-nav [data-tab="notes"]',tab:'notes'},
+ {title:'Explore study tools',text:'Choose a highlighted tool: handwriting, sticky notes, flashcards or something you are curious about.',prepare:'tools',selector:'#main .study-tool-launcher',kind:'tools'},
+ {title:'Open the planner',text:'Open your planner to organize subjects and study topics.',prepare:'tools',selector:'.rail-nav [data-tab="planner"],.bottom-nav [data-tab="planner"],#main .study-tool-launcher[data-tab="planner"]',tab:'planner'},
+ {title:'Use the focus timer',text:'Use Focus to set a duration and record study time.',prepare:'tools',selector:'.rail-nav [data-tab="focus"],.bottom-nav [data-tab="focus"],#main .study-tool-launcher[data-tab="focus"]',tab:'focus'},
+ {title:'Review settings',text:'Settings contains account sync, Drive, backups and this tour.',selector:'#settingsBtn',kind:'settings'}
 ];
 let panel,ring,target,region,index=-1,phase='',opener,frame=0,observer,active=false,generation=0;
 let modalState=new Map(),highlighted=[],timers=new Set();
@@ -162,7 +162,7 @@ function start(){
  panel.innerHTML='<header><span id="tourCount">A QUICK LOOK AROUND</span><button type="button" data-tour="exit" aria-label="Close tour">×</button></header><progress id="tourProgress" max="6" value="0" aria-label="Tour progress"></progress><h2 id="tourTitle" tabindex="-1"></h2><p id="tourText"></p><p id="tourStatus" role="status" hidden></p><footer><button type="button" id="tourBack" data-tour="back" hidden>Back</button><button type="button" id="tourNext" data-tour="next">Let’s try it →</button></footer><button type="button" id="tourStepSkip" data-tour="skip" hidden>Skip this step</button>';
  ring=document.createElement('div');ring.id='tourSpotlight';ring.setAttribute('aria-hidden','true');
  document.body.append(ring,panel);document.body.classList.add('tour-active');
- content('Learn by doing','Open a note, find your notebook and try a study tool. Six tiny steps, at your pace. You can leave anytime.');
+ content('PsychDesk tour','Open a note, find your notebook and try a study tool. Six steps to find the main tools. Exit whenever you want.');
  panel.addEventListener('click',e=>{const a=e.target.closest('[data-tour]')?.dataset.tour;if(a==='exit')finish();else if(a==='next')advance();else if(a==='back'&&index>0)show(index-1);else if(a==='skip'){if(index<chapters.length-1)show(index+1);else finish()}});
  document.addEventListener('click',click,true);document.addEventListener('keydown',keys,true);
  window.addEventListener('psychdesk:tab-changed',nav);window.addEventListener('scroll',schedule,true);window.addEventListener('resize',schedule);
@@ -182,7 +182,7 @@ function offer(){
  invite.id='psychdeskTourInvite';
  invite.setAttribute('role','region');
  invite.setAttribute('aria-label','Optional first-time study tour');
- invite.innerHTML='<span>New here? Take a short tour of your study garden.</span>'+
+ invite.innerHTML='<span>New to PsychDesk? Explore the main features.</span>'+
   '<button type="button" data-tour-invite="start">Show me</button>'+
   '<button type="button" data-tour-invite="dismiss" aria-label="Dismiss tour invitation">×</button>';
  invite.addEventListener('click',event=>{
