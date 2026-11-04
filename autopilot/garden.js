@@ -95,7 +95,7 @@ function scene(saved,concepts){
   return c?'<button type="button" class="garden-flower garden-flower-'+i+'" data-auto="related" data-id="'+String(c.id).replace(/[^a-z0-9-]/g,'')+'" aria-label="Explore saved idea: '+String(c.term).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;')+'"><span aria-hidden="true">✿</span></button>':'';
  }).join('');
  scheduleObservation();
- return '<div class="garden-world">'+art+chips+'<span class="garden-world-caption" aria-hidden="true">a little world of your own</span></div>';
+ return '<div class="garden-world">'+art+chips+'<span class="garden-world-caption" aria-hidden="true">saved study concepts</span></div>';
 }
 // Pause decorative motion when off-screen or in a background tab.
 let watcher;
