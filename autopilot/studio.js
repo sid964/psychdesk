@@ -28,14 +28,14 @@ function welcome(){
 }
 function discoveryMarkup(){
  const c=discovery();
- if(!c)return '<div class="studio-discovery-loading"><span class="studio-kicker">A LITTLE PSYCHOLOGY</span><h2>A new idea is on its way.</h2><p>Your curiosity has a place here.</p></div>';
+ if(!c)return '<div class="studio-discovery-loading"><span class="studio-kicker">A LITTLE PSYCHOLOGY</span><h2>A small discovery is on its way.</h2><p>There is always room for another question.</p></div>';
  const saved=safeSaved().some(x=>x.id===c.id);
- return '<div class="studio-feature-top"><span class="studio-kicker">A LITTLE PSYCHOLOGY <span aria-hidden="true">/</span> '+h(c.category)+'</span><span class="studio-feature-mark" aria-hidden="true">✳</span></div>'+
- '<div class="studio-feature-body"><p class="studio-feature-label">TODAY’S QUESTION</p><h2>'+h(c.title)+'</h2><p class="studio-concept">'+h(c.term)+'</p><p class="studio-feature-definition">'+h(c.definition)+'</p>'+
- '<div class="studio-feature-example"><span>IN EVERYDAY LIFE</span><p>'+h(c.example)+'</p></div></div>'+
- '<div class="studio-feature-footer"><span class="studio-feature-credit">Sourced from '+h(c.source?.publisher||'OpenStax')+'</span>'+
- '<div class="studio-actions"><button type="button" class="primary" data-auto="explore">Explore this idea <span aria-hidden="true">↗</span></button><button type="button" class="secondary" data-auto="save">'+(saved?'Saved ✓':'Save for later')+'</button></div></div>';
+ return '<div class="studio-feature-top"><span class="studio-kicker">A LITTLE PSYCHOLOGY</span><span class="studio-feature-day">ONE IDEA, EACH DAY</span></div>'+
+ '<div class="studio-feature-body"><div class="studio-feature-decoration" aria-hidden="true">✳</div><p class="studio-concept">'+h(c.category)+' · '+h(c.term)+'</p><h2>'+h(c.title)+'</h2><p class="studio-feature-definition">'+h(c.definition)+'</p></div>'+
+ '<div class="studio-feature-footer"><p class="studio-feature-credit">A thoughtful note, sourced from '+h(c.source?.publisher||'a psychology reference')+'.</p>'+
+ '<div class="studio-actions"><button type="button" class="studio-explore" data-auto="explore">Explore this idea <span aria-hidden="true">↗</span></button><button type="button" class="studio-save" data-auto="save" aria-label="'+(saved?'Discovery already saved':'Save today’s discovery')+'">'+(saved?'Saved ✓':'♡ Save')+'</button></div></div>';
 }
+
 function postcard(){
  const old=safeSaved().find(x=>x.savedAt&&Date.now()-Date.parse(x.savedAt)>2*86400000);
  const c=old&&discoveries.find(v=>v.id===old.id);
@@ -46,33 +46,28 @@ function renderHome(){
  const saved=safeSaved().length;
  const day=new Date().toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'});
  const subject=recent?(d.subjects||[]).find(s=>s.id===recent.subjectId):null;
- const excerpt=recent?String(recent.body||'').replace(/\s+/g,' ').trim().slice(0,115):'';
+ const excerpt=recent?String(recent.body||'').replace(/\\s+/g,' ').trim().slice(0,130):'';
  const continuation=recent?
- '<section class="studio-resume"><div class="studio-panel-top"><span class="studio-kicker">BACK TO YOUR NOTEBOOK</span><span class="studio-mini-symbol" aria-hidden="true">↗</span></div><h3>'+h(recent.title||'Untitled page')+'</h3>'+
- '<p class="studio-resume-excerpt">'+h(excerpt||'Your saved page is here, ready whenever you are.')+'</p>'+
- '<div class="studio-resume-foot"><span>'+h(subject?.name||'Your notes')+'</span><button type="button" class="studio-text-action" data-cloud="editNote" data-id="'+h(recent.id)+'">Continue writing <span aria-hidden="true">→</span></button></div></section>':
- '<section class="studio-resume"><div class="studio-panel-top"><span class="studio-kicker">YOUR NOTEBOOK</span><span class="studio-mini-symbol" aria-hidden="true">✎</span></div><h3>A thought is a good start.</h3><p class="studio-resume-excerpt">No folders or titles required. Just write something down.</p><div class="studio-resume-foot"><span>Make it yours</span><button type="button" class="studio-text-action" data-auto="capture">Start writing <span aria-hidden="true">→</span></button></div></section>';
+ '<section class="studio-resume"><div class="studio-panel-top"><span class="studio-kicker">WHERE YOU LEFT OFF</span><span class="studio-mini-symbol" aria-hidden="true">↗</span></div><h3>'+h(recent.title||'Untitled page')+'</h3>'+
+ '<p class="studio-resume-excerpt">'+h(excerpt||'Your page is exactly where you left it.')+'</p>'+
+ '<div class="studio-resume-foot"><span>'+h(subject?.name||'Your notebook')+'</span><button type="button" class="studio-text-action" data-cloud="editNote" data-id="'+h(recent.id)+'">Continue this page <span aria-hidden="true">→</span></button></div></section>':
+ '<section class="studio-resume"><div class="studio-panel-top"><span class="studio-kicker">YOUR NOTEBOOK</span><span class="studio-mini-symbol" aria-hidden="true">✎</span></div><h3>A blank page is a beginning.</h3><p class="studio-resume-excerpt">You do not need a plan or a perfect title. Start with one thought.</p><div class="studio-resume-foot"><span>Ready when you are</span><button type="button" class="studio-text-action" data-auto="capture">Open a page <span aria-hidden="true">→</span></button></div></section>';
  return '<div class="studio-home studio-home-v2">'+
- '<header class="studio-intro"><div class="studio-intro-copy"><span class="studio-kicker">YOUR PERSONAL PSYCHOLOGY STUDIO</span><h1>Make room for <em>curiosity.</em></h1><p>'+h(welcome())+'</p></div><div class="studio-intro-end"><span class="studio-day">'+h(day)+'</span><button type="button" data-auto="capture" class="studio-quick-capture"><span aria-hidden="true">＋</span> Capture a thought</button></div></header>'+
+ '<header class="studio-intro"><div class="studio-intro-copy"><span class="studio-kicker">PSYCHDESK / A QUIET PLACE TO LEARN</span><h1>Follow a thought.<br><em>See where it goes.</em></h1><p>'+h(welcome())+'</p><button type="button" data-auto="capture" class="studio-hero-capture"><span aria-hidden="true">✎</span> Start writing <span aria-hidden="true">↗</span></button></div><div class="studio-intro-end"><span class="studio-day">'+h(day)+'</span><span class="studio-soft-mark" aria-hidden="true">ψ</span></div></header>'+
  '<div class="studio-content-grid"><section class="studio-discovery" id="studio-discovery" aria-label="Daily psychology discovery">'+discoveryMarkup()+'</section>'+
- '<aside class="studio-utility-column" aria-label="Continue and explore">'+continuation+
- '<section class="studio-tool-panel"><div class="studio-panel-top"><span class="studio-kicker">FOLLOW YOUR CURIOSITY</span><span class="studio-mini-symbol" aria-hidden="true">✳</span></div><h3>What feels interesting?</h3>'+
- '<div class="studio-quick-grid">'+
- '<button type="button" data-tab="notes"><span class="studio-tool-glyph" aria-hidden="true">✎</span><span>Write notes</span><span class="studio-tool-arrow" aria-hidden="true">↗</span></button>'+
- '<button type="button" data-tab="ink"><span class="studio-tool-glyph" aria-hidden="true">⌁</span><span>Use your pen</span><span class="studio-tool-arrow" aria-hidden="true">↗</span></button>'+
- '<button type="button" data-tab="materials"><span class="studio-tool-glyph" aria-hidden="true">▤</span><span>Your library</span><span class="studio-tool-arrow" aria-hidden="true">↗</span></button>'+
- '<button type="button" data-tab="dictionary"><span class="studio-tool-glyph" aria-hidden="true">ψ</span><span>Find a concept</span><span class="studio-tool-arrow" aria-hidden="true">↗</span></button>'+
- '</div><details class="studio-quiet-tools"><summary>More ways to study <span aria-hidden="true">⌄</span></summary><div><button type="button" data-auto="quiet">Quiet Room</button><button type="button" data-auto="inbox">Prepared material</button><button type="button" data-auto="import">Import a PDF or text</button></div></details></section></aside></div>'+
- postcard()+
- '<section class="studio-saved-nook"><div class="studio-collection-copy"><span class="studio-kicker">A COLLECTION THAT GROWS WITH YOU</span><h3>Keep the ideas that stay with you.</h3><p>'+saved+' saved '+(saved===1?'discovery':'discoveries')+'. No streaks, no pressure.</p></div><div class="studio-collection-actions"><button type="button" data-auto="garden">Open Memory Garden <span aria-hidden="true">↗</span></button><button type="button" data-auto="letter">Your weekly letter <span aria-hidden="true">↗</span></button></div></section>'+
- '<footer class="studio-home-signoff">Come back whenever something makes you wonder.</footer></div>';
+ '<aside class="studio-utility-column" aria-label="Return to your work">'+continuation+
+ '<section class="studio-invitation"><span class="studio-kicker">A GENTLE REMINDER</span><p>There is no need to do everything.<br>One interesting idea is enough to begin.</p><div class="studio-small-links"><button type="button" data-tab="notes">Your notebooks <span aria-hidden="true">↗</span></button><button type="button" data-tab="materials">Reading shelf <span aria-hidden="true">↗</span></button></div></section></aside></div>'+
+ '<section class="studio-afterword"><div class="studio-collection-copy"><span class="studio-kicker">IDEAS WORTH KEEPING</span><p>'+saved+' saved '+(saved===1?'discovery':'discoveries')+' · collected at your own pace</p></div><button type="button" class="studio-garden-link" data-auto="garden">Memory Garden <span aria-hidden="true">↗</span></button></section>'+
+ '<details class="studio-quiet-tools"><summary>Other ways to explore <span aria-hidden="true">⌄</span></summary><div><button type="button" data-tab="ink">Ink notes</button><button type="button" data-tab="dictionary">Dictionary</button><button type="button" data-tab="recall">Flashcards</button><button type="button" data-auto="quiet">Quiet room</button><button type="button" data-auto="inbox">Prepared materials</button><button type="button" data-auto="import">Import material</button><button type="button" data-auto="letter">Weekly letter</button><button type="button" data-tab="tools">All study tools</button></div></details>'+
+ '<footer class="studio-home-signoff">A little curiosity goes a long way.</footer></div>';
 }
+
 function refreshHome(){
  const node=$('#studio-discovery');if(node)node.innerHTML=discoveryMarkup();
- const home=$('.studio-home');
- if(home){home.querySelector('.studio-postcard')?.remove();const fragment=postcard();if(fragment)home.querySelector('.studio-saved-nook')?.insertAdjacentHTML('beforebegin',fragment);
- const saved=safeSaved().length;const line=home.querySelector('.studio-collection-copy p');if(line)line.textContent=saved+' saved '+(saved===1?'discovery':'discoveries')+'. No streaks, no pressure.';}
+ const line=$('.studio-home .studio-collection-copy p');
+ if(line){const saved=safeSaved().length;line.textContent=saved+' saved '+(saved===1?'discovery':'discoveries')+' · collected at your own pace';}
 }
+
 fetch('./automation/data/curated-concepts.json?v=1',{cache:'force-cache'}).then(r=>{if(!r.ok)throw Error('No curated discovery file');return r.json()}).then(j=>{discoveries=(j.concepts||[]).filter(x=>x.id&&x.title&&x.source?.url&&x.verification==='editor-reviewed');refreshHome()}).catch(()=>{const t=$('#studio-discovery');if(t)t.innerHTML='<span class="studio-kicker">A LITTLE PSYCHOLOGY</span><h2>Discoveries are temporarily unavailable.</h2><p>Your notes and other study tools still work.</p>'});
 function explore(id){
  const c=discoveries.find(x=>x.id===(id||discovery()?.id));if(!c){core.toast('Discovery is not available yet');return;}
