@@ -392,3 +392,23 @@ html[data-theme="dark"] .garden-collection .studio-garden-item{
  .garden-art{filter:none!important}
  html[data-theme="dark"] .garden-art{filter:brightness(.76) saturate(.90)!important}
 }
+
+/* Collision-free art direction: the trees occupy the lower scene, never the greeting. */
+@media(min-width:900px) and (max-width:1210px){
+ .garden-landing{min-height:755px}
+ .garden-art-wrap{width:min(77%,630px);right:-2%;bottom:12px}
+}
+@media(min-width:571px) and (max-width:899px){
+ .garden-landing{min-height:790px}
+ .garden-heading{position:relative;z-index:3}
+ .garden-art-wrap{width:min(92%,665px);right:-2%;bottom:12px}
+}
+@media(max-width:570px){
+ .garden-landing{min-height:clamp(675px,147vw,820px)}
+ .garden-art-wrap{bottom:26px}
+ .garden-heading{position:relative;z-index:3}
+}
+@media(max-width:375px){
+ .garden-landing{min-height:680px}
+ .garden-art-wrap{bottom:30px}
+}
