@@ -1,0 +1,26 @@
+/* Phase 4: nature stays optional, timer stays primary. */
+.p4-garden{margin:20px 0;border:1px solid var(--fr-line,#303030);border-radius:18px;background:var(--fr-surface,#090909);overflow:hidden;color:var(--fr-ink,#eee)}
+.p4-garden>summary{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:19px 22px;cursor:pointer;list-style:none}
+.p4-garden>summary::-webkit-details-marker{display:none}
+.p4-garden>summary span:first-child{display:grid;gap:5px}
+.p4-garden>summary strong{font-size:15px}
+.p4-garden>summary small{color:var(--fr-muted,#aaa);font-size:12px}
+.p4-garden-content{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:12px;align-items:center;padding:4px 22px 24px}
+.p4-scene{min-width:0;overflow:hidden;border-radius:16px;background:radial-gradient(ellipse at 50% 20%,#e3f0dd,#c7ddc8);isolation:isolate}
+.p4-scene .garden-world{width:100%;aspect-ratio:660/480}
+.p4-scene .garden-world-caption{display:none}
+.p4-scene .garden-art{filter:none}
+.p4-garden-info{min-width:0;padding:14px 6px}
+.p4-garden-info h2{font:500 clamp(25px,3vw,38px)/1.2 'Fraunces',Georgia,serif;margin:10px 0}
+.p4-garden-info p{color:var(--fr-muted,#aaa);font-size:13px;line-height:1.7}
+.p4-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin:18px 0}
+.p4-day{min-width:0;display:grid;gap:5px;place-items:center;border:1px solid var(--fr-line,#333);border-radius:10px;background:transparent;color:var(--fr-muted,#aaa);padding:9px 0;font:inherit;cursor:pointer}
+.p4-day span{font-size:19px;line-height:1.2}
+.p4-day small{font-size:10px}
+.p4-day.has-session{background:#284534;color:#e5f5dc;border-color:#3b5f49}
+.p4-garden-info .p4-quiet{font-size:11px}
+.p4-links{display:flex;flex-wrap:wrap;gap:9px}
+.p4-links button{border:1px solid var(--fr-line,#333);border-radius:999px;padding:10px 14px;background:transparent;color:var(--fr-ink,#eee);font:600 12px 'DM Sans',sans-serif;cursor:pointer}
+html[data-theme=dark] .p4-scene{background:radial-gradient(ellipse at 50% 20%,#d7e9d5,#b8d1b9)}
+@media(max-width:720px){.p4-garden-content{grid-template-columns:1fr;padding:0 15px 20px}.p4-scene{max-height:300px}.p4-garden-info{padding:6px}.p4-garden>summary{padding:17px}}
+@media(prefers-reduced-motion:reduce){.p4-scene *{animation:none!important;transition:none!important}}
