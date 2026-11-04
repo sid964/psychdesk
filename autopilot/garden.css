@@ -62,21 +62,21 @@ html[data-theme="light"] .topbar{background:#f4f6ee}
 .garden-canopy,.garden-needles,.garden-shrub-crown,.garden-flower-sway,.garden-grass-sway,
 .garden-butterfly,.garden-drift-leaf{transform-box:fill-box}
 .garden-canopy,.garden-needles,.garden-butterfly{will-change:transform}
-.garden-canopy{transform-origin:50% 93%;animation:garden-sway 8.4s ease-in-out infinite}
-.garden-tree:nth-child(2) .garden-canopy{animation-duration:10.1s;animation-delay:-2.5s}
-.garden-tree:nth-child(3) .garden-canopy{animation-duration:9.2s;animation-delay:-4.1s}
-.garden-needles{transform-origin:50% 95%;animation:garden-pine-wind 11.3s ease-in-out infinite}
+.garden-canopy{transform-origin:50% 93%;animation:garden-sway 6.9s ease-in-out infinite}
+.garden-tree:nth-child(2) .garden-canopy{animation-duration:7.8s;animation-delay:-2.5s}
+.garden-tree:nth-child(3) .garden-canopy{animation-duration:8.1s;animation-delay:-4.1s}
+.garden-needles{transform-origin:50% 95%;animation:garden-pine-wind 8.4s ease-in-out infinite}
 .garden-tree:nth-child(4) .garden-needles{animation-delay:-5.7s;animation-duration:9.7s}
-.garden-shrub-crown{transform-origin:50% 98%;animation:garden-shrub-wind 6.8s ease-in-out infinite}
+.garden-shrub-crown{transform-origin:50% 98%;animation:garden-shrub-wind 5.5s ease-in-out infinite}
 .garden-shrub:nth-child(even) .garden-shrub-crown{animation-duration:7.9s;animation-delay:-3.2s}
-.garden-flower-sway{transform-origin:50% 99%;animation:garden-flower-wind 5.8s ease-in-out infinite}
+.garden-flower-sway{transform-origin:50% 99%;animation:garden-flower-wind 5.1s ease-in-out infinite}
 .garden-sway-1{animation-duration:7.1s;animation-delay:-3.1s}
 .garden-sway-2{animation-duration:6.4s;animation-delay:-1.8s}
-.garden-grass-sway{transform-origin:50% 99%;animation:garden-grass-wind 4.7s ease-in-out infinite}
+.garden-grass-sway{transform-origin:50% 99%;animation:garden-grass-wind 4.2s ease-in-out infinite}
 .garden-grass-group:nth-child(odd) .garden-grass-sway{animation-delay:-2.3s;animation-duration:6.2s}
 .garden-leaf-shimmer{animation:garden-leaf-light 6.4s ease-in-out infinite alternate}
-.garden-cloud{animation:garden-cloud-drift 26s ease-in-out infinite alternate}
-.garden-wind{animation:garden-wind-flow 10s ease-in-out infinite;stroke-dashoffset:130}
+.garden-cloud{animation:garden-cloud-drift 18s ease-in-out infinite alternate}
+.garden-wind{animation:garden-wind-flow 7.6s ease-in-out infinite;stroke-dashoffset:130}
 .garden-wind-b{animation-duration:13s;animation-delay:-6s}
 .garden-wind-c{animation-duration:8.5s;animation-delay:-4s}
 .garden-butterfly{transform-origin:50% 50%;animation:garden-flutter 7.8s ease-in-out infinite}
@@ -92,31 +92,31 @@ html[data-theme="light"] .topbar{background:#f4f6ee}
  animation:garden-air-breathe 14s ease-in-out infinite alternate;
 }
 @keyframes garden-sway{
- 0%,100%{transform:rotate(-1.1deg) translateX(-.3px)}
- 28%{transform:rotate(1.7deg) translateX(1px)}
- 55%{transform:rotate(-.45deg)}
- 73%{transform:rotate(1.1deg)}
+ 0%,100%{transform:rotate(-2.2deg) translateX(-.8px)}
+ 28%{transform:rotate(3.2deg) translateX(1.5px)}
+ 55%{transform:rotate(-1.1deg)}
+ 73%{transform:rotate(2.3deg)}
 }
 @keyframes garden-pine-wind{
- 0%,100%{transform:rotate(-.8deg)}
- 30%{transform:rotate(1.35deg)}
- 55%{transform:rotate(-.25deg)}
- 78%{transform:rotate(.9deg)}
+ 0%,100%{transform:rotate(-1.5deg)}
+ 30%{transform:rotate(2.8deg)}
+ 55%{transform:rotate(-.7deg)}
+ 78%{transform:rotate(1.8deg)}
 }
 @keyframes garden-shrub-wind{
- 0%,100%{transform:rotate(-1.2deg)}
- 38%{transform:rotate(2.1deg)}
- 63%{transform:rotate(-.6deg)}
+ 0%,100%{transform:rotate(-2.7deg)}
+ 38%{transform:rotate(4.1deg)}
+ 63%{transform:rotate(-1.2deg)}
 }
 @keyframes garden-flower-wind{
- 0%,100%{transform:rotate(-2.8deg)}
- 33%{transform:rotate(3.2deg)}
- 69%{transform:rotate(-1.1deg)}
+ 0%,100%{transform:rotate(-5deg)}
+ 33%{transform:rotate(6deg)}
+ 69%{transform:rotate(-2deg)}
 }
 @keyframes garden-grass-wind{
- 0%,100%{transform:rotate(-3deg)}
- 45%{transform:rotate(4deg)}
- 75%{transform:rotate(-1deg)}
+ 0%,100%{transform:rotate(-5deg)}
+ 45%{transform:rotate(7deg)}
+ 75%{transform:rotate(-2deg)}
 }
 @keyframes garden-cloud-drift{
  0%{transform:translateX(-5px)}100%{transform:translateX(18px)}
@@ -412,3 +412,8 @@ html[data-theme="dark"] .garden-collection .studio-garden-item{
  .garden-landing{min-height:680px}
  .garden-art-wrap{bottom:30px}
 }
+
+/* Noticeable wind without using a JavaScript rendering loop. */
+.garden-wind-trails{opacity:.86}
+.garden-butterfly{animation-duration:5.8s}
+@media(prefers-reduced-motion:reduce){.garden-wind-trails,.garden-falling-leaves{opacity:0!important}}
