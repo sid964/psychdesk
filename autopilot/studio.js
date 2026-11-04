@@ -57,16 +57,17 @@ function renderHome(){
  '<section class="garden-landing" aria-label="Psychology study homepage">'+
  '<div class="garden-ambient" aria-hidden="true"></div>'+
  '<div class="garden-heading"><span class="studio-kicker">PSYCHOLOGY · STUDY DESK</span><h1>Pick up where<br><em>you left off.</em></h1><p>Start with a note or settle into a short focus session.</p>'+
- '<div class="garden-entry">'+firstAction+'<button class="garden-soft-btn" type="button" data-tab="focus">Focus</button></div></div>'+
+ '<div class="garden-entry">'+firstAction+'<button class="garden-soft-btn" type="button" data-tab="focus">Focus</button><button class="garden-soft-btn" type="button" data-tab="connections">Study Flow</button></div></div>'+
  '<div class="garden-art-wrap">'+scene+'</div>'+
  '<div class="garden-scene-footer"><span>✿ &nbsp; A few ideas to return to</span><span>YOUR COLLECTION</span></div>'+
  '</section>'+
+ (window.PsychDeskPhase6?.homeCard?.()||'')+
  '<div class="garden-path-marker" aria-hidden="true"><span></span>ON YOUR DESK<span></span></div>'+
  '<div class="garden-stories">'+
  '<section class="garden-notebook" aria-label="Resume your notebook"><div class="garden-book-icon" aria-hidden="true"><span>✧</span></div>'+(lastSession||continuation)+'</section>'+ 
  '<section class="studio-discovery garden-seed" id="studio-discovery" aria-label="A daily psychology concept">'+discoveryMarkup()+'</section></div>'+
  '<section class="garden-bloom-line"><div><span class="studio-kicker">SAVED IDEAS</span><h3>Ideas to come back to.</h3><p>'+saved+' '+(saved===1?'concept':'concepts')+' saved.</p></div><button type="button" data-auto="garden">Review saved ideas <span aria-hidden="true">↗</span></button></section>'+
- '<details class="studio-quiet-tools garden-tool-drawer"><summary>Other tools <span aria-hidden="true">⌄</span></summary><div><button type="button" data-tab="notes">Notebooks</button><button type="button" data-tab="ink">Ink notes</button><button type="button" data-tab="materials">Reading shelf</button><button type="button" data-tab="dictionary">Psychology dictionary</button><button type="button" data-tab="recall">Flashcards</button><button type="button" data-auto="inbox">Organize notes</button><button type="button" data-auto="import">Import a document</button><button type="button" data-auto="letter">Weekly letter</button><button type="button" data-tab="tools">All tools</button></div></details>'+
+ '<details class="studio-quiet-tools garden-tool-drawer"><summary>Other tools <span aria-hidden="true">⌄</span></summary><div><button type="button" data-tab="notes">Notebooks</button><button type="button" data-tab="ink">Ink notes</button><button type="button" data-tab="materials">Reading shelf</button><button type="button" data-tab="dictionary">Psychology dictionary</button><button type="button" data-tab="recall">Flashcards</button><button type="button" data-tab="connections">Study Flow</button><button type="button" data-auto="inbox">Organize notes</button><button type="button" data-auto="import">Import a document</button><button type="button" data-auto="letter">Weekly letter</button><button type="button" data-tab="tools">All tools</button></div></details>'+
  '<footer class="studio-home-signoff">PsychDesk · Notes, reading, and revision</footer></div>';
 }
 

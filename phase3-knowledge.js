@@ -16,11 +16,11 @@ const sourceList=()=>{
  ...(data.mindMaps||[]).map(x=>({id:x.id,kind:'map',title:x.title||'Untitled concept map',body:(x.nodes||[]).map(n=>n.label).join(' '),subjectId:x.subjectId||''}))
  ].filter(x=>x.id&&x.title).slice(0,450);
 };
-let selected='',left='',right='',filter='all';
+let selected='',left='',right='',filter='today',compareOpen=false;
 const itemText=x=>x.title+' '+x.body.slice(0,1800);
 function links(){
  const sources=sourceList(),source=sources.find(x=>x.kind+':'+x.id===selected)||sources.find(x=>x.kind==='note')||sources[0];
- if(source&&!selected)selected=source.kind+':'+source.id;
+ if(source&&selected!==source.kind+':'+source.id)selected=source.kind+':'+source.id;
  const matches=source?sources.filter(x=>x!==source).map(x=>({...x,shared:related(itemText(source),itemText(x))}))
  .filter(x=>x.shared.length>=2).sort((a,b)=>b.shared.length-a.shared.length).slice(0,10):[];
  return '<div class="p3-panel"><label for="p3Source">Find connections for</label><select id="p3Source">'+sources.map(x=>'<option value="'+h(x.kind+':'+x.id)+'"'+(source&&x.id===source.id&&x.kind===source.kind?' selected':'')+'>'+h(x.title)+' · '+h(x.kind)+'</option>').join('')+'</select>'+
@@ -54,11 +54,18 @@ function recall(){
  '<p class="p3-empty">You are caught up. Make one flashcard from a difficult concept when you are ready.</p>')+'</div>';
 }
 function render(){
- const tabs=[['links','Connected notes'],['compare','Compare theories'],['review','Memory review']];
- return '<section class="hero p3-hero"><div class="eyebrow">UNDERSTAND · CONNECT · REMEMBER</div><h1>Connect your learning.</h1><p>Find related ideas, compare what you have written, and review without a crowded dashboard.</p></section>'+
- '<nav class="p3-tabs" aria-label="Knowledge workspace sections">'+tabs.map(([id,label])=>'<button type="button" data-p3="tab" data-mode="'+id+'" aria-pressed="'+(filter===id)+'" class="'+(filter===id?'active':'')+'">'+label+'</button>').join('')+'</nav>'+
- (filter==='compare'?compare():filter==='review'?recall():links())+
- '<div class="p3-footer"><button type="button" data-tab="mindmap">Open interactive concept boards →</button><button type="button" data-tab="dictionary">Psychology dictionary →</button></div>';
+ const tabs=[['today','Start here'],['chapters','My chapters'],['connect','Connect ideas'],['review','Memory review']];
+ const selectedTab=tabs.some(([id])=>id===filter)?filter:'today';
+ const next=window.PsychDeskPhase6?.render?.()||'<div class="p3-panel"><p class="p3-empty">Start a session in the Focus Room, or choose a topic from your planner.</p><button type="button" data-tab="focus">Open Focus Room</button></div>';
+ const chapter=window.PsychDeskPhase5?.render?.()||'<div class="p3-panel"><p class="p3-empty">Your chapters will appear after preparation.</p></div>';
+ const weak=window.PsychDeskPhase7?.render?.()||'';
+ return '<section class="hero p3-hero p3-studio-header"><div class="eyebrow">YOUR PSYCHOLOGY STUDY FLOW</div><h1>Study, without the clutter.</h1><p>One next step, your own material and a quiet way to revisit ideas.</p></section>'+
+ '<nav class="p3-tabs" aria-label="Study flow sections">'+tabs.map(([id,label])=>'<button type="button" data-p3="tab" data-mode="'+id+'" aria-pressed="'+(selectedTab===id)+'" class="'+(selectedTab===id?'active':'')+'">'+label+'</button>').join('')+'</nav>'+
+ (selectedTab==='today'?next:
+  selectedTab==='chapters'?chapter:
+  selectedTab==='connect'?links()+'<details id="p3Comparison" class="p3-comparison-drawer"'+(compareOpen?' open':'')+'><summary>Compare two saved theories <span aria-hidden="true">⌄</span></summary>'+compare()+'</details>':
+  weak+recall())+
+ '<div class="p3-footer"><button type="button" data-tab="focus">Focus Room →</button><button type="button" data-tab="mindmap">Concept boards →</button><button type="button" data-tab="dictionary">Dictionary →</button><button type="button" data-tab="tools">All study tools →</button></div>';
 }
 function open(kind,id){
  if(kind==='note'){const note=(d().notes||[]).find(n=>n.id===id);if(!note)return;core.setTab('notes');window.PsychDeskCloud?.noteEditor?.(note);}
@@ -72,10 +79,11 @@ document.addEventListener('change',e=>{
 });
 document.addEventListener('click',e=>{
  const b=e.target.closest('[data-p3]');if(!b)return;e.preventDefault();
- if(b.dataset.p3==='tab'){filter=b.dataset.mode;core.render();}
+ if(b.dataset.p3==='tab'){if(['today','chapters','connect','review'].includes(b.dataset.mode)){filter=b.dataset.mode;core.render();}}
  else if(b.dataset.p3==='open')open(b.dataset.kind,b.dataset.id);
  else if(b.dataset.p3==='review'){core.setTab('recall');core.toast('Flashcards opened. Choose the subject filter to focus your review.');}
 });
-window.addEventListener('psychdesk:session-reset',()=>{selected='';left='';right='';filter='links';});
-window.PsychDeskPhase3={render,related,sourceList};
+document.addEventListener('toggle',e=>{if(e.target?.id==='p3Comparison')compareOpen=Boolean(e.target.open);},true);
+window.addEventListener('psychdesk:session-reset',()=>{selected='';left='';right='';filter='today';compareOpen=false;});
+window.PsychDeskPhase3={render,related,sourceList,setSection:section=>{if(['today','chapters','connect','review'].includes(section)){filter=section;core.render();}}};
 })();

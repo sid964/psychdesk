@@ -88,6 +88,32 @@ async function main(){
       }
      }
      record.navigation=navigation;
+     // Integration audit for the single Phases 3–8 release. Use only local test data.
+     if(vp.width===390||vp.width===1440){
+      await openTab('today');
+      const homeEntry=await page.locator('.study-flow-entry').count();
+      await openTab('connections');
+      const headline=await page.locator('.p3-studio-header h1').textContent();
+      const tabs=await page.locator('[data-p3="tab"]').allTextContents();
+      const overview=await page.locator('.p6-choice').count();
+      const reflection=await page.locator('.p8-reflection').count();
+      await page.locator('[data-p3="tab"][data-mode="chapters"]').click();
+      const chapterTrail=await page.locator('.p5-panel').count();
+      await page.locator('[data-p3="tab"][data-mode="connect"]').click();
+      const sourceLinker=await page.locator('#p3Source').count();
+      await page.locator('#p3Comparison summary').click();
+      const theoryPicker=await page.locator('#p3Left').count();
+      await page.locator('[data-p3="tab"][data-mode="review"]').click();
+      const weakConcepts=await page.locator('.p7-panel').count();
+      const flashcardSummary=await page.locator('.p3-recall').count();
+      await openTab('focus');
+      const livingGarden=await page.locator('.p4-garden').count();
+      const summary={homeEntry,headline:headline.trim(),tabs,overview,reflection,chapterTrail,sourceLinker,theoryPicker,weakConcepts,flashcardSummary,livingGarden,
+        overflow:await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth)};
+      record.studyFlowRelease=summary;
+      if(!homeEntry||!headline.includes('Study')||tabs.length!==4||![overview,reflection,chapterTrail,sourceLinker,theoryPicker,weakConcepts,flashcardSummary,livingGarden].every(Boolean)||summary.overflow>8)fatal=true;
+      await page.screenshot({path:path.join(dest,'study-flow-'+vp.width+'.png'),fullPage:false,animations:'disabled'});
+     }
      if(vp.width===360){
       await openTab('notes');
       await page.locator('[data-cloud="newNote"]').first().click();

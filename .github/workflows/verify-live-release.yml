@@ -1,0 +1,43 @@
+name: Verify live PsychDesk release
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'phase-release.css'
+      - 'phase6-next-step.js'
+      - 'sw.js'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-pages:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Confirm GitHub Pages serves the merged Study Flow
+        shell: bash
+        run: |
+          set -euo pipefail
+          SITE='https://sid964.github.io/psychdesk'
+          echo "Checking live HTML and assets following commit $GITHUB_SHA"
+          for attempt in $(seq 1 48); do
+            url_query="release=$GITHUB_SHA&attempt=$attempt"
+            html=$(curl -fsSL --max-time 12 "$SITE/index.html?$url_query" || true)
+            css=$(curl -fsSL --max-time 12 "$SITE/phase-release.css?$url_query" || true)
+            next=$(curl -fsSL --max-time 12 "$SITE/phase6-next-step.js?$url_query" || true)
+            sw=$(curl -fsSL --max-time 12 "$SITE/sw.js?$url_query" || true)
+            if [[ "$html" == *'phase-release.css?v=release-1'* &&
+                  "$html" == *'data-tab="connections"'* &&
+                  "$css" == *'.study-flow-entry'* &&
+                  "$next" == *'homeCard'* &&
+                  "$sw" == *'psychdesk-study-flow-release-v66'* ]]; then
+              echo "LIVE_RELEASE_VERIFIED: study flow page, styles, next-step behavior and PWA cache are served by GitHub Pages."
+              echo "RELEASE_COMMIT=$GITHUB_SHA"
+              exit 0
+            fi
+            echo "Attempt $attempt: Pages not yet serving the full release; rechecking."
+            sleep 8
+          done
+          echo "::error::GitHub Pages did not serve the expected integrated Phase 3–8 release."
+          exit 1
