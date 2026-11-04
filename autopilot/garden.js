@@ -102,7 +102,11 @@ let watcher;
 function observe(){
  const gardens=document.querySelectorAll('.garden-world');
  if(!watcher&&'IntersectionObserver' in window)watcher=new IntersectionObserver(entries=>{
-  for(const entry of entries)entry.target.classList.toggle('garden-motion-paused',!entry.isIntersecting);
+  for(const entry of entries){
+   const paused=!entry.isIntersecting;
+   entry.target.classList.toggle('garden-motion-paused',paused);
+   entry.target.closest('.garden-landing')?.classList.toggle('garden-motion-paused',paused);
+  }
  },{rootMargin:'70px'});
  gardens.forEach(node=>{
   if(!node.dataset.gardenObserved){node.dataset.gardenObserved='1';watcher?.observe(node);}
