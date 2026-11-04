@@ -182,7 +182,7 @@ function renderTools(){
  ['university','▤','University exam prep','Your semester syllabus, revision topics and answer practice.'],
  ['psychology','ψ','Overall psychology prep','Understand concepts, compare theories and apply ideas.']]],
  ['Capture and organize',['Choose how you want to keep your study material.'],[
- ['notes','✎','Typed notes','Write and organize your notebook.'],['ink','✒','Handwritten notes','Write or draw with a pen, touch or mouse.'],['stickies','▧','Sticky notes','Keep short reminders and ideas.'],['materials','✧','Subject library','Organize books, files and study links.'],['reader','▤','Book reader','Read and annotate PDFs.']]],
+ ['planner','▤','Study planner','Plan topics and pick up where you left off.'],['notes','✎','Typed notes','Write and organize your notebook.'],['ink','✒','Handwritten notes','Write or draw with a pen, touch or mouse.'],['stickies','▧','Sticky notes','Keep short reminders and ideas.'],['materials','✧','Subject library','Organize books, files and study links.'],['reader','▤','Book reader','Read and annotate PDFs.']]],
  ['Practice and connect',['Use these after choosing a topic.'],[
  ['recall','◇','Flashcards','Recall an answer, then check and schedule review.'],['focus','◷','Focus room','Time one study session and log it when finished.'],['mindmap','◇','Mind maps','Connect concepts and compare theories.'],['board','✳','Study board','Arrange ideas visually.']]],
  ['Look up and explore',['Find material or check a concept.'],[
