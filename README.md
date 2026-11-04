@@ -1,5 +1,11 @@
 # PsychDesk — subject study library
 
+## Phase 2 study preparation (November 4, 2026)
+
+Phase 2, merged via PR #48, adds a local **Prepare chapter** action in the book reader and PDF page-range import; it previews editable chapter outlines and selectable definition-based flashcards before saving them. The existing prepared-notes inbox can also suggest a subject assignment with an undo option. Original books, imported files, Firebase sign-in, and Drive integration remain unchanged.
+
+The phase uses the existing browser worker and account-scoped storage. Prepared excerpts are not copied into the synchronized study record by default; only reviewed, explicitly approved outlines/cards are saved. GitHub Pages publishes the static site from the main branch.
+
 ## Firestore sync repair: nested handwritten strokes (November 2026)
 
 **Fix for “Function Transaction.set() called with invalid data. Nested arrays are not supported.”**
