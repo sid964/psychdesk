@@ -66,7 +66,7 @@ function renderHome(){
  '<section class="garden-notebook" aria-label="Resume your notebook"><div class="garden-book-icon" aria-hidden="true"><span>✧</span></div>'+(lastSession||continuation)+'</section>'+ 
  '<section class="studio-discovery garden-seed" id="studio-discovery" aria-label="A daily psychology concept">'+discoveryMarkup()+'</section></div>'+
  '<section class="garden-bloom-line"><div><span class="studio-kicker">SAVED IDEAS</span><h3>Ideas to come back to.</h3><p>'+saved+' '+(saved===1?'concept':'concepts')+' saved.</p></div><button type="button" data-auto="garden">Review saved ideas <span aria-hidden="true">↗</span></button></section>'+
- '<details class="studio-quiet-tools garden-tool-drawer"><summary>Other tools <span aria-hidden="true">⌄</span></summary><div><button type="button" data-tab="notes">Notebooks</button><button type="button" data-tab="ink">Ink notes</button><button type="button" data-tab="materials">Reading shelf</button><button type="button" data-tab="dictionary">Psychology dictionary</button><button type="button" data-tab="recall">Flashcards</button><button type="button" data-auto="inbox">Prepared material</button><button type="button" data-auto="import">Import a document</button><button type="button" data-auto="letter">Weekly letter</button><button type="button" data-tab="tools">All tools</button></div></details>'+
+ '<details class="studio-quiet-tools garden-tool-drawer"><summary>Other tools <span aria-hidden="true">⌄</span></summary><div><button type="button" data-tab="notes">Notebooks</button><button type="button" data-tab="ink">Ink notes</button><button type="button" data-tab="materials">Reading shelf</button><button type="button" data-tab="dictionary">Psychology dictionary</button><button type="button" data-tab="recall">Flashcards</button><button type="button" data-auto="inbox">Organize notes</button><button type="button" data-auto="import">Import a document</button><button type="button" data-auto="letter">Weekly letter</button><button type="button" data-tab="tools">All tools</button></div></details>'+
  '<footer class="studio-home-signoff">PsychDesk · Notes, reading, and revision</footer></div>';
 }
 
@@ -146,7 +146,7 @@ async function recoverJobs(){
 function analyze(source){
  return new Promise((resolve,reject)=>{
   try{
-   if(!worker)worker=new Worker('./autopilot/worker.js?v=1');
+   if(!worker)worker=new Worker('./autopilot/worker.js?v=phase2-1');
    const jobId=Math.random().toString(36).slice(2),timer=setTimeout(()=>{worker?.terminate();worker=null;reject(Error('Worker timeout'))},10000);
    const onMessage=e=>{if(e.data?.jobId!==jobId)return;clearTimeout(timer);worker.removeEventListener('message',onMessage);if(e.data.error)reject(Error(e.data.error));else resolve(e.data.result)};
    worker.addEventListener('message',onMessage);worker.postMessage({jobId,source});
@@ -163,7 +163,7 @@ async function run(){
    if(!n||rev(n)!==job.revision){job.state='stale';await operate('jobs','put',job);continue;}
    job.state='working';await operate('jobs','put',job);
    try{
-    const result=await analyze({id:n.id,title:n.title,text:n.body,revision:job.revision});
+    const result=await analyze({id:n.id,title:n.title,text:n.body,revision:job.revision,subjects:info().subjects.map(s=>({id:s.id,name:s.name}))});
     if(scope()!==current)break;
     await operate('artifacts','put',{key:job.key,scope:current,sourceId:n.id,revision:job.revision,result,createdAt:new Date().toISOString()});
     job.state='complete';await operate('jobs','put',job);
@@ -190,9 +190,30 @@ async function inbox(){
  const bodies=artifacts.map(a=>{
   const note=info().notes.find(n=>n.id===a.sourceId),r=a.result,possible=info().subjects.find(x=>x.id===r.suggestion.subjectId);
   const mentioned=discoveries.filter(c=>{const words=(' '+String(note?.title||'')+' '+String(note?.body||'')+' ').toLowerCase().replace(/[^a-z0-9]+/g,' ');const term=String(c.term||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();return term&&(' '+words.trim()+' ').includes(' '+term+' ')}).slice(0,5);
-  return '<details class="studio-result"><summary>'+h(note?.title||'Untitled note')+' <small>'+r.cards.length+' draft cards</small></summary>'+(possible?'<p>Suggested notebook: '+h(possible.name)+' · confidence '+Math.round(r.suggestion.confidence*100)+'% (keyword rule)</p>':'<p>Not classified with enough confidence — safely left in its original notebook.</p>')+(r.outline.length?'<h4>Extracted headings</h4><ol>'+r.outline.slice(0,12).map(x=>'<li>'+h(x)+'</li>').join('')+'</ol><button type="button" class="secondary" data-auto="outline" data-key="'+h(a.key)+'">Review editable outline</button>':'')+(mentioned.length?'<p>Known concepts mentioned: '+mentioned.map(c=>'<button class="link-btn" data-auto="related" data-id="'+h(c.id)+'">'+h(c.term)+'</button>').join(' ')+'</p>':'')+(r.researchers.length?'<p>Names mentioned: '+h(r.researchers.join(', '))+'</p>':'')+(r.dois.length?'<p>Research DOIs: '+r.dois.slice(0,5).map(doi=>'<button type="button" class="link-btn" data-auto="reference" data-doi="'+h(doi)+'">'+h(doi)+' · find reference ↗</button>').join(' ')+'</p>':'')+(r.cards.length?'<h4>Draft flashcards</h4>'+r.cards.slice(0,5).map(x=>'<p><strong>'+h(x.question)+'</strong> — '+h(x.answer)+'</p>').join('')+'<button type="button" class="primary" data-auto="approve" data-key="'+h(a.key)+'">Add reviewed cards to deck</button>':'<p>No explicit definition statements were found. Nothing was invented.</p>')+'</details>';
+  return '<details class="studio-result"><summary>'+h(note?.title||'Untitled note')+' <small>'+r.cards.length+' draft cards</small></summary>'+(note?.subjectId?'<p class="note">Already filed under '+h(info().subjects.find(s=>s.id===note.subjectId)?.name||'a subject')+'.</p>':possible&&r.suggestion.confidence>=.65?'<p>Suggested subject: <strong>'+h(possible.name)+'</strong> · '+Math.round(r.suggestion.confidence*100)+'% keyword match'+(r.suggestion.matched?.length?' ('+h(r.suggestion.matched.join(', '))+')':'')+'</p><button type="button" class="secondary" data-auto="organize" data-key="'+h(a.key)+'">File under '+h(possible.name)+'</button>':'<p class="note">No reliable subject match. Note stays unassigned.</p>')+(r.outline.length?'<h4>Extracted headings</h4><ol>'+r.outline.slice(0,12).map(x=>'<li>'+h(x)+'</li>').join('')+'</ol><button type="button" class="secondary" data-auto="outline" data-key="'+h(a.key)+'">Review editable outline</button>':'')+(mentioned.length?'<p>Known concepts mentioned: '+mentioned.map(c=>'<button class="link-btn" data-auto="related" data-id="'+h(c.id)+'">'+h(c.term)+'</button>').join(' ')+'</p>':'')+(r.researchers.length?'<p>Names mentioned: '+h(r.researchers.join(', '))+'</p>':'')+(r.dois.length?'<p>Research DOIs: '+r.dois.slice(0,5).map(doi=>'<button type="button" class="link-btn" data-auto="reference" data-doi="'+h(doi)+'">'+h(doi)+' · find reference ↗</button>').join(' ')+'</p>':'')+(r.cards.length?'<h4>Draft flashcards</h4>'+r.cards.slice(0,5).map(x=>'<p><strong>'+h(x.question)+'</strong> — '+h(x.answer)+'</p>').join('')+'<button type="button" class="primary" data-auto="approve" data-key="'+h(a.key)+'">Add reviewed cards to deck</button>':'<p>No explicit definition statements were found. Nothing was invented.</p>')+'</details>';
  }).join('');
  core.openModal('Prepared study material','<div class="studio-prepared"><p>Local, deterministic suggestions. Your original notes are unchanged. Flashcards are drafts until you approve them.</p>'+(artifacts.length?bodies:'<p>Nothing prepared yet. Save or edit a note containing a clear definition, such as “Operant conditioning: learning through consequences.”</p>')+'<button class="secondary" data-auto="rescan">Check notes again</button></div>');
+}
+async function applyOrganization(keyValue){
+ const owner=scope(),artifact=await operate('artifacts','get',keyValue).catch(()=>null);
+ if(owner!==scope()||!artifact||artifact.scope!==owner){core.toast('Suggestion is no longer available.');return;}
+ const note=info().notes.find(n=>n.id===artifact.sourceId);
+ const guess=artifact.result?.suggestion;
+ if(!note||rev(note)!==artifact.revision||note.subjectId||!guess||guess.confidence<.65){
+  core.toast('This note changed or no longer needs organizing.');return;
+ }
+ const target=info().subjects.find(s=>s.id===guess.subjectId);
+ if(!target){core.toast('Suggested subject was removed.');return;}
+ const ok=core.commitChange(d=>{
+  const current=d.notes.find(n=>n.id===note.id);
+  if(!current||current.subjectId||rev(current)!==artifact.revision)throw Error('The note changed. No subject was assigned.');
+  current.subjectId=target.id;
+ });
+ if(!ok){core.toast('Could not assign this note. Your original is unchanged.');return;}
+ await operate('activity','put',{key:owner+':organize:'+Date.now()+':'+note.id,scope:owner,at:new Date().toISOString(),
+  title:'Filed '+String(note.title||'Untitled note').slice(0,70)+' under '+target.name,
+  undo:{noteId:note.id,oldSubjectId:'',newSubjectId:target.id}}).catch(()=>{});
+ core.toast('Note filed under '+target.name+'. Undo is available in Recent activity.');inbox();
 }
 async function draftOutline(keyValue){
  const a=await operate('artifacts','get',keyValue).catch(()=>null);
@@ -280,6 +301,7 @@ document.addEventListener('click',event=>{
  else if(a==='quiet')quiet(!document.body.classList.contains('psychdesk-quiet'));
  else if(a==='inbox')inbox(); else if(a==='import')window.PsychDeskImport?.open();
  else if(a==='approve')approve(b.dataset.key);
+ else if(a==='organize')applyOrganization(b.dataset.key);
  else if(a==='outline')draftOutline(b.dataset.key);
  else if(a==='saveOutline')saveOutline();
  else if(a==='reference')sendReference(b.dataset.doi);
@@ -315,7 +337,7 @@ window.addEventListener('online',run);
 atmosphere();setInterval(atmosphere,3600000);
 const exit=document.createElement('button');exit.type='button';exit.id='quietExit';exit.className='studio-quiet-exit';exit.textContent='↙ Leave Quiet Room';exit.addEventListener('click',()=>quiet(false));document.body.append(exit);
 quiet(read('quiet',false));
-window.PsychDeskAutopilot={renderHome,scan,emit,on,openPrepared:inbox,getMode:mode};
+window.PsychDeskAutopilot={renderHome,scan,emit,on,openPrepared:inbox,getMode:mode,analyze};
 core.render();
 recoverJobs().then(scanSoon);
 })();
