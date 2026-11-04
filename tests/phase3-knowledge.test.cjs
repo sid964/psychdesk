@@ -25,7 +25,7 @@ test('phase 3 suggests existing sources without changing any records',()=>{
  assert.match(e.api.render(),/Start a session in the Focus Room/); // Safe fallback when Phase 6 is absent.
  e.api.setSection('connect');
  const html=e.api.render();
- assert.match(html,/Connected notes/);
+ assert.match(html,/Find connections for/);
  assert.match(html,/Working memory/);
  assert.match(html,/Attention and working memory/);
  assert.equal(JSON.stringify(e.data),before);
