@@ -32,7 +32,7 @@ function render(){
  '<div class="p6-choice"><span class="p6-kind">'+h(current.type==='task'?'FROM YOUR PLAN':current.type==='recall'?'READY TO REVIEW':current.type==='chapter'?'PREPARED CHAPTER':current.type==='resume'?'CONTINUE READING':'FOCUS TIME')+'</span>'+
  '<h3>'+h(current.title)+'</h3><p>'+h(current.detail)+'</p><button class="primary" type="button" data-p6="go">'+h(current.action)+' →</button></div>'+
  (options.length>1?'<div class="p6-alternatives"><span>Or choose something else</span><div>'+options.map((item,i)=>'<button type="button" data-p6="choose" data-index="'+i+'" aria-pressed="'+(selected===i)+'">'+h(item.type==='task'?'Study plan':item.type==='recall'?'Flashcards':item.type==='chapter'?'Chapter':item.type==='resume'?'Reading':'Focus')+'</button>').join('')+'</div></div>':'')+
- '<p class="p3-muted">Nothing starts automatically. Your existing data and study schedule remain unchanged.</p></section>';
+ '<p class="p3-muted">Nothing starts automatically. Your existing data and study schedule remain unchanged.</p>'+(window.PsychDeskPhase8?.render?.()||'')+'</section>';
 }
 function go(){
  const item=choices()[selected];if(!item)return;
