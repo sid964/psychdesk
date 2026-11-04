@@ -113,8 +113,14 @@ function scene(saved,concepts){
  return '<div class="garden-world">'+art+chips+'<span class="garden-world-caption" aria-hidden="true">saved study concepts</span></div>';
 }
 // Pause decorative motion when off-screen or in a background tab.
+// An IntersectionObserver retains its targets; release detached garden SVGs
+// after each home rerender so frequent navigation cannot accumulate old scenes.
 let watcher;
+const observedGardens=new Set();
 function observe(){
+ for(const node of observedGardens){
+  if(!node.isConnected){watcher?.unobserve(node);observedGardens.delete(node);}
+ }
  const gardens=document.querySelectorAll('.garden-world');
  if(!watcher&&'IntersectionObserver' in window)watcher=new IntersectionObserver(entries=>{
   for(const entry of entries){
@@ -124,10 +130,20 @@ function observe(){
   }
  },{rootMargin:'70px'});
  gardens.forEach(node=>{
-  if(!node.dataset.gardenObserved){node.dataset.gardenObserved='1';watcher?.observe(node);}
+  if(!observedGardens.has(node)){
+   observedGardens.add(node);
+   watcher?.observe(node);
+  }
  });
 }
-function scheduleObservation(){requestAnimationFrame(observe);}
+let scheduled=false;
+function scheduleObservation(){
+ if(scheduled)return;
+ scheduled=true;
+ requestAnimationFrame(()=>{scheduled=false;observe()});
+}
+window.addEventListener('pagehide',()=>{watcher?.disconnect();watcher=null;observedGardens.clear();});
+window.addEventListener('pageshow',scheduleObservation);
 document.addEventListener('visibilitychange',()=>{
  document.documentElement.classList.toggle('garden-document-hidden',document.hidden);
 });
