@@ -94,6 +94,7 @@ html[data-theme="dark"] .studio-intro h1 em{color:#deb992}
  background:radial-gradient(circle,rgba(205,159,114,.10),transparent 70%);
  z-index:-1;pointer-events:none;
 }
+html[data-theme="light"] .studio-home-v2 .studio-discovery{background:linear-gradient(142deg,#40342f 0%,#302b29 61%,#292827 100%);color:#f8f1e9}
 html[data-theme="dark"] .studio-home-v2 .studio-discovery{
  background:linear-gradient(142deg,#201b1b 0%,#151415 66%,#101011 100%);
  color:#f8f3ed;border-color:#433737;box-shadow:none;
