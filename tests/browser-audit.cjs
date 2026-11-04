@@ -30,6 +30,21 @@ async function inspect(page){
    const st=getComputedStyle(el),r=el.getBoundingClientRect();
    return st.display!=='none'&&st.visibility!=='hidden'&&r.width>20&&(r.left< -5||r.right>W+6);
   }).slice(0,12).map(el=>({tag:el.tagName,cls:String(el.className).slice(0,65),left:Math.round(el.getBoundingClientRect().left),right:Math.round(el.getBoundingClientRect().right)}));
+  const garden=document.querySelector('.garden-landing');
+  const heroText=garden?.querySelector('.garden-heading');
+  const heroArt=garden?.querySelector('.garden-art-wrap');
+  const heroTitle=garden?.querySelector('h1');
+  // Check visible element geometry, not only document horizontal overflow.
+  // A clipped illustration can cover readable words while scrollWidth stays valid.
+  const overlapArea=(a,b)=>{
+   if(!a||!b)return 0;
+   const w=Math.max(0,Math.min(a.right,b.right)-Math.max(a.left,b.left));
+   const h=Math.max(0,Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top));
+   return Math.round(w*h);
+  };
+  const heroOverlap=W>=900&&heroText&&heroArt
+   ?overlapArea(heroText.getBoundingClientRect(),heroArt.getBoundingClientRect()):null;
+  const heroTitleAccessible=heroTitle?.textContent?.replace(/\s+/g,' ').trim()||'';
   const rail=document.querySelector('.desktop-rail');
   const railStyle=rail?getComputedStyle(rail):null;
   const skip=document.querySelector('.skip-link')?.getBoundingClientRect();
@@ -37,7 +52,7 @@ async function inspect(page){
   const accent=stat?getComputedStyle(stat,'::before').backgroundColor:null;
   return {width:W,scrollY,skipVisible:!!skip&&skip.bottom>0,accent,overflow:document.documentElement.scrollWidth-W,
    rail:{overflowX:railStyle?.overflowX||'',width:rail?.clientWidth||0,scrollWidth:rail?.scrollWidth||0},
-   headerOverlap:intersections,
+   headerOverlap:intersections,heroOverlap,heroTitleAccessible,
    headerScroll:Math.round((header?.scrollWidth||0)-(header?.clientWidth||0)),
    offscreen,theme:document.documentElement.dataset.theme,
    loaded:Boolean(window.PsychDeskCore),heading:document.querySelector('#main h1')?.textContent?.trim()||''};
@@ -198,6 +213,8 @@ async function main(){
      if(vp.width===390||vp.width===1440)await auditFlows(page,openTab,record,dest);
      if(errors.length)fatal=true;
      if(overview.overflow>6||overview.headerOverlap.length||overview.scrollY!==0||overview.skipVisible)fatal=true;
+     if(overview.heroOverlap!==null&&overview.heroOverlap>25)fatal=true;
+     if(overview.heroTitleAccessible&&!overview.heroTitleAccessible.includes('where you'))fatal=true;
      if(overview.accent!==null&&overview.accent!=='rgb(146, 146, 146)')fatal=true;
      if(vp.width>=900&&overview.rail.overflowX!=='hidden'&&overview.rail.overflowX!=='clip')fatal=true;
     }
