@@ -24,16 +24,16 @@ const info=()=>core.getData();
 
 function welcome(){
  const hour=new Date().getHours();
- return hour<11?'A fresh morning for a new thought.':hour<17?'An open afternoon for curious minds.':hour<21?'A little space to unwind and wonder.':'One quiet idea before the day ends.';
+ return hour<11?'Start with a concept, a note, or a task.':hour<17?'Pick up a subject or review your notes.':hour<21?'Continue reading or review a concept.':'Review a concept before you finish studying.';
 }
 function discoveryMarkup(){
  const c=discovery();
- if(!c)return '<div class="studio-discovery-loading"><span class="studio-kicker">TODAY’S LITTLE DISCOVERY</span><h2>A new thought is on its way.</h2><p>There is always something wonderful to notice.</p></div>';
+ if(!c)return '<div class="studio-discovery-loading"><span class="studio-kicker">FEATURED PSYCHOLOGY CONCEPT</span><h2>Loading the featured concept.</h2><p>Concepts are selected from reviewed psychology sources.</p></div>';
  const saved=safeSaved().some(x=>x.id===c.id);
- return '<div class="studio-feature-top"><span class="studio-kicker">TODAY’S LITTLE DISCOVERY</span><span class="garden-story-mark" aria-hidden="true">✳</span></div>'+
+ return '<div class="studio-feature-top"><span class="studio-kicker">FEATURED PSYCHOLOGY CONCEPT</span><span class="garden-story-mark" aria-hidden="true">✳</span></div>'+
  '<div class="studio-feature-body"><p class="studio-concept">'+h(c.category)+' · '+h(c.term)+'</p><h2>'+h(c.title)+'</h2><p class="studio-feature-definition">'+h(c.definition)+'</p></div>'+
  '<div class="studio-feature-footer"><span class="studio-feature-credit">From '+h(c.source?.publisher||'a psychology source')+'</span>'+
- '<div class="studio-actions"><button type="button" class="studio-explore" data-auto="explore">Discover more ↗</button><button type="button" class="studio-save" data-auto="save" aria-label="'+(saved?'Already growing in your garden':'Save this concept to your garden')+'">'+(saved?'Growing ✓':'✿ Keep this idea')+'</button></div></div>';
+ '<div class="studio-actions"><button type="button" class="studio-explore" data-auto="explore">Discover more ↗</button><button type="button" class="studio-save" data-auto="save" aria-label="'+(saved?'Concept already saved':'Save this psychology concept')+'">'+(saved?'Saved ✓':'Save concept')+'</button></div></div>';
 }
 
 function postcard(){
@@ -46,34 +46,34 @@ function renderHome(){
  const saved=safeSaved().length,subject=recent?(d.subjects||[]).find(v=>v.id===recent.subjectId):null;
  const excerpt=recent?String(recent.body||'').replace(/\s+/g,' ').trim().slice(0,145):'';
  const continuation=recent?
- '<div class="garden-notebook-copy"><span class="studio-kicker">YOUR BOOK NOOK · PICK UP WHERE YOU LEFT OFF</span><h3>'+h(recent.title||'Your unfinished page')+'</h3><p>'+h(excerpt||'Your writing is still here, just as you left it.')+'</p></div>'+
- '<div class="garden-book-actions"><span>'+h(subject?.name||'Your notebook')+'</span><button type="button" class="garden-text-btn" data-cloud="editNote" data-id="'+h(recent.id)+'">Continue writing ↗</button></div>':
- '<div class="garden-notebook-copy"><span class="studio-kicker">YOUR BOOK NOOK</span><h3>A blank page is a beautiful start.</h3><p>No perfect title, no folders to set up. Just one thought is enough.</p></div>'+
- '<div class="garden-book-actions"><span>Begin anywhere</span><button type="button" class="garden-text-btn" data-auto="capture">Open your notebook ↗</button></div>';
+ '<div class="garden-notebook-copy"><span class="studio-kicker">RECENT NOTE</span><h3>'+h(recent.title||'Untitled note')+'</h3><p>'+h(excerpt||'Continue reading or editing this note.')+'</p></div>'+
+ '<div class="garden-book-actions"><span>'+h(subject?.name||'Your notebook')+'</span><button type="button" class="garden-text-btn" data-cloud="editNote" data-id="'+h(recent.id)+'">Open note ↗</button></div>':
+ '<div class="garden-notebook-copy"><span class="studio-kicker">NOTES</span><h3>Start a new note.</h3><p>Capture lecture points, questions, and explanations.</p></div>'+
+ '<div class="garden-book-actions"><span>NOTEBOOK</span><button type="button" class="garden-text-btn" data-auto="capture">New note ↗</button></div>';
  const scene=window.PsychDeskGarden?.scene(safeSaved(),discoveries)||'';
  return '<div class="studio-home studio-home-v2 garden-home">'+
- '<section class="garden-landing" aria-label="Your peaceful psychology garden">'+
+ '<section class="garden-landing" aria-label="Psychology study homepage">'+
  '<div class="garden-ambient" aria-hidden="true"></div>'+
- '<div class="garden-heading"><span class="studio-kicker">YOUR OWN LITTLE PSYCHOLOGY GARDEN</span><h1>A little space<br>to <em>grow curious.</em></h1><p>Nothing to catch up on. Just a quiet corner where your ideas can take root.</p>'+
- '<div class="garden-entry"><button class="garden-main-btn" type="button" data-auto="capture">✎ &nbsp; Open my notebook <span aria-hidden="true">↗</span></button><button class="garden-soft-btn" type="button" data-tab="focus">Take a quiet moment</button></div></div>'+
+ '<div class="garden-heading"><span class="studio-kicker">PSYCHOLOGY STUDY WORKSPACE</span><h1>Explore psychology.<br><em>Build understanding.</em></h1><p>Read, take notes, and connect what you learn.</p>'+
+ '<div class="garden-entry"><button class="garden-main-btn" type="button" data-auto="capture">✎ &nbsp; New note <span aria-hidden="true">↗</span></button><button class="garden-soft-btn" type="button" data-tab="focus">Start focus</button></div></div>'+
  '<div class="garden-art-wrap">'+scene+'</div>'+
- '<div class="garden-scene-footer"><span>✿ &nbsp; Every idea has somewhere to grow</span><span>YOUR LITTLE FOREST</span></div>'+
+ '<div class="garden-scene-footer"><span>✿ &nbsp; Concepts you choose to save</span><span>PSYCHOLOGY COLLECTION</span></div>'+
  '</section>'+
- '<div class="garden-path-marker" aria-hidden="true"><span></span>TAKE THE SCENIC ROUTE<span></span></div>'+
+ '<div class="garden-path-marker" aria-hidden="true"><span></span>STUDY RESOURCES<span></span></div>'+
  '<div class="garden-stories"><section class="studio-discovery garden-seed" id="studio-discovery" aria-label="A daily psychology discovery">'+discoveryMarkup()+'</section>'+
  '<section class="garden-notebook" aria-label="Resume your notebook"><div class="garden-book-icon" aria-hidden="true"><span>✧</span></div>'+continuation+'</section></div>'+
- '<section class="garden-bloom-line"><div><span class="studio-kicker">YOUR MEMORY GARDEN</span><h3>Little things you chose to keep.</h3><p>'+saved+' saved '+(saved===1?'discovery':'discoveries')+'. No streaks, no deadlines, no plants that die.</p></div><button type="button" data-auto="garden">Wander through your garden <span aria-hidden="true">↗</span></button></section>'+
- '<details class="studio-quiet-tools garden-tool-drawer"><summary>Find something else in the garden <span aria-hidden="true">⌄</span></summary><div><button type="button" data-tab="notes">Notebooks</button><button type="button" data-tab="ink">Ink notes</button><button type="button" data-tab="materials">Reading shelf</button><button type="button" data-tab="dictionary">Psychology dictionary</button><button type="button" data-tab="recall">Flashcards</button><button type="button" data-auto="inbox">Prepared material</button><button type="button" data-auto="import">Import a document</button><button type="button" data-auto="letter">Weekly letter</button><button type="button" data-tab="tools">All tools</button></div></details>'+
- '<footer class="studio-home-signoff">Grow at your own pace. Your garden will be here.</footer></div>';
+ '<section class="garden-bloom-line"><div><span class="studio-kicker">SAVED CONCEPTS</span><h3>Concepts for later review.</h3><p>'+saved+' '+(saved===1?'concept':'concepts')+' saved.</p></div><button type="button" data-auto="garden">View saved concepts <span aria-hidden="true">↗</span></button></section>'+
+ '<details class="studio-quiet-tools garden-tool-drawer"><summary>More study tools <span aria-hidden="true">⌄</span></summary><div><button type="button" data-tab="notes">Notebooks</button><button type="button" data-tab="ink">Ink notes</button><button type="button" data-tab="materials">Reading shelf</button><button type="button" data-tab="dictionary">Psychology dictionary</button><button type="button" data-tab="recall">Flashcards</button><button type="button" data-auto="inbox">Prepared material</button><button type="button" data-auto="import">Import a document</button><button type="button" data-auto="letter">Weekly letter</button><button type="button" data-tab="tools">All tools</button></div></details>'+
+ '<footer class="studio-home-signoff">PsychDesk · Psychology study workspace</footer></div>';
 }
 
 function refreshHome(){
  const node=$('#studio-discovery');if(node)node.innerHTML=discoveryMarkup();
  const art=$('.garden-art-wrap');if(art&&window.PsychDeskGarden)art.innerHTML=window.PsychDeskGarden.scene(safeSaved(),discoveries);
- const line=$('.garden-bloom-line p');if(line){const count=safeSaved().length;line.textContent=count+' saved '+(count===1?'discovery':'discoveries')+'. No streaks, no deadlines, no plants that die.';}
+ const line=$('.garden-bloom-line p');if(line){const count=safeSaved().length;line.textContent=count+' '+(count===1?'concept':'concepts')+' saved.';}
 }
 
-fetch('./automation/data/curated-concepts.json?v=1',{cache:'force-cache'}).then(r=>{if(!r.ok)throw Error('No curated discovery file');return r.json()}).then(j=>{discoveries=(j.concepts||[]).filter(x=>x.id&&x.title&&x.source?.url&&x.verification==='editor-reviewed');refreshHome()}).catch(()=>{const t=$('#studio-discovery');if(t)t.innerHTML='<span class="studio-kicker">A LITTLE PSYCHOLOGY</span><h2>Discoveries are temporarily unavailable.</h2><p>Your notes and other study tools still work.</p>'});
+fetch('./automation/data/curated-concepts.json?v=1',{cache:'force-cache'}).then(r=>{if(!r.ok)throw Error('No curated discovery file');return r.json()}).then(j=>{discoveries=(j.concepts||[]).filter(x=>x.id&&x.title&&x.source?.url&&x.verification==='editor-reviewed');refreshHome()}).catch(()=>{const t=$('#studio-discovery');if(t)t.innerHTML='<span class="studio-kicker">PSYCHOLOGY CONCEPT</span><h2>Discoveries are temporarily unavailable.</h2><p>Your notes and other study tools still work.</p>'});
 function explore(id){
  const c=discoveries.find(x=>x.id===(id||discovery()?.id));if(!c){core.toast('Discovery is not available yet');return;}
  const related=c.related.map(x=>discoveries.find(v=>v.id===x)).filter(Boolean);
@@ -81,9 +81,9 @@ function explore(id){
 }
 function saveDiscovery(id){
  const c=discoveries.find(x=>x.id===(id||discovery()?.id));if(!c)return;
- const saved=safeSaved();if(saved.some(x=>x.id===c.id)){core.toast('Already in your Memory Garden');return;}
+ const saved=safeSaved();if(saved.some(x=>x.id===c.id)){core.toast('Concept already saved');return;}
  if(!write('saved',[...saved,{id:c.id,savedAt:new Date().toISOString()}])){core.toast('Could not save this discovery on this device.');return;}
- core.toast('A new idea is growing in your garden');refreshHome();
+ core.toast('Concept saved');refreshHome();
 }
 function makeDiscoveryCard(id){
  const c=discoveries.find(v=>v.id===id);if(!c)return;
@@ -93,7 +93,7 @@ function makeDiscoveryCard(id){
 }
 function garden(){
  const saved=safeSaved(),items=saved.map(x=>discoveries.find(c=>c.id===x.id)).filter(Boolean);
- core.openModal('Your Memory Garden','<div class="studio-garden garden-collection"><p>A small sanctuary for things you are curious about. Every saved idea adds a flower; nothing disappears when you take a break.</p><div class="garden-modal-illustration">'+(window.PsychDeskGarden?.scene(saved,discoveries)||'')+'</div><h3>The ideas you kept</h3>'+(items.length?items.map((c,i)=>'<button class="studio-garden-item" data-auto="related" data-id="'+h(c.id)+'"><span>✿</span><strong>'+h(c.term)+'</strong><small>'+h(c.category)+'</small></button>').join(''):'<p>Save a daily discovery to start growing your collection.</p>')+'</div>');
+ core.openModal('Saved concepts','<div class="studio-garden garden-collection"><p>Review and open the psychology concepts you saved.</p><div class="garden-modal-illustration">'+(window.PsychDeskGarden?.scene(saved,discoveries)||'')+'</div><h3>Saved concepts</h3>'+(items.length?items.map((c,i)=>'<button class="studio-garden-item" data-auto="related" data-id="'+h(c.id)+'"><span>✿</span><strong>'+h(c.term)+'</strong><small>'+h(c.category)+'</small></button>').join(''):'<p>Save a daily discovery to start growing your collection.</p>')+'</div>');
 }
 function getDb(){
  if(!('indexedDB' in window))return Promise.reject(Error('IndexedDB unavailable'));
@@ -239,7 +239,7 @@ function letter(){
  const hard={};
  (d.reviews||[]).filter(x=>x.rating==='again'||x.rating==='hard').forEach(x=>{hard[x.cardId]=(hard[x.cardId]||0)+1});
  const revisit=(d.cards||[]).filter(c=>(hard[c.id]||0)>=2).slice(0,3);
- core.openModal('Your weekly learning letter','<div class="studio-letter"><span class="studio-kicker">THE WEEK BEGINNING '+h(date(begin))+'</span><h3>Ideas worth keeping.</h3><p>You captured '+notes.length+' note'+(notes.length===1?'':'s')+' and kept '+saved.length+(saved.length===1?' discovery':' discoveries')+' last week.</p>'+(subjects.length?'<p>Topics you visited: '+h(subjects.join(', '))+'.</p>':'<p>No subject was assigned to your saved notes, and that’s okay.</p>')+(revisit.length?'<h4>A gentle revisit</h4>'+revisit.map(c=>'<p>'+h(c.question)+'</p>').join(''):'<p>Nothing needs a special revisit based on repeated hard recalls.</p>')+'<p>There is no score to improve. Pick up any thread that interests you.</p></div>');
+ core.openModal('Your weekly learning letter','<div class="studio-letter"><span class="studio-kicker">THE WEEK BEGINNING '+h(date(begin))+'</span><h3>Weekly overview.</h3><p>You captured '+notes.length+' note'+(notes.length===1?'':'s')+' and kept '+saved.length+(saved.length===1?' discovery':' discoveries')+' last week.</p>'+(subjects.length?'<p>Topics you visited: '+h(subjects.join(', '))+'.</p>':'<p>No subject was assigned to your saved notes, and that’s okay.</p>')+(revisit.length?'<h4>A gentle revisit</h4>'+revisit.map(c=>'<p>'+h(c.question)+'</p>').join(''):'<p>Nothing needs a special revisit based on repeated hard recalls.</p>')+'<p>There is no score to improve. Pick up any thread that interests you.</p></div>');
 }
 function compare(){
  const source='https://openstax.org/books/psychology-2e/pages/';
@@ -250,7 +250,7 @@ function quiet(set){document.body.classList.toggle('psychdesk-quiet',set);write(
 function settings(){
  const modal=$('#modalRoot .modal');if(!modal||modal.querySelector('#studioAutopilotSettings'))return;
  const wrap=document.createElement('section');wrap.id='studioAutopilotSettings';wrap.className='settings-section studio-auto-settings';
- wrap.innerHTML='<h3>A little help in the background</h3><p class="note">Private, AI-free preparation. Derived suggestions stay on this device unless you approve them into your synced notes or flashcards.</p><div class="studio-mode-group" role="group" aria-label="Autopilot mode">'+[['calm','Calm'],['assisted','Assisted'],['autopilot','Autopilot']].map(([v,label])=>'<button type="button" data-auto="mode" data-mode="'+v+'" aria-pressed="'+(mode()===v)+'">'+label+'</button>').join('')+'</div><p class="note" id="studioModeHelp">'+h(mode()==='calm'?'Only continuity and daily discoveries.':mode()==='assisted'?'Safe preparation with approval before adding cards.':'Safe preparation, with reversible high-confidence notebook suggestions.')+'</p><div class="studio-settings-actions"><button type="button" class="secondary" data-auto="inbox">See prepared material</button><button type="button" class="secondary" data-auto="history">Recent activity</button><button type="button" class="secondary" data-auto="compare">Compare learning theories</button></div>';
+ wrap.innerHTML='<h3>Study preparation</h3><p class="note">Private, AI-free preparation. Derived suggestions stay on this device unless you approve them into your synced notes or flashcards.</p><div class="studio-mode-group" role="group" aria-label="Autopilot mode">'+[['calm','Manual'],['assisted','Assisted'],['autopilot','Autopilot']].map(([v,label])=>'<button type="button" data-auto="mode" data-mode="'+v+'" aria-pressed="'+(mode()===v)+'">'+label+'</button>').join('')+'</div><p class="note" id="studioModeHelp">'+h(mode()==='calm'?'Only continuity and daily discoveries.':mode()==='assisted'?'Safe preparation with approval before adding cards.':'Safe preparation, with reversible high-confidence notebook suggestions.')+'</p><div class="studio-settings-actions"><button type="button" class="secondary" data-auto="inbox">See prepared material</button><button type="button" class="secondary" data-auto="history">Recent activity</button><button type="button" class="secondary" data-auto="compare">Compare learning theories</button></div>';
  const footer=modal.querySelector('.settings-section:last-of-type');if(footer)footer.before(wrap);else modal.append(wrap);
 }
 async function history(){
