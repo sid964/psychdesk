@@ -2,7 +2,7 @@
 (()=>{'use strict';
 const core=window.PsychDeskCore;
 if(!core)return;
-const allowed=new Set(['reader','notes','ink','recall','focus','planner','materials','research','dictionary','timeline','board','mindmap','university','psychology']);
+const allowed=new Set(['reader','notes','ink','recall','focus','planner','materials','research','dictionary','timeline','board','mindmap','connections','university','psychology']);
 const key=()=> 'psychdesk-session-v1:'+core.getStorageKey();
 const validId=value=>typeof value==='string'&&value.length>0&&value.length<=180;
 const safeTab=tab=>allowed.has(tab)?tab:null;
@@ -25,7 +25,7 @@ function getResume(){
   const note=(core.getData().notes||[]).find(n=>n.id===saved.noteId);
   return {tab:'notes',noteId:note?.id||'',title:String(note?.title||'Your notebook').slice(0,100)};
  }
- return {tab:saved.tab,title:({ink:'Ink Notes',recall:'Flashcards',focus:'Focus Room',planner:'Study planner',materials:'Reading shelf',research:'Research shelf',dictionary:'Psychology dictionary',timeline:'Psychology timeline',board:'Study board',mindmap:'Mind map',university:'University preparation',psychology:'Psychology preparation'})[saved.tab]||'Your study space'};
+ return {tab:saved.tab,title:({ink:'Ink Notes',recall:'Flashcards',focus:'Focus Room',planner:'Study planner',materials:'Reading shelf',research:'Research shelf',dictionary:'Psychology dictionary',timeline:'Psychology timeline',board:'Study board',mindmap:'Mind map',connections:'Connected learning',university:'University preparation',psychology:'Psychology preparation'})[saved.tab]||'Your study space'};
 }
 function store(part){
  if(!safeTab(part.tab))return false;
