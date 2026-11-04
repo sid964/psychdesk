@@ -1,0 +1,15 @@
+/* Phase 5: compact source-linked study trail */
+.p5-panel{gap:18px}
+.p5-intro strong{font:500 clamp(22px,3vw,30px)/1.2 'Fraunces',Georgia,serif}
+.p5-intro p{margin:10px 0 0}
+.p5-list{display:grid;gap:10px}
+.p5-chapter{border:1px solid var(--line,#303030);border-radius:13px;padding:16px;display:flex;align-items:center;justify-content:space-between;gap:20px;min-width:0}
+.p5-chapter-info{min-width:0}
+.p5-chapter-info small{color:var(--muted,#aaa);font-size:11px}
+.p5-chapter-info h3{font-size:15px;margin:6px 0;overflow-wrap:anywhere}
+.p5-chapter-info p{font-size:12px;color:var(--muted,#aaa);margin:0}
+.p5-actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}
+.p5-actions button,.p5-empty button{border:1px solid var(--line,#333);border-radius:999px;padding:9px 12px;background:transparent;color:var(--ink,#eee);font:600 12px 'DM Sans',sans-serif;cursor:pointer}
+.p5-empty{padding:22px;border:1px dashed var(--line,#333);border-radius:14px}
+.p5-empty p{line-height:1.65}
+@media(max-width:650px){.p5-chapter{align-items:stretch;flex-direction:column;gap:13px}.p5-actions{justify-content:flex-start}}
