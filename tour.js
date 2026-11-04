@@ -8,8 +8,8 @@ const chapters=[
  {title:'Catch a thought',text:'Tap the glowing + Note button. Your writing space opens right here.',selector:'#quickNoteBtn',kind:'capture'},
  {title:'Find your writing',text:'Tap Notes to visit your notebook. This is where your saved thoughts live.',selector:'.rail-nav [data-tab="notes"],.bottom-nav [data-tab="notes"]',tab:'notes'},
  {title:'Pick a tool to explore',text:'Choose a highlighted tool: handwriting, sticky notes, flashcards or something you are curious about.',prepare:'tools',selector:'#main .study-tool-launcher',kind:'tools'},
- {title:'Give today a small goal',text:'Tap Plan to see where you organize subjects and study tasks.',selector:'.rail-nav [data-tab="planner"],.bottom-nav [data-tab="planner"]',tab:'planner'},
- {title:'Make space to focus',text:'Tap Focus to see your timer. Start a session whenever you are ready.',selector:'.rail-nav [data-tab="focus"],.bottom-nav [data-tab="focus"]',tab:'focus'},
+ {title:'Give today a small goal',text:'Open your planner to organize subjects and study topics.',prepare:'tools',selector:'.rail-nav [data-tab="planner"],.bottom-nav [data-tab="planner"],#main .study-tool-launcher[data-tab="planner"]',tab:'planner'},
+ {title:'Make space to focus',text:'Visit your focus room. You can begin a session whenever you are ready.',prepare:'tools',selector:'.rail-nav [data-tab="focus"],.bottom-nav [data-tab="focus"],#main .study-tool-launcher[data-tab="focus"]',tab:'focus'},
  {title:'Make this space yours',text:'Tap Settings to find account sync, Drive, backups and this tour.',selector:'#settingsBtn',kind:'settings'}
 ];
 let panel,ring,target,region,index=-1,phase='',opener,frame=0,observer,active=false,generation=0;
@@ -157,7 +157,7 @@ function start(){
  if(active||!core())return;
  // Never replace an existing writing or account dialog.
  if($('#modalRoot')?.children.length)return;
- cleanup();active=true;index=-1;phase='welcome';opener=document.activeElement;
+ cleanup();$('#psychdeskTourInvite')?.remove();active=true;index=-1;phase='welcome';opener=document.activeElement;
  panel=document.createElement('section');panel.id='psychdeskTour';panel.setAttribute('role','dialog');panel.setAttribute('aria-labelledby','tourTitle');panel.setAttribute('aria-describedby','tourText');
  panel.innerHTML='<header><span id="tourCount">A QUICK LOOK AROUND</span><button type="button" data-tour="exit" aria-label="Close tour">×</button></header><progress id="tourProgress" max="6" value="0" aria-label="Tour progress"></progress><h2 id="tourTitle" tabindex="-1"></h2><p id="tourText"></p><p id="tourStatus" role="status" hidden></p><footer><button type="button" id="tourBack" data-tour="back" hidden>Back</button><button type="button" id="tourNext" data-tour="next">Let’s try it →</button></footer><button type="button" id="tourStepSkip" data-tour="skip" hidden>Skip this step</button>';
  ring=document.createElement('div');ring.id='tourSpotlight';ring.setAttribute('aria-hidden','true');
@@ -175,7 +175,26 @@ document.addEventListener('click',e=>{if(e.target.closest('[data-action="replayT
 window.PsychDeskTour={start};
 function offer(){
  let seen=true;try{seen=localStorage.getItem(KEY)==='done'}catch{}
- if(!seen&&core()&&!document.hidden&&!$('#modalRoot')?.children.length&&!document.querySelector('dialog[open]'))start();
+ if(seen||!core()||document.hidden||$('#modalRoot')?.children.length||document.querySelector('dialog[open]'))return;
+ // A first-visit invitation, not a blocking dialog: normal study actions must remain usable.
+ if($('#psychdeskTourInvite'))return;
+ const invite=document.createElement('aside');
+ invite.id='psychdeskTourInvite';
+ invite.setAttribute('role','region');
+ invite.setAttribute('aria-label','Optional first-time study tour');
+ invite.innerHTML='<span>New here? Take a short tour of your study garden.</span>'+
+  '<button type="button" data-tour-invite="start">Show me</button>'+
+  '<button type="button" data-tour-invite="dismiss" aria-label="Dismiss tour invitation">×</button>';
+ invite.addEventListener('click',event=>{
+  const action=event.target.closest('[data-tour-invite]')?.dataset.tourInvite;
+  if(action==='start'){invite.remove();start();}
+  else if(action==='dismiss'){
+   try{localStorage.setItem(KEY,'done')}catch{}
+   invite.remove();
+  }
+ });
+ document.body.append(invite);
+ cleanup();
 }
 const timer=setInterval(offer,1500),stop=setTimeout(cleanup,60000);
 function cleanup(){clearInterval(timer);clearTimeout(stop)}

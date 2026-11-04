@@ -20,3 +20,40 @@ body.tour-active #modalRoot .modal{max-height:calc(100dvh - 330px);overflow:auto
 body.tour-active #modalRoot .modal-overlay{align-items:flex-start}
 @media(max-height:650px){#psychdeskTour{padding:12px 16px}#psychdeskTour h2{font-size:21px;margin:8px 0}#tourStatus{margin:8px 0}#tourText{font-size:13px;margin-bottom:8px}body.tour-active #modalRoot .modal{max-height:calc(100dvh - 270px)}}
 @media(prefers-reduced-motion:no-preference){#psychdeskTour{animation:tour-in .25s ease-out}@keyframes tour-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}}
+
+/* First-time guidance is invited, never forced. A compact, dismissible invitation. */
+#psychdeskTourInvite{
+ position:fixed;z-index:45;right:18px;
+ bottom:calc(22px + env(safe-area-inset-bottom));
+ display:flex;align-items:center;gap:10px;
+ max-width:min(405px,calc(100vw - 30px));padding:10px 11px 10px 15px;
+ border:1px solid #c5ddc4;border-radius:17px;
+ background:#f6fbf3;color:#315640;box-shadow:0 10px 32px #1c402026;
+ font:600 12px/1.5 'DM Sans',system-ui,sans-serif;
+}
+#psychdeskTourInvite>span{flex:1;min-width:0}
+#psychdeskTourInvite button{
+ border:1px solid #c2d9c0;border-radius:999px;background:#dcefd7;
+ color:#31543a;min-height:36px;padding:7px 11px;white-space:nowrap;
+ font:750 11px/1.2 'DM Sans',system-ui,sans-serif;
+}
+#psychdeskTourInvite button[data-tour-invite="dismiss"]{
+ background:transparent;border:0;padding:3px 8px;color:#617e66;
+ min-height:36px;font-size:19px;
+}
+#psychdeskTourInvite button:focus-visible{outline:3px solid #82a981;outline-offset:2px}
+html[data-theme="dark"] #psychdeskTourInvite{
+ background:#0e1a11;color:#d3e8d0;border-color:#36503b;box-shadow:0 10px 32px #0009;
+}
+html[data-theme="dark"] #psychdeskTourInvite button{
+ background:#233c29;border-color:#49644a;color:#dcebd5;
+}
+html[data-theme="dark"] #psychdeskTourInvite button[data-tour-invite="dismiss"]{background:transparent}
+@media(max-width:899px){
+ #psychdeskTourInvite{bottom:calc(92px + env(safe-area-inset-bottom));right:11px;left:11px;max-width:none}
+}
+@media(max-width:370px){
+ #psychdeskTourInvite{gap:4px;padding:9px 7px 9px 11px;font-size:11px}
+ #psychdeskTourInvite button{padding:7px 9px}
+}
+@media(prefers-reduced-motion:reduce){#psychdeskTourInvite{animation:none!important}}
