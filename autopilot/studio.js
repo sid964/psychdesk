@@ -93,7 +93,7 @@ function makeDiscoveryCard(id){
 }
 function garden(){
  const saved=safeSaved(),items=saved.map(x=>discoveries.find(c=>c.id===x.id)).filter(Boolean);
- core.openModal('Saved concepts','<div class="studio-garden garden-collection"><p>Review and open the psychology concepts you saved.</p><div class="garden-modal-illustration">'+(window.PsychDeskGarden?.scene(saved,discoveries)||'')+'</div><h3>Saved concepts</h3>'+(items.length?items.map((c,i)=>'<button class="studio-garden-item" data-auto="related" data-id="'+h(c.id)+'"><span>✿</span><strong>'+h(c.term)+'</strong><small>'+h(c.category)+'</small></button>').join(''):'<p>Save a daily discovery to start growing your collection.</p>')+'</div>');
+ core.openModal('Saved concepts','<div class="studio-garden garden-collection"><p>Review and open the psychology concepts you saved.</p><div class="garden-modal-illustration">'+(window.PsychDeskGarden?.scene(saved,discoveries)||'')+'</div><h3>Saved concepts</h3>'+(items.length?items.map((c,i)=>'<button class="studio-garden-item" data-auto="related" data-id="'+h(c.id)+'"><span>✿</span><strong>'+h(c.term)+'</strong><small>'+h(c.category)+'</small></button>').join(''):'<p>Save a featured concept to build a review collection.</p>')+'</div>');
 }
 function getDb(){
  if(!('indexedDB' in window))return Promise.reject(Error('IndexedDB unavailable'));
