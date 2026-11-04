@@ -5,7 +5,7 @@ const assert=require('node:assert/strict');
  const browser=await chromium.launch({...(process.env.CHROMIUM_PATH?{executablePath:process.env.CHROMIUM_PATH}:{}),headless:true});
  try{
   const page=await browser.newPage({viewport:{width:390,height:844},reducedMotion:'reduce'});
-  await page.goto('http://127.0.0.1:8765/');await page.waitForSelector('#main .hero');
+  await page.goto('http://127.0.0.1:8765/');await page.waitForSelector('#main .hero, #main .studio-home-v2');
   await page.locator('.bottom-nav [data-tab="tools"]').click();
   assert.equal(await page.evaluate(()=>document.activeElement.tagName),'H1');
   await page.evaluate(()=>{
