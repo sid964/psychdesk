@@ -213,3 +213,29 @@ html[data-theme="dark"] .garden-home>.garden-tool-drawer button{background:#101b
 @media(prefers-reduced-motion:reduce){
  .garden-home *, .garden-home *::before, .garden-home *::after{animation:none!important;transition:none!important}
 }
+
+/* A real garden view for saved discoveries, rather than a text-only popup. */
+.garden-collection .garden-modal-illustration{
+ position:relative;background:radial-gradient(ellipse at 60% 23%,#f3f6db,#d8ead8 78%);
+ border:1px solid #dbe6d7;border-radius:20px;
+ overflow:hidden;max-height:265px;margin:20px 0 26px;
+}
+.garden-collection .garden-modal-illustration .garden-world{
+ max-width:490px;margin:auto;
+}
+.garden-collection .garden-modal-illustration .garden-world-caption{display:none}
+.garden-collection>h3{font:500 24px 'Fraunces',Georgia,serif;margin:15px 0}
+.garden-collection .studio-garden-item{
+ background:#f4f7ef;color:#355f48;border-color:#d7e4d4;
+}
+.garden-collection .studio-garden-item:hover{border-color:#80b288}
+html[data-theme="dark"] .garden-collection .garden-modal-illustration{
+ background:radial-gradient(ellipse at 65% 20%,#163225,#06100a 82%);
+ border-color:#294332;
+}
+html[data-theme="dark"] .garden-collection .studio-garden-item{
+ background:#101c13;color:#d0e7cb;border-color:#2b4431;
+}
+@media(max-width:570px){
+ .garden-collection .garden-modal-illustration{max-height:220px}
+}
