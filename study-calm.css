@@ -106,3 +106,105 @@ html[data-motion="off"] *,html[data-motion="off"] *::before,html[data-motion="of
 @media(prefers-reduced-motion:reduce){
  .garden-home *, .garden-home *::before,.garden-home *::after{animation:none!important;transition:none!important}
 }
+
+
+/* Desktop home hero — collision-free text and moving illustration.
+   Prior desktop breakpoints positioned the garden absolutely over a variable
+   width heading. Layout now reserves separate space for both. The animation
+   itself is unchanged, including its visibility and reduced-motion controls.
+   Query the actual home content width rather than the viewport: the desktop
+   sidebar and touch/tablet mode change how much room the home has. */
+@media (min-width:900px){
+ .garden-home{container-type:inline-size}
+ .garden-home .garden-landing{
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  grid-template-rows:auto auto auto;
+  gap:8px;
+  align-items:start;
+  min-height:0;
+  padding:clamp(22px,2.7vw,36px);
+ }
+ .garden-home .garden-heading{
+  grid-column:1;
+  grid-row:1;
+  position:relative;
+  z-index:3;
+  width:100%;
+  max-width:none;
+  min-width:0;
+  padding:0;
+ }
+ .garden-home .garden-heading h1{
+  font-size:clamp(36px,4vw,54px);
+  line-height:1.16;
+  letter-spacing:-1.2px;
+  max-width:none;
+  margin:13px 0 16px;
+  text-wrap:balance;
+  overflow-wrap:normal;
+ }
+ .garden-home .garden-heading p{max-width:48ch}
+ .garden-home .garden-entry{
+  flex-direction:row;
+  align-items:center;
+  gap:10px;
+  margin-top:22px;
+ }
+ .garden-home .garden-art-wrap{
+  grid-column:1;
+  grid-row:2;
+  position:relative;
+  inset:auto;
+  width:min(90%,560px);
+  max-width:100%;
+  min-width:0;
+  margin:0 auto;
+  justify-self:center;
+  align-self:center;
+ }
+ .garden-home .garden-scene-footer{
+  grid-column:1;
+  grid-row:3;
+  position:relative;
+  inset:auto;
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:space-between;
+  min-width:0;
+  gap:8px 16px;
+  margin:0;
+ }
+ .garden-home .garden-notebook h3,
+ .garden-home .garden-seed h2{
+  overflow-wrap:anywhere;
+  line-height:1.2;
+ }
+ /* At roomy desktop widths, preserve the intended side-by-side composition
+    without allowing either side to physically occupy the other's column. */
+ @container (min-width:860px){
+  .garden-home .garden-landing{
+   grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+   grid-template-rows:minmax(0,1fr) auto;
+   column-gap:clamp(16px,2.4vw,32px);
+   row-gap:8px;
+   min-height:475px;
+  }
+  .garden-home .garden-heading{
+   grid-column:1;
+   grid-row:1;
+   align-self:center;
+  }
+  .garden-home .garden-art-wrap{
+   grid-column:2;
+   grid-row:1;
+   width:100%;
+   max-width:100%;
+   justify-self:center;
+  }
+  .garden-home .garden-scene-footer{
+   grid-column:1 / -1;
+   grid-row:2;
+  }
+ }
+}
