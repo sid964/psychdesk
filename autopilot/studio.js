@@ -46,7 +46,7 @@ function renderHome(){
  const saved=safeSaved().length;
  const day=new Date().toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'});
  const subject=recent?(d.subjects||[]).find(s=>s.id===recent.subjectId):null;
- const excerpt=recent?String(recent.body||'').replace(/\\s+/g,' ').trim().slice(0,130):'';
+ const excerpt=recent?String(recent.body||'').replace(/\s+/g,' ').trim().slice(0,130):'';
  const continuation=recent?
  '<section class="studio-resume"><div class="studio-panel-top"><span class="studio-kicker">WHERE YOU LEFT OFF</span><span class="studio-mini-symbol" aria-hidden="true">↗</span></div><h3>'+h(recent.title||'Untitled page')+'</h3>'+
  '<p class="studio-resume-excerpt">'+h(excerpt||'Your page is exactly where you left it.')+'</p>'+
