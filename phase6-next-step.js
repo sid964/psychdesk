@@ -34,9 +34,9 @@ function render(){
  (options.length>1?'<div class="p6-alternatives"><span>Or choose something else</span><div>'+options.map((item,i)=>'<button type="button" data-p6="choose" data-index="'+i+'" aria-pressed="'+(selected===i)+'">'+h(item.type==='task'?'Study plan':item.type==='recall'?'Flashcards':item.type==='chapter'?'Chapter':item.type==='resume'?'Reading':'Focus')+'</button>').join('')+'</div></div>':'')+
  '<p class="p3-muted">Nothing starts automatically. Your existing data and study schedule remain unchanged.</p>'+(window.PsychDeskPhase8?.render?.()||'')+'</section>';
 }
-function go(){
- const item=choices()[selected];if(!item)return;
- if(item.type==='task'){core.setTab('planner');core.toast('Your next topic is in your study plan.');}
+function go(item=choices()[selected]){
+ if(!item)return;
+ if(item.type==='task'){if(!core.openStudyTopic?.(item.id)){core.setTab('planner');core.toast('Find this topic in your study plan.');}}
  else if(item.type==='recall')core.setTab('recall');
  else if(item.type==='chapter'){
   const note=(d().notes||[]).find(n=>n.id===item.id);
@@ -49,7 +49,15 @@ document.addEventListener('click',e=>{
  const b=e.target.closest?.('[data-p6]');if(!b)return;e.preventDefault();
  if(b.dataset.p6==='choose'){const index=Number(b.dataset.index);if(Number.isInteger(index)&&index>=0&&index<choices().length){selected=index;core.render();}}
  if(b.dataset.p6==='go')go();
+ if(b.dataset.p6==='homeGo')go(choices()[0]);
 });
+function homeCard(){
+ const item=choices()[0];if(!item)return '';
+ return '<section class="study-flow-entry" aria-label="Your next study step">'+
+ '<div><span class="study-flow-entry-kicker">NEXT STUDY STEP</span><h2>'+h(item.title)+'</h2><p>'+h(item.detail)+'</p></div>'+
+ '<div class="study-flow-entry-actions"><button type="button" class="study-flow-entry-primary" data-p6="homeGo">'+h(item.action)+' ↗</button>'+
+ '<button type="button" class="study-flow-entry-secondary" data-tab="connections">Open Study Flow</button></div></section>';
+}
 window.addEventListener('psychdesk:session-reset',()=>{selected=0;});
-window.PsychDeskPhase6={render,choices};
+window.PsychDeskPhase6={render,choices,homeCard};
 })();
