@@ -55,7 +55,7 @@ function renderHome(){
  return '<div class="studio-home studio-home-v2 garden-home">'+
  '<section class="garden-landing" aria-label="Psychology study homepage">'+
  '<div class="garden-ambient" aria-hidden="true"></div>'+
- '<div class="garden-heading"><span class="studio-kicker">PSYCHOLOGY · STUDY DESK</span><h1>Pick up where<br><em>you left off.</em></h1><p>Start with a note or settle into a short focus session.</p>'+
+ '<div class="garden-heading"><span class="studio-kicker">PSYCHOLOGY · STUDY DESK</span><h1>Pick up where<br> <em>you left off.</em></h1><p>Start with a note or settle into a short focus session.</p>'+
  '<div class="garden-entry">'+firstAction+'<button class="garden-soft-btn" type="button" data-tab="focus">Focus</button></div></div>'+
  '<div class="garden-art-wrap">'+scene+'</div>'+
  '<div class="garden-scene-footer"><span>✿ &nbsp; A few ideas to return to</span><span>YOUR COLLECTION</span></div>'+
