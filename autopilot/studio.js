@@ -4,7 +4,10 @@
 const core=window.PsychDeskCore;if(!core)return;
 const h=core.esc, $=s=>document.querySelector(s);
 const SCHEMA='psychdesk-autopilot-v1';
-let discoveries=[],tab='today',working=false,scanTimer=0,scrollTimer=0,worker=null,ready=false;
+let discoveries=[],tab='today',working=false,scanTimer=0,scrollTimer=0,worker=null;
+const handlers=new Map();
+const on=(name,fn)=>{const list=handlers.get(name)||[];list.push(fn);handlers.set(name,list)};
+const emit=(name,payload={})=>{for(const fn of handlers.get(name)||[])try{fn(payload)}catch(e){console.warn('Autopilot event',name,e)}};
 const scope=()=>core.getStorageKey();
 const key=(part)=>'psychdesk-studio:'+scope()+':'+part;
 const read=(part,def)=>{try{const raw=localStorage.getItem(key(part));return raw==null?def:JSON.parse(raw)}catch{return def}};
@@ -77,14 +80,17 @@ async function operate(name,verb,value){
  return new Promise((resolve,reject)=>{
   const tx=db.transaction(name,verb==='get'||verb==='all'?'readonly':'readwrite');
   const store=tx.objectStore(name),req=verb==='get'?store.get(value):verb==='all'?store.getAll():store.put(value);
-  req.onsuccess=()=>resolve(req.result);
-  req.onerror=()=>reject(req.error||Error('Autopilot storage error'));
+  let result;
+  req.onsuccess=()=>{result=req.result};
+  tx.oncomplete=()=>resolve(result);
+  tx.onerror=()=>reject(tx.error||req.error||Error('Autopilot storage error'));
+  tx.onabort=()=>reject(tx.error||Error('Autopilot storage aborted'));
  });
 }
 const log=async(title)=>{try{const a=await operate('activity','all');if(a.length>=60){const db=await getDb();const old=a.sort((x,y)=>String(x.at).localeCompare(String(y.at))).slice(0,a.length-59);for(const x of old){await new Promise((resolve,reject)=>{const t=db.transaction('activity','readwrite'),q=t.objectStore('activity').delete(x.key);q.onsuccess=resolve;q.onerror=reject})}}await operate('activity','put',{key:scope()+':'+Date.now()+':'+Math.random().toString(36).slice(2),scope:scope(),at:new Date().toISOString(),title})}catch{}};
 async function scan(){
  if(mode()==='calm')return;
- const current=scope(),notes=(info().notes||[]).slice(-350);
+ const current=scope(),notes=(info().notes||[]).slice().sort((a,b)=>String(b.updatedAt||b.createdAt||'').localeCompare(String(a.updatedAt||a.createdAt||''))).slice(0,350);
  try{
   const jobs=await operate('jobs','all'),existing=new Set(jobs.map(j=>j.key));
   let created=0;
@@ -100,6 +106,10 @@ async function scan(){
  }catch(error){console.warn('Autopilot disabled: ',error);}
 }
 function scanSoon(){clearTimeout(scanTimer);scanTimer=setTimeout(scan,700)}
+on('note.saved',scanSoon);on('note.updated',scanSoon);on('material.imported',scanSoon);
+async function recoverJobs(){
+ try{const current=scope(),jobs=await operate('jobs','all');for(const j of jobs){if(j.scope===current&&j.state==='working'){j.state='pending';j.retryAt=0;await operate('jobs','put',j)}}}catch(e){console.warn('Autopilot recovery:',e)}
+}
 function analyze(source){
  return new Promise((resolve,reject)=>{
   try{
@@ -174,7 +184,7 @@ function letter(){
  const hard={};
  (d.reviews||[]).filter(x=>x.rating==='again'||x.rating==='hard').forEach(x=>{hard[x.cardId]=(hard[x.cardId]||0)+1});
  const revisit=(d.cards||[]).filter(c=>(hard[c.id]||0)>=2).slice(0,3);
- core.openModal('Your weekly learning letter','<div class="studio-letter"><span class="studio-kicker">THE WEEK BEGINNING '+h(date(begin))+'</span><h3>Ideas worth keeping.</h3><p>You captured '+notes.length+' note'+(notes.length===1?'':'s')+' and kept '+saved.length+' discovery'+(saved.length===1?'':'ies')+' last week.</p>'+(subjects.length?'<p>Topics you visited: '+h(subjects.join(', '))+'.</p>':'<p>No subject was assigned to your saved notes, and that’s okay.</p>')+(revisit.length?'<h4>A gentle revisit</h4>'+revisit.map(c=>'<p>'+h(c.question)+'</p>').join(''):'<p>Nothing needs a special revisit based on repeated hard recalls.</p>')+'<p>There is no score to improve. Pick up any thread that interests you.</p></div>');
+ core.openModal('Your weekly learning letter','<div class="studio-letter"><span class="studio-kicker">THE WEEK BEGINNING '+h(date(begin))+'</span><h3>Ideas worth keeping.</h3><p>You captured '+notes.length+' note'+(notes.length===1?'':'s')+' and kept '+saved.length+(saved.length===1?' discovery':' discoveries')+' last week.</p>'+(subjects.length?'<p>Topics you visited: '+h(subjects.join(', '))+'.</p>':'<p>No subject was assigned to your saved notes, and that’s okay.</p>')+(revisit.length?'<h4>A gentle revisit</h4>'+revisit.map(c=>'<p>'+h(c.question)+'</p>').join(''):'<p>Nothing needs a special revisit based on repeated hard recalls.</p>')+'<p>There is no score to improve. Pick up any thread that interests you.</p></div>');
 }
 function compare(){
  const source='https://openstax.org/books/psychology-2e/pages/';
@@ -220,11 +230,18 @@ document.addEventListener('click',event=>{
  else if(a==='mode'){write('mode',b.dataset.mode);settings();document.querySelectorAll('[data-auto="mode"]').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.mode===b.dataset.mode)));const hint=$('#studioModeHelp');if(hint)hint.textContent=b.dataset.mode==='calm'?'Only continuity and daily discoveries.':b.dataset.mode==='assisted'?'Safe preparation with approval before adding cards.':'Safe preparation, with reversible high-confidence notebook suggestions.';if(b.dataset.mode!=='calm')scanSoon();}
 });
 document.addEventListener('click',e=>{if(e.target.closest('#settingsBtn'))queueMicrotask(settings)});
-window.addEventListener('psychdesk:changed',scanSoon);
-window.addEventListener('psychdesk:data-replaced',()=>{scanSoon();refreshHome()});
-window.addEventListener('psychdesk:account-ready',scanSoon);
+let knownNotes=new Map((info().notes||[]).map(n=>[n.id,rev(n)]));
+function observeNotes(){
+ const current=new Map((info().notes||[]).map(n=>[n.id,rev(n)]));let changed=0;
+ for(const [id,revision] of current){if(knownNotes.get(id)!==revision){emit(knownNotes.has(id)?'note.updated':'note.saved',{noteId:id});changed++;}}
+ knownNotes=current;
+ if(!changed)scanSoon();
+}
+window.addEventListener('psychdesk:changed',observeNotes);
+window.addEventListener('psychdesk:data-replaced',()=>{knownNotes=new Map((info().notes||[]).map(n=>[n.id,rev(n)]));recoverJobs().then(scanSoon);refreshHome()});
+window.addEventListener('psychdesk:account-ready',()=>{knownNotes=new Map((info().notes||[]).map(n=>[n.id,rev(n)]));recoverJobs().then(scanSoon)});
 window.addEventListener('psychdesk:tab-changed',e=>{
- tab=e.tab||'today';
+ const next=e.tab||'today';if(tab==='focus'&&next!=='focus')emit('study.ended',{from:tab});tab=next;emit('study.resumed',{tab});
  const last=read('positions',{}),position=Number(last[tab]||0);
  if(position>80&&tab!=='today')setTimeout(()=>{if(!$('#modalRoot .modal'))window.scrollTo({top:Math.max(0,Math.min(position,document.documentElement.scrollHeight-innerHeight)),behavior:'instant'})},100);
 });
@@ -237,7 +254,7 @@ window.addEventListener('online',run);
 atmosphere();setInterval(atmosphere,3600000);
 const exit=document.createElement('button');exit.type='button';exit.id='quietExit';exit.className='studio-quiet-exit';exit.textContent='↙ Leave Quiet Room';exit.addEventListener('click',()=>quiet(false));document.body.append(exit);
 quiet(read('quiet',false));
-window.PsychDeskAutopilot={renderHome,scan,openPrepared:inbox,getMode:mode};
+window.PsychDeskAutopilot={renderHome,scan,emit,on,openPrepared:inbox,getMode:mode};
 core.render();
-scanSoon();
+recoverJobs().then(scanSoon);
 })();
