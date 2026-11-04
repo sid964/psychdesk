@@ -43,6 +43,13 @@ const art=`<svg class="garden-art" viewBox="0 0 660 480" role="img" aria-label="
    <ellipse cx="117" cy="95" rx="51" ry="14"/><ellipse cx="137" cy="84" rx="26" ry="19"/><ellipse cx="90" cy="84" rx="24" ry="19"/>
    <ellipse cx="535" cy="75" rx="43" ry="11"/><ellipse cx="548" cy="65" rx="24" ry="16"/>
  </g>
+ <!-- Small moving points of light, part of the illustration, never controls -->
+ <g class="garden-sky-motes" aria-hidden="true" fill="#fff7d1">
+  <circle class="garden-mote garden-mote-a" cx="178" cy="132" r="2.8" opacity=".78"/>
+  <circle class="garden-mote garden-mote-b" cx="336" cy="102" r="2.2" opacity=".74"/>
+  <circle class="garden-mote garden-mote-c" cx="575" cy="164" r="2.6" opacity=".72"/>
+  <circle class="garden-mote garden-mote-d" cx="270" cy="189" r="1.9" opacity=".66"/>
+ </g>
  <!-- Short translucent wind streams travel above the leaves -->
  <g class="garden-wind-trails" aria-hidden="true" fill="none" stroke="#ffffff" stroke-width="2.6" stroke-linecap="round" opacity=".63">
  <path class="garden-wind garden-wind-a" d="M97 162 Q145 144 192 156 T289 154" stroke-dasharray="19 15 40 150"/>
@@ -75,6 +82,12 @@ const art=`<svg class="garden-art" viewBox="0 0 660 480" role="img" aria-label="
  <path d="M-54 -19 1 -53 55 -20" fill="none" stroke="#e9b194" stroke-width="3" stroke-linejoin="round"/>
  <path d="M27 -38 V-55" stroke="#bd9c7e" stroke-width="7" stroke-linecap="round"/>
  </g>
+ <!-- Air gently drifts from the cottage chimney. -->
+ <g class="garden-cottage-smoke" aria-hidden="true" fill="#fffbe8">
+  <ellipse class="garden-smoke garden-smoke-a" cx="360" cy="195" rx="5" ry="7" opacity=".5"/>
+  <ellipse class="garden-smoke garden-smoke-b" cx="371" cy="176" rx="7" ry="9" opacity=".38"/>
+  <ellipse class="garden-smoke garden-smoke-c" cx="383" cy="152" rx="8" ry="10" opacity=".3"/>
+ </g>
  ${shrub(134,307,.82)}${shrub(235,320,.66)}${shrub(554,329,.66)}${shrub(464,357,.45)}
  <!-- Gentle meadow flowers -->
  ${flower(167,322,0)}${flower(175,326,1)}${flower(221,348,2)}${flower(455,365,1)}${flower(520,333,0)}
@@ -84,8 +97,10 @@ const art=`<svg class="garden-art" viewBox="0 0 660 480" role="img" aria-label="
  <path class="garden-drift-leaf garden-drift-leaf-a" d="M309 142 Q300 133 294 144 Q300 151 309 142" fill="#e6d5a0"/>
  <path class="garden-drift-leaf garden-drift-leaf-b" d="M521 213 Q512 206 506 216 Q515 224 521 213" fill="#c5dda7"/>
  <path class="garden-drift-leaf garden-drift-leaf-c" d="M217 172 Q205 169 209 181 Q220 184 217 172" fill="#e1bf92"/>
+ <path class="garden-drift-leaf garden-drift-leaf-d" d="M422 173 Q410 169 414 183 Q425 183 422 173" fill="#d8e8ae"/>
  </g>
  <g transform="translate(530 177)"><g class="garden-butterfly"><path d="M0 0 Q-24 -27 -25 -5 Q-19 9 0 4 Q18 10 23 -6 Q20 -27 0 0Z" fill="#eabfa2"/><path d="M0 0V10" stroke="#8a775d" stroke-width="2"/></g></g>
+ <g transform="translate(193 208)"><g class="garden-butterfly garden-butterfly-second" aria-hidden="true"><path d="M0 0 Q-15 -19 -18 -3 Q-13 8 0 3 Q13 8 17 -4 Q15 -18 0 0Z" fill="#f7d9aa"/><path d="M0 0V7" stroke="#96785d" stroke-width="1.7"/></g></g>
  <g class="garden-fireflies" fill="#f9eabb"><circle cx="220" cy="175" r="3"/><circle cx="560" cy="195" r="3"/><circle cx="469" cy="211" r="2.4"/><circle cx="290" cy="125" r="2.7"/></g>
  </svg>`;
 function scene(saved,concepts){
