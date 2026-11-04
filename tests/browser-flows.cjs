@@ -45,7 +45,7 @@ module.exports=async function auditFlows(page,openTab,record,dest){
  assert.equal(await page.evaluate(()=>window.PsychDeskCore.getData().reviews.length),1);
  await openTab('focus');await page.locator('[data-action="startTimer"]').click();
  await page.evaluate(()=>{const key='psychdesk-timer-v2:'+window.PsychDeskCore.getStorageKey(),timer=JSON.parse(localStorage.getItem(key));timer.endsAt-=61000;localStorage.setItem(key,JSON.stringify(timer));});
- await page.reload({waitUntil:'domcontentloaded'});await page.waitForSelector('#main .hero');await openTab('focus');
+ await page.reload({waitUntil:'domcontentloaded'});await page.waitForSelector('#main .hero, #main .studio-home-v2');await openTab('focus');
  assert.equal(await page.locator('[data-action="completeTimer"]').isEnabled(),true,'Running timer survives refresh with Finish enabled');
  await page.locator('[data-action="completeTimer"]').click();assert.equal(await page.evaluate(()=>window.PsychDeskCore.getData().sessions.length),1);
  record.studyFlows={task:true,failedSave:true,notebook:true,quickCapture:true,flashcard:true,timerRefresh:true,keyboardDialog:true};
