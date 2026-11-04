@@ -21,7 +21,10 @@ function setup(){
  return {api:window.PsychDeskPhase3,data,calls,handlers};
 }
 test('phase 3 suggests existing sources without changing any records',()=>{
- const e=setup(),before=JSON.stringify(e.data),html=e.api.render();
+ const e=setup(),before=JSON.stringify(e.data);
+ assert.match(e.api.render(),/Just one next step/); // Overview defaults to a single calm action.
+ e.api.setSection('connect');
+ const html=e.api.render();
  assert.match(html,/Connected notes/);
  assert.match(html,/Working memory/);
  assert.match(html,/Attention and working memory/);
@@ -35,6 +38,7 @@ test('comparison uses meaningful overlapping keywords',()=>{
 });
 test('untrusted note titles and bodies are escaped in the view',()=>{
  const e=setup();e.data.notes[0].title='<img src=x onerror=1>';
+ e.api.setSection('connect');
  const html=e.api.render();
  assert.doesNotMatch(html,/<img src=x/);
  assert.match(html,/&lt;img/);
