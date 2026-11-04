@@ -38,7 +38,7 @@ function group(root,selectors,label,key){
 function spark(root,tab){
  const items=prompts[tab];if(!items)return;
  const box=document.createElement('details');box.className='studio-spark';
- const name=tab==='notes'?'Need a little writing spark?':'A little idea to play with';
+ const name=tab==='notes'?'Need a writing prompt?':'Optional study prompt';
  box.innerHTML='<summary>'+name+'</summary><div class="studio-spark-body"><h2></h2><p class="note"></p><button type="button" class="link-btn" data-studio="another">Another idea ↻</button></div>';
  const draw=()=>{const row=items[(choices.get(tab)||0)%items.length];box.querySelector('h2').textContent=row[0];box.querySelector('p').textContent=row[1]};draw();
  box.querySelector('button').hidden=items.length<2;
@@ -57,7 +57,7 @@ function enhance(root,tab){
  }
  spark(root,tab);
  if(tab==='dictionary'||tab==='timeline'){
-  const b=document.createElement('button');b.className='secondary studio-surprise';b.type='button';b.textContent=tab==='dictionary'?'Surprise me with a concept ↗':'Take me to a moment ↗';
+  const b=document.createElement('button');b.className='secondary studio-surprise';b.type='button';b.textContent=tab==='dictionary'?'Surprise me with a concept ↗':'Explore a milestone ↗';
   b.addEventListener('click',()=>{const k=window.PsychDeskKnowledge,list=tab==='dictionary'?k.glossary():k.history();if(!list.length)return;const previous=choices.get(tab+':id');const pool=list.filter(x=>x.id!==previous);const source=pool.length?pool:list;const item=source[Math.floor(Math.random()*source.length)];choices.set(tab+':id',item.id);if(tab==='dictionary')k.openTerm(item.id);else k.openEvent(item.id);const target=root.querySelector(tab==='dictionary'?'#psyDefinitionDetail':'#psyEventDetail');if(target){target.setAttribute('tabindex','-1');target.scrollIntoView({block:'nearest'});target.focus({preventScroll:true});}});root.querySelector('.hero')?.append(b);
  }
  if(tab==='recall'){
