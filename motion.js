@@ -1,9 +1,10 @@
-/* Motion engine v2. Presentation only: native WAAPI, no frame-rate timer. */
+/* PsychDesk interaction motion adapter. Playback is owned by motion-runtime.js. */
 (()=>{
  'use strict';
  const preference=matchMedia('(prefers-reduced-motion: reduce)');
- const timing={navigation:560,dialog:500,exit:220,reveal:460,feedback:220};
- const active=new Map(),positions=new Map(),seen=new Map(),completed=new Map(),exits=new Set();
+ const engine=window.PsychDeskMotionEngine;
+ const timing={navigation:365,dialog:340,exit:185,reveal:310,feedback:170};
+ const active=engine?.animations||new Map(),positions=new Map(),seen=new Map(),completed=new Map(),exits=new Set();
  const order=['today','planner','notes','ink','stickies','recall','focus','materials','research','dictionary','timeline','tools','insights','search','reader','voice','board','mindmap'];
  const direct='input,textarea,select,[contenteditable],.ink-paper,.ink-editor,.ink-toolbar,.board-card,.mind-node,.reader-pages,canvas';
  let lastTab=null,pending=null,observer=null,dialog=null,drag=null;
@@ -12,25 +13,19 @@
   const t=i/32,x=8*t,end=1-9*Math.exp(-8);
   return {offset:t,progress:(1-(1+x)*Math.exp(-x))/end};
  });
- function stop(el){const a=active.get(el);if(a){active.delete(el);a.cancel();}}
- function cancel(scope){for(const el of [...active.keys()])if(!scope||el===scope||scope.contains(el)||!el.isConnected)stop(el);}
- function play(el,frames,ms){
-  if(!el?.animate||preference.matches||document.hidden)return null;
-  stop(el);
-  const a=el.animate(frames,{duration:ms,easing:'cubic-bezier(.2,.7,.2,1)'});active.set(el,a);
-  const clean=()=>{if(active.get(el)===a)active.delete(el);};
-  a.addEventListener('finish',clean,{once:true});a.addEventListener('cancel',clean,{once:true});return a;
- }
+ function stop(el){engine?.stop(el);}
+ function cancel(scope){engine?.cancel(scope);}
+ function play(el,frames,ms){return engine?.play(el,frames,{duration:ms})||null;}
  function settle(el,axis,start,ms){
   const a=play(el,spring.map(({offset,progress})=>({offset,transform:`translate${axis}(${start*(1-progress)}px)`})),ms);
-  if(a)a.effect.updateTiming({easing:'linear'});return a;
+  if(a)try{a.effect?.updateTiming({easing:'linear'});}catch{}return a;
  }
  function offset(el,axis){try{return new DOMMatrixReadOnly(getComputedStyle(el).transform)[axis==='X'?'m41':'m42'];}catch{return 0;}}
  function disconnect(){observer?.disconnect();observer=null;}
  function beforeRender(root){disconnect();for(const el of [...active.keys()])if(el!==root&&root.contains(el))stop(el);}
  function navigate(from,to){if(from===to)return;positions.set(from,scrollY);pending={direction:order.indexOf(to)<order.indexOf(from)?-1:1};}
  function observeSections(root,tab){
-  disconnect();if(preference.matches||['ink','board','mindmap','reader'].includes(tab)||!window.IntersectionObserver)return;
+  disconnect();if(!engine?.isEnabled()||['ink','board','mindmap','reader'].includes(tab)||!window.IntersectionObserver)return;
   if(!seen.has(tab))seen.set(tab,new Set());const visited=seen.get(tab);
   // Observe top-level sections only: never stack child entrances or hide unread content.
   observer=new IntersectionObserver(entries=>{
@@ -83,7 +78,7 @@
   settle(el,'Y',innerWidth<650?64:44,timing.dialog);
  }
  function dismiss(overlay){
-  if(!overlay||preference.matches||document.hidden)return;
+  if(!overlay||!engine?.isEnabled())return;
   const surface=overlay.querySelector('.modal');if(!surface)return;
   const y=Math.max(0,new DOMMatrixReadOnly(getComputedStyle(surface).transform).m42);
   // Move the actual outgoing DOM only after the existing editor has flushed its draft.
@@ -105,7 +100,7 @@
    }
    return;
   }
-  if(e.pointerType==='pen'||!e.isPrimary||e.button!==0||preference.matches||innerWidth>649)return;
+  if(e.pointerType==='pen'||!e.isPrimary||e.button!==0||!engine?.isEnabled()||innerWidth>649)return;
   const el=handle.closest('.modal');if(!el)return;
   const offset=Math.max(0,new DOMMatrixReadOnly(getComputedStyle(el).transform).m42);stop(el);e.preventDefault();
   drag={el,handle,id:e.pointerId,startY:e.clientY,offset,dy:offset,lastY:e.clientY,time:performance.now(),velocity:0};
@@ -129,7 +124,7 @@
  function quiet(){
   disconnect();resetDrag();for(const overlay of [...exits]){cancel(overlay);overlay.remove();exits.delete(overlay);}cancel();
  }
- preference.addEventListener('change',()=>{if(preference.matches)quiet();else{const root=document.querySelector('#main');if(root)observeSections(root,lastTab);}});
+ document.addEventListener('psychdesk:motion-changed',()=>{if(!engine?.isEnabled())quiet();else{const root=document.querySelector('#main');if(root)observeSections(root,lastTab);}});
  document.addEventListener('visibilitychange',()=>{if(document.hidden)quiet();});
  window.addEventListener('pagehide',quiet);
  window.addEventListener('pageshow',()=>{const root=document.querySelector('#main');if(root)observeSections(root,lastTab);});
