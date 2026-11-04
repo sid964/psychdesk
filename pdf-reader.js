@@ -260,7 +260,7 @@ document.addEventListener('change',e=>{
  if(e.target.id==='readerPage')navigate(e.target.value);
 });
 document.addEventListener('input',e=>{if(e.target.id==='readerNoteDraft'){try{sessionStorage.setItem(readerDraftKey(),e.target.value.slice(0,2500))}catch{}}});
-window.addEventListener('psychdesk:rendered',e=>{if(e.detail?.tab==='reader'&&pdf)void renderPage();});
+// Called after core replaces the reader DOM, including when a notebook modal closes.
 window.addEventListener('psychdesk:changed',()=>{if($('#readerLinkedNotes'))refreshReaderNotes();});
 document.addEventListener('pointerup',e=>{if(e.target.closest('#readerTextLayer,#readerMarkdown'))setTimeout(capture,0);});
 document.addEventListener('keyup',e=>{if(e.target.closest?.('#readerTextLayer,#readerMarkdown'))setTimeout(capture,0);});
@@ -296,5 +296,5 @@ document.addEventListener('click',e=>{
 });
 window.addEventListener('psychdesk:tab-changed',e=>{if(e.tab!=='reader'&&(pdf||loading||fileText))resetReader();});
 window.addEventListener('psychdesk:session-reset',resetReader);
-window.PsychDeskReader={render:readerHTML,open:openMaterial,openLocal,capture,annotationCard};
+window.PsychDeskReader={render:readerHTML,open:openMaterial,openLocal,capture,annotationCard,afterRender:tab=>{if(tab==='reader'&&pdf)void renderPage()}};
 })();
