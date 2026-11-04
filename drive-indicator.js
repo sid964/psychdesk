@@ -38,8 +38,7 @@ window.addEventListener('psychdesk:account-ready',update);
 window.addEventListener('psychdesk:login-complete',update);
 window.addEventListener('psychdesk:session-reset',update);
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')update()});
-// Local status only; no network polling or repeated animation recreation.
-setInterval(()=>{if(!document.hidden)update();},1000);
+// Connection events refresh instantly. A sparse visibility-only fallback also notices\n// token expiry without waking the UI every second (battery-friendly on phones).\nsetInterval(()=>{if(!document.hidden)update();},15000);
 update();
 window.PsychDeskDriveIndicator={update};
 })();
