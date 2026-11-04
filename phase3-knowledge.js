@@ -54,10 +54,10 @@ function recall(){
  '<p class="p3-empty">You are caught up. Make one flashcard from a difficult concept when you are ready.</p>')+'</div>';
 }
 function render(){
- const tabs=[['links','Connected notes'],['compare','Compare theories'],['review','Memory review']];
+ const tabs=[['links','Connected notes'],['compare','Compare theories'],['review','Memory review'],['chapters','Chapter trail']];
  return '<section class="hero p3-hero"><div class="eyebrow">UNDERSTAND · CONNECT · REMEMBER</div><h1>Connect your learning.</h1><p>Find related ideas, compare what you have written, and review without a crowded dashboard.</p></section>'+
  '<nav class="p3-tabs" aria-label="Knowledge workspace sections">'+tabs.map(([id,label])=>'<button type="button" data-p3="tab" data-mode="'+id+'" aria-pressed="'+(filter===id)+'" class="'+(filter===id?'active':'')+'">'+label+'</button>').join('')+'</nav>'+
- (filter==='compare'?compare():filter==='review'?recall():links())+
+ (filter==='compare'?compare():filter==='review'?recall():filter==='chapters'?(window.PsychDeskPhase5?.render?.()||'<p>Chapter trail unavailable.</p>'):links())+
  '<div class="p3-footer"><button type="button" data-tab="mindmap">Open interactive concept boards →</button><button type="button" data-tab="dictionary">Psychology dictionary →</button></div>';
 }
 function open(kind,id){
