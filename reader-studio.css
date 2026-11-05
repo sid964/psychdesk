@@ -34,3 +34,10 @@ html[data-theme="light"] .reader-highlight-card p,html[data-theme="light"] .read
  .reader-toolbar{justify-content:space-between}
 }
 @media(prefers-reduced-motion:reduce){.reader-mobile-switch button,.reader-notes-list button{transition:none!important}}
+
+
+/* Related ideas remain folded to keep the book as the main surface. */
+.reader-related{border:1px solid var(--line,#393939);border-radius:12px;padding:12px 14px;margin:0 0 19px;background:var(--paper,#101010)}
+.reader-related summary{display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer;color:var(--ink,#eee);font-size:12px;font-weight:700}
+.reader-related summary span{font-size:11px;color:var(--muted,#aaa);font-weight:500}
+.reader-related .reader-notes-list{padding-top:11px}

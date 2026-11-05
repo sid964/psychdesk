@@ -32,7 +32,7 @@ async function setup({failSave=false}={}){
   const b={dataset:{reader},closest:selector=>selector==='[data-reader]'?b:null};
   listeners.get('document:click')({target:b,preventDefault(){}});
  };
- return {data,nodes,storage,messages,click,rendered:()=>rendered,reader:window.PsychDeskReader};
+ return {data,nodes,storage,messages,click,rendered:()=>rendered,reader:window.PsychDeskReader,listeners};
 }
 test('local reader provides an integrated note editor without uploading document text',async()=>{
  const s=await setup();
@@ -62,4 +62,26 @@ test('reader note content escapes HTML before insertion into the linked-note lis
  s.click('saveReaderNote');
  assert.doesNotMatch(s.nodes['#readerLinkedNotes'].innerHTML,/<img/);
  assert.match(s.nodes['#readerLinkedNotes'].innerHTML,/&lt;img/);
+});
+
+
+test('reader surfaces related existing notes without creating copies',async()=>{
+ const s=await setup();
+ s.data.notes.push({id:'other-1',title:'Reading reflections',body:'A note about reading.',subjectId:''});
+ const html=s.reader.render();
+ assert.match(html,/Related notes/);
+ assert.match(html,/Reading reflections/);
+ assert.equal(s.data.notes.length,1);
+});
+test('Markdown reading position and draft stay local and account-scoped',async()=>{
+ const s=await setup();
+ const draft='My private reading thought';
+ s.listeners.get('document:input')({target:{id:'readerNoteDraft',value:draft}});
+ assert.match(s.reader.render(),/My private reading thought/);
+ s.nodes['#readerMarkdown']={id:'readerMarkdown',scrollTop:240};
+ s.listeners.get('document:scroll')({target:s.nodes['#readerMarkdown']});
+ s.nodes['#readerMarkdown'].scrollTop=0;
+ s.reader.afterRender('reader');
+ assert.equal(s.nodes['#readerMarkdown'].scrollTop,240);
+ assert.match([...s.storage.keys()].join(' '),/psychdesk-user-reader-a/);
 });
