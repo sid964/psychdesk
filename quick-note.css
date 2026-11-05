@@ -36,3 +36,18 @@
 .drive-status-chip[data-state=ready] .drive-orbit-ring{animation-play-state:running}
 @keyframes drive-orbit-turn{to{transform:rotate(360deg)}}
 @media(prefers-reduced-motion:reduce){.drive-orbit-ring{animation:none!important}}
+
+
+/* Quiet opt-in, local subject help. It appears only after a useful match. */
+.quick-note-assist{border:1px solid #373b38;border-radius:11px;padding:10px 12px;color:#d7dbd6;background:#121714;font:500 12px/1.55 'DM Sans',sans-serif}
+.quick-note-assist[hidden]{display:none}
+.quick-note-assist>div{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.quick-note-assist strong{font-weight:700}
+.quick-note-assist button{padding:7px 11px;min-height:36px;border:1px solid #637366;border-radius:9px;background:transparent;color:inherit;font-weight:700}
+.quick-note-assist p{margin:8px 0 0;color:#c7c4b5}
+html[data-theme="light"] .quick-capture-heading p{color:#33332f}
+html[data-theme="light"] .quick-capture>textarea{background:#fffdfa!important;color:#252521!important;border-color:#d6d3ce}
+html[data-theme="light"] .quick-more{background:#f8f6f2;border-color:#d6d3ce}
+html[data-theme="light"] .quick-more summary,html[data-theme="light"] .quick-more label{color:#363732}
+html[data-theme="light"] .quick-more input,html[data-theme="light"] .quick-more select{background:#fffdfa!important;color:#252521!important;border-color:#d6d3ce}
+html[data-theme="light"] .quick-note-assist{background:#f5f6f1;color:#3a4038;border-color:#d6dbd0}

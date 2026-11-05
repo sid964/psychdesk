@@ -26,7 +26,15 @@ async function pdfLib(){
 function bookTitle(){return material?.title||localFile?.name||'Your book';}
 
 const readerDraftKey=()=> 'psychdesk-reader-note-draft:'+core.getStorageKey()+':'+materialKey();
-function readDraft(){try{return (sessionStorage.getItem(readerDraftKey())||'').slice(0,2500)}catch{return ''}}
+function readDraft(){
+ try{const local=localStorage.getItem(readerDraftKey());if(local!==null)return local.slice(0,2500);}catch{}
+ try{return (sessionStorage.getItem(readerDraftKey())||'').slice(0,2500);}catch{return ''}
+}
+const scrollKey=()=> 'psychdesk-reader-scroll:'+core.getStorageKey()+':'+materialKey();
+function restoreMarkdownScroll(){
+ const panel=$('#readerMarkdown');if(!panel)return;
+ try{const n=Number(localStorage.getItem(scrollKey()));if(Number.isFinite(n)&&n>=0&&n<20000000)panel.scrollTop=n;}catch{}
+}
 function linkedNotes(){
  return (getData().notes||[]).filter(n=>n.sourceInfo?.kind==='reader-note'&&n.sourceInfo.materialId===materialKey())
   .sort((a,b)=>String(b.updatedAt||b.createdAt||'').localeCompare(String(a.updatedAt||a.createdAt||''))).slice(0,12);
@@ -35,6 +43,23 @@ function linkedNotesHTML(){
  const notes=linkedNotes();
  return notes.length?notes.map(n=>'<button type="button" data-reader="editReaderNote" data-id="'+h(n.id)+'"><strong>'+h(n.title||'Untitled note')+'</strong><small>Page '+h(n.sourceInfo?.page||1)+' · '+h(String(n.body||'').replace(/\s+/g,' ').slice(0,100))+'</small></button>').join(''):
  '<p>No notes for this book yet. Write one above while you read.</p>';
+}
+// Optional links to existing material. A source match never creates a new note.
+function relatedNotes(){
+ const titleWords=new Set((bookTitle().toLowerCase().match(/[a-z]{5,}/g)||[]).filter(w=>!['chapter','notes','study','book','psychology'].includes(w)));
+ const sameSubject=material?.subjectId||'';
+ return (getData().notes||[]).filter(n=>n?.id&&n.sourceInfo?.materialId!==materialKey())
+  .map(n=>{
+   let score=sameSubject&&n.subjectId===sameSubject?6:0;
+   const haystack=(String(n.title||'')+' '+String(n.body||'').slice(0,450)).toLowerCase();
+   for(const word of titleWords)if(haystack.includes(word))score+=2;
+   return {note:n,score};
+  }).filter(x=>x.score>0).sort((a,b)=>b.score-a.score).slice(0,4).map(x=>x.note);
+}
+function relatedNotesPanel(){
+ const rows=relatedNotes();if(!rows.length)return '';
+ return '<details class="reader-related"><summary>Related notes <span>'+rows.length+'</span></summary><div id="readerRelatedList" class="reader-notes-list">'+
+ rows.map(n=>'<button type="button" data-reader="openRelated" data-id="'+h(n.id)+'"><strong>'+h(n.title||'Untitled note')+'</strong><small>'+h(String(n.body||'').replace(/\s+/g,' ').slice(0,90))+'</small></button>').join('')+'</div></details>';
 }
 function refreshReaderNotes(){
  const list=$('#readerLinkedNotes');if(list)list.innerHTML=linkedNotesHTML();
@@ -50,6 +75,7 @@ function saveReaderNote(){
   sourceInfo:{kind:'reader-note',materialId:materialKey(),page,bookTitle:bookTitle().slice(0,140)}};
  if(!core.commitChange(data=>data.notes.unshift(entry))){core.toast('Note could not be saved. Your draft is still here.');return;}
  try{sessionStorage.removeItem(readerDraftKey())}catch{}
+ try{localStorage.removeItem(readerDraftKey())}catch{}
  if(editor)editor.value='';
  refreshReaderNotes();core.toast('Reading note saved to Notebook');
 }
@@ -76,7 +102,7 @@ function readerHTML(){
  '<button data-reader="search">Find in book</button><button data-reader="prepareChapter" class="reader-prep-action">Prepare chapter</button></div>'+
  '<div class="reader-mobile-switch" role="group" aria-label="Reader view"><button type="button" data-reader="viewRead" aria-pressed="'+(mobileMode==='read')+'">Reading</button><button type="button" data-reader="viewNotes" aria-pressed="'+(mobileMode==='notes')+'">My notes</button></div>'+ '<div class="reader-layout'+(mobileMode==='notes'?' reader-notes-mode':'')+'"><section class="reader-page-area"><div id="readerRenderStatus" role="status">'+(loading?'Loading page…':readerError?h(readerError):'')+'</div>'+
  (fileText?'<div id="readerMarkdown" class="reader-markdown" tabindex="0">'+h(fileText)+'</div>':'<div class="reader-canvas-scroll"><div id="readerPageSurface" class="reader-page-surface"><canvas id="readerCanvas"></canvas><div class="reader-text-layer" id="readerTextLayer"></div><div class="reader-mark-layer" id="readerMarkLayer"></div></div></div>')+
- '</section><aside class="reader-sidebar"><section class="reader-notebook-panel" aria-label="Notes for this book"><h3>My notes <span class="reader-linked-count" id="readerLinkedCount">'+linkedNotes().length+'</span></h3><p>Keep your thoughts beside the text. Each saved note links to this book and page.</p><label for="readerNoteDraft" class="reader-linked-count">Add a reading note</label><textarea id="readerNoteDraft" maxlength="2500" placeholder="What does this passage mean to you?">'+h(readDraft())+'</textarea><div class="reader-note-save"><button type="button" data-reader="saveReaderNote">Save to Notebook</button></div><div class="reader-notes-list" id="readerLinkedNotes">'+linkedNotesHTML()+'</div></section><div class="study-panel-heading"><h2>Reading tools</h2><span id="readerSelectedCount">Select words on the page</span></div>'+
+ '</section><aside class="reader-sidebar"><section class="reader-notebook-panel" aria-label="Notes for this book"><h3>My notes <span class="reader-linked-count" id="readerLinkedCount">'+linkedNotes().length+'</span></h3><p>Keep your thoughts beside the text. Each saved note links to this book and page.</p><label for="readerNoteDraft" class="reader-linked-count">Add a reading note</label><textarea id="readerNoteDraft" maxlength="2500" placeholder="What does this passage mean to you?">'+h(readDraft())+'</textarea><div class="reader-note-save"><button type="button" data-reader="saveReaderNote">Save to Notebook</button></div><div class="reader-notes-list" id="readerLinkedNotes">'+linkedNotesHTML()+'</div></section>'+relatedNotesPanel()+'<div class="study-panel-heading"><h2>Reading tools</h2><span id="readerSelectedCount">Select words on the page</span></div>'+
  '<div class="reader-selection" id="readerSelectedText">Highlight a definition, explanation or interesting passage.</div>'+
  '<div class="reader-side-actions"><button data-reader="mark" class="primary">Highlight selection</button><button data-reader="sticky">Make sticky</button><button data-reader="card">Create flashcards</button><button data-reader="note">Save as notebook note</button></div>'+
  '<div class="reader-highlight-list"><h3>Saved highlights <span id="readerHighlightCount">'+owned().length+'</span></h3><div id="readerHighlights">'+owned().slice().reverse().map(annotationCard).join('')+'</div></div>'+
@@ -298,7 +324,8 @@ document.addEventListener('change',e=>{
  if(e.target.id==='localReaderFile'){openLocal(e.target.files?.[0]);}
  if(e.target.id==='readerPage')navigate(e.target.value);
 });
-document.addEventListener('input',e=>{if(e.target.id==='readerNoteDraft'){try{sessionStorage.setItem(readerDraftKey(),e.target.value.slice(0,2500))}catch{}}});
+document.addEventListener('input',e=>{if(e.target.id==='readerNoteDraft'){const draft=e.target.value.slice(0,2500);try{sessionStorage.setItem(readerDraftKey(),draft)}catch{}try{localStorage.setItem(readerDraftKey(),draft)}catch{}}});
+document.addEventListener('scroll',e=>{if(e.target?.id==='readerMarkdown'){try{localStorage.setItem(scrollKey(),String(Math.max(0,Math.floor(e.target.scrollTop||0))))}catch{}}},true);
 // Called after core replaces the reader DOM, including when a notebook modal closes.
 window.addEventListener('psychdesk:changed',()=>{if($('#readerLinkedNotes'))refreshReaderNotes();});
 document.addEventListener('pointerup',e=>{if(e.target.closest('#readerTextLayer,#readerMarkdown'))setTimeout(capture,0);});
@@ -315,6 +342,7 @@ document.addEventListener('click',e=>{
  }
  case 'saveReaderNote':saveReaderNote();break;
  case 'editReaderNote':{const n=linkedNotes().find(x=>x.id===b.dataset.id);if(n)window.PsychDeskCloud?.noteEditor?.(n);break;}
+ case 'openRelated':{const n=(getData().notes||[]).find(x=>x.id===b.dataset.id);if(n)window.PsychDeskCloud?.noteEditor?.(n);break;}
  case 'driveSettings':cloud?.openSettings?.();break;
  case 'back':back();break;
  case 'prev':navigate(page-1);break;
@@ -336,5 +364,5 @@ document.addEventListener('click',e=>{
 });
 window.addEventListener('psychdesk:tab-changed',e=>{if(e.tab!=='reader'&&(pdf||loading||fileText))resetReader();});
 window.addEventListener('psychdesk:session-reset',resetReader);
-window.PsychDeskReader={render:readerHTML,open:openMaterial,openLocal,capture,annotationCard,afterRender:tab=>{if(tab==='reader'&&pdf)void renderPage()}};
+window.PsychDeskReader={render:readerHTML,open:openMaterial,openLocal,capture,annotationCard,relatedNotes,afterRender:tab=>{if(tab==='reader'&&pdf)void renderPage();else if(tab==='reader'&&fileText)restoreMarkdownScroll();}};
 })();

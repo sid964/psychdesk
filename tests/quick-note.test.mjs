@@ -69,3 +69,17 @@ test('sticky quick capture also rolls back on a failed storage write',()=>{
  assert.equal(h.closed,0);
  assert.match(h.session.get('psychdesk-quick-note-draft-alice')||'',/Classical conditioning/);
 });
+
+
+test('local subject suggestions require explicit selection',()=>{
+ const h=setup();
+ h.data.subjects.push({id:'dev',name:'Developmental Psychology'});
+ const suggestion=h.window.PsychDeskQuickNote.suggestSubject('Piaget described how children develop schemas.',h.data.subjects,h.data.notes);
+ assert.equal(suggestion.subjectId,'dev');
+ assert.equal(h.data.notes.length,0);
+ assert.equal(h.nodes['#quickNoteSubject'].value,'cog');
+});
+test('capturing without a clue leaves the subject optional',()=>{
+ const h=setup();
+ assert.equal(h.window.PsychDeskQuickNote.suggestSubject('Just a thought.',h.data.subjects,h.data.notes),null);
+});

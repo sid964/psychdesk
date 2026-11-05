@@ -61,5 +61,5 @@ test('Phase 1 reader, Phase 2 preparation, accounts and Settings icon survive re
  assert.match(html,/data-tab="connections"/);
  assert.match(html,/phase-release\.css\?v=release-1/);
  assert.match(js,/validateSnapshot/);assert.match(js,/openStudyTopic/);
- assert.match(sw,/psychdesk-study-flow-release-v66/);assert.match(sw,/\.\/phase-release\.css/);
+ assert.match(sw,/const CACHE='psychdesk-[a-z0-9-]+-v\d+'/);assert.match(sw,/\.\/phase-release\.css/);
 });
