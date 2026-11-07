@@ -1,11 +1,5 @@
 /* PsychDesk human study polish — small, predictable choices; no decorative dashboard clutter.
    Loaded last so responsive rules have one clear owner. */
-:root{
- --motion-navigation:365ms;
- --motion-dialog:340ms;
- --motion-exit:185ms;
- --motion-reveal:310ms;
-}
 .garden-home{max-width:1180px}
 .garden-home .studio-kicker{letter-spacing:1.05px}
 .garden-landing{box-shadow:none;border-radius:20px}
