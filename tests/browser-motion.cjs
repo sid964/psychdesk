@@ -31,10 +31,10 @@ module.exports=async(page,record,dest)=>{
  assert.equal(timings.dialog,'340ms','Dialog duration has one CSS source');
  await page.evaluate(()=>window.PsychDeskCore.setTab('university'));await page.waitForTimeout(420);
  const prepForward=await page.evaluate(()=>{window.PsychDeskCore.setTab('psychology');return document.querySelector('#main').getAnimations()[0]?.effect.getKeyframes()[0].transform});
- assert.match(prepForward,/translateX\\((44|60)px\\)/,'Preparation navigation moves forward in sidebar order');
+ assert.match(prepForward,/translateX\((44|60)px\)/,'Preparation navigation moves forward in sidebar order');
  await page.waitForTimeout(420);
  const prepBackward=await page.evaluate(()=>{window.PsychDeskCore.setTab('university');return document.querySelector('#main').getAnimations()[0]?.effect.getKeyframes()[0].transform});
- assert.match(prepBackward,/translateX\\(-(44|60)px\\)/,'Preparation navigation reverses correctly');
+ assert.match(prepBackward,/translateX\(-(44|60)px\)/,'Preparation navigation reverses correctly');
  await page.waitForTimeout(420);
  await page.evaluate(()=>window.PsychDeskCore.setTab('planner'));await page.waitForTimeout(420);
  await page.evaluate(()=>window.scrollTo({top:600,behavior:'instant'}));await page.waitForTimeout(420);
