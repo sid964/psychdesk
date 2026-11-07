@@ -1,8 +1,8 @@
 /* User-selected motion language: directional surfaces, gentle stops, a still workspace. */
 :root{
  --motion-ease:cubic-bezier(.22,.68,.2,1);
- --motion-press:110ms;--motion-feedback:200ms;--motion-hover:240ms;
- --motion-navigation:460ms;--motion-dialog:420ms;--motion-exit:190ms;--motion-reveal:400ms;
+ --motion-press:120ms;--motion-feedback:170ms;--motion-hover:240ms;
+ --motion-navigation:365ms;--motion-dialog:340ms;--motion-exit:185ms;--motion-reveal:310ms;
 }
 html{scroll-behavior:auto;overflow-x:clip}
 /* Remove competing legacy entrances, bounces, chart growth and ambient loops. */
@@ -24,7 +24,6 @@ html{scroll-behavior:auto;overflow-x:clip}
 }
 /* Individual scale keeps each control's existing layout/rotation intact. */
 button{transform:none!important;scale:1;transition:scale var(--motion-press) var(--motion-ease),background-color var(--motion-feedback) ease,border-color var(--motion-feedback) ease,color var(--motion-feedback) ease!important}
-button:active:not(:disabled){scale:.98}
 :is(.nav-ico,.rail-symbol,.rail-trail){transform:none!important;transition:color var(--motion-feedback) ease,opacity var(--motion-feedback) ease!important}
 .rail-link,.rail-link:hover{transform:none!important}
 :is(.stat,.banner,.task-row):hover{transform:none!important}
@@ -66,14 +65,14 @@ html[data-theme=dark] #modalRoot .modal-overlay,html[data-theme=dark] .motion-di
 
 /* No extra displacement for direct manipulation or the preserved Settings artwork. */
 #settingsBtn:active{scale:1}
-button:active:not(:disabled){scale:.985}
+button:active:not(:disabled):not(#settingsBtn):not(.ink-toolbar button){scale:.985}
 #settingsBtn:active,.ink-toolbar button:active{scale:1!important}
 @media(prefers-reduced-motion:reduce){button:active:not(:disabled){scale:1!important}}
 
 /* Visible interaction travel without changing document layout. */
 @media(prefers-reduced-motion:no-preference){
- button:not(#settingsBtn):not(.ink-toolbar button){transition:scale 170ms cubic-bezier(.2,.7,.2,1),background-color 220ms ease,border-color 220ms ease,color 220ms ease!important}
- button:active:not(:disabled):not(#settingsBtn):not(.ink-toolbar button){scale:.96}
+ button:not(#settingsBtn):not(.ink-toolbar button){transition:scale var(--motion-press) cubic-bezier(.2,.7,.2,1),background-color 220ms ease,border-color 220ms ease,color 220ms ease!important}
+ button:active:not(:disabled):not(#settingsBtn):not(.ink-toolbar button){scale:.985}
  @media(hover:hover) and (pointer:fine){
   :is(.subject-card,.note-card,.material-card,.resource-item,.tool-card){translate:0 0;transition:translate 300ms cubic-bezier(.2,.7,.2,1),border-color 220ms ease,box-shadow 220ms ease!important}
   :is(.subject-card,.note-card,.material-card,.resource-item,.tool-card):hover{translate:0 -3px}

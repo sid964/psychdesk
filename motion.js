@@ -3,9 +3,15 @@
  'use strict';
  const preference=matchMedia('(prefers-reduced-motion: reduce)');
  const engine=window.PsychDeskMotionEngine;
- const timing={navigation:365,dialog:340,exit:185,reveal:310,feedback:170};
+ const fallbackTiming={navigation:365,dialog:340,exit:185,reveal:310,feedback:170};
+ // CSS tokens are the single source of truth; a fallback also supports old cached stylesheets.
+ function duration(name){
+  const raw=getComputedStyle(document.documentElement).getPropertyValue('--motion-'+name).trim();
+  const match=/^(\d+(?:\.\d+)?)(ms|s)$/.exec(raw);
+  return match?Math.round(Number(match[1])*(match[2]==='s'?1000:1)):fallbackTiming[name];
+ }
  const active=engine?.animations||new Map(),positions=new Map(),seen=new Map(),completed=new Map(),exits=new Set();
- const order=['today','planner','notes','ink','stickies','recall','focus','materials','research','dictionary','timeline','tools','insights','search','reader','voice','board','mindmap'];
+ const order=['today','university','psychology','planner','connections','notes','ink','stickies','recall','focus','materials','research','dictionary','timeline','tools','insights','search','reader','voice','board','mindmap'];
  const direct='input,textarea,select,[contenteditable],.ink-paper,.ink-editor,.ink-toolbar,.board-card,.mind-node,.reader-pages,canvas';
  let lastTab=null,pending=null,observer=null,dialog=null,drag=null,homeActive=false;
  // Sample a critically damped spring once. Browser animation scheduling follows the display.
@@ -23,7 +29,7 @@
  function offset(el,axis){try{return new DOMMatrixReadOnly(getComputedStyle(el).transform)[axis==='X'?'m41':'m42'];}catch{return 0;}}
  function disconnect(){observer?.disconnect();observer=null;}
  function beforeRender(root){disconnect();for(const el of [...active.keys()])if(el!==root&&root.contains(el))stop(el);}
- function navigate(from,to){if(from===to)return;positions.set(from,scrollY);pending={direction:order.indexOf(to)<order.indexOf(from)?-1:1};}
+ function navigate(from,to){if(from===to)return;positions.set(from,scrollY);const source=order.indexOf(from),destination=order.indexOf(to);pending={direction:source>=0&&destination>=0&&destination<source?-1:1};}
  function observeSections(root,tab){
   disconnect();if(!engine?.isEnabled()||['ink','board','mindmap','reader'].includes(tab)||!window.IntersectionObserver)return;
   if(!seen.has(tab))seen.set(tab,new Set());const visited=seen.get(tab);
@@ -31,7 +37,7 @@
   observer=new IntersectionObserver(entries=>{
    for(const entry of entries){if(!entry.isIntersecting)continue;observer?.unobserve(entry.target);
     const key=entry.target.dataset.motionKey;if(visited.has(key))continue;visited.add(key);
-    if(!active.has(root))settle(entry.target,'Y',20,timing.reveal);
+    if(!active.has(root))settle(entry.target,'Y',20,duration('reveal'));
    }
   },{threshold:.06});
   // The home page is wrapped in a single container: observe its actual study
@@ -72,7 +78,7 @@
    const start=active.has(root)?offset(root,'X'):(pending?.direction||1)*(innerWidth<650?44:60);
    stop(root);
    // Drawing and canvas workspaces are immediately stable on entry.
-   if(!['ink','board','mindmap','reader'].includes(tab))settle(root,initial?'Y':'X',initial?24:start,timing.navigation);
+   if(!['ink','board','mindmap','reader'].includes(tab))settle(root,initial?'Y':'X',initial?24:start,duration('navigation'));
   }
   root.dataset.motionDirection=pending?.direction===-1?'backward':'forward';pending=null;
   const homeNow=tab==='today'&&Boolean(root.querySelector('.garden-home'));
@@ -80,7 +86,7 @@
   homeActive=homeNow;
   for(const el of root.querySelectorAll('.check-btn[data-id]')){
    const key=el.dataset.id,done=el.classList.contains('done');
-   if(lastTab===tab&&completed.has(key)&&completed.get(key)!==done)play(el,[{opacity:.6},{opacity:1}],timing.feedback);
+   if(lastTab===tab&&completed.has(key)&&completed.get(key)!==done)play(el,[{opacity:.6},{opacity:1}],duration('feedback'));
    completed.set(key,done);
   }
   lastTab=tab;observeSections(root,tab);
@@ -100,7 +106,7 @@
   if(header&&!header.querySelector('.motion-sheet-handle')){
    const handle=document.createElement('span');handle.className='motion-sheet-handle';handle.setAttribute('aria-hidden','true');header.prepend(handle);
   }
-  settle(el,'Y',innerWidth<650?64:44,timing.dialog);
+  settle(el,'Y',innerWidth<650?64:44,duration('dialog'));
  }
  function dismiss(overlay){
   if(!overlay||!engine?.isEnabled())return;
@@ -112,8 +118,8 @@
   overlay.querySelectorAll('[id]').forEach(el=>el.removeAttribute('id'));
   document.body.append(overlay);exits.add(overlay);
   const remove=()=>{cancel(overlay);overlay.remove();exits.delete(overlay);};
-  const slide=play(surface,[{transform:'translateY('+y+'px)'},{transform:'translateY('+(y+24)+'px)'}],timing.exit);
-  play(overlay,[{opacity:1},{opacity:0}],timing.exit);
+  const slide=play(surface,[{transform:'translateY('+y+'px)'},{transform:'translateY('+(y+24)+'px)'}],duration('exit'));
+  play(overlay,[{opacity:1},{opacity:0}],duration('exit'));
   if(slide){slide.addEventListener('finish',remove,{once:true});slide.addEventListener('cancel',remove,{once:true});}else remove();
  }
  document.addEventListener('pointerdown',e=>{
@@ -142,7 +148,7 @@
   const travel=d.dy-d.offset,velocity=performance.now()-d.time<100?d.velocity:0;
   const shouldDismiss=e.type==='pointerup'&&travel>20&&(d.dy>100||(d.dy>40&&velocity>.7));
   if(shouldDismiss){window.PsychDeskCore.closeModal();d.el.style.removeProperty('transform');}
-  else{settle(d.el,'Y',d.dy,timing.dialog);d.el.style.removeProperty('transform');}
+  else{settle(d.el,'Y',d.dy,duration('dialog'));d.el.style.removeProperty('transform');}
  }
  document.addEventListener('pointerup',endDrag);document.addEventListener('pointercancel',endDrag);
  document.addEventListener('lostpointercapture',e=>{if(drag?.id===e.pointerId)endDrag({pointerId:e.pointerId,type:'pointercancel'});});
@@ -160,7 +166,7 @@
  document.addEventListener('click',e=>{
   const button=e.target.closest?.('.rail-link,.nav-item,.garden-main-btn,.garden-soft-btn,.garden-text-btn,.studio-explore,.studio-save,.garden-bloom-line button');
   if(button&&button.id!=='settingsBtn')play(button,[
-   {opacity:.79,scale:'.965'},{opacity:1,scale:'1'}
+   {opacity:.86},{opacity:1}
   ],220);
  });
  window.PsychDeskMotion={beforeRender,navigate,render,opened,closed,dismiss,cancel};

@@ -22,6 +22,21 @@ module.exports=async(page,record,dest)=>{
  await page.waitForTimeout(500);
  assert.equal(await page.evaluate(()=>document.querySelector('#main').getAnimations({subtree:true}).length),0,'Workspace settles completely');
  assert.equal(await page.evaluate(()=>{window.PsychDeskCore.render();return document.querySelector('#main').getAnimations({subtree:true}).length}),0,'Data refresh does not replay movement');
+ const timings=await page.evaluate(()=>{
+  const styles=getComputedStyle(document.documentElement);
+  const root=window.PsychDeskMotionEngine;
+  return {navigation:styles.getPropertyValue('--motion-navigation').trim(),dialog:styles.getPropertyValue('--motion-dialog').trim(),mode:root.getMode()};
+ });
+ assert.equal(timings.navigation,'365ms','Navigation duration has one CSS source');
+ assert.equal(timings.dialog,'340ms','Dialog duration has one CSS source');
+ await page.evaluate(()=>window.PsychDeskCore.setTab('university'));await page.waitForTimeout(420);
+ const prepForward=await page.evaluate(()=>{window.PsychDeskCore.setTab('psychology');return document.querySelector('#main').getAnimations()[0]?.effect.getKeyframes()[0].transform});
+ assert.match(prepForward,/translateX\((44|60)px\)/,'Preparation navigation moves forward in sidebar order');
+ await page.waitForTimeout(420);
+ const prepBackward=await page.evaluate(()=>{window.PsychDeskCore.setTab('university');return document.querySelector('#main').getAnimations()[0]?.effect.getKeyframes()[0].transform});
+ assert.match(prepBackward,/translateX\(-(44|60)px\)/,'Preparation navigation reverses correctly');
+ await page.waitForTimeout(420);
+ await page.evaluate(()=>window.PsychDeskCore.setTab('planner'));await page.waitForTimeout(420);
  await page.evaluate(()=>window.scrollTo({top:600,behavior:'instant'}));await page.waitForTimeout(420);
  const position=await page.evaluate(()=>scrollY);
  await page.evaluate(()=>{window.PsychDeskCore.setTab('notes');window.PsychDeskCore.setTab('planner')});
