@@ -1,7 +1,7 @@
 /* PsychDesk Garden — original scalable illustration.
    No network requests, no extra data stores, and no progress penalties. */
 (()=>{'use strict';
-const tree=(x,y,s,shade)=>`<g transform="translate(${x} ${y}) scale(${s})" class="garden-tree">
+const tree=(x,y,s,shade)=>`<g transform="translate(${x} ${y}) scale(${s})" class="garden-tree" role="button" tabindex="0" aria-label="Gently sway a tree">
  <path d="M-7 10 Q-4 -24 0 -59 Q5 -27 9 10" fill="#755942"/>
  <path d="M-1 -42 Q-20 -58 -26 -68 M2 -30 Q23 -46 25 -53" fill="none" stroke="#755942" stroke-width="5" stroke-linecap="round"/>
  <g class="garden-canopy">
@@ -12,7 +12,7 @@ const tree=(x,y,s,shade)=>`<g transform="translate(${x} ${y}) scale(${s})" class
  <path d="M-35 -98 Q-7 -120 23 -103" fill="none" stroke="#b5d6aa" stroke-width="5" stroke-linecap="round" opacity=".65"/>
  <g class="garden-leaf-shimmer"><circle cx="-20" cy="-83" r="4" fill="#d9eac2"/><circle cx="22" cy="-73" r="3" fill="#d9eac2"/></g>
  </g></g>`;
-const pine=(x,y,s)=>`<g transform="translate(${x} ${y}) scale(${s})" class="garden-tree garden-pine">
+const pine=(x,y,s)=>`<g transform="translate(${x} ${y}) scale(${s})" class="garden-tree garden-pine" role="button" tabindex="0" aria-label="Gently sway a pine tree">
  <path d="M-6 0 V-78 H6 V0Z" fill="#866747"/>
  <g class="garden-needles">
  <path d="M-48 -28 L0 -111 48 -28Z" fill="#5c947a"/>
@@ -93,6 +93,7 @@ const art=`<svg class="garden-art" viewBox="0 0 660 480" role="img" aria-label="
  ${flower(167,322,0)}${flower(175,326,1)}${flower(221,348,2)}${flower(455,365,1)}${flower(520,333,0)}
  ${grass(105,290,.7)}${grass(211,310,.63)}${grass(397,344,.67)}${grass(505,330,.54)}
  <ellipse class="garden-pond-ripple" cx="429" cy="289" rx="29" ry="9" transform="rotate(-20 429 289)" fill="none" stroke="#ecfff6" stroke-width="2" opacity=".7"/>
+ <ellipse class="garden-pond-hit" cx="429" cy="289" rx="58" ry="26" transform="rotate(-20 429 289)" fill="transparent" role="button" tabindex="0" aria-label="Make gentle ripples in the pond"/>
  <g class="garden-falling-leaves" aria-hidden="true">
  <path class="garden-drift-leaf garden-drift-leaf-a" d="M309 142 Q300 133 294 144 Q300 151 309 142" fill="#e6d5a0"/>
  <path class="garden-drift-leaf garden-drift-leaf-b" d="M521 213 Q512 206 506 216 Q515 224 521 213" fill="#c5dda7"/>
@@ -133,5 +134,36 @@ document.addEventListener('visibilitychange',()=>{
 });
 window.addEventListener('psychdesk:tab-changed',scheduleObservation);
 window.addEventListener('psychdesk:data-replaced',scheduleObservation);
+/* Ambient lighting follows local time; interaction is optional and never stores data. */
+function updateGardenLight(){
+ const hour=new Date().getHours();
+ document.documentElement.dataset.gardenTime=hour<11?'morning':hour<17?'afternoon':hour<20?'evening':'night';
+}
+updateGardenLight();
+const activeReactions=new WeakMap();
+const motionDisabled=()=>document.documentElement.dataset.motion==='off'
+ ||document.documentElement.classList.contains('psychdesk-ambient-off')
+ ||window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function reactToGarden(target){
+ const element=target?.closest?.('.garden-tree, .garden-pond-hit');
+ if(!element||!element.closest('.garden-world')||motionDisabled()
+  ||element.closest('.garden-motion-paused'))return;
+ const tree=element.closest('.garden-tree');
+ const node=tree||element.closest('svg.garden-art');
+ const className=tree?'garden-reacting':'garden-pond-reacting';
+ if(!node)return;
+ window.clearTimeout(activeReactions.get(node));
+ node.classList.remove(className);
+ void node.getBoundingClientRect();
+ node.classList.add(className);
+ activeReactions.set(node,window.setTimeout(()=>node.classList.remove(className),960));
+}
+document.addEventListener('click',event=>reactToGarden(event.target));
+document.addEventListener('keydown',event=>{
+ if((event.key==='Enter'||event.key===' ')&&event.target?.matches?.('.garden-tree, .garden-pond-hit')){
+  event.preventDefault();reactToGarden(event.target);
+ }
+});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateGardenLight()});
 window.PsychDeskGarden={scene};
 })();
