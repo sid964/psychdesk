@@ -1,0 +1,3 @@
+# Project-local upstream skill installations and Playwright captures.
+/.agents/skills/
+/browser-audit-artifacts/
