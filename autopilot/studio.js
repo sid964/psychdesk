@@ -67,7 +67,7 @@ function renderHome(){
   resume?.tab==='materials'?'Your reading <em>shelf.</em>':
   resume?.tab==='focus'?'Your focus <em>space.</em>':
   hasHistory?'Back at <em>your desk.</em>':'A place for <em>your ideas.</em>';
- const shortTitle=value=>String(value||'Untitled').trim().slice(0,80);
+ const shortTitle=value=>{const title=String(value||'Untitled').trim();return title.length>48?title.slice(0,46)+'…':title;};
  const introduction=resume?.tab==='reader'
   ?'You stopped at page '+resume.page+' of <strong>'+h(shortTitle(resume.title))+'</strong>.'
   :resume?.tab==='notes'&&resume.noteId
