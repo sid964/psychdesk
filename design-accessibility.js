@@ -16,4 +16,21 @@
     });
     observer.observe(nav, {subtree: true, attributes: true, attributeFilter: ['class']});
   }
+  // The account label is icon-only at phone widths; keep the actual status
+  // available to assistive technology even when the visible text is concealed.
+  const account = document.getElementById('accountBtn');
+  if (account) {
+    const syncAccount = () => {
+      const visibleStatus = (account.textContent || '').trim().replace(/\\s+/g, ' ').slice(0,80);
+      account.setAttribute('aria-label', visibleStatus
+        ? 'Google account and sync: ' + visibleStatus
+        : 'Google account and sync status');
+    };
+    const accountObserver = new MutationObserver(syncAccount);
+    accountObserver.observe(account, {
+      childList: true, subtree: true, characterData: true,
+      attributes: true, attributeFilter: ['data-state']
+    });
+    syncAccount();
+  }
 })();
