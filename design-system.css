@@ -1,0 +1,223 @@
+/* PsychDesk design system, adapted from the user supplied landing-page-design skill.
+   PsychDesk is a personal study workspace, not a marketing landing page.
+   Preserve the living SVG garden, all data paths, and the original Settings icon. */
+:root {
+  --pd-font: "Manrope", system-ui, sans-serif;
+  --pd-space-0: 0;
+  --pd-space-25: 2px;
+  --pd-space-50: 4px;
+  --pd-space-75: 8px;
+  --pd-space-100: 12px;
+  --pd-space-200: 16px;
+  --pd-space-300: 24px;
+  --pd-space-400: 32px;
+  --pd-space-500: 40px;
+  --pd-space-600: 48px;
+  --pd-space-700: 64px;
+  --pd-space-800: 80px;
+  --pd-space-900: 96px;
+  --pd-ease: cubic-bezier(.22,1,.36,1);
+  --pd-heading-1: 60px;
+  --pd-heading-2: 48px;
+  --pd-heading-3: 36px;
+  --pd-heading-4: 30px;
+  --pd-heading-5: 24px;
+  --pd-heading-6: 20px;
+  --pd-body: 16px;
+  --pd-caption: 14px;
+  --studio-display: var(--pd-font);
+}
+html[data-theme="dark"] {
+  --bg: #000000; --paper: #181818; --nav: #131209;
+  --ink: #f5f5f3; --muted: #b4b4af; --line: #313131;
+  --green: #a8c9a3; --greenlight: #272727;
+  color-scheme: dark;
+}
+html[data-theme="light"] {
+  --bg: #f6f3eb; --paper: #fffcf6; --nav: #f6f3eb;
+  --ink: #292d28; --muted: #59635a; --line: #dcded4;
+  --green: #496c52; --greenlight: #e1e9dd;
+  color-scheme: light;
+}
+body, button, input, textarea, select, option, summary {
+  font-family: var(--pd-font) !important;
+}
+body :is(h1,h2,h3,h4,h5,h6,.brand strong,.rail-brand strong,.rail-quote,.stat .number,.focus-clock,.review-q,.garden-notebook h3,.garden-home .garden-seed h2) {
+  font-family: var(--pd-font) !important;
+  font-style: normal !important;
+  font-weight: 600;
+}
+body :is(h1,h2,h3,h4,h5,h6){text-wrap:balance}
+body :is(p,.garden-notebook-copy,.studio-feature-definition){text-wrap:pretty}
+body :is(.garden-heading em,.rail-quote em,.studio-home-signoff){font-style:normal!important}
+body :is(button,.nav-item,.rail-link){font-weight:600}
+body :is(.studio-kicker,.rail-section-label,.crumb-overline,.eyebrow){font-weight:600;letter-spacing:.08em}
+body :is(.card,.stat,.subject-card,.note-card,.task-row,.material-card,.garden-notebook,.garden-seed) {
+  box-shadow:none;
+}
+html[data-theme="dark"] :is(body,.app-shell){background:#000!important}
+html[data-theme="light"] :is(body,.app-shell){background:#f6f3eb!important}
+body::before{display:none}
+html[data-theme="dark"] :is(.topbar,.bottom-nav,.desktop-rail){
+  background:#131209!important;border-color:#272727!important;
+}
+html[data-theme="light"] :is(.topbar,.bottom-nav){background:#f6f3eb!important}
+html[data-theme="light"] .desktop-rail{background:#eeece4!important;border-color:#dcded4!important;color:#292d28!important}
+html[data-theme="dark"] .desktop-rail .rail-link{color:#d0d0cd}
+html[data-theme="light"] .desktop-rail .rail-link{color:#414e43}
+html[data-theme="dark"] .desktop-rail .rail-link.active{
+  background:#272727!important;color:#f4f4f1!important;
+}
+html[data-theme="light"] .desktop-rail .rail-link.active{
+  background:#e1e9dd!important;color:#304c39!important;
+}
+.desktop-rail .rail-link{
+  border-radius:12px;font-size:14px;line-height:20px;
+  padding:12px 16px;
+  transition:transform 500ms var(--pd-ease),background-color 300ms var(--pd-ease),color 300ms var(--pd-ease);
+}
+.desktop-rail .rail-section-label{font-size:12px;line-height:16px;letter-spacing:.06em}
+.desktop-rail .rail-brand strong{font-size:20px;line-height:28px}
+.desktop-rail .rail-quote{font-size:24px;line-height:32px}
+.desktop-rail .rail-caption{font-size:14px;line-height:20px}
+.desktop-rail .rail-lower{padding-bottom:16px}
+.garden-home{width:100%;min-width:0}
+.garden-home .garden-landing{
+  border-radius:24px;
+  box-shadow:none;
+}
+html[data-theme="dark"] .garden-home .garden-landing{
+  background:#131209!important;border-color:#313131!important;
+}
+html[data-theme="light"] .garden-home .garden-landing{
+  background:#e8eee3!important;border-color:#d7e0d2!important;
+}
+.garden-home .garden-ambient{background:none!important}
+.garden-home .garden-landing::before{display:none}
+.garden-home .garden-heading{max-width:680px}
+.garden-home .garden-heading h1{
+  font-family:var(--pd-font)!important;
+  font-size:var(--pd-heading-1)!important;
+  line-height:1!important;
+  font-weight:600!important;
+  letter-spacing:-.04em!important;
+  text-wrap:balance;
+  max-width:680px;
+}
+.garden-home .garden-heading h1 em{font-family:inherit;font-style:normal!important;font-weight:inherit}
+.garden-home .garden-heading p{
+  font-size:16px!important;line-height:24px!important;
+  max-width:43ch!important;text-wrap:pretty;
+}
+.garden-home .garden-heading .studio-kicker{
+  font-size:12px!important;line-height:16px!important;
+  letter-spacing:.08em!important;
+}
+.garden-home .garden-entry{gap:8px;margin-top:24px}
+.garden-home .garden-entry button{
+  border-radius:12px!important;
+  font-size:16px!important;line-height:24px!important;
+  font-weight:600!important;min-height:44px;
+  padding:8px 12px!important;
+  transition:transform 500ms var(--pd-ease),background-color 300ms var(--pd-ease),color 300ms var(--pd-ease),border-color 300ms var(--pd-ease);
+}
+.garden-home .garden-entry button:active,
+.garden-home .garden-bloom-line button:active,
+.garden-home :is(.garden-text-btn,.studio-explore,.studio-save):active{transform:scale(.98)}
+html[data-theme="dark"] .garden-home .garden-main-btn{background:#a8c9a3;color:#131b14;border-color:#a8c9a3}
+html[data-theme="light"] .garden-home .garden-main-btn{background:#496c52;color:#fff;border-color:#496c52}
+html[data-theme="dark"] .garden-home .garden-soft-btn{background:#1f1f1f;color:#eee;border-color:#313131}
+html[data-theme="light"] .garden-home .garden-soft-btn{background:#fffcf6;color:#344d39;border-color:#b8c8b7}
+html[data-theme="dark"] .garden-home :is(.garden-notebook,.garden-seed){
+  background:#181818!important;color:#f5f5f3!important;border-color:#313131!important;
+}
+html[data-theme="light"] .garden-home :is(.garden-notebook,.garden-seed){
+  background:#fffcf6!important;color:#292d28!important;border-color:#dcded4!important;
+}
+.garden-home :is(.garden-notebook,.garden-seed){border-radius:16px!important;padding:24px}
+.garden-home .garden-notebook h3{
+  font-size:24px!important;line-height:32px!important;letter-spacing:-.025em!important;
+  margin:16px 0 12px;
+}
+.garden-home .garden-seed h2{
+  font-size:24px!important;line-height:32px!important;letter-spacing:-.025em!important;
+}
+.garden-home :is(.garden-notebook-copy p,.studio-feature-definition){
+  font-size:16px!important;line-height:24px!important;
+}
+.garden-home .studio-feature-body{padding-block:24px}
+.garden-home :is(.studio-feature-credit,.garden-book-actions>span){
+  font-size:12px!important;line-height:16px!important;
+}
+.garden-home .studio-feature-footer{gap:12px;flex-wrap:wrap}
+.garden-home .studio-feature-footer .studio-actions{min-width:0;flex-wrap:wrap}
+.garden-home .studio-feature-footer .studio-actions button,
+.garden-home .garden-book-actions button,
+.garden-home .garden-bloom-line button{
+  font-size:14px!important;line-height:20px!important;
+  min-height:44px;padding:8px 12px;
+  border-radius:8px;
+  transition:transform 500ms var(--pd-ease),background-color 300ms var(--pd-ease),color 300ms var(--pd-ease);
+}
+.garden-home .garden-path-marker{font-size:12px;line-height:16px;margin-block:24px 16px}
+.garden-home .garden-stories{gap:16px}
+.garden-home .garden-bloom-line{gap:16px;padding-block:24px}
+.garden-home .garden-bloom-line h3{font-size:24px;line-height:32px}
+.garden-home .garden-bloom-line p{font-size:14px;line-height:20px}
+.garden-home .garden-scene-footer{font-size:12px;line-height:16px}
+.garden-home .garden-scene-footer span:last-child{font-size:12px}
+.garden-home .garden-tool-drawer summary{font-size:14px;line-height:20px}
+.garden-home .studio-home-signoff{font-size:12px;line-height:16px;font-style:normal}
+body :is(button,a,input,select,textarea,summary):focus-visible{
+  outline:3px solid #a8c9a3!important;outline-offset:3px!important;
+}
+html[data-theme="light"] body :is(button,a,input,select,textarea,summary):focus-visible{outline-color:#496c52!important}
+.bottom-nav .nav-item{font-size:12px;line-height:16px;min-height:44px}
+.bottom-nav .nav-ico{font-family:var(--pd-font);font-size:24px}
+.bottom-nav .nav-item[aria-current="page"]{color:var(--green)}
+.desktop-rail .rail-link[aria-current="page"]{font-weight:700}
+@media (min-width:900px){
+  .garden-home .garden-heading{padding-left:24px;padding-right:0}
+  .garden-home .garden-stories{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+}
+@media (min-width:571px) and (max-width:899px){
+  .garden-home .garden-heading h1{font-size:48px!important;line-height:1!important}
+  .garden-home .garden-landing{padding:24px!important}
+}
+@media (max-width:570px){
+  main{padding-inline:16px}
+  .garden-home .garden-landing{padding:16px!important;border-radius:16px}
+  .garden-home .garden-heading h1{
+    font-size:36px!important;line-height:40px!important;
+    max-width:17ch;margin:12px 0 12px!important;
+    letter-spacing:-.035em!important;
+  }
+  .garden-home .garden-heading p{font-size:16px!important;line-height:24px!important;max-width:38ch!important}
+  .garden-home .garden-entry{margin-top:16px;gap:8px;flex-wrap:wrap}
+  .garden-home .garden-entry button{white-space:normal}
+  .garden-home .garden-art-wrap{width:min(85%,330px)!important;margin:8px auto 0}
+  .garden-home .garden-scene-footer{gap:8px;flex-wrap:wrap}
+  .garden-home :is(.garden-notebook,.garden-seed){padding:16px!important}
+  .garden-home .garden-notebook h3{margin:12px 0}
+  .garden-home .studio-feature-body{padding:16px 0}
+  .garden-home .garden-stories{grid-template-columns:minmax(0,1fr);gap:12px}
+  .garden-home .garden-book-actions{gap:12px}
+  .garden-home .garden-bloom-line{align-items:flex-start}
+  .topbar{gap:4px!important;padding-inline:12px!important}
+  .topbar .account-chip{max-width:78px}
+}
+@media (max-width:390px){
+  .topbar .quick-label,.topbar .drive-chip-label{display:none}
+  .topbar .quick-note-launch{min-width:38px;padding-inline:8px}
+  .topbar .icon-btn{width:38px;height:38px}
+  .topbar .account-chip{max-width:70px;padding-inline:6px}
+  .garden-home .garden-scene-footer span:last-child{display:none}
+}
+@media (max-width:360px){
+  .garden-home .garden-heading h1{font-size:30px!important;line-height:36px!important}
+  .garden-home .garden-entry button{font-size:14px!important;line-height:20px!important}
+}
+@media (prefers-reduced-motion:reduce){
+  .garden-home :is(button,.garden-text-btn,.studio-explore,.studio-save),
+  .desktop-rail .rail-link{transition:none!important}
+}
