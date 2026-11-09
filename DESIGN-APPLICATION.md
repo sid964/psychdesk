@@ -36,3 +36,16 @@ No layout overhaul, fabricated product claims, new paid dependencies or destruct
 **Visual language**: Flat surfaces on non-illustrative UI, subtle text gradient in the hero, stronger 14–16px supporting copy, more obvious reading hierarchy and consistent button targets. The SVG illustration remains animated and interactive. Drive's connected status uses a steady accent instead of a perpetual spinner.
 
 **Regression checks**: In addition to the existing navigation, autosave, ink, motion and theme audits, CI checks the garden's visibility, hierarchy, primary action within the initial phone viewport, branded phone header and accessible account controls. No login, sync, Drive or study-data storage code was modified.
+
+## Personal desk pass (9 November 2026)
+
+The previous approach interpreted the uploaded design skill too literally for an individual study workspace: an attractive hero was still mostly a generic landing page. This pass changes the **information architecture**, not the account or automation model.
+
+- The homepage names a real recent reading material and saved page number, last opened workspace, or recent note when that information exists. Long titles are shortened visually and escaped. If no history exists, it uses a truthful first-use message instead of an invented activity.
+- The notebook below the garden always represents an actual recent note or a one-tap new-note entry, rather than duplicating the reading shelf already described in the hero.
+- The living garden remains the original animated SVG; existing saved concept IDs still determine its flower controls. A compact, account-scoped status explains how many saved ideas it reflects and opens the existing saved-concepts dialog. Empty state tells the user how their first flower appears.
+- The daily discovery card says what it is and whether that idea is already saved. No fabricated recommendation or AI-inferred personalization is claimed.
+- The redundant saved-concepts promotional block was removed; no new preferences, accounts, external APIs, paid services, note copies or storage schemas were introduced.
+- Automated browser auditing now verifies that saving a curated concept creates a visible garden flower and a working button into the saved collection, using only isolated local test data.
+
+The home should feel personal because it **remembers the work the user actually did**, not because it uses personal-sounding slogans or manufactured progress.
