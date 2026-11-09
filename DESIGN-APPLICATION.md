@@ -45,6 +45,7 @@ The previous approach interpreted the uploaded design skill too literally for an
 - The notebook below the garden always represents an actual recent note or a one-tap new-note entry, rather than duplicating the reading shelf already described in the hero.
 - The living garden remains the original animated SVG; existing saved concept IDs still determine its flower controls. A compact, account-scoped status explains how many saved ideas it reflects and opens the existing saved-concepts dialog. Empty state tells the user how their first flower appears.
 - The daily discovery card says what it is and whether that idea is already saved. No fabricated recommendation or AI-inferred personalization is claimed.
+- An optional memory postcard appears only if there is a real concept saved more than two days earlier. It never sends a notification, calculates a streak or invents a reminder; tapping it reopens the existing sourced concept.
 - The redundant saved-concepts promotional block was removed; no new preferences, accounts, external APIs, paid services, note copies or storage schemas were introduced.
 - Automated browser auditing now verifies that saving a curated concept creates a visible garden flower and a working button into the saved collection, using only isolated local test data.
 
