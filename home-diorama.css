@@ -131,3 +131,18 @@ html[data-theme="light"] .garden-home .garden-seed{background:linear-gradient(14
  .garden-home .garden-art *{animation:none!important;transition:none!important}
  .garden-home .garden-flower,.garden-home .garden-entry button{transition:none!important}
 }
+/* Natural garden revision: the familiar garden stands freely in the atmosphere.
+   No display plinth; depth lives in the plants, cottage, water and uneven meadow. */
+.garden-home .garden-landing::before{display:none!important}
+.garden-home .garden-ambient{background:radial-gradient(ellipse at 78% 60%,#a5b7960a,transparent 65%)!important}
+.garden-home .garden-art-wrap{max-width:600px!important}
+.garden-home .garden-cloud{opacity:.18}
+.garden-home .garden-wind-trails{opacity:.16}
+.garden-home .garden-sun{opacity:.28}
+.garden-home .garden-art .garden-shrub-crown{animation-duration:8s!important}
+/* The garden belongs to the page itself, never a bordered card or display box. */
+html[data-theme] .garden-home .garden-landing{
+ border:0!important;border-radius:0!important;background:transparent!important;
+ box-shadow:none!important;overflow:visible;
+}
+.garden-home .garden-ambient{display:none!important}

@@ -22,6 +22,6 @@ test('garden preserves keyboard tree and pond controls and bounds saved objects'
  const items=Array.from({length:12},(_,i)=>({id:'idea-'+i,title:'Idea '+i}));
  const result=garden().scene(items,items);
  assert.equal((result.match(/data-auto="related"/g)||[]).length,5);
- assert.equal((result.match(/class="garden-tree" role="button" tabindex="0"/g)||[]).length,4);
+ assert.equal((result.match(/class="garden-tree(?: garden-pine)?" role="button" tabindex="0"/g)||[]).length,4);
  assert.match(result,/class="garden-pond-hit"[^>]*role="button" tabindex="0"/);
 });
