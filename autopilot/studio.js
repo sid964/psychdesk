@@ -37,9 +37,13 @@ function discoveryMarkup(){
 }
 
 function postcard(){
- const old=safeSaved().find(x=>x.savedAt&&Date.now()-Date.parse(x.savedAt)>2*86400000);
- const c=old&&discoveries.find(v=>v.id===old.id);
- return c?'<section class="studio-postcard"><div><span class="studio-kicker">AN IDEA FROM YOUR COLLECTION</span><h3>Remember '+h(c.term)+'?</h3><p>See what comes to mind before looking it up.</p></div><button data-auto="postcard" data-id="'+h(c.id)+'" class="secondary">Revisit idea ↗</button></section>':'';
+ // An occasional, optional return to something the person genuinely saved.
+ // Never shows streaks, grades, notifications or fabricated suggestions.
+ const older=safeSaved().filter(x=>x.savedAt&&Number.isFinite(Date.parse(x.savedAt))&&Date.now()-Date.parse(x.savedAt)>2*86400000)
+  .map(x=>discoveries.find(v=>v.id===x.id)).filter(Boolean);
+ if(!older.length)return '';
+ const c=older[Math.floor(Date.now()/86400000)%older.length];
+ return '<section class="studio-postcard" aria-label="A saved psychology idea"><div><span class="studio-kicker">FROM YOUR SAVED IDEAS</span><h3>'+h(c.term)+'</h3><p>You kept this idea earlier. Return to it whenever you like.</p></div><button type="button" data-auto="postcard" data-id="'+h(c.id)+'" class="secondary">Revisit idea ↗</button></section>';
 }
 function gardenStatusMarkup(){
  const count=safeSaved().length;
@@ -91,6 +95,7 @@ function renderHome(){
  '<div class="garden-stories">'+
  '<section class="garden-notebook" aria-label="Your last note or workspace"><div class="garden-book-icon" aria-hidden="true"><span>✧</span></div>'+notebookCard+'</section>'+ 
  '<section class="studio-discovery garden-seed" id="studio-discovery" aria-label="A daily psychology concept">'+discoveryMarkup()+'</section></div>'+
+ '<div id="studioMemoryPostcard" class="studio-memory-postcard-slot">'+postcard()+'</div>'+
  (window.PsychDeskPhase6?.homeCard?.()||'')+
 
  '<details class="studio-quiet-tools garden-tool-drawer"><summary>Other tools <span aria-hidden="true">⌄</span></summary><div><button type="button" data-tab="notes">Notebooks</button><button type="button" data-tab="ink">Ink notes</button><button type="button" data-tab="materials">Reading shelf</button><button type="button" data-tab="dictionary">Psychology dictionary</button><button type="button" data-tab="recall">Flashcards</button><button type="button" data-tab="connections">Study Flow</button><button type="button" data-auto="inbox">Organize notes</button><button type="button" data-auto="import">Import a document</button><button type="button" data-auto="letter">Weekly letter</button><button type="button" data-tab="tools">All tools</button></div></details>'+
@@ -101,6 +106,7 @@ function refreshHome(){
  const node=$('#studio-discovery');if(node)node.innerHTML=discoveryMarkup();
  const art=$('.garden-art-wrap');if(art&&window.PsychDeskGarden)art.innerHTML=window.PsychDeskGarden.scene(safeSaved(),discoveries);
  const status=$('.studio-garden-context');if(status)status.innerHTML='<span aria-hidden="true"></span>'+gardenStatusMarkup()+'<span aria-hidden="true"></span>';
+ const postcardSlot=$('#studioMemoryPostcard');if(postcardSlot)postcardSlot.innerHTML=postcard();
 }
 
 fetch('./automation/data/curated-concepts.json?v=1',{cache:'force-cache'}).then(r=>{if(!r.ok)throw Error('No curated discovery file');return r.json()}).then(j=>{discoveries=(j.concepts||[]).filter(x=>x.id&&x.title&&x.source?.url&&x.verification==='editor-reviewed');refreshHome()}).catch(()=>{const t=$('#studio-discovery');if(t)t.innerHTML='<span class="studio-kicker">PSYCHOLOGY CONCEPT</span><h2>Discoveries are temporarily unavailable.</h2><p>Your notes and other study tools still work.</p>'});
