@@ -42,7 +42,7 @@ test('accessible tab announcement does not replace route and settings handlers',
 
 test('new assets are cached with a changed version', () => {
   const sw = read('sw.js');
-  assert.match(sw, /psychdesk-study-adoption-midnight-sage-v72/);
+  assert.match(sw, /psychdesk-study-adoption-midnight-sage-v73/);
   assert.match(sw, /'\.\/design-system\.css'/);
   assert.match(sw, /'\.\/design-accessibility\.js'/);
 });
@@ -53,9 +53,9 @@ test('homepage now puts notebook and concept before the optional next step', () 
   const next = home.indexOf('(window.PsychDeskPhase6?.homeCard?.()||');
   const collection = home.indexOf('class="garden-bloom-line"');
   assert.ok(stories > -1 && next > stories && collection > next);
-  assert.match(home, /Your psychology <em>workspace\.<\/em>/);
+  assert.match(home, /A place for <em>your ideas\.<\/em>/);
   assert.doesNotMatch(home, /class="garden-scene-footer"/);
-  assert.match(home, /Your saved concepts/);
+  assert.match(home, /saved in your garden/);
 });
 
 test('desktop navigation is ordered around everyday study and remains complete', () => {
@@ -91,10 +91,26 @@ test('mobile landing compacts the first screen without removing the living garde
   assert.match(css, /width:min\(87%,295px\)!important/);
   assert.match(css, /filter:brightness\(\.96\) saturate\(1\.10\)!important/);
   assert.match(css, /\.garden-home \.garden-world-caption \{display:none!important\}/);
-  assert.match(home, /Back to <em>reading\.<\/em>/);
-  assert.match(home, /CONTINUE HERE/);
+  assert.match(home, /Back to <em>your book\.<\/em>/);
+  assert.match(home, /studio-garden-context/);
   assert.match(session, /'Open reading shelf'/);
-  assert.match(html, /design-system\.css\?v=mobile-home-3/);
-  assert.match(html, /autopilot\/studio\.js\?v=mobile-home-3/);
+  assert.match(html, /design-system\.css\?v=personal-desk-1/);
+  assert.match(html, /autopilot\/studio\.js\?v=personal-desk-1/);
   assert.match(html, /study-session\.js\?v=mobile-home-3/);
+});
+
+test('personal desk uses only existing records to explain the last reading and notebook', () => {
+  const home=read('autopilot/studio.js');
+  const css=read('design-system.css');
+  assert.match(home, /You stopped at page /);
+  assert.match(home, /h\(shortTitle\(resume\.title\)\)/);
+  assert.match(home, /const notebookCard=continuation/);
+  assert.match(home, /const hasHistory=Boolean\(recent\|\|resume\|\|safeSaved\(\)\.length\)/);
+  assert.match(home, /function gardenStatusMarkup\(/);
+  assert.match(home, /data-auto="garden"/);
+  assert.match(home, /saved in your garden/);
+  assert.doesNotMatch(home, /class="garden-bloom-line"/);
+  assert.match(css, /Personal desk: actual last reading/);
+  assert.match(css, /\.studio-garden-context \.studio-garden-open/);
+  assert.match(css, /prefers-reduced-motion:reduce/);
 });
