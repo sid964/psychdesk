@@ -41,17 +41,18 @@ jobs:
                   "$html" == *'data-tab="connections"'* &&
                   "$css" == *'.study-flow-entry'* &&
                   "$next" == *'homeCard'* &&
-                  "$sw" == *'psychdesk-study-adoption-midnight-sage-v72'* &&
+                  "$sw" == *'psychdesk-study-adoption-midnight-sage-v73'* &&
                   "$html" == *'garden-refresh.css?v=midnight-sage-1'* &&
                   "$garden_css" == *'--bg:#000000'* &&
                   "$garden_js" == *'reactToGarden'* &&
-                  "$html" == *'design-system.css?v=mobile-home-3'* &&
+                  "$html" == *'design-system.css?v=personal-desk-1'* &&
                   "$design_css" == *'--pd-font:'* &&
                   "$design_js" == *'aria-current'* &&
                   "$html" == *'design-accessibility.js?v=design-skill-2'* &&
-                  "$html" == *'autopilot/studio.js?v=mobile-home-3'* &&
+                  "$html" == *'autopilot/studio.js?v=personal-desk-1'* &&
                   "$html" == *'study-session.js?v=mobile-home-3'* &&
-                  "$design_css" == *'Mobile garden composition'* ]]; then
+                  "$design_css" == *'Mobile garden composition'* &&
+                  "$design_css" == *'Personal desk: actual last reading'* ]]; then
               echo "LIVE_RELEASE_VERIFIED: Midnight Sage, living garden, accessible navigation, design system and updated PWA cache are served by GitHub Pages."
               echo "RELEASE_COMMIT=$GITHUB_SHA"
               exit 0
