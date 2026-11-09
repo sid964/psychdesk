@@ -597,6 +597,9 @@ html[data-theme="dark"] .garden-home .garden-heading p strong{color:#f0f3ed}
   cursor:pointer;
   transition:transform 500ms var(--pd-ease),border-color 300ms var(--pd-ease);
 }
+.garden-home .studio-garden-context .studio-garden-open span{
+  height:auto;flex:none;background:transparent;
+}
 .garden-home .studio-garden-context .studio-garden-open span:first-child{
   color:var(--green);font-size:18px;line-height:20px;
 }
