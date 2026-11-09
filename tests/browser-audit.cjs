@@ -56,8 +56,32 @@ async function main(){
     await page.waitForSelector('#main .hero, #main .studio-home-v2',{timeout:16000});
     await page.waitForTimeout(500);
     const overview=await inspect(page);
+    const homeDesign=await page.evaluate(()=>{
+      const garden=document.querySelector('#main .garden-art');
+      const primary=document.querySelector('#main .garden-main-btn');
+      const stories=document.querySelector('#main .garden-stories');
+      const next=document.querySelector('#main .study-flow-entry');
+      const brand=document.querySelector('.topbar .brand');
+      const brandText=document.querySelector('.topbar .brand strong');
+      const quick=document.querySelector('#quickNoteBtn');
+      const account=document.querySelector('#accountBtn');
+      const first=primary?.getBoundingClientRect();
+      const b=brand?.getBoundingClientRect();
+      const q=quick?.getBoundingClientRect();
+      return {
+        gardenVisible:!!garden&&garden.getBoundingClientRect().width>0,
+        primaryVisible:!!first&&first.width>0&&first.top>=0&&first.bottom<innerHeight,
+        storiesBeforeSuggestion:!!stories&&!!next&&Boolean(stories.compareDocumentPosition(next)&Node.DOCUMENT_POSITION_FOLLOWING),
+        brandVisible:!!brandText&&getComputedStyle(brandText).display!=='none',
+        brandClear:!!b&&!!q&&b.right<=q.left+3,
+        accountAccessible:!!account?.getAttribute('aria-label')?.includes('Google account')
+      };
+    });
     await page.screenshot({path:path.join(dest,'overview-'+vp.width+'.png'),fullPage:true,animations:'disabled'});
-    const record={origin,viewport:vp.width,overview,errors};
+    const record={origin,viewport:vp.width,overview,homeDesign,errors};
+    if(!homeDesign.gardenVisible||!homeDesign.storiesBeforeSuggestion||!homeDesign.accountAccessible)fatal=true;
+    if(vp.width<=390&&!homeDesign.primaryVisible)fatal=true;
+    if((vp.width===360||vp.width===390)&&(!homeDesign.brandVisible||!homeDesign.brandClear))fatal=true;
     async function openTab(tab){
      let selector='[data-tab="'+tab+'"]:visible';
      if(!await page.locator(selector).count()){
