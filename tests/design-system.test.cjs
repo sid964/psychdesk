@@ -49,10 +49,11 @@ test('new assets are cached with a changed version', () => {
 
 test('homepage now puts notebook and concept before the optional next step', () => {
   const home = read('autopilot/studio.js');
+  const garden = home.indexOf('class="garden-path-marker studio-garden-context"');
   const stories = home.indexOf('class="garden-stories"');
   const next = home.indexOf('(window.PsychDeskPhase6?.homeCard?.()||');
-  const collection = home.indexOf('class="garden-bloom-line"');
-  assert.ok(stories > -1 && next > stories && collection > next);
+  const tools = home.indexOf('class="studio-quiet-tools garden-tool-drawer"');
+  assert.ok(garden > -1 && stories > garden && next > stories && tools > next);
   assert.match(home, /A place for <em>your ideas\.<\/em>/);
   assert.doesNotMatch(home, /class="garden-scene-footer"/);
   assert.match(home, /saved in your garden/);
