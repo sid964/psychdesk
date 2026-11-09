@@ -21,7 +21,7 @@
   const account = document.getElementById('accountBtn');
   if (account) {
     const syncAccount = () => {
-      const visibleStatus = (account.textContent || '').trim().replace(/\\s+/g, ' ').slice(0,80);
+      const visibleStatus = (account.textContent || '').trim().replace(/\s+/g, ' ').slice(0,80);
       account.setAttribute('aria-label', visibleStatus
         ? 'Google account and sync: ' + visibleStatus
         : 'Google account and sync status');
