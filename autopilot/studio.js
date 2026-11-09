@@ -30,10 +30,10 @@ function discoveryMarkup(){
  const c=discovery();
  if(!c)return '<div class="studio-discovery-loading"><span class="studio-kicker">A PSYCHOLOGY IDEA</span><h2>Finding a psychology concept.</h2><p>Concepts are selected from reviewed psychology sources.</p></div>';
  const saved=safeSaved().some(x=>x.id===c.id);
- return '<div class="studio-feature-top"><span class="studio-kicker">FEATURED PSYCHOLOGY CONCEPT</span><span class="garden-story-mark" aria-hidden="true">✳</span></div>'+
+ return '<div class="studio-feature-top"><span class="studio-kicker">'+(saved?'SAVED TO YOUR GARDEN':'A PSYCHOLOGY IDEA FOR TODAY')+'</span><span class="garden-story-mark" aria-hidden="true">✳</span></div>'+
  '<div class="studio-feature-body"><p class="studio-concept">'+h(c.category)+' · '+h(c.term)+'</p><h2>'+h(c.title)+'</h2><p class="studio-feature-definition">'+h(c.definition)+'</p></div>'+
  '<div class="studio-feature-footer"><span class="studio-feature-credit">Source: '+h(c.source?.publisher||'a psychology source')+'</span>'+
- '<div class="studio-actions"><button type="button" class="studio-explore" data-auto="explore">Read more ↗</button><button type="button" class="studio-save" data-auto="save" aria-label="'+(saved?'Concept already saved':'Save this psychology concept')+'">'+(saved?'Saved ✓':'Save')+'</button></div></div>';
+ '<div class="studio-actions"><button type="button" class="studio-explore" data-auto="explore">Explore idea ↗</button><button type="button" class="studio-save" data-auto="save" aria-label="'+(saved?'Concept already saved':'Save this psychology concept')+'">'+(saved?'Saved ✓':'Save')+'</button></div></div>';
 }
 
 function postcard(){
@@ -59,7 +59,7 @@ function renderHome(){
  const scene=window.PsychDeskGarden?.scene(safeSaved(),discoveries)||'';
  const firstAction=window.PsychDeskSession?.homeButton?.()||(recent?'<button class="garden-main-btn" type="button" data-cloud="editNote" data-id="'+h(recent.id)+'">Continue note <span aria-hidden="true">↗</span></button>':'<button class="garden-main-btn" type="button" data-auto="capture">New note <span aria-hidden="true">↗</span></button>');
  const resume=window.PsychDeskSession?.getResume?.();
- const hasHistory=Boolean(recent||resume);
+ const hasHistory=Boolean(recent||resume||safeSaved().length);
  // The homepage is a personal work surface, not a marketing banner.
  // Describe actual saved content and never claim a session or subject exists when it doesn't.
  const heading=resume?.tab==='reader'?'Back to <em>your book.</em>':
@@ -77,7 +77,8 @@ function renderHome(){
     :recent
      ?'Last edited: <strong>'+h(shortTitle(recent.title||'Untitled note'))+'</strong>.'
      :'Notes, reading and small discoveries, all in one place.';
- const notebookCard=recent?continuation:(window.PsychDeskSession?.homeDetail?.()||continuation);
+ // A reading session is already in the hero; show the latest note below it instead of duplicating the reader card.
+ const notebookCard=continuation;
  return '<div class="studio-home studio-home-v2 garden-home">'+
  '<section class="garden-landing" aria-label="Psychology study homepage">'+
  '<div class="garden-ambient" aria-hidden="true"></div>'+
@@ -122,7 +123,7 @@ function makeDiscoveryCard(id){
 }
 function garden(){
  const saved=safeSaved(),items=saved.map(x=>discoveries.find(c=>c.id===x.id)).filter(Boolean);
- core.openModal('Saved concepts','<div class="studio-garden garden-collection"><p>Review and open the psychology concepts you saved.</p><div class="garden-modal-illustration">'+(window.PsychDeskGarden?.scene(saved,discoveries)||'')+'</div><h3>Saved concepts</h3>'+(items.length?items.map((c,i)=>'<button class="studio-garden-item" data-auto="related" data-id="'+h(c.id)+'"><span>✿</span><strong>'+h(c.term)+'</strong><small>'+h(c.category)+'</small></button>').join(''):'<p>Save a featured concept to build a review collection.</p>')+'</div>');
+ core.openModal('Your garden','<div class="studio-garden garden-collection"><p>Each saved idea becomes a flower in your garden. Revisit one whenever you like.</p><div class="garden-modal-illustration">'+(window.PsychDeskGarden?.scene(saved,discoveries)||'')+'</div><h3>Saved concepts</h3>'+(items.length?items.map((c,i)=>'<button class="studio-garden-item" data-auto="related" data-id="'+h(c.id)+'"><span>✿</span><strong>'+h(c.term)+'</strong><small>'+h(c.category)+'</small></button>').join(''):'<p>Save a psychology idea from your desk to plant your first flower.</p>')+'</div>');
 }
 function getDb(){
  if(!('indexedDB' in window))return Promise.reject(Error('IndexedDB unavailable'));
