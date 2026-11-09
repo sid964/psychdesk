@@ -1,0 +1,133 @@
+/* Home-only material system. Artwork uses shaded vector geometry, no canvas or GPU loop. */
+.garden-home{
+ --desk-surface:#121613;--desk-edge:#343d34;--desk-light:#e1dfcf;
+ position:relative;isolation:isolate;
+ background:radial-gradient(ellipse 62% 36% at 76% 17%,#a5b6a00a,transparent 85%);
+}
+.garden-home .garden-landing{
+ display:grid!important;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr)!important;
+ grid-template-rows:auto!important;align-items:center;gap:16px!important;
+ min-height:420px!important;padding:36px!important;overflow:hidden;
+ border-radius:24px!important;border:1px solid #30382f!important;
+ background:radial-gradient(ellipse at 80% 24%,#9eaea318,transparent 55%),linear-gradient(160deg,#101411,#030504 80%)!important;
+ box-shadow:inset 0 1px #c7d0bd14,0 24px 48px -32px #000!important;
+}
+.garden-home .garden-landing::before{
+ display:block;content:"";position:absolute;inset:auto -15% -105px;
+ width:auto;height:180px;border:1px solid #aeb6a012;border-radius:50%;
+ background:radial-gradient(ellipse,#8a9d8410,transparent 70%);
+ transform:rotate(-9deg);pointer-events:none;
+}
+.garden-home .garden-landing::after{display:none!important}
+.garden-home .garden-ambient{
+ background:linear-gradient(110deg,transparent 50%,#adb8a507 50.2%,transparent 76%)!important;
+}
+.garden-home .garden-heading{
+ grid-column:1!important;grid-row:1!important;position:relative;
+ width:100%!important;max-width:none!important;padding:0!important;
+}
+.garden-home .garden-heading h1{font-size:clamp(34px,3.7vw,53px)!important;line-height:1.13!important;letter-spacing:-.045em!important;max-width:13ch!important}
+.garden-home .garden-heading h1 em{font-style:normal!important}
+.garden-home .garden-heading .studio-kicker{font-size:10px!important;letter-spacing:.12em!important;line-height:1.7!important}
+.garden-home .garden-heading p{font-size:15px!important;line-height:1.65!important;max-width:36ch!important}
+.garden-home .garden-art-wrap{
+ position:relative!important;inset:auto!important;grid-column:2!important;grid-row:1!important;
+ width:100%!important;max-width:560px!important;margin:0!important;justify-self:center;
+}
+.garden-home .garden-art{filter:none!important;overflow:visible}
+.garden-home .garden-world{aspect-ratio:660/480!important}
+.garden-home .garden-entry button{min-height:46px!important;border-radius:12px!important;white-space:normal}
+.garden-home .garden-main-btn{box-shadow:inset 0 1px #eaf4df70,0 4px 0 #455b43,0 8px 16px #0004!important}
+.garden-home .garden-soft-btn{box-shadow:inset 0 1px #d5dfc711,0 3px 0 #030603!important}
+.garden-home .garden-entry button:active{transform:translateY(2px)!important}
+.garden-home .studio-garden-context{margin:16px 0 26px!important}
+/* A recessed desk tray contains two distinct objects: a bound notebook and an idea card. */
+.garden-home .desk-shelf{
+ position:relative;margin:0 3px 26px;padding:20px 24px 32px;
+ border:1px solid #353a32;border-bottom:8px solid #22281f;border-radius:13px 13px 18px 18px;
+ background:linear-gradient(178deg,#181d18,#0c100d 85%);
+ box-shadow:inset 0 2px 6px #0007,0 1px #646e5940,0 18px 28px -20px #000;
+}
+.garden-home .desk-shelf::after{
+ content:"";position:absolute;pointer-events:none;bottom:7px;left:12px;right:12px;height:1px;
+ background:linear-gradient(90deg,transparent,#bec4a733,transparent);
+}
+.garden-home .desk-shelf-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:20px}
+.garden-home .desk-shelf-heading>.studio-kicker{color:var(--muted);font-size:11px;letter-spacing:.13em}
+.garden-home .desk-shelf-heading button{min-height:44px;font-size:13px;color:var(--ink);padding:8px 0;background:none;border:0}
+.garden-home .garden-stories{gap:26px;align-items:stretch;perspective:1200px}
+html[data-theme="dark"] .garden-home .garden-notebook,
+html[data-theme="dark"] .garden-home .garden-seed{
+ background:linear-gradient(110deg,#1e2720,#131a15)!important;
+ border:1px solid #495142!important;
+ box-shadow:inset 1px 1px #dbe1c920,3px 4px 0 #30382d,5px 6px 0 #777b5e55,7px 9px 0 #252c23,10px 18px 20px -8px #0009!important;
+}
+.garden-home .garden-notebook{
+ border-radius:5px 14px 14px 5px!important;padding:28px 26px 25px 34px!important;
+ transform:rotateY(3deg);border-left:9px solid #3d5141!important;
+}
+.garden-home .garden-notebook::before{
+ content:"";position:absolute;left:7px;top:0;bottom:0;width:1px;
+ background:#b8c5a826;pointer-events:none;
+}
+.garden-home .garden-notebook::after{display:none!important}
+.garden-home .garden-book-icon{display:none}
+.garden-home .garden-notebook-copy{padding-top:0}
+.garden-home .garden-notebook h3{font-size:clamp(24px,2.4vw,32px)!important;line-height:1.2!important;margin:20px 0 12px!important;max-width:24ch}
+.garden-home .garden-notebook-copy p{font-size:14px!important;line-height:1.7!important}
+html[data-theme="dark"] .garden-home .garden-seed{
+ background:linear-gradient(140deg,#28291f,#1a1e17)!important;border-color:#4a4c3b!important;
+}
+.garden-home .garden-seed{border-radius:9px!important;transform:rotateY(-3deg);padding:26px!important}
+.garden-home .garden-seed h2{font-size:clamp(24px,2.4vw,32px)!important}
+.garden-home .garden-book-actions{gap:10px;flex-wrap:wrap}
+.garden-home .garden-book-actions>span{min-width:0;overflow-wrap:anywhere}
+.garden-home .garden-text-btn{min-height:44px}
+/* Saved ideas become small brass plant markers; each retains its real concept action. */
+.garden-home .garden-flower{width:44px;height:44px;padding:8px;display:grid;place-items:center;filter:none;transform:translate(-50%,-50%)}
+.garden-home .garden-flower:hover,.garden-home .garden-flower:focus-visible{transform:translate(-50%,-55%)}
+.garden-home .garden-flower:focus-visible{outline:2px solid #f0dfb3;outline-offset:2px}
+.idea-sprout{position:relative;display:block;width:3px;height:23px;background:linear-gradient(90deg,#5f7550,#bbc39a);box-shadow:3px 3px 3px #0005;transform:rotate(-8deg)}
+.idea-sprout::before,.idea-sprout::after{content:"";position:absolute;top:0;width:13px;height:9px;background:linear-gradient(135deg,#e1d8a7,#798d66);border-radius:2px 12px 2px 12px;box-shadow:0 1px 1px #203422}
+.idea-sprout::before{right:2px;transform:rotate(15deg)}
+.idea-sprout::after{left:2px;top:-5px;transform:scaleX(-1) rotate(30deg)}
+.garden-home .garden-flower-0{left:25%;top:65%}.garden-home .garden-flower-1{left:37%;top:59%}
+.garden-home .garden-flower-2{left:57%;top:76%}.garden-home .garden-flower-3{left:77%;top:67%}
+.garden-home .garden-flower-4{left:47%;top:73%}
+.garden-home .garden-tree:focus-visible{outline:none;stroke:#dce5c3;stroke-width:1px}
+.garden-home .garden-pond-hit:focus-visible{outline:none;stroke:#dce5c3;stroke-width:2px}
+/* Keep ambient motion limited to leaves and water, and preserve the existing pause observer. */
+.garden-home .garden-art{animation:none!important}
+.garden-home .garden-canopy{animation-duration:9s!important}
+.garden-home .garden-pond-ripple{animation-duration:7s!important}
+html[data-theme="light"] .garden-home{--desk-surface:#ece9dd;--desk-edge:#c6c6b2}
+html[data-theme="light"] .garden-home .garden-landing{background:radial-gradient(ellipse at 80% 20%,#fbf8e9,transparent 60%),linear-gradient(140deg,#eaece0,#dce3d5)!important;border-color:#cbd3c1!important}
+html[data-theme="light"] .garden-home .desk-shelf{background:linear-gradient(#e4e3d5,#d6d9c9);border-color:#b6bdab;border-bottom-color:#b7bfab;box-shadow:inset 0 2px 5px #6a725122,0 14px 26px -22px #354231}
+html[data-theme="light"] .garden-home .garden-notebook{background:linear-gradient(105deg,#f6f3e7,#e9ebdd)!important;border-color:#bac4aa!important;box-shadow:3px 4px #b9c1a9,5px 6px #eff0e0,7px 9px #aab69d,10px 18px 20px -8px #4a5b4133!important}
+html[data-theme="light"] .garden-home .garden-seed{background:linear-gradient(140deg,#fff9e8,#f0eddc)!important;box-shadow:3px 4px #c9c8b2,5px 6px #f8f6e8,7px 9px #b8bda6,10px 18px 20px -8px #4a5b4133!important}
+@media(max-width:899px){
+ .garden-home .garden-landing{grid-template-columns:minmax(0,1fr)!important;padding:26px!important;gap:0!important;min-height:0!important}
+ .garden-home .garden-heading h1{max-width:20ch!important}
+ .garden-home .garden-art-wrap{grid-column:1!important;grid-row:2!important;width:min(100%,450px)!important;margin:0 auto!important}
+ .garden-home .garden-stories{grid-template-columns:minmax(0,1fr)!important;gap:26px}
+ .garden-home .garden-notebook,.garden-home .garden-seed{transform:none}
+}
+@media(max-width:570px){
+ .garden-home .garden-landing{padding:22px 19px 8px!important;border-radius:20px!important}
+ .garden-home .garden-heading h1{font-size:32px!important;max-width:16ch!important;margin:10px 0!important}
+ .garden-home .garden-heading p{font-size:14px!important;line-height:21px!important}
+ .garden-home .garden-art-wrap{width:min(100%,340px)!important;margin:0 auto!important}
+ .garden-home .garden-entry{margin-top:16px!important}
+ .garden-home .studio-garden-context{margin:12px 0 20px!important}
+ .garden-home .desk-shelf{padding:10px 14px 25px;margin-inline:0}
+ .garden-home .desk-shelf-heading{margin-bottom:12px}
+ .garden-home .desk-shelf-heading>.studio-kicker{font-size:10px}
+ .garden-home .garden-notebook{padding:22px 18px 20px 24px!important;min-height:0!important}
+ .garden-home .garden-seed{padding:20px!important}
+ .garden-home .garden-notebook h3{font-size:25px!important;margin-top:16px!important}
+ .garden-home .garden-stories{gap:24px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ .garden-home .garden-art *{animation:none!important;transition:none!important}
+ .garden-home .garden-flower,.garden-home .garden-entry button{transition:none!important}
+}

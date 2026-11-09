@@ -92,9 +92,9 @@ function renderHome(){
 
  '</section>'+
  '<div class="garden-path-marker studio-garden-context"><span aria-hidden="true"></span>'+gardenStatusMarkup()+'<span aria-hidden="true"></span></div>'+
- '<div class="garden-stories">'+
+ '<section class="desk-shelf" aria-label="Your study shelf"><div class="desk-shelf-heading"><span class="studio-kicker">ON YOUR DESK</span><button type="button" class="garden-text-btn" data-tab="materials">Reading shelf ↗</button></div><div class="garden-stories">'+
  '<section class="garden-notebook" aria-label="Your last note or workspace"><div class="garden-book-icon" aria-hidden="true"><span>✧</span></div>'+notebookCard+'</section>'+ 
- '<section class="studio-discovery garden-seed" id="studio-discovery" aria-label="A daily psychology concept">'+discoveryMarkup()+'</section></div>'+
+ '<section class="studio-discovery garden-seed" id="studio-discovery" aria-label="A daily psychology concept">'+discoveryMarkup()+'</section></div></section>'+
  '<div id="studioMemoryPostcard" class="studio-memory-postcard-slot">'+postcard()+'</div>'+
  (window.PsychDeskPhase6?.homeCard?.()||'')+
 
