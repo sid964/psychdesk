@@ -1,4 +1,12 @@
 /* PsychDesk living garden. Original artwork; no copied Forest assets. */
+html[data-theme="light"] body{background:#f4f6ee}
+html[data-theme="light"] .app-shell{background:#f4f6ee}
+html[data-theme="dark"] body,html[data-theme="dark"] .app-shell{background:#000}
+html[data-theme="light"] .desktop-rail{background:#e9efe5;border-color:#dbe5d8}
+html[data-theme="dark"] .desktop-rail{background:#050806!important;border-color:#1b261f!important}
+html[data-theme="light"] .desktop-rail .rail-link.active{background:#d4e3d1;color:#355842!important}
+html[data-theme="dark"] .desktop-rail .rail-link.active{background:#102117;color:#bedbb8!important}
+html[data-theme="light"] .topbar{background:#f4f6ee}
 .garden-home{width:min(100%,1210px);max-width:none;padding:0 0 30px}
 .garden-home .studio-kicker{font-weight:750;letter-spacing:1.5px;font-size:10px}
 .garden-landing{

@@ -9,9 +9,9 @@ html{scroll-behavior:auto;overflow-x:clip}
 /* Keep the legacy workspace still, but do not blanket-disable the animated homepage garden.
    Complex :not() selectors leave the garden and its SVG descendants free to sway. */
 #main,
-#main :not(.garden-landing):not(.garden-landing *):not(.study-desk-collection *),
-#main :not(.garden-landing):not(.garden-landing *):not(.study-desk-collection *)::before,
-#main :not(.garden-landing):not(.garden-landing *):not(.study-desk-collection *)::after,
+#main :not(.garden-landing):not(.garden-landing *),
+#main :not(.garden-landing):not(.garden-landing *)::before,
+#main :not(.garden-landing):not(.garden-landing *)::after,
 .rail-motif,.desktop-rail::before,
 #modalRoot .modal,#modalRoot .modal-overlay,.motion-dismiss-layer,.motion-dismiss-layer .modal,
 .sticky-hero h1 span,.setup-panel,.setup-icon{animation:none!important}

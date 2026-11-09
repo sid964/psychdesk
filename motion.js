@@ -13,7 +13,7 @@
  const active=engine?.animations||new Map(),positions=new Map(),seen=new Map(),completed=new Map(),exits=new Set();
  const order=['today','university','psychology','planner','connections','notes','ink','stickies','recall','focus','materials','research','dictionary','timeline','tools','insights','search','reader','voice','board','mindmap'];
  const direct='input,textarea,select,[contenteditable],.ink-paper,.ink-editor,.ink-toolbar,.board-card,.mind-node,.reader-pages,canvas';
- let lastTab=null,pending=null,observer=null,dialog=null,drag=null;
+ let lastTab=null,pending=null,observer=null,dialog=null,drag=null,homeActive=false;
  // Sample a critically damped spring once. Browser animation scheduling follows the display.
  const spring=Array.from({length:33},(_,i)=>{
   const t=i/32,x=8*t,end=1-9*Math.exp(-8);
@@ -40,13 +40,34 @@
     if(!active.has(root))settle(entry.target,'Y',20,duration('reveal'));
    }
   },{threshold:.06});
-  const surfaces=[...root.children];
+  // The home page is wrapped in a single container: observe its actual study
+  // cards instead of silently skipping them as the old top-level selector did.
+  const surfaces=tab==='today'&&root.querySelector('.garden-home')
+   ?[...root.querySelectorAll('.garden-notebook,.studio-discovery,.garden-bloom-line,.garden-tool-drawer')]
+   :[...root.children];
   surfaces.forEach((el,i)=>{
-   if(!el.matches('section,.card,.subject-grid,.summary-grid,.study-panel,.psy-layout,.ref-library,.study-tools-grid'))return;
+   if(!el.matches('section,.card,.subject-grid,.summary-grid,.study-panel,.psy-layout,.ref-library,.study-tools-grid,.garden-bloom-line,.garden-tool-drawer'))return;
    const key=tab+':'+i+':'+el.className;el.dataset.motionKey=key;
    if(el.getBoundingClientRect().top<innerHeight)visited.add(key);
    else if(!visited.has(key))observer.observe(el);
   });
+ }
+ function greetHome(root){
+  if(engine?.getMode()!=='gentle'||document.body.classList.contains('psychdesk-quiet'))return;
+  // One-time choreography when Home actually enters, never on every save.
+  // These are decorative surfaces, not editors or buttons taking input.
+  const heading=root.querySelector('.garden-heading');
+  const artwork=root.querySelector('.garden-art-wrap');
+  const caption=root.querySelector('.garden-scene-footer');
+  if(heading)play(heading,[
+   {opacity:.62,transform:'translateY(13px)'},
+   {opacity:1,transform:'translateY(0)'}
+  ],470);
+  if(artwork)play(artwork,[
+   {opacity:.68,transform:'translateY(16px) scale(.965)'},
+   {opacity:1,transform:'translateY(0) scale(1)'}
+  ],640);
+  if(caption)play(caption,[{opacity:.5},{opacity:1}],620);
  }
  function render(root,tab){
   for(const el of [...active.keys()])if(!el.isConnected)stop(el);
@@ -60,6 +81,9 @@
    if(!['ink','board','mindmap','reader'].includes(tab))settle(root,initial?'Y':'X',initial?24:start,duration('navigation'));
   }
   root.dataset.motionDirection=pending?.direction===-1?'backward':'forward';pending=null;
+  const homeNow=tab==='today'&&Boolean(root.querySelector('.garden-home'));
+  if(homeNow&&(changed||!homeActive))greetHome(root);
+  homeActive=homeNow;
   for(const el of root.querySelectorAll('.check-btn[data-id]')){
    const key=el.dataset.id,done=el.classList.contains('done');
    if(lastTab===tab&&completed.has(key)&&completed.get(key)!==done)play(el,[{opacity:.6},{opacity:1}],duration('feedback'));
@@ -140,7 +164,7 @@
  // Every navigation action receives restrained touch/click feedback.
  // Never animate writing canvases, the Settings icon, or text fields.
  document.addEventListener('click',e=>{
-  const button=e.target.closest?.('.rail-link,.nav-item,.garden-main-btn,.studio-explore,.studio-save');
+  const button=e.target.closest?.('.rail-link,.nav-item,.garden-main-btn,.garden-soft-btn,.garden-text-btn,.studio-explore,.studio-save,.garden-bloom-line button');
   if(button&&button.id!=='settingsBtn')play(button,[
    {opacity:.86},{opacity:1}
   ],220);
