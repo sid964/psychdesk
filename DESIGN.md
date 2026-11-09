@@ -17,3 +17,5 @@ Run `bash scripts/install-design-skills.sh` once per checkout before opening it 
 | `web-design-guidelines` | Review keyboard focus, form labels, semantic controls, and reduced motion. |
 
 Use the shared direction when guidance overlaps. The work surfaces take priority over marketing layouts and decorative effects.
+
+The initial checkout was checked against the official Codex install paths. Frontend Design, Taste Skill, and Vercel used the project-scoped Skills CLI. UI/UX Pro Max used `uipro init --ai codex --offline`, and Impeccable used its Codex project installer with `--no-hooks`. The pinned bootstrap is the smaller, reproducible setup for future checkouts. It leaves optional installer binaries and companion skills out.

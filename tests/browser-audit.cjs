@@ -84,6 +84,12 @@ async function main(){
      assert.equal(await page.locator('html').getAttribute('data-theme'),'light');
      await page.screenshot({path:path.join(dest,'study-desk-light-'+vp.width+'.png'),animations:'disabled'});
      await page.locator('#themeToggle').click();
+     await page.evaluate(()=>window.PsychDeskCore.setTab('materials'));
+     const currentNav=page.locator(':is(.rail-link,.nav-item)[aria-current="page"]:visible');
+     assert.equal(await currentNav.count(),1,'Library selects one navigation destination');
+     assert.equal(await currentNav.getAttribute('data-tab'),'materials');
+     await page.evaluate(()=>window.PsychDeskCore.setTab('today'));
+     await page.waitForFunction(()=>document.querySelector('#main').getAnimations().length===0);
      if(vp.width===390||vp.width===1440)await require('./browser-motion.cjs')(page,record,dest);
      const navigation=[];
      for(const tab of (vp.width===390||vp.width===1440?['today','university','psychology','planner','notes','ink','stickies','recall','focus','insights','search','reader','research','dictionary','timeline','voice','board','mindmap','tools']:['university','psychology','planner','notes','ink','dictionary','research','timeline','tools'])){

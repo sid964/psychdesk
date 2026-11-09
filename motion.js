@@ -40,8 +40,6 @@
     if(!active.has(root))settle(entry.target,'Y',20,duration('reveal'));
    }
   },{threshold:.06});
-  // The home page is wrapped in a single container: observe its actual study
-  // cards instead of silently skipping them as the old top-level selector did.
   const surfaces=[...root.children];
   surfaces.forEach((el,i)=>{
    if(!el.matches('section,.card,.subject-grid,.summary-grid,.study-panel,.psy-layout,.ref-library,.study-tools-grid'))return;

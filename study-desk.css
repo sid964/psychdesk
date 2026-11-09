@@ -71,7 +71,7 @@ html[data-theme="dark"] {
  overflow-wrap: anywhere;
 }
 .study-desk-actions { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; }
-.study-desk-actions .garden-main-btn {
+html[data-theme] .study-desk-actions .garden-main-btn {
  min-height: var(--desk-target);
  padding: 9px 16px;
  border: 1px solid transparent;
@@ -102,7 +102,22 @@ html[data-theme] .study-desk .study-desk-discovery {
 .study-desk .studio-feature-body { padding: 12px 0 16px; }
 .study-desk .studio-concept, .study-desk .studio-feature-credit { color: var(--desk-muted); font-size: 13px; }
 .study-desk .studio-feature-footer { display: flex; flex-wrap: wrap; gap: 8px 16px; }
-.study-desk .study-flow-entry { margin: 20px 0 0; border-radius: var(--desk-radius); }
+html[data-theme] .study-desk .study-flow-entry {
+ margin: 20px 0 0;
+ padding: 16px 0;
+ border: 0;
+ border-bottom: 1px solid var(--desk-rule);
+ border-radius: 0;
+ background: transparent;
+}
+html[data-theme] .study-desk .study-flow-entry :is(h2, p, .study-flow-entry-kicker) { color: var(--desk-text); }
+html[data-theme] .study-desk .study-flow-entry-actions :is(button) {
+ border: 1px solid var(--desk-rule);
+ border-radius: 8px;
+ background: transparent;
+ color: var(--desk-accent);
+}
+.study-desk .study-flow-entry-kicker { font-size: 13px; letter-spacing: 0; }
 .study-desk :is(.study-desk-collection, .garden-tool-drawer) { margin-top: 12px; }
 .study-desk-collection { border-bottom: 1px solid var(--desk-rule); }
 .study-desk-collection summary { padding: 12px 0; cursor: pointer; font-weight: 650; }
@@ -196,4 +211,8 @@ html[data-theme] .focus-room :is(.focus-room-primary, .select-strip button.activ
   min-height: var(--desk-target);
  }
  .topbar .account-chip { min-height: var(--desk-target); }
+}
+
+@media (max-width: 360px) {
+ .topbar .account-chip { max-width: 74px; }
 }
