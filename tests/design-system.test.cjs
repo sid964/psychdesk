@@ -115,3 +115,16 @@ test('personal desk uses only existing records to explain the last reading and n
   assert.match(css, /\.studio-garden-context \.studio-garden-open/);
   assert.match(css, /prefers-reduced-motion:reduce/);
 });
+
+test('memory postcard is opt-in and derived only from saved curated concepts', () => {
+  const home=read('autopilot/studio.js');
+  const css=read('design-system.css');
+  assert.match(home, /function postcard\(\)/);
+  assert.match(home, /const older=safeSaved\(\)\.filter/);
+  assert.match(home, /Date\.now\(\)-Date\.parse\(x\.savedAt\)>2\*86400000/);
+  assert.match(home, /id="studioMemoryPostcard"/);
+  assert.match(home, /postcardSlot\.innerHTML=postcard\(\)/);
+  assert.match(home, /data-auto="postcard"/);
+  assert.match(css, /\.studio-memory-postcard-slot:empty\{display:none\}/);
+  assert.match(css, /\.studio-postcard\{/);
+});
