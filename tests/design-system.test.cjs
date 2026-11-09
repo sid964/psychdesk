@@ -42,7 +42,41 @@ test('accessible tab announcement does not replace route and settings handlers',
 
 test('new assets are cached with a changed version', () => {
   const sw = read('sw.js');
-  assert.match(sw, /psychdesk-study-adoption-midnight-sage-v70/);
+  assert.match(sw, /psychdesk-study-adoption-midnight-sage-v71/);
   assert.match(sw, /'\.\/design-system\.css'/);
   assert.match(sw, /'\.\/design-accessibility\.js'/);
+});
+
+test('homepage now puts notebook and concept before the optional next step', () => {
+  const home = read('autopilot/studio.js');
+  const stories = home.indexOf('class="garden-stories"');
+  const next = home.indexOf('(window.PsychDeskPhase6?.homeCard?.()||');
+  const collection = home.indexOf('class="garden-bloom-line"');
+  assert.ok(stories > -1 && next > stories && collection > next);
+  assert.match(home, /Your psychology<br><em>study space\.<\/em>/);
+  assert.match(home, /Touch a tree or pond/);
+  assert.match(home, /Your saved concepts/);
+});
+
+test('desktop navigation is ordered around everyday study and remains complete', () => {
+  const html = read('index.html');
+  const source = html.split('<nav class="rail-nav"')[1].split('</nav>')[0];
+  const routes = ['today', 'notes', 'materials', 'planner', 'focus', 'tools'];
+  const indexes = routes.map(route => source.indexOf('data-tab="' + route + '"'));
+  assert.ok(indexes.every(x => x >= 0));
+  assert.deepEqual(indexes, indexes.slice().sort((a, b) => a - b));
+  for (const route of ['ink','connections','university','psychology']) {
+    assert.match(source, new RegExp('data-tab="' + route + '"'));
+  }
+});
+
+test('mobile header retains brand and five operable controls', () => {
+  const css = read('design-system.css');
+  const js = read('design-accessibility.js');
+  assert.match(css, /\.topbar \.brand strong\{display:block!important/);
+  assert.match(css, /\.topbar \.account-chip::before/);
+  assert.match(css, /\.topbar \.drive-status-chip\[data-state="ready"\]/);
+  assert.match(js, /Google account and sync:/);
+  assert.match(js, /accountObserver\.observe\(account/);
+  assert.match(read('index.html'), /design-accessibility\.js\?v=design-skill-2/);
 });
