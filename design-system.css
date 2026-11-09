@@ -566,3 +566,71 @@ html[data-garden-time="night"][data-theme="dark"] .garden-home .garden-art {
 @media(prefers-reduced-motion:reduce){
   .garden-home .garden-art *{animation:none!important}
 }
+
+/* Personal desk: actual last reading/note details and a purposeful, saved-idea garden.
+   No personalized content is persisted, sent off device, or inserted into static assets. */
+.garden-home .garden-heading p strong{
+  font-weight:650;
+  color:#233d2d;
+  overflow-wrap:anywhere;
+}
+html[data-theme="dark"] .garden-home .garden-heading p strong{color:#f0f3ed}
+.garden-home .studio-garden-context{
+  display:flex;align-items:center;justify-content:center;
+  width:100%;min-width:0;gap:0;
+  margin:12px 0 16px!important;
+  padding:0;
+  font-size:14px;line-height:20px;
+  letter-spacing:normal!important;
+  font-weight:500;
+}
+.garden-home .studio-garden-context>span[aria-hidden="true"]{display:none!important}
+.garden-home .studio-garden-context .studio-garden-open{
+  display:inline-flex;align-items:center;justify-content:center;
+  flex-wrap:wrap;gap:8px;
+  border:1px solid var(--line);
+  color:var(--ink);
+  background:var(--paper);
+  border-radius:12px;
+  font-size:14px;line-height:20px;font-weight:600;
+  min-height:44px;padding:8px 12px;
+  cursor:pointer;
+  transition:transform 500ms var(--pd-ease),border-color 300ms var(--pd-ease);
+}
+.garden-home .studio-garden-context .studio-garden-open span:first-child{
+  color:var(--green);font-size:18px;line-height:20px;
+}
+.garden-home .studio-garden-context .studio-garden-open:hover{
+  border-color:var(--green);
+}
+.garden-home .studio-garden-context .studio-garden-open:active{transform:scale(.98)}
+.garden-home .studio-garden-context .studio-garden-empty{
+  display:block;height:auto;flex:none;
+  background:none;max-width:100%;
+  color:var(--muted);
+  text-align:center;
+  font-size:14px;line-height:20px;
+  letter-spacing:normal;font-weight:500;
+}
+.garden-home .garden-notebook-copy :is(h3,p){overflow-wrap:anywhere}
+.garden-home .garden-notebook .studio-kicker{font-size:12px;letter-spacing:.065em}
+.garden-home .garden-seed .studio-kicker{font-size:12px;letter-spacing:.065em}
+@media(max-width:570px){
+  .garden-home .studio-garden-context{
+    margin:8px 0 12px!important;
+    justify-content:center;
+  }
+  .garden-home .studio-garden-context .studio-garden-open{
+    width:100%;max-width:100%;
+    font-size:14px;line-height:20px;
+  }
+  .garden-home .studio-garden-context .studio-garden-empty{
+    font-size:12px;line-height:16px;
+    padding:4px 0;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .garden-home .studio-garden-context .studio-garden-open{
+    transition:none!important;transform:none!important;
+  }
+}
