@@ -53,11 +53,14 @@ function renderHome(){
  const scene=window.PsychDeskGarden?.scene(safeSaved(),discoveries)||'';
  const firstAction=window.PsychDeskSession?.homeButton?.()||(recent?'<button class="garden-main-btn" type="button" data-cloud="editNote" data-id="'+h(recent.id)+'">Continue note <span aria-hidden="true">↗</span></button>':'<button class="garden-main-btn" type="button" data-auto="capture">New note <span aria-hidden="true">↗</span></button>');
  const lastSession=window.PsychDeskSession?.homeDetail?.();
+ const hasHistory=Boolean(recent||window.PsychDeskSession?.getResume?.());
+ const heading=hasHistory?'Pick up where<br><em>you left off.</em>':'A quiet place<br><em>to study.</em>';
+ const introduction=hasHistory?'Return to your work or settle into a short focus session.':'Start with a note or settle into a short focus session.';
  return '<div class="studio-home studio-home-v2 garden-home">'+
  '<section class="garden-landing" aria-label="Psychology study homepage">'+
  '<div class="garden-ambient" aria-hidden="true"></div>'+
- '<div class="garden-heading"><span class="studio-kicker">PSYCHOLOGY · STUDY DESK</span><h1>Pick up where<br><em>you left off.</em></h1><p>Start with a note or settle into a short focus session.</p>'+
- '<div class="garden-entry">'+firstAction+'<button class="garden-soft-btn" type="button" data-tab="focus">Focus</button><button class="garden-soft-btn" type="button" data-tab="connections">Study Flow</button></div></div>'+
+ '<div class="garden-heading"><span class="studio-kicker">PSYCHOLOGY · STUDY DESK</span><h1>'+heading+'</h1><p>'+introduction+'</p>'+
+ '<div class="garden-entry">'+firstAction+'<button class="garden-soft-btn" type="button" data-tab="focus">Focus</button></div></div>'+
  '<div class="garden-art-wrap">'+scene+'</div>'+
  '<div class="garden-scene-footer"><span>✿ &nbsp; A few ideas to return to</span><span>YOUR COLLECTION</span></div>'+
  '</section>'+
