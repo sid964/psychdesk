@@ -26,3 +26,13 @@ PsychDesk is a **personal psychology study application**. The landing page conve
 - The live deployment workflow checks the versioned CSS, accessibility script and v70 service-worker cache.
 
 No layout overhaul, fabricated product claims, new paid dependencies or destructive data migration was included.
+
+## Editorial refinement (second pass)
+
+**Home structure**: The living garden stays the first screen, with the primary continue/new-note action directly beneath a factual psychology-study headline. The notebook and daily concept now come immediately after the garden; the derived next-step suggestion is a quieter, secondary panel below those cards. The saved-concepts section uses functional copy rather than repeated garden metaphors.
+
+**Navigation**: Desktop routes are ordered Study desk, Notebooks, Library, Planner, Focus, Explore. Specialist routes still exist in the app and remain available through Explore; their event handlers are not changed. The narrow phone header keeps the PsychDesk name visible above 345px while retaining quick note, theme, Google account, Drive and Settings controls. The account control is visually icon-only on phones, but its current text and sync status remain in its accessible label.
+
+**Visual language**: Flat surfaces on non-illustrative UI, subtle text gradient in the hero, stronger 14–16px supporting copy, more obvious reading hierarchy and consistent button targets. The SVG illustration remains animated and interactive. Drive's connected status uses a steady accent instead of a perpetual spinner.
+
+**Regression checks**: In addition to the existing navigation, autosave, ink, motion and theme audits, CI checks the garden's visibility, hierarchy, primary action within the initial phone viewport, branded phone header and accessible account controls. No login, sync, Drive or study-data storage code was modified.
