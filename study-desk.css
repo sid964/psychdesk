@@ -20,6 +20,16 @@ html[data-theme="dark"] {
  --desk-on-accent: #21170d;
 }
 
+html[data-theme="light"] :is(.topbar, .bottom-nav, .desktop-rail) {
+ background: var(--desk-paper);
+ border-color: var(--desk-rule);
+}
+html[data-theme="dark"] .desktop-rail { box-shadow: none; }
+html[data-theme] :is(.desktop-rail .rail-link.active, .bottom-nav .nav-item.active) {
+ background: var(--greenlight) !important;
+ color: var(--desk-accent) !important;
+}
+
 .study-desk { max-width: 1040px; margin-inline: auto; color: var(--desk-text); }
 .study-desk-heading {
  display: flex;
