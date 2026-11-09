@@ -114,6 +114,19 @@ async function main(){
        await page.locator('.studio-garden-open').click();
        if(!await page.locator('#modalRoot .garden-collection').count())fatal=true;
        await page.locator('.modal-header .close').click();
+       // A previously saved idea becomes an optional, accurate memory postcard.
+       await page.evaluate(()=>{
+         const key='psychdesk-studio:'+window.PsychDeskCore.getStorageKey()+':saved';
+         const items=JSON.parse(localStorage.getItem(key)||'[]');
+         if(items[0])items[0].savedAt='2026-01-01T12:00:00.000Z';
+         localStorage.setItem(key,JSON.stringify(items));
+         window.PsychDeskCore.render();
+       });
+       record.gardenMemory.postcardVisible=await page.locator('#studioMemoryPostcard .studio-postcard').count()===1;
+       if(!record.gardenMemory.postcardVisible)fatal=true;
+       await page.locator('#studioMemoryPostcard [data-auto="postcard"]').click();
+       if(!await page.locator('#modalRoot .studio-discovery-detail').count())fatal=true;
+       await page.locator('.modal-header .close').click();
      }
      const navigation=[];
      for(const tab of (vp.width===390||vp.width===1440?['today','university','psychology','planner','notes','ink','stickies','recall','focus','insights','search','reader','research','dictionary','timeline','voice','board','mindmap','tools']:['university','psychology','planner','notes','ink','dictionary','research','timeline','tools'])){
