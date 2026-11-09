@@ -66,6 +66,30 @@ async function main(){
      await page.locator(selector).first().click();
     }
     if(!live){
+     const assert=require('node:assert/strict');
+     const desk=page.locator('.study-desk');
+     const resume=desk.locator('.study-desk-resume');
+     await resume.waitFor();
+     assert.equal(await desk.locator('.garden-world').count(),0,'The illustration stays unmounted until requested');
+     assert.ok((await resume.boundingBox()).y<vp.height/2,'Resume is near the top at each width');
+     const noteButton=resume.locator('.garden-main-btn');
+     assert.ok((await noteButton.boundingBox()).height>=44,'The primary action has a 44px target');
+     const collection=desk.locator('.study-desk-collection');
+     await collection.locator('summary').click();
+     await collection.locator('.garden-world').waitFor();
+     await collection.locator('summary').click();
+     await collection.locator('.garden-world').waitFor({state:'detached'});
+     await page.evaluate(()=>window.scrollTo(0,0));
+     await page.locator('#themeToggle').click();
+     assert.equal(await page.locator('html').getAttribute('data-theme'),'light');
+     await page.screenshot({path:path.join(dest,'study-desk-light-'+vp.width+'.png'),animations:'disabled'});
+     await page.locator('#themeToggle').click();
+     await page.evaluate(()=>window.PsychDeskCore.setTab('materials'));
+     const currentNav=page.locator(':is(.rail-link,.nav-item)[aria-current="page"]:visible');
+     assert.equal(await currentNav.count(),1,'Library selects one navigation destination');
+     assert.equal(await currentNav.getAttribute('data-tab'),'materials');
+     await page.evaluate(()=>window.PsychDeskCore.setTab('today'));
+     await page.waitForFunction(()=>document.querySelector('#main').getAnimations().length===0);
      if(vp.width===390||vp.width===1440)await require('./browser-motion.cjs')(page,record,dest);
      const navigation=[];
      for(const tab of (vp.width===390||vp.width===1440?['today','university','psychology','planner','notes','ink','stickies','recall','focus','insights','search','reader','research','dictionary','timeline','voice','board','mindmap','tools']:['university','psychology','planner','notes','ink','dictionary','research','timeline','tools'])){

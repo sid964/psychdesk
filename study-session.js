@@ -84,10 +84,9 @@ function homeButton(){
 }
 function homeDetail(){
  const previous=getResume();if(!previous)return '';
- const kind=previous.tab==='reader'?'YOUR LAST BOOK':previous.tab==='notes'?'YOUR NOTE':'YOUR LAST WORKSPACE';
- const description=previous.tab==='reader'?'Page '+previous.page+' · Open where you stopped.':'Continue without finding your place again.';
- return '<div class="garden-notebook-copy"><span class="studio-kicker">'+kind+'</span><h3>'+esc(previous.title)+'</h3><p>'+esc(description)+'</p></div>'+
- '<div class="garden-book-actions"><span>Saved on this device</span><button type="button" class="garden-text-btn" data-session="resume">Continue ↗</button></div>';
+ const kind=previous.tab==='reader'?'Last reading':previous.tab==='notes'?'Last note':'Last workspace';
+ return '<div class="garden-notebook-copy"><span class="studio-kicker">'+kind+'</span><h2>'+esc(previous.title)+'</h2>'+
+ (previous.tab==='reader'?'<p>Page '+previous.page+'</p>':'')+'</div>';
 }
 document.addEventListener('click',event=>{
  if(event.target.closest('[data-session="resume"]')){event.preventDefault();resume();}
