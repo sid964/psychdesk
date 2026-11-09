@@ -1,0 +1,174 @@
+/* Midnight Sage • Living Garden — final, scoped responsive layer.
+   Preserves the original SVG artwork, existing study actions and all stored data. */
+html[data-theme="dark"]{
+  --bg:#000000;--paper:#121513;--nav:#070908;--ink:#eeeCE4;--muted:#a5ada6;
+  --line:#29322d;--green:#a8c9a3;--greenlight:#1c2c21;
+  color-scheme:dark;
+}
+html[data-theme="dark"] body,
+html[data-theme="dark"] .app-shell{background:#000!important;color:var(--ink)}
+html[data-theme="dark"] :is(.topbar,.bottom-nav,.desktop-rail,.modal){background:#070908!important;border-color:#262d29!important}
+html[data-theme="dark"] :is(.card,.stat,.subject-card,.note-card,.task-row,.material-card,.icon-btn,.mini-btn,.secondary,.filter,.select-strip button,.review-btns button){background:#121513!important;border-color:#29322d!important}
+html[data-theme="dark"] .primary{background:#a8c9a3;color:#142017;border-color:#a8c9a3}
+html[data-theme="dark"] .secondary{color:#d1dfcd}
+html[data-theme="dark"] .brand-mark{background:#172019;color:#dbead6}
+html[data-theme="dark"] .nav-item.active .nav-ico{background:#1b2820}
+html[data-theme="dark"] .rail-link.active{color:#c6e0c0!important}
+html[data-theme="dark"] .desktop-rail .rail-link.active{background:#1a271e!important;color:#c6e0c0!important}
+html[data-theme="light"]{--bg:#f6f3eb;--paper:#fffcf6;--nav:#f8f5ee;--ink:#292d28;--muted:#667267;--line:#dddcd2;--green:#496c52;--greenlight:#e1e9dd}
+html[data-theme="light"] body,html[data-theme="light"] .app-shell{background:#f6f3eb!important}
+html[data-theme="light"] :is(.topbar,.bottom-nav){background:#f6f3eb!important}
+html[data-theme="light"] .desktop-rail{background:#eeece4!important;border-color:#d9ddd4!important}
+html[data-theme="light"] .garden-landing{background:radial-gradient(ellipse 58% 72% at 83% 62%,#dfebd7,transparent 76%),linear-gradient(120deg,#f5f2e9,#e7ede2);border-color:#d7e0d2}
+html[data-theme="light"] .garden-heading h1{color:#26392b}
+html[data-theme="light"] .garden-heading h1 em{color:#6c9470}
+html[data-theme="light"] .garden-heading p{color:#536758}
+
+/* Only the garden's hero carries a hint of foliage; the rest stays AMOLED black. */
+html[data-theme="dark"] .garden-landing{
+  background:radial-gradient(ellipse 58% 74% at 78% 63%,rgba(79,111,80,.19),transparent 76%),linear-gradient(125deg,#070907,#0c100d);
+  border-color:#2b382e;box-shadow:none;
+}
+html[data-theme="dark"] .garden-ambient{background:radial-gradient(circle at 79% 56%,rgba(128,168,121,.08),transparent 52%)}
+html[data-theme="dark"] .garden-heading h1{color:#eeece4}
+html[data-theme="dark"] .garden-heading h1 em{color:#a8c9a3}
+html[data-theme="dark"] .garden-heading p{color:#b0bab1}
+html[data-theme="dark"] .garden-heading .studio-kicker{color:#a4c4a0}
+html[data-theme="dark"] .garden-main-btn{background:#a8c9a3;border-color:#a8c9a3;color:#152118;box-shadow:none}
+html[data-theme="dark"] .garden-soft-btn{background:#171e18;border-color:#3a4a3d;color:#d3e0d1}
+html[data-theme="dark"] .garden-art{filter:brightness(.89) saturate(.92)}
+html[data-theme="dark"] .garden-home .garden-notebook,
+html[data-theme="dark"] .garden-home .garden-seed{background:#111512!important;border-color:#29362d!important;color:#eeece4!important}
+html[data-theme="dark"] .garden-home .garden-seed h2,
+html[data-theme="dark"] .garden-notebook h3{color:#eeece4!important}
+html[data-theme="dark"] .garden-notebook-copy p,
+html[data-theme="dark"] .garden-home .garden-seed .studio-feature-definition{color:#aeb9ae!important}
+html[data-theme="dark"] .garden-home .garden-seed .studio-explore{background:#a8c9a3;color:#152118;border-color:#a8c9a3!important}
+html[data-theme="dark"] .garden-home .garden-seed .studio-save{color:#c9dbc6;border-color:#536854!important}
+html[data-theme="dark"] .garden-bloom-line button{background:#18251b;color:#d0e2ce;border-color:#39513e}
+html[data-theme="dark"] .study-flow-entry{background:#111512;border-color:#29362d}
+html[data-theme="dark"] .study-flow-entry-primary{background:#a8c9a3;color:#152118;border-color:#a8c9a3}
+html[data-theme="dark"] .study-flow-entry-secondary{color:#d3e0d1;border-color:#465a49}
+html[data-theme="dark"] .garden-home .garden-seed .studio-kicker,
+html[data-theme="dark"] .garden-notebook .studio-kicker{color:#aacbaa}
+html[data-theme="dark"] .garden-path-marker{color:#9cab9d}
+html[data-theme="dark"] .garden-scene-footer{color:#a8bca9}
+html[data-theme="dark"] .garden-home .garden-seed .studio-concept{color:#acd0a7}
+html[data-theme="dark"] .garden-home .garden-seed .studio-feature-credit{color:#9dad9e}
+
+/* A garden that has its own reserved space never collides with study actions. */
+@media (min-width:900px){
+  .garden-home{max-width:1180px}
+  .garden-home .garden-landing{border-radius:22px}
+  @container (min-width:740px){
+    .garden-home .garden-landing{
+      display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+      grid-template-rows:minmax(0,1fr) auto;
+      min-height:440px;column-gap:24px;row-gap:10px;
+    }
+    .garden-home .garden-heading{grid-column:1;grid-row:1;align-self:center;width:100%;max-width:none;padding:0}
+    .garden-home .garden-art-wrap{
+      grid-column:2;grid-row:1;position:relative;inset:auto;
+      width:100%;max-width:100%;justify-self:center;align-self:center;margin:0;
+    }
+    .garden-home .garden-scene-footer{grid-column:1/-1;grid-row:2;position:relative;inset:auto}
+  }
+}
+@media (min-width:571px) and (max-width:899px){
+  .garden-home .garden-landing{display:grid;grid-template-rows:auto auto auto;min-height:0!important;padding:30px;gap:8px}
+  .garden-home .garden-heading{grid-row:1;width:100%;padding:0!important}
+  .garden-home .garden-heading h1{font-size:clamp(37px,5vw,48px)}
+  .garden-home .garden-art-wrap{grid-row:2;position:relative;inset:auto;width:min(78%,470px)!important;margin:auto}
+  .garden-home .garden-scene-footer{grid-row:3;position:relative;inset:auto}
+}
+/* On phones, the art is an independent flow item, not an oversized background. */
+@media (max-width:570px){
+  .garden-home{padding-top:0}
+  .garden-home .garden-landing{
+    display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto auto;
+    min-height:0!important;padding:21px 18px 14px;gap:0;border-radius:19px;
+  }
+  .garden-home .garden-heading{grid-column:1;grid-row:1;width:100%;padding:0!important;max-width:none}
+  .garden-home .garden-heading .studio-kicker{font-size:9px;letter-spacing:1.25px}
+  .garden-home .garden-heading h1{
+    font-size:clamp(30px,7.8vw,38px);line-height:1.08;
+    letter-spacing:-1.1px;max-width:19ch;margin:9px 0 8px;
+  }
+  .garden-home .garden-heading p{font-size:12px;line-height:1.5;max-width:35ch}
+  .garden-home .garden-entry{margin-top:13px;gap:9px;flex-direction:row;align-items:center}
+  .garden-home .garden-entry button{font-size:12px;min-height:43px;min-width:0;padding:10px 15px;white-space:nowrap}
+  .garden-home .garden-art-wrap{
+    grid-column:1;grid-row:2;position:relative!important;inset:auto!important;
+    width:min(85%,330px)!important;max-width:100%;margin:4px auto -2px;
+    justify-self:center;align-self:center;
+  }
+  .garden-home .garden-scene-footer{
+    grid-column:1;grid-row:3;position:relative!important;inset:auto!important;
+    display:flex;justify-content:space-between;align-items:center;
+    font-size:9px;gap:8px;margin:0;min-width:0;
+  }
+  .garden-home .garden-scene-footer span:last-child{font-size:8px}
+  .garden-home .garden-world-caption{right:15%;bottom:0;font-size:9px}
+  .garden-home .garden-path-marker{margin:18px 0 13px}
+  .garden-home .garden-stories{gap:11px}
+  .garden-home .garden-notebook{min-height:0;padding:20px 19px}
+  .garden-home .garden-notebook h3{font-size:27px;margin:19px 0 11px}
+  .garden-home .garden-notebook-copy{padding-top:4px}
+  .garden-home .garden-book-actions{margin-top:21px;padding-top:12px}
+  .garden-home .garden-seed{min-height:0;padding:20px 19px}
+  .garden-home .garden-seed .studio-feature-body{padding:23px 0 16px}
+  .garden-home .garden-seed h2{font-size:clamp(25px,6.5vw,30px)}
+  .study-flow-entry{padding:18px 19px;gap:13px;margin:13px 0 0;border-radius:17px}
+  .study-flow-entry h2{font-size:clamp(22px,5.8vw,27px);margin-bottom:6px}
+  .study-flow-entry-actions{display:flex;gap:8px}
+  .study-flow-entry-secondary{display:none}
+  .study-flow-entry-actions button{min-height:43px}
+  .topbar{gap:5px}
+  .topbar .brand{min-width:0;margin-right:auto}
+  .topbar .brand strong{white-space:nowrap;font-size:14px}
+  .topbar .quick-note-launch,.topbar .icon-btn,.topbar .drive-status-chip{flex-shrink:0}
+}
+@media (max-width:390px){
+  .topbar .brand strong{display:none}
+  .topbar .brand-mark{width:35px;min-width:35px}
+  .topbar .account-chip{max-width:78px;overflow:hidden;text-overflow:ellipsis}
+  .garden-home .garden-landing{padding:19px 15px 13px}
+  .garden-home .garden-heading h1{font-size:30px}
+  .garden-home .garden-entry button{padding-inline:12px}
+  .garden-home .garden-scene-footer span:last-child{display:none}
+}
+/* Light changes across the world without recoloring the application. */
+html[data-garden-time="morning"] .garden-sun{fill:#fff2c4}
+html[data-garden-time="afternoon"] .garden-sun{fill:#f9e8ad}
+html[data-garden-time="evening"] .garden-sun{fill:#f4c99e;opacity:.7}
+html[data-garden-time="night"] .garden-sun{fill:#ecf0e1;opacity:.65}
+html[data-garden-time="night"] .garden-fireflies{animation:garden-glow 4.2s ease-in-out infinite alternate}
+html[data-garden-time="morning"] .garden-fireflies,
+html[data-garden-time="afternoon"] .garden-fireflies{animation:none!important;opacity:.12}
+html[data-garden-time="night"][data-theme="dark"] .garden-art{filter:brightness(.77) saturate(.82)}
+/* SVG descendants may respond to taps even though the surrounding art isn't a button. */
+.garden-art-wrap{pointer-events:none}
+.garden-art .garden-tree,.garden-art .garden-pond-hit{pointer-events:visiblePainted;cursor:pointer}
+.garden-art .garden-pond-hit{pointer-events:all}
+.garden-tree.garden-reacting .garden-canopy,
+.garden-tree.garden-reacting .garden-needles{
+  animation:garden-tap-sway .7s cubic-bezier(.2,.7,.2,1) 1!important;
+}
+.garden-art.garden-pond-reacting .garden-pond-ripple{
+  animation:garden-tap-ripple .9s ease-out 1!important;
+}
+@keyframes garden-tap-sway{
+  0%{transform:rotate(0)}
+  30%{transform:rotate(8deg)}
+  65%{transform:rotate(-5deg)}
+  100%{transform:rotate(0)}
+}
+@keyframes garden-tap-ripple{
+  0%{opacity:.95;stroke-width:2}
+  100%{opacity:0;stroke-width:8}
+}
+@media (prefers-reduced-motion:reduce){
+  .garden-tree.garden-reacting .garden-canopy,
+  .garden-tree.garden-reacting .garden-needles,
+  .garden-art.garden-pond-reacting .garden-pond-ripple{animation:none!important}
+}
