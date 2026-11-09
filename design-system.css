@@ -637,3 +637,38 @@ html[data-theme="dark"] .garden-home .garden-heading p strong{color:#f0f3ed}
     transition:none!important;transform:none!important;
   }
 }
+
+/* A small, optional memory postcard only when a previously saved idea exists. */
+.garden-home .studio-memory-postcard-slot:empty{display:none}
+.garden-home .studio-postcard{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:16px;margin:16px 0 0;padding:20px 24px;
+  background:var(--paper);color:var(--ink);
+  border:1px solid var(--line);border-radius:16px;
+}
+.garden-home .studio-postcard>div{min-width:0}
+.garden-home .studio-postcard .studio-kicker{color:var(--muted);font-size:12px;line-height:16px;letter-spacing:.06em}
+.garden-home .studio-postcard h3{
+  color:var(--ink);font:600 20px/28px var(--pd-font)!important;
+  margin:8px 0 4px;overflow-wrap:anywhere;
+}
+.garden-home .studio-postcard p{color:var(--muted);font-size:14px;line-height:20px;margin:0}
+.garden-home .studio-postcard button{
+  min-height:44px;min-width:max-content;
+  border-radius:10px;background:transparent!important;
+  color:var(--ink)!important;border:1px solid var(--line)!important;
+  font-size:14px;line-height:20px;font-weight:600;padding:8px 12px;
+  transition:transform 500ms var(--pd-ease),border-color 300ms var(--pd-ease);
+}
+.garden-home .studio-postcard button:hover{border-color:var(--green)!important}
+.garden-home .studio-postcard button:active{transform:scale(.98)}
+@media(max-width:570px){
+  .garden-home .studio-postcard{
+    padding:16px;display:flex;flex-direction:column;
+    align-items:stretch;gap:12px;
+  }
+  .garden-home .studio-postcard button{width:fit-content;min-width:0}
+}
+@media(prefers-reduced-motion:reduce){
+  .garden-home .studio-postcard button{transition:none!important;transform:none!important}
+}
