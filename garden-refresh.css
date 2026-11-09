@@ -150,6 +150,8 @@ html[data-garden-time="night"][data-theme="dark"] .garden-art{filter:brightness(
 .garden-art-wrap{pointer-events:none}
 .garden-art .garden-tree,.garden-art .garden-pond-hit{pointer-events:visiblePainted;cursor:pointer}
 .garden-art .garden-pond-hit{pointer-events:all}
+html[data-motion="gentle"] .garden-world .garden-tree.garden-reacting .garden-canopy,
+html[data-motion="gentle"] .garden-world .garden-tree.garden-reacting .garden-needles,
 .garden-tree.garden-reacting .garden-canopy,
 .garden-tree.garden-reacting .garden-needles{
   animation:garden-tap-sway .7s cubic-bezier(.2,.7,.2,1) 1!important;
