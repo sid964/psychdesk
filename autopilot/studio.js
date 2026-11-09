@@ -53,18 +53,28 @@ function renderHome(){
  const scene=window.PsychDeskGarden?.scene(safeSaved(),discoveries)||'';
  const firstAction=window.PsychDeskSession?.homeButton?.()||(recent?'<button class="garden-main-btn" type="button" data-cloud="editNote" data-id="'+h(recent.id)+'">Continue note <span aria-hidden="true">↗</span></button>':'<button class="garden-main-btn" type="button" data-auto="capture">New note <span aria-hidden="true">↗</span></button>');
  const lastSession=window.PsychDeskSession?.homeDetail?.();
- const hasHistory=Boolean(recent||window.PsychDeskSession?.getResume?.());
- const heading=hasHistory?'Continue where<br><em>you left off.</em>':'Your psychology<br><em>study space.</em>';
- const introduction=hasHistory?'Your latest work is ready. Resume studying or choose a short focus session.':'Write, read, and connect ideas in one place. Start with a single note.';
+ const resume=window.PsychDeskSession?.getResume?.();
+ const hasHistory=Boolean(recent||resume);
+ // Study copy names the actual place a person can return to. The actions
+ // remain connected to the existing account-scoped session and notes.
+ const heading=resume?.tab==='reader'?'Keep <em>reading.</em>':
+  resume?.tab==='materials'?'Back to <em>reading.</em>':
+  resume?.tab==='notes'?'Continue your <em>notes.</em>':
+  resume?.tab==='focus'?'Ready to <em>focus?</em>':
+  hasHistory?'Continue <em>studying.</em>':'Your psychology <em>workspace.</em>';
+ const introduction=resume?.tab==='reader'?'Your reading position is saved.':
+  resume?.tab==='materials'?'Your reading shelf is ready.':
+  resume?.tab==='notes'?'Your notebook is ready where you left it.':
+  hasHistory?'Your last workspace is ready.':'Notes, reading, and revision in one place.';
  return '<div class="studio-home studio-home-v2 garden-home">'+
  '<section class="garden-landing" aria-label="Psychology study homepage">'+
  '<div class="garden-ambient" aria-hidden="true"></div>'+
  '<div class="garden-heading"><span class="studio-kicker">PSYCHOLOGY · STUDY DESK</span><h1>'+heading+'</h1><p>'+introduction+'</p>'+
  '<div class="garden-entry">'+firstAction+'<button class="garden-soft-btn" type="button" data-tab="focus">Focus</button></div></div>'+
  '<div class="garden-art-wrap">'+scene+'</div>'+
- '<div class="garden-scene-footer"><span>Touch a tree or pond</span><span>LIVING GARDEN</span></div>'+
+
  '</section>'+
- '<div class="garden-path-marker" aria-hidden="true"><span></span>ON YOUR DESK<span></span></div>'+
+ '<div class="garden-path-marker" aria-hidden="true"><span></span>CONTINUE HERE<span></span></div>'+
  '<div class="garden-stories">'+
  '<section class="garden-notebook" aria-label="Resume your notebook"><div class="garden-book-icon" aria-hidden="true"><span>✧</span></div>'+(lastSession||continuation)+'</section>'+ 
  '<section class="studio-discovery garden-seed" id="studio-discovery" aria-label="A daily psychology concept">'+discoveryMarkup()+'</section></div>'+

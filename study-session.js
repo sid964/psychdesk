@@ -78,7 +78,7 @@ function resume(){
 }
 function homeButton(){
  const previous=getResume();if(!previous)return '';
- const short=previous.tab==='reader'?'Continue reading':previous.tab==='notes'?'Continue your note':'Continue studying';
+ const short=previous.tab==='reader'?'Continue reading':previous.tab==='materials'?'Open reading shelf':previous.tab==='notes'?'Continue your note':previous.tab==='focus'?'Return to focus':'Continue studying';
  const detail=previous.tab==='reader'?'Page '+previous.page+' · '+previous.title:previous.title;
  return '<button class="garden-main-btn" type="button" data-session="resume" aria-label="'+esc(short+' — '+detail)+'">'+esc(short)+' <span aria-hidden="true">↗</span></button>';
 }
