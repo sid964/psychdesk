@@ -42,7 +42,7 @@ test('accessible tab announcement does not replace route and settings handlers',
 
 test('new assets are cached with a changed version', () => {
   const sw = read('sw.js');
-  assert.match(sw, /psychdesk-study-adoption-midnight-sage-v71/);
+  assert.match(sw, /psychdesk-study-adoption-midnight-sage-v72/);
   assert.match(sw, /'\.\/design-system\.css'/);
   assert.match(sw, /'\.\/design-accessibility\.js'/);
 });
@@ -53,8 +53,8 @@ test('homepage now puts notebook and concept before the optional next step', () 
   const next = home.indexOf('(window.PsychDeskPhase6?.homeCard?.()||');
   const collection = home.indexOf('class="garden-bloom-line"');
   assert.ok(stories > -1 && next > stories && collection > next);
-  assert.match(home, /Your psychology<br><em>study space\.<\/em>/);
-  assert.match(home, /Touch a tree or pond/);
+  assert.match(home, /Your psychology <em>workspace\.<\/em>/);
+  assert.doesNotMatch(home, /class="garden-scene-footer"/);
   assert.match(home, /Your saved concepts/);
 });
 
@@ -79,4 +79,22 @@ test('mobile header retains brand and five operable controls', () => {
   assert.match(js, /Google account and sync:/);
   assert.match(js, /accountObserver\.observe\(account/);
   assert.match(read('index.html'), /design-accessibility\.js\?v=design-skill-2/);
+});
+
+test('mobile landing compacts the first screen without removing the living garden', () => {
+  const css = read('design-system.css');
+  const home = read('autopilot/studio.js');
+  const session = read('study-session.js');
+  const html = read('index.html');
+  assert.match(css, /Mobile garden composition/);
+  assert.match(css, /grid-template-rows:auto auto!important/);
+  assert.match(css, /width:min\(87%,295px\)!important/);
+  assert.match(css, /filter:brightness\(\.96\) saturate\(1\.10\)!important/);
+  assert.match(css, /\.garden-home \.garden-world-caption \{display:none!important\}/);
+  assert.match(home, /Back to <em>reading\.<\/em>/);
+  assert.match(home, /CONTINUE HERE/);
+  assert.match(session, /'Open reading shelf'/);
+  assert.match(html, /design-system\.css\?v=mobile-home-3/);
+  assert.match(html, /autopilot\/studio\.js\?v=mobile-home-3/);
+  assert.match(html, /study-session\.js\?v=mobile-home-3/);
 });
