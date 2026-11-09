@@ -372,6 +372,10 @@ html[data-theme="light"] .garden-home .study-flow-entry-primary{color:#fff}
   .topbar .quick-plus{line-height:1}
   .topbar .quick-label,.topbar .drive-chip-label{display:none}
   .topbar .drive-status-chip>span:first-child{font-size:18px;line-height:1}
+  /* Connection feedback is a steady status, not a perpetual spinning decoration. */
+  .topbar .drive-status-chip[data-state="ready"] .drive-orbit-ring{animation:none!important}
+  .topbar .drive-status-chip[data-state="ready"] .drive-orbit{color:#a8c9a3}
+  html[data-theme="light"] .topbar .drive-status-chip[data-state="ready"] .drive-orbit{color:#496c52}
   .topbar .account-chip{
     position:relative;display:grid;place-items:center;
     font-size:0!important;line-height:0!important;
