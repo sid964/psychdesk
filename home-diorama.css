@@ -201,3 +201,43 @@ html[data-motion="off"] .garden-home :is(.garden-notebook,.garden-seed,.garden-e
  .garden-home .garden-world{animation:none!important;transform:none!important}
  .garden-home :is(.garden-notebook,.garden-seed,.garden-entry button,.idea-sprout){transition:none!important;transform:none!important}
 }
+/* Neutral interface palette. Botanical SVG fills remain natural. */
+html[data-theme="dark"]{
+ --bg:#000;--paper:#171717;--nav:#101010;--ink:#f2f0eb;
+ --muted:#b3b0aa;--line:#343434;--green:#e4dfd5;--greenlight:#282726;
+ --ui-accent:#e4dfd5;--ui-on-accent:#242321;--ui-surface:#171717;--ui-text:#f2f0eb;--ui-muted:#b3b0aa;--ui-border:#343434;
+}
+html[data-theme="light"]{
+ --ink:#302e2b;--muted:#6d6860;--line:#d8d3ca;--green:#514c45;--greenlight:#e9e4db;
+ --ui-accent:#514c45;--ui-on-accent:#fffdf8;--ui-surface:#fffcf6;--ui-text:#302e2b;--ui-muted:#6d6860;--ui-border:#d8d3ca;
+}
+html[data-theme] .garden-home :is(h1,h1 em,h2,h3,.studio-kicker,.studio-concept,.studio-story-mark,.garden-text-btn,.studio-garden-open,.studio-garden-open span){
+ color:var(--ui-text)!important;-webkit-text-fill-color:var(--ui-text)!important;
+}
+html[data-theme] .garden-home :is(p,.studio-feature-definition,.studio-feature-credit,.garden-book-actions>span){color:var(--ui-muted)!important}
+html[data-theme] .garden-home .garden-heading p strong{color:var(--ui-text)!important}
+html[data-theme] :is(.primary,.garden-main-btn,.study-flow-entry-primary),
+html[data-theme] .garden-home .garden-seed .studio-explore{
+ background:var(--ui-accent)!important;color:var(--ui-on-accent)!important;border-color:var(--ui-accent)!important;
+}
+html[data-theme] .garden-home .garden-main-btn{box-shadow:inset 0 1px #ffffff30,0 3px 0 #67635c,0 7px 14px #0003!important}
+html[data-theme] :is(.secondary,.garden-soft-btn,.mini-btn,.filter,.icon-btn,.card,.stat,.subject-card,.note-card,.task-row,.material-card,.modal,.study-flow-entry-secondary),
+html[data-theme] .garden-home .garden-seed .studio-save{
+ background:var(--ui-surface)!important;color:var(--ui-text)!important;border-color:var(--ui-border)!important;
+}
+html[data-theme] :is(.topbar,.bottom-nav,.desktop-rail){border-color:var(--ui-border)!important}
+html[data-theme="dark"] :is(.topbar,.bottom-nav,.desktop-rail){background:#0b0b0b!important}
+html[data-theme] .desktop-rail .rail-link{color:var(--ui-muted)!important}
+html[data-theme] .desktop-rail .rail-link.active,
+html[data-theme] .nav-item.active .nav-ico{background:var(--greenlight)!important;color:var(--ui-text)!important}
+html[data-theme] :is(.brand-mark,.garden-bloom-line button){background:var(--greenlight)!important;color:var(--ui-text)!important;border-color:var(--ui-border)!important}
+html[data-theme] .topbar .drive-status-chip[data-state="ready"] .drive-orbit{color:var(--ui-text)!important}
+html[data-theme] body :is(button,a,input,select,textarea,summary):focus-visible{outline-color:var(--ui-accent)!important}
+html[data-theme] #psychdeskTourInvite{background:var(--ui-surface)!important;color:var(--ui-text)!important;border-color:var(--ui-border)!important}
+html[data-theme] #psychdeskTourInvite button{background:var(--greenlight)!important;color:var(--ui-text)!important;border-color:var(--ui-border)!important}
+html[data-theme] .garden-home .garden-heading h1,
+html[data-theme] .garden-home .garden-heading h1 em{
+ color:var(--ui-text)!important;-webkit-text-fill-color:var(--ui-text)!important;background:none!important;
+}
+html[data-theme] .garden-home .garden-seed .studio-story-mark{color:var(--ui-text)!important;filter:grayscale(1)}
+html[data-theme] .garden-home .garden-seed .garden-story-mark{color:var(--ui-text)!important;filter:grayscale(1)}

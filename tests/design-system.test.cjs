@@ -42,7 +42,7 @@ test('accessible tab announcement does not replace route and settings handlers',
 
 test('new assets are cached with a changed version', () => {
   const sw = read('sw.js');
-  assert.match(sw, /psychdesk-study-adoption-open-desk-motion-v76/);
+  assert.match(sw, /psychdesk-study-adoption-neutral-desk-v77/);
   assert.match(sw, /'\.\/design-system\.css'/);
   assert.match(sw, /'\.\/design-accessibility\.js'/);
 });
@@ -96,7 +96,7 @@ test('mobile landing compacts the first screen without removing the living garde
   assert.match(home, /studio-garden-context/);
   assert.match(session, /'Open reading shelf'/);
   assert.match(html, /design-system\.css\?v=personal-desk-1/);
-  assert.match(html, /autopilot\/studio\.js\?v=open-desk-motion-3/);
+  assert.match(html, /autopilot\/studio\.js\?v=neutral-desk-4/);
   assert.match(html, /study-session\.js\?v=mobile-home-3/);
 });
 
