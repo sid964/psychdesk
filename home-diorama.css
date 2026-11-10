@@ -146,3 +146,58 @@ html[data-theme] .garden-home .garden-landing{
  box-shadow:none!important;overflow:visible;
 }
 .garden-home .garden-ambient{display:none!important}
+/* Open desk: typography and spacing group content without enclosing frames. */
+html[data-theme] .garden-home :is(.desk-shelf,.garden-notebook,.garden-seed,.studio-postcard,.study-flow-entry,.studio-quiet-tools){
+ border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;
+}
+.garden-home .desk-shelf{padding:12px 0 24px!important;margin-inline:0}
+.garden-home .desk-shelf::after,.garden-home .garden-notebook::before{display:none!important}
+.garden-home .desk-shelf-heading{padding-inline:12px;margin-bottom:22px}
+.garden-home .garden-stories{gap:36px!important;perspective:1200px}
+.garden-home :is(.garden-notebook,.garden-seed){
+ padding:16px 20px 20px!important;transform:none;position:relative;
+ transition:transform 650ms cubic-bezier(.2,.7,.2,1)!important;
+}
+.garden-home .garden-book-actions{border:0!important}
+.garden-home .studio-garden-context .studio-garden-open{
+ border:0!important;background:transparent!important;box-shadow:none!important;
+}
+.garden-home .studio-postcard,.garden-home .study-flow-entry{padding-inline:20px}
+/* Perspective motion affects the illustration and its saved sprouts together.
+   The text stays still; only transform/opacity are animated, never layout. */
+.garden-home .garden-art-wrap{perspective:1000px}
+.garden-home .garden-world{
+ transform-origin:50% 68%;
+ animation:desk-garden-depth 16s cubic-bezier(.45,0,.55,1) infinite!important;
+}
+@keyframes desk-garden-depth{
+ 0%,100%{transform:rotateX(1deg) rotateY(-2deg) translateY(2px)}
+ 50%{transform:rotateX(-1.5deg) rotateY(2deg) translateY(-3px)}
+}
+/* The notebook and idea respond like light objects rather than floating text. */
+@media(hover:hover) and (pointer:fine){
+ .garden-home .garden-notebook:hover{transform:perspective(1200px) rotateY(2deg) rotateX(1deg) translateY(-4px)}
+ .garden-home .garden-seed:hover{transform:perspective(1200px) rotateY(-2deg) rotateX(1deg) translateY(-4px)}
+ .garden-home .garden-flower:hover .idea-sprout{transform:rotate(-8deg) rotateY(22deg) translateY(-3px)}
+}
+.garden-home .idea-sprout{transition:transform 550ms cubic-bezier(.2,.7,.2,1)}
+.garden-home .garden-notebook:focus-within,.garden-home .garden-seed:focus-within{transform:translateY(-2px)}
+.garden-home .garden-entry button{transition:transform 350ms cubic-bezier(.2,.7,.2,1)!important}
+.garden-home .garden-entry button:active{transform:perspective(500px) rotateX(5deg) translateY(2px)!important}
+/* Reuse the existing visibility observer and user motion preferences. */
+.garden-home .garden-world.garden-motion-paused,
+html.garden-document-hidden .garden-home .garden-world{animation-play-state:paused!important}
+html[data-motion="off"] .garden-home .garden-world,
+html[data-motion="quiet"] .garden-home .garden-world,
+html.psychdesk-ambient-off .garden-home .garden-world{animation:none!important;transform:none!important}
+html[data-motion="off"] .garden-home :is(.garden-notebook,.garden-seed,.garden-entry button,.idea-sprout){transition:none!important;transform:none!important}
+@media(max-width:570px){
+ .garden-home .desk-shelf-heading{padding-inline:4px}
+ .garden-home :is(.garden-notebook,.garden-seed){padding:14px 4px 22px!important}
+ .garden-home .garden-stories{gap:20px!important}
+ .garden-home .studio-postcard,.garden-home .study-flow-entry{padding-inline:4px}
+}
+@media(prefers-reduced-motion:reduce){
+ .garden-home .garden-world{animation:none!important;transform:none!important}
+ .garden-home :is(.garden-notebook,.garden-seed,.garden-entry button,.idea-sprout){transition:none!important;transform:none!important}
+}
