@@ -402,6 +402,11 @@ function useStorageKey(key){
  // Account initialization does not reset a running or completed focus session.
  saveTimer();
 }
-window.PsychDeskCore={getData:()=>data,openStudyTopic,getStorageKey:()=>storageKey,save,commitChange,validateSnapshot,render,setTab,toast,openModal,closeModal,subjectOptions,esc,id,today,settings,replaceData,useStorageKey,ensureSubjectDepartments,resourceDialog};$('#settingsBtn').addEventListener('click',settings);document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});if(ensureSubjectDepartments())save(true);render();
-if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
+window.PsychDeskCore={getData:()=>data,openStudyTopic,getStorageKey:()=>storageKey,save,commitChange,validateSnapshot,render,setTab,toast,openModal,closeModal,subjectOptions,esc,id,today,settings,replaceData,useStorageKey,ensureSubjectDepartments,resourceDialog};$('#settingsBtn').addEventListener('click',settings);document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});if(ensureSubjectDepartments())save(true);
+// The studio home initializes at the end of the deferred scripts. Avoid
+// drawing the legacy homepage first (it visibly flashes before the new UI).
+const expectsStudio=Array.from(document.scripts||[]).some(s=>s.getAttribute?.('src')?.startsWith('autopilot/studio.js'));
+if(!expectsStudio)render();
+else window.addEventListener('load',()=>{if(!main.firstElementChild)render();},{once:true});
+if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'}).then(reg=>reg.update()).catch(()=>{});
 })();

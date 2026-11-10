@@ -25,7 +25,7 @@ function getResume(){
   const note=(core.getData().notes||[]).find(n=>n.id===saved.noteId);
   return {tab:'notes',noteId:note?.id||'',title:String(note?.title||'Your notebook').slice(0,100)};
  }
- return {tab:saved.tab,title:({ink:'Ink Notes',recall:'Flashcards',focus:'Focus Room',planner:'Study planner',materials:'Reading shelf',research:'Research shelf',dictionary:'Psychology dictionary',timeline:'Psychology timeline',board:'Study board',mindmap:'Mind map',connections:'Connected learning',university:'University preparation',psychology:'Psychology preparation'})[saved.tab]||'Your study space'};
+ return {tab:saved.tab,title:({ink:'Ink Notes',recall:'Flashcards',focus:'Focus Room',planner:'Study planner',materials:'Library',research:'Research',dictionary:'Psychology dictionary',timeline:'Psychology timeline',board:'Study board',mindmap:'Mind map',connections:'Connected learning',university:'University preparation',psychology:'Psychology preparation'})[saved.tab]||'Your study space'};
 }
 function store(part){
  if(!safeTab(part.tab))return false;
@@ -78,13 +78,13 @@ function resume(){
 }
 function homeButton(){
  const previous=getResume();if(!previous)return '';
- const short=previous.tab==='reader'?'Continue reading':previous.tab==='materials'?'Open reading shelf':previous.tab==='notes'?'Continue your note':previous.tab==='focus'?'Return to focus':'Continue studying';
+ const short=previous.tab==='reader'?'Continue reading':previous.tab==='materials'?'Open library':previous.tab==='notes'?'Continue your note':previous.tab==='focus'?'Return to focus':'Continue studying';
  const detail=previous.tab==='reader'?'Page '+previous.page+' · '+previous.title:previous.title;
  return '<button class="garden-main-btn" type="button" data-session="resume" aria-label="'+esc(short+' — '+detail)+'">'+esc(short)+' <span aria-hidden="true">↗</span></button>';
 }
 function homeDetail(){
  const previous=getResume();if(!previous)return '';
- const kind=previous.tab==='reader'?'YOUR LAST BOOK':previous.tab==='notes'?'YOUR NOTE':'YOUR LAST WORKSPACE';
+ const kind=previous.tab==='reader'?'LAST BOOK':previous.tab==='notes'?'LATEST NOTE':'LAST OPENED';
  const description=previous.tab==='reader'?'Page '+previous.page+' · Open where you stopped.':'Continue without finding your place again.';
  return '<div class="garden-notebook-copy"><span class="studio-kicker">'+kind+'</span><h3>'+esc(previous.title)+'</h3><p>'+esc(description)+'</p></div>'+
  '<div class="garden-book-actions"><span>Saved on this device</span><button type="button" class="garden-text-btn" data-session="resume">Continue ↗</button></div>';
