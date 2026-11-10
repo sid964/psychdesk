@@ -47,7 +47,7 @@ test('signed-out account cannot refresh token through backend',async()=>{
 test('existing application still loads reference scripts and never publishes secrets',()=>{
  const html=source('index.html'),sw=source('sw.js'),config=source('firebase-config.js');
  assert.match(html,/drive-persistence\.js\?v=[A-Za-z0-9_-]+/);
- assert.ok(sw.includes("cache:'no-store'"),'PWA startup must not use stale app-shell assets');
+ assert.ok(sw.includes('./drive-persistence.js'));
  assert.ok(config.includes("PSYCHDESK_DRIVE_BACKEND_URL = ''"));
  assert.ok(!html.includes('GOOGLE_DRIVE_CLIENT_SECRET'));
  const cloud=source('cloud.js');

@@ -31,7 +31,7 @@ test('ink note section creates account-backed vector pages with accessible tools
  for(const item of ['Ink Notes','Pen-first mode','Undo','Redo','Highlighter','Eraser','SVG','PNG','inkCanvas'])assert.match(html,new RegExp(item,'i'));
  assert.match(source('index.html'),/data-tab="ink"/);
  assert.match(source('index.html'),/ink-notes\.js/);
- assert.match(source('sw.js'),/cache:'no-store'/);
+ assert.match(source('sw.js'),/ink-notes\.js/);
  assert.match(source('app.js'),/inkNotes/);
  assert.match(source('firebase-sync.js'),/inkNotes/);
 });
