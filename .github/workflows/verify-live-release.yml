@@ -4,14 +4,10 @@ on:
     branches: [main]
     paths:
       - 'index.html'
-      - 'phase-release.css'
-      - 'garden-refresh.css'
-      - 'design-system.css'
-      - 'design-accessibility.js'
-      - 'autopilot/garden.js'
+      - 'home-diorama.css'
       - 'autopilot/studio.js'
       - 'study-session.js'
-      - 'phase6-next-step.js'
+      - 'app.js'
       - 'sw.js'
   workflow_dispatch:
 permissions:
@@ -21,44 +17,31 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
-      - name: Confirm GitHub Pages serves the living-garden release
+      - name: Confirm Pages serves the current home and startup cache
         shell: bash
         run: |
           set -euo pipefail
           SITE='https://sid964.github.io/psychdesk'
-          echo "Checking live HTML and assets following commit $GITHUB_SHA"
           for attempt in $(seq 1 48); do
-            url_query="release=$GITHUB_SHA&attempt=$attempt"
-            html=$(curl -fsSL --max-time 12 "$SITE/index.html?$url_query" || true)
-            css=$(curl -fsSL --max-time 12 "$SITE/phase-release.css?$url_query" || true)
-            next=$(curl -fsSL --max-time 12 "$SITE/phase6-next-step.js?$url_query" || true)
-            sw=$(curl -fsSL --max-time 12 "$SITE/sw.js?$url_query" || true)
-          garden_css=$(curl -fsSL --max-time 12 "$SITE/garden-refresh.css?$url_query" || true)
-          garden_js=$(curl -fsSL --max-time 12 "$SITE/autopilot/garden.js?$url_query" || true)
-          design_css=$(curl -fsSL --max-time 12 "$SITE/design-system.css?$url_query" || true)
-          design_js=$(curl -fsSL --max-time 12 "$SITE/design-accessibility.js?$url_query" || true)
-            if [[ "$html" == *'phase-release.css?v=release-1'* &&
-                  "$html" == *'data-tab="connections"'* &&
-                  "$css" == *'.study-flow-entry'* &&
-                  "$next" == *'homeCard'* &&
-                  "$sw" == *'psychdesk-study-adoption-midnight-sage-v73'* &&
-                  "$html" == *'garden-refresh.css?v=midnight-sage-1'* &&
-                  "$garden_css" == *'--bg:#000000'* &&
-                  "$garden_js" == *'reactToGarden'* &&
-                  "$html" == *'design-system.css?v=personal-desk-1'* &&
-                  "$design_css" == *'--pd-font:'* &&
-                  "$design_js" == *'aria-current'* &&
-                  "$html" == *'design-accessibility.js?v=design-skill-2'* &&
-                  "$html" == *'autopilot/studio.js?v=personal-desk-1'* &&
-                  "$html" == *'study-session.js?v=mobile-home-3'* &&
-                  "$design_css" == *'Mobile garden composition'* &&
-                  "$design_css" == *'Personal desk: actual last reading'* ]]; then
-              echo "LIVE_RELEASE_VERIFIED: Midnight Sage, living garden, accessible navigation, design system and updated PWA cache are served by GitHub Pages."
+            query="release=$GITHUB_SHA&attempt=$attempt"
+            html=$(curl -fsSL --max-time 12 "$SITE/index.html?$query" || true)
+            sw=$(curl -fsSL --max-time 12 "$SITE/sw.js?$query" || true)
+            studio=$(curl -fsSL --max-time 12 "$SITE/autopilot/studio.js?$query" || true)
+            css=$(curl -fsSL --max-time 12 "$SITE/home-diorama.css?$query" || true)
+            if [[ "$html" == *'app.js?v=desk-startup-20261110'* &&
+                  "$html" == *'autopilot/studio.js?v=desk-startup-20261110'* &&
+                  "$html" == *'home-diorama.css?v=desk-startup-20261110'* &&
+                  "$sw" == *'psychdesk-study-adoption-neutral-desk-v78'* &&
+                  "$sw" == *"cache:'no-store'"* &&
+                  "$studio" == *'PICK UP WHERE YOU LEFT OFF'* &&
+                  "$studio" == *'Open library'* &&
+                  "$css" == *'Open study desk'* ]]; then
+              echo "LIVE_RELEASE_VERIFIED: current desk and startup cache on Pages"
               echo "RELEASE_COMMIT=$GITHUB_SHA"
               exit 0
             fi
-            echo "Attempt $attempt: Pages not yet serving the full release; rechecking."
+            echo "Attempt $attempt: Pages propagation pending"
             sleep 8
           done
-          echo "::error::GitHub Pages did not serve the expected Midnight Sage living-garden release."
+          echo "::error::Pages did not serve the current home/startup release"
           exit 1
