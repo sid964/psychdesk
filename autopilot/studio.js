@@ -372,5 +372,7 @@ const exit=document.createElement('button');exit.type='button';exit.id='quietExi
 quiet(read('quiet',false));
 window.PsychDeskAutopilot={renderHome,scan,emit,on,openPrepared:inbox,getMode:mode,analyze};
 core.render();
+// No intermediate rendering is visible before the final studio is complete.
+if(document.querySelector('#main .garden-home'))document.documentElement.dataset.psychdeskReady='ready';
 recoverJobs().then(scanSoon);
 })();
