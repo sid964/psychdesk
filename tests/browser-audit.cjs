@@ -52,6 +52,18 @@ async function main(){
    const page=await context.newPage();
    const errors=[];page.on('pageerror',e=>errors.push(String(e.message).slice(0,200)));
    try{
+    await page.addInitScript(()=>{
+      window.__psychdeskVisibleStarts=[];
+      new MutationObserver(()=>{
+        const main=document.querySelector('#main'),heading=main?.querySelector('h1');
+        if(!heading)return;
+        const style=getComputedStyle(main);
+        if(style.visibility!=='hidden'&&style.display!=='none'){
+          const value=heading.textContent.trim();
+          if(window.__psychdeskVisibleStarts.at(-1)!==value)window.__psychdeskVisibleStarts.push(value);
+        }
+      }).observe(document,{childList:true,subtree:true,attributes:true,attributeFilter:['data-psychdesk-ready']});
+    });
     await page.goto(origin,{waitUntil:'domcontentloaded',timeout:25000});
     await page.waitForSelector('#main .hero, #main .studio-home-v2',{timeout:16000});
     await page.waitForTimeout(500);
@@ -83,7 +95,13 @@ async function main(){
       };
     });
     await page.screenshot({path:path.join(dest,'overview-'+vp.width+'.png'),fullPage:true,animations:'disabled'});
-    const record={origin,viewport:vp.width,overview,homeDesign,errors};
+    const boot=await page.evaluate(()=>({
+      state:document.documentElement.dataset.psychdeskReady,
+      headings:window.__psychdeskVisibleStarts||[],
+      spatialStyles:!!document.querySelector('link[href*="spatial-desk.css"]')
+    }));
+    const record={origin,viewport:vp.width,overview,homeDesign,boot,errors};
+    if(boot.state!=='ready'||!boot.spatialStyles||boot.headings.some(text=>text==='Study overview.'))fatal=true;
     if(!homeDesign.gardenVisible||!homeDesign.memoryStatusVisible||!homeDesign.storiesBeforeSuggestion||!homeDesign.accountAccessible)fatal=true;
     if(vp.width<=390&&!homeDesign.primaryVisible)fatal=true;
     // The study card should start near the first mobile screen, not below a

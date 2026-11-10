@@ -406,7 +406,13 @@ window.PsychDeskCore={getData:()=>data,openStudyTopic,getStorageKey:()=>storageK
 // The studio home initializes at the end of the deferred scripts. Avoid
 // drawing the legacy homepage first (it visibly flashes before the new UI).
 const expectsStudio=Array.from(document.scripts||[]).some(s=>s.getAttribute?.('src')?.startsWith('autopilot/studio.js'));
-if(!expectsStudio)render();
-else window.addEventListener('load',()=>{if(!main.firstElementChild)render();},{once:true});
+if(!expectsStudio){render();if(document.documentElement?.dataset)document.documentElement.dataset.psychdeskReady='ready';}
+else window.addEventListener('load',()=>{
+ // A missing studio asset must never reveal the old home. Offer a safe retry.
+ if(document.documentElement.dataset.psychdeskReady==='ready')return;
+ main.innerHTML='<section class="hero" role="alert"><h1>Study desk could not open.</h1><p>Check the connection, then reload to try again. Saved notes are untouched.</p><button type="button" id="retryCurrentDesk" class="secondary">Reload PsychDesk</button></section>';
+ main.querySelector('#retryCurrentDesk')?.addEventListener('click',()=>location.reload());
+ document.documentElement.dataset.psychdeskReady='ready';
+},{once:true});
 if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'}).then(reg=>reg.update()).catch(()=>{});
 })();

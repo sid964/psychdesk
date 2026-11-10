@@ -72,7 +72,7 @@ test('online code is delivered after existing curated and imported vocabulary',(
  const worker=fs.readFileSync(path.join(__dirname,'..','sw.js'),'utf8');
  for(const name of ['psychology-online.js','psychology-online.css']){
   assert.ok(html.includes(name));
-  assert.ok(worker.includes(name));
+  assert.ok(worker.includes("cache:'no-store'"),'current application does not fall back to stale cached code');
  }
  assert.ok(html.indexOf('psychology-imports.js')<html.indexOf('psychology-online.js'));
  const importer=fs.readFileSync(path.join(__dirname,'..','psychology-imports.js'),'utf8');

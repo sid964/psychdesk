@@ -40,11 +40,11 @@ test('accessible tab announcement does not replace route and settings handlers',
   assert.match(script, /removeAttribute\('aria-current'\)/);
 });
 
-test('new assets are cached with a changed version', () => {
-  const sw = read('sw.js');
-  assert.match(sw, /psychdesk-study-adoption-neutral-desk-v78/);
-  assert.match(sw, /'\.\/design-system\.css'/);
-  assert.match(sw, /'\.\/design-accessibility\.js'/);
+test('service worker never serves a stale app shell on startup', () => {
+  const sw=read('sw.js');
+  assert.match(sw, /psychdesk-spatial-current-v79/);
+  assert.match(sw, /cache:'no-store'/);
+  assert.doesNotMatch(sw, /caches\.open\(/);
 });
 
 test('homepage now puts notebook and concept before the optional next step', () => {
@@ -96,7 +96,7 @@ test('mobile landing compacts the first screen without removing the living garde
   assert.match(home, /studio-garden-context/);
   assert.match(session, /'Open library'/);
   assert.match(html, /design-system\.css\?v=personal-desk-1/);
-  assert.match(html, /autopilot\/studio\.js\?v=desk-startup-20261110/);
+  assert.match(html, /autopilot\/studio\.js\?v=spatial-20261110-1/);
   assert.match(html, /study-session\.js\?v=desk-startup-20261110/);
 });
 

@@ -1,0 +1,85 @@
+/* Spatial study desk: time-aware atmosphere and touch-responsive perspective.
+   Uses native CSS and the existing SVG garden, not a permanent 3D scene loop. */
+.garden-home{
+ --spatial-rx:0deg;--spatial-ry:0deg;--spatial-tx:0px;--spatial-ty:0px;
+ --spatial-light-x:0px;--spatial-light-y:0px;
+ --spatial-warmth:rgba(194,169,129,.09);
+ position:relative;isolation:isolate;
+}
+html[data-garden-time="morning"] .garden-home{--spatial-warmth:rgba(255,213,155,.13)}
+html[data-garden-time="afternoon"] .garden-home{--spatial-warmth:rgba(255,220,168,.10)}
+html[data-garden-time="evening"] .garden-home{--spatial-warmth:rgba(236,170,133,.12)}
+html[data-garden-time="night"] .garden-home{--spatial-warmth:rgba(160,162,194,.10)}
+/* Depth exists in open space around the garden, not a border or shelf. */
+html[data-theme] .garden-home .garden-landing{
+ position:relative!important;isolation:isolate;overflow:visible!important;
+ background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;
+}
+html[data-theme] .garden-home .garden-landing::before{
+ display:block!important;content:"";position:absolute;
+ inset:3% -3% 0 18%;pointer-events:none;z-index:0;
+ border:0!important;border-radius:50%;
+ background:radial-gradient(ellipse at 62% 55%,var(--spatial-warmth),transparent 68%);
+ transform:translate3d(var(--spatial-light-x),var(--spatial-light-y),0);
+ transition:transform 480ms cubic-bezier(.22,.7,.2,1),background-color 600ms ease;
+}
+html[data-theme] .garden-home .garden-landing::after{display:none!important}
+.garden-home .garden-heading{z-index:2!important}
+.garden-home .garden-art-wrap{
+ position:relative;isolation:isolate;
+ perspective:1200px;perspective-origin:50% 58%;
+ filter:drop-shadow(0 17px 18px rgba(0,0,0,.12));
+}
+.garden-home .garden-art-wrap::before{
+ content:"";position:absolute;left:13%;right:11%;bottom:5%;
+ height:18%;border-radius:50%;pointer-events:none;
+ background:radial-gradient(ellipse,rgba(33,30,24,.25),transparent 71%);
+ filter:blur(14px);z-index:-1;
+}
+html[data-motion="gentle"] .garden-home .garden-world{
+ animation:none!important;
+ transform-origin:50% 62%!important;
+ transform:perspective(1200px) rotateX(var(--spatial-rx)) rotateY(var(--spatial-ry)) translate3d(var(--spatial-tx),var(--spatial-ty),0)!important;
+ transition:transform 420ms cubic-bezier(.22,.68,.2,1)!important;
+ will-change:auto;
+}
+html[data-motion="gentle"] .garden-home .garden-world:is(:hover,:focus-within){transition-duration:280ms!important}
+/* Natural leaf, butterfly, pond, flower and cloud animations remain intact. */
+html[data-theme] .garden-home :is(.garden-notebook,.garden-seed,.desk-shelf){
+ border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;
+}
+html[data-theme] .garden-home :is(.garden-notebook,.garden-seed){transform:none!important}
+.garden-home .garden-notebook{border-inline-start:0!important}
+@media(hover:hover) and (pointer:fine){
+ html[data-theme] .garden-home :is(.garden-notebook,.garden-seed):hover{
+  transform:translateY(-3px)!important;
+  background:linear-gradient(140deg,rgba(161,154,139,.075),transparent 75%)!important;
+ }
+}
+html[data-theme="light"] .garden-home .garden-art-wrap::before{
+ background:radial-gradient(ellipse,rgba(87,69,45,.17),transparent 71%);
+}
+html[data-theme="light"] .garden-home :is(.garden-notebook,.garden-seed):hover{
+ background:linear-gradient(140deg,rgba(130,104,70,.055),transparent 75%)!important;
+}
+@media(max-width:570px){
+ .garden-home .garden-landing{padding:13px 6px 0!important;gap:0!important}
+ .garden-home .garden-heading h1{font-size:30px!important;line-height:1.1!important;margin:6px 0!important}
+ .garden-home .garden-heading p{font-size:13px!important;line-height:19px!important}
+ .garden-home .garden-entry{margin-top:10px!important}
+ .garden-home .garden-entry button{min-height:42px!important;padding:9px 12px!important}
+ .garden-home .garden-art-wrap{width:min(84%,285px)!important;max-width:285px!important;margin:-8px auto -8px!important}
+ .garden-home .studio-garden-context{margin:6px 0 10px!important}
+ .garden-home .desk-shelf{padding-top:4px!important}
+}
+html[data-motion="quiet"] .garden-home .garden-world,
+html[data-motion="off"] .garden-home .garden-world,
+html.psychdesk-ambient-off .garden-home .garden-world{
+ animation:none!important;transition:none!important;transform:none!important;
+}
+@media(prefers-reduced-motion:reduce){
+ .garden-home .garden-world,.garden-home .garden-landing::before{
+  animation:none!important;transform:none!important;transition:none!important;
+ }
+ .garden-home :is(.garden-notebook,.garden-seed){transition:none!important;transform:none!important}
+}
