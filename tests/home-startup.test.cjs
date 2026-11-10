@@ -7,7 +7,7 @@ test('boot gate prevents any intermediate homepage from being visible',()=>{
  assert.match(html,/dataset\.psychdeskReady="loading"/);
  assert.match(html,/data-psychdesk-ready="loading"\] #main\{visibility:hidden!important\}/);
  assert.match(app,/const expectsStudio=Array\.from\(document\.scripts/);
- assert.match(app,/if\(!expectsStudio\)\{render\(\);document\.documentElement\.dataset\.psychdeskReady='ready'/);
+ assert.match(app,/if\(!expectsStudio\)\{render\(\);if\(document\.documentElement\?\.dataset\)/);
  assert.match(app,/Study desk could not open/);
  assert.doesNotMatch(app,/if\(!main\.firstElementChild\)render\(\)/);
  assert.match(studio,/if\(document\.querySelector\('#main \.garden-home'\)\)document\.documentElement\.dataset\.psychdeskReady='ready'/);

@@ -33,11 +33,11 @@ test('import module can initialize without changing account data',()=>{
  assert.equal(typeof context.window.PsychDeskDictionaryPacks.search,'function');
  assert.equal(typeof context.window.PsychDeskDictionaryPacks.mount,'function');
 });
-test('HTML load order and service-worker cache include the new modules',()=>{
+test('HTML load order remains correct and PWA shell is network-only',()=>{
  const html=read('index.html'),sw=read('sw.js');
  for(const name of ['psychology-expanded-data.js','psychology-imports.js','psychology-imports.css']){
   assert.ok(html.includes(name),'Not linked: '+name);
-  assert.ok(sw.includes(name),'Not precached: '+name);
+  assert.ok(!sw.includes('caches.open('),'App resources must not be served from a stale SW cache');
  }
  assert.ok(html.indexOf('psychology-data.js')<html.indexOf('psychology-expanded-data.js'));
  assert.ok(html.indexOf('psychology-expanded-data.js')<html.indexOf('psychology-knowledge.js'));

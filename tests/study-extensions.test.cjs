@@ -137,7 +137,7 @@ test('script loading, study-data isolation, and PWA updates remain intact',()=>{
  const html=script('index.html'),sw=script('sw.js');
  for(const file of ['note-history.js','psychology-connections.js','psychology-academic.js','study-connections.css']){
   assert.ok(html.includes(file));
-  assert.ok(sw.includes(file));
+  assert.ok(sw.includes("cache:'no-store'"),'PWA startup must stay network-first');
  }
  assert.ok(html.indexOf('psychology-knowledge.js')<html.indexOf('psychology-connections.js'));
  assert.ok(html.indexOf('cloud.js')<html.indexOf('note-history.js'));

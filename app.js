@@ -406,7 +406,7 @@ window.PsychDeskCore={getData:()=>data,openStudyTopic,getStorageKey:()=>storageK
 // The studio home initializes at the end of the deferred scripts. Avoid
 // drawing the legacy homepage first (it visibly flashes before the new UI).
 const expectsStudio=Array.from(document.scripts||[]).some(s=>s.getAttribute?.('src')?.startsWith('autopilot/studio.js'));
-if(!expectsStudio){render();document.documentElement.dataset.psychdeskReady='ready';}
+if(!expectsStudio){render();if(document.documentElement?.dataset)document.documentElement.dataset.psychdeskReady='ready';}
 else window.addEventListener('load',()=>{
  // A missing studio asset must never reveal the old home. Offer a safe retry.
  if(document.documentElement.dataset.psychdeskReady==='ready')return;
