@@ -109,7 +109,7 @@ async function main(){
          status:document.querySelector('.studio-garden-context')?.textContent?.trim()||'',
          flowers:document.querySelectorAll('.garden-home .garden-flower').length
        }));
-       record.gardenMemory={countVisible:/1 idea saved in your garden/.test(gardenMemory.status),flowerVisible:gardenMemory.flowers>0};
+       record.gardenMemory={countVisible:/1 idea saved in the garden/.test(gardenMemory.status),flowerVisible:gardenMemory.flowers>0};
        if(!record.gardenMemory.countVisible||!record.gardenMemory.flowerVisible)fatal=true;
        await page.locator('.studio-garden-open').click();
        if(!await page.locator('#modalRoot .garden-collection').count())fatal=true;

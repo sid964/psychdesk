@@ -241,3 +241,58 @@ html[data-theme] .garden-home .garden-heading h1 em{
 }
 html[data-theme] .garden-home .garden-seed .studio-story-mark{color:var(--ui-text)!important;filter:grayscale(1)}
 html[data-theme] .garden-home .garden-seed .garden-story-mark{color:var(--ui-text)!important;filter:grayscale(1)}
+
+/* Open study desk: frames and fake tray removed; animated botanical art stays. */
+html[data-theme="dark"] .garden-home .garden-landing{
+ border:0!important;border-radius:0!important;
+ background:radial-gradient(ellipse at 76% 56%,rgba(178,160,130,.085),transparent 58%)!important;
+ box-shadow:none!important;
+}
+html[data-theme="light"] .garden-home .garden-landing{
+ border:0!important;border-radius:0!important;
+ background:radial-gradient(ellipse at 76% 56%,rgba(168,149,124,.10),transparent 62%)!important;
+ box-shadow:none!important;
+}
+.garden-home .garden-heading h1 em{color:inherit!important}
+html[data-theme="dark"] .garden-home .garden-heading .studio-kicker,
+html[data-theme="dark"] .garden-home .studio-kicker{color:#c2bdb4!important}
+html[data-theme="light"] .garden-home .garden-heading .studio-kicker,
+html[data-theme="light"] .garden-home .studio-kicker{color:#615d57!important}
+html[data-theme="dark"] .garden-home .garden-main-btn{
+ background:#e6e2d9!important;border-color:#e6e2d9!important;color:#1d1c19!important;
+ box-shadow:0 4px 12px rgba(0,0,0,.22)!important;
+}
+html[data-theme="dark"] .garden-home .garden-soft-btn{
+ background:#1c1b1a!important;border-color:#3e3b36!important;color:#e9e5dc!important;
+ box-shadow:none!important;
+}
+html[data-theme="dark"] .garden-home .desk-shelf,
+html[data-theme="light"] .garden-home .desk-shelf{
+ padding:12px 0 24px!important;margin:0 0 26px!important;
+ background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;
+}
+.garden-home .desk-shelf::after{display:none!important}
+html[data-theme="dark"] .garden-home .garden-notebook,
+html[data-theme="dark"] .garden-home .garden-seed{
+ background:linear-gradient(145deg,#1c1b19,#111110)!important;
+ border:1px solid #37342f!important;border-left-color:#403c35!important;
+ box-shadow:0 12px 26px -22px #000!important;
+}
+html[data-theme="light"] .garden-home .garden-notebook,
+html[data-theme="light"] .garden-home .garden-seed{
+ background:linear-gradient(145deg,#faf8f3,#f0ece4)!important;
+ border:1px solid #d6d0c5!important;box-shadow:0 12px 24px -22px #3e3326!important;
+}
+html[data-theme="dark"] .garden-home .garden-seed .studio-explore{
+ background:#e6e2d9!important;border-color:#e6e2d9!important;color:#171717!important;
+}
+html[data-theme="dark"] .garden-home .garden-seed .studio-save{
+ color:#e6e2d9!important;border-color:#55504a!important;
+}
+html[data-theme="dark"] .garden-home .garden-seed .studio-concept,
+html[data-theme="dark"] .garden-home .garden-seed .studio-feature-credit,
+html[data-theme="dark"] .garden-home .studio-garden-context{color:#bbb5aa!important}
+@media(max-width:570px){
+ .garden-home .garden-landing{padding:20px 8px 6px!important}
+ .garden-home .desk-shelf{padding:5px 0 20px!important}
+}

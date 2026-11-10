@@ -94,8 +94,18 @@ test('an in-flight Firestore transaction remains bound to its original account',
 test('storage write failure purges legacy secrets and reports that saving failed',()=>{
  const storage=new Map([['psychdesk-cloud-v2',JSON.stringify({clientId:CLIENT,geminiKey:'old-secret'})]]);const env=environment(storage,true);assert.doesNotMatch(JSON.stringify([...storage]),/old-secret/);env.saveClient(CLIENT);assert.ok(env.toasts.some(message=>message.includes('storage unavailable')));
 });
-test('offline loading finds versioned assets and cache cleanup preserves other apps',async()=>{
- const handlers={},removed=[];let response,options;const self={location:{origin:'https://sid964.github.io'},clients:{claim(){}},skipWaiting(){},addEventListener:(type,fn)=>handlers[type]=fn};const caches={keys:async()=>['other-app-cache','psychdesk-old','psychdesk-library-v1'],delete:async key=>removed.push(key),match:async(_,opts)=>{options=opts;return 'cached-script'}};vm.runInNewContext(source('sw.js'),{self,caches,URL,fetch:async()=>{throw Error('offline')}});handlers.fetch({request:{method:'GET',url:'https://sid964.github.io/psychdesk/cloud.js?v=settings-1'},respondWith:value=>response=value});assert.equal(await response,'cached-script');assert.equal(options.ignoreSearch,true);handlers.activate({waitUntil:value=>response=value});await response;assert.deepEqual(removed,['psychdesk-old','psychdesk-library-v1']);
+test('offline loading uses the current cache without deleting unrelated caches',async()=>{
+ const handlers={},removed=[];let response,matched;
+ const self={location:{origin:'https://sid964.github.io'},clients:{claim(){}},skipWaiting(){},addEventListener:(type,fn)=>handlers[type]=fn};
+ const cache={match:async url=>{matched=url;return 'cached-script'}};
+ const caches={keys:async()=>['other-app-cache','psychdesk-old','psychdesk-library-v1'],delete:async key=>removed.push(key),open:async()=>cache};
+ vm.runInNewContext(source('sw.js'),{self,caches,URL,fetch:async()=>{throw Error('offline')}});
+ handlers.fetch({request:{method:'GET',url:'https://sid964.github.io/psychdesk/cloud.js?v=settings-1'},respondWith:value=>response=value});
+ assert.equal(await response,'cached-script');
+ assert.equal(matched,'https://sid964.github.io/psychdesk/cloud.js','only the current version cache may serve an asset fallback');
+ handlers.activate({waitUntil:value=>response=value});
+ await response;
+ assert.deepEqual(removed,['psychdesk-old','psychdesk-library-v1']);
 });
 
 
