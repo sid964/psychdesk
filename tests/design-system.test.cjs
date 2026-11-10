@@ -97,7 +97,7 @@ test('mobile landing compacts the first screen without removing the living garde
   assert.match(session, /'Open library'/);
   assert.match(html, /design-system\.css\?v=personal-desk-1/);
   assert.match(html, /autopilot\/studio\.js\?v=desk-startup-20261110/);
-  assert.match(html, /study-session\.js\?v=mobile-home-3/);
+  assert.match(html, /study-session\.js\?v=desk-startup-20261110/);
 });
 
 test('personal desk uses only existing records to explain the last reading and notebook', () => {
