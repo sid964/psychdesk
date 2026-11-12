@@ -7,7 +7,7 @@ if(!core||!source)return;
 const NS='http://www.w3.org/2000/svg',W=1100,H=700,chapters=source.chapters,topics=source.topics;
 const safe=core.esc,clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const nodes=[{id:'course',type:'course',title:'Psychopathology',label:'Psychopathology'}]
- .concat(chapters.map(c=>({id:c.id,type:'chapter',chapter:c.number,title:c.title,label:'Chapter '+c.number})))
+ .concat(chapters.map(c=>({id:c.id,type:'chapter',chapter:c.number,startPage:c.startPage,title:c.title,label:'Chapter '+c.number})))
  .concat(topics.map(t=>({...t,id:'t-'+t.id,type:'topic',label:t.title})));
 const nodeById=new Map(nodes.map(n=>[n.id,n]));
 const edges=chapters.map(c=>({from:'course',to:c.id,kind:'chapter'}))

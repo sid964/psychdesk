@@ -89,7 +89,7 @@ Baseline: `41934d734aeecf5a30de808e4e57105146b1398d`. 163 tracked files enumerat
 | `psychology-online.js` | Source/config reviewed |
 | `psychopathology-course-data.js` | Source/config reviewed; chapter outline compared with original source |
 | `psychopathology-graph.css` | Purpose/reference inventory only; semantic review pending |
-| `psychopathology-graph.js` | Purpose/reference inventory only; semantic review pending |
+| `psychopathology-graph.js` | Source/config reviewed |
 | `quick-note.css` | Purpose/reference inventory only; semantic review pending |
 | `quick-note.js` | Source/config reviewed |
 | `reader-studio.css` | Purpose/reference inventory only; semantic review pending |

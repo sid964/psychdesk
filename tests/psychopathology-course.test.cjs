@@ -9,8 +9,21 @@ function setup(){
  const context={window:{PsychDeskCore:core},localStorage:{getItem:k=>store.get(k)||null,setItem:(k,v)=>store.set(k,v)}};
  vm.runInNewContext(read('psychopathology-course-data.js'),context);
  vm.runInNewContext(read('psychopathology-graph.js'),context);
- return {api:context.window.PsychDeskPsychopathology,content:context.window.PsychDeskPsychopathologyContent,store,data};
+ return {api:context.window.PsychDeskPsychopathology,content:context.window.PsychDeskPsychopathologyContent,store,data,context};
 }
+test('opening each chapter displays its actual source start page',()=>{
+ const {api,content,context}=setup(),handlers={},detail={innerHTML:''};
+ const svg={isConnected:false,addEventListener(){}};
+ const control={addEventListener(){},setAttribute(){}};
+ const root={querySelector:selector=>selector==='#psyGraph'?svg:selector==='#psyGraphDetail'?detail:control,querySelectorAll:()=>[],addEventListener:(name,fn)=>{handlers[name]=fn}};
+ context.document={getElementById:()=>root};context.window.matchMedia=()=>({matches:true});
+ api.mount();
+ for(const chapter of content.chapters){
+  handlers.click({target:{closest:selector=>selector==='[data-psy-node]'?{dataset:{psyNode:chapter.id}}:null}});
+  assert.ok(detail.innerHTML.includes('Starts on page '+chapter.startPage+'.'),chapter.id+' must show its verified page');
+  assert.ok(!detail.innerHTML.includes('undefined'));
+ }
+});
 test('16 chapters appear in the order of the ninth-edition table of contents',()=>{
  const {api,content}=setup();
  assert.equal(api.chapters().length,16);
