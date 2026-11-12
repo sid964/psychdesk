@@ -21,7 +21,7 @@ const chapters=[
 'Neurodevelopmental Disorders',
 'Neurocognitive Disorders',
 'Mental Health Services: Legal and Ethical Issues'
-].map((title,i)=>({id:'ch'+(i+1),number:i+1,title}));
+].map((title,i)=>({id:'ch'+(i+1),number:i+1,title,startPage:[2,30,72,102,124,180,210,266,318,356,400,444,480,516,548,574][i]}));
 const topics=[
 {id:'definition',chapter:1,title:'What Is a Psychological Disorder?',page:'3–5',kind:'lesson',
 simple:'A psychological disorder is not simply unusual behavior. The textbook asks whether psychological functioning is disrupted, whether distress or impairment is involved, and how the response fits its cultural context.',
@@ -31,9 +31,9 @@ advanced:[
 'Atypicality also requires care: statistical rarity or a violation of social expectations alone does not make a behavior a disorder. Cultural context, function, and the broader clinical picture matter.',
 'The book discusses competing attempts to define disorder, including harmful dysfunction, diagnostic prototypes, and dimensional severity, rather than presenting one infallible dividing line.'
 ],
-example:'Janelle, a student in the book, developed severe blood-injection-injury phobia. Her repeated fainting and avoidance interfered with schooling, unlike a mild reaction to blood.',
+example:'In the chapter’s clinical vignette, 16-year-old Janelle develops blood-injection-injury phobia after seeing distressing blood-related images. She avoids reminders and faints repeatedly, sometimes in class, disrupting her education. The text contrasts her severe impairment with milder reactions to blood.',examplePage:'2–3',
 question:'Does unusual behavior by itself establish a psychological disorder?',choices:['Yes, rarity is sufficient','No, dysfunction, distress or impairment, and context also matter','Yes, whenever social norms are violated'],correct:1,reason:'The textbook explicitly warns that no single criterion is sufficient to define a psychological disorder.'},
-{id:'science',chapter:1,title:'The Science of Psychopathology',page:'5–8',kind:'lesson',
+{id:'science',chapter:1,title:'The Science of Psychopathology',page:'6–8',kind:'lesson',
 simple:'Psychopathology is the scientific study of psychological disorders. Professionals study what disorders look like, what contributes to them, and how treatment works.',
 advanced:[
 'The textbook distinguishes clinical professions while showing that investigation, assessment, and treatment often overlap. Clinical psychologists, psychiatrists, psychiatric nurses, social workers, and other professionals contribute from different training backgrounds.',
@@ -61,7 +61,7 @@ advanced:[
 'Psychoanalytic theory placed importance on unconscious processes. Humanistic approaches emphasized human potential and therapeutic understanding. Behavioral and cognitive-behavioral approaches stressed the role of learning and observable or testable processes. The authors also discuss limits of one-dimensional accounts.'
 ],
 question:'Which approaches are treated within the psychological tradition?',choices:['Psychoanalytic, humanistic, behavioral','Only supernatural explanations','Only genetics'],correct:0,reason:'The chapter explicitly surveys these psychological approaches.'},
-{id:'integrative',chapter:1,title:'Scientific Method and Integrative Approach',page:'25–27',kind:'lesson',
+{id:'integrative',chapter:1,title:'Scientific Method and Integrative Approach',page:'25–26',kind:'lesson',
 simple:'The authors argue that biological, psychological, social, and developmental factors interact. A disorder should not be explained by just one factor in isolation.',
 advanced:[
 'The concluding chapter section integrates research in neuroscience, behavioral and cognitive science, and life-span development. Each influence operates within a system of other influences.',
@@ -82,7 +82,7 @@ window.PsychDeskPsychopathologyContent=Object.freeze({
  book:'Psychopathology: An Integrative Approach to Mental Disorders',
  edition:'Ninth edition · 2023',authors:'David H. Barlow · V. Mark Durand · Stefan G. Hofmann',
  chapters,topics,
- // Cross-concept connections are explicit relationships discussed in the book.
+ // Cross-concept connections connect nearby ideas discussed across chapter 1 (interpretive study links, not causal findings).
  links:[['definition','science'],['definition','integrative'],['supernatural','biological'],['biological','psychological'],['psychological','integrative'],['integrative','ch2']]
 });
 })();
