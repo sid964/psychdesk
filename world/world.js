@@ -7,7 +7,7 @@ const destinations=[
  {id:'notes',name:'Notebook House',x:-10,z:7,color:0xc99077,kind:'house'},
  {id:'materials',name:'Research Library',x:0,z:-10,color:0x9fa6be,kind:'library'},
  {id:'garden',name:'Memory Garden',x:10,z:-5,color:0xc8ae83,kind:'garden'},
- {id:'flashcards',name:'Recall Pavilion',x:0,z:10,color:0xc9a98b,kind:'house'},
+ {id:'recall',name:'Recall Pavilion',x:0,z:10,color:0xc9a98b,kind:'house'},
  {id:'dictionary',name:'Concept Observatory',x:-10,z:-8,color:0xada4ca,kind:'tower'},
  {id:'focus',name:'Quiet Clearing',x:10,z:9,color:0xb5a997,kind:'clearing'}
 ];
