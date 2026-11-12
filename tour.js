@@ -175,7 +175,7 @@ document.addEventListener('click',e=>{if(e.target.closest('[data-action="replayT
 window.PsychDeskTour={start};
 function offer(){
  let seen=true;try{seen=localStorage.getItem(KEY)==='done'}catch{}
- if(seen||!core()||document.hidden||$('#modalRoot')?.children.length||document.querySelector('dialog[open]'))return;
+ if(seen||!core()||document.hidden||document.body.classList.contains('psychworld-open')||$('#modalRoot')?.children.length||document.querySelector('dialog[open]'))return;
  // A first-visit invitation, not a blocking dialog: normal study actions must remain usable.
  if($('#psychdeskTourInvite'))return;
  const invite=document.createElement('aside');

@@ -64,6 +64,28 @@ const fs=require('node:fs'),path=require('node:path');
    await page.waitForFunction(()=>!!window.PsychDeskCore);
    results.push({offlineWorld:true,offlineMain:true,reconnect:true});
   }finally{await context.close()}
+  const setupContext=await browser.newContext(),setupPage=await setupContext.newPage();
+  try{
+   // Exercise the real status UI/event chain with isolated service stand-ins.
+   // No Google sign-in, Firestore request or real Drive grant is used.
+   await setupPage.route('**/firebase-sync.js*',route=>route.fulfill({contentType:'application/javascript',body:''}));
+   await setupPage.goto('http://127.0.0.1:8765/',{waitUntil:'domcontentloaded'});
+   await setupPage.evaluate(()=>{
+    window.__driveChecks=0;
+    window.PsychDeskFirebase={getConnectionStatus:()=>({signedIn:true,uid:'isolated',email:'student@example.test',synced:true})};
+    window.PsychDeskCloud.isConnected=()=>true;
+    window.PsychDeskCloud.verifyDriveConnection=async()=>{
+     await Promise.resolve();window.__driveChecks++;
+     if(window.__driveChecks>4)throw Error('Repeated verification regression');
+     window.dispatchEvent(new Event('psychdesk:drive-connected'));
+     return {email:'student@example.test'};
+    };
+    window.PsychDeskSetup.start();
+   });
+   await setupPage.waitForFunction(()=>document.getElementById('setup-title')?.textContent==='All set — ready to study');
+   assert.equal(await setupPage.evaluate(()=>window.__driveChecks),1);
+   results.push({setupSingleVerification:true});
+  }finally{await setupContext.close()}
  }finally{await browser.close();fs.writeFileSync(path.join(dir,'results.json'),JSON.stringify(results,null,2))}
  console.log('REPAIR_BROWSER_PASS',JSON.stringify(results));
 })().catch(error=>{console.error(error);process.exitCode=1});
