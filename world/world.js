@@ -44,15 +44,15 @@ try{
 }
 if(renderer){
  const scene=new THREE.Scene();
- const horizon=night?0x71858d:0xc3d2cc;
+ const horizon=night?0x71858d:0xb5c4b9;
  scene.background=new THREE.Color(horizon);
- scene.fog=new THREE.FogExp2(horizon,night?.012:.0097);
+ scene.fog=new THREE.FogExp2(horizon,night?.009:.0052);
  const camera=new THREE.PerspectiveCamera(49,1,.12,240);
- camera.position.set(34,24,40);
+ camera.position.set(31,21,36);
  camera.lookAt(0,1.5,0);
  renderer.outputColorSpace=THREE.SRGBColorSpace;
  renderer.toneMapping=THREE.ACESFilmicToneMapping;
- renderer.toneMappingExposure=night?1.18:1.26;
+ renderer.toneMappingExposure=night?1.05:1.04;
  const pixelRatio={high:1.8,medium:1.35,low:1};
  let tier=quality;
  function applyQuality(){
@@ -76,8 +76,8 @@ if(renderer){
  const sky=new THREE.Mesh(new THREE.SphereGeometry(195,40,24),
   new THREE.ShaderMaterial({
    uniforms:{
-    upper:{value:new THREE.Color(night?0x1d3449:0x82a9b5)},
-    lower:{value:new THREE.Color(night?0x899397:0xe2e0cb)},
+    upper:{value:new THREE.Color(night?0x1d3449:0x79a5bc)},
+    lower:{value:new THREE.Color(night?0x899397:0xe0d6ba)},
     sunColor:{value:new THREE.Color(night?0xc1bdba:0xffddb1)},
     sunDirection:{value:new THREE.Vector3(-.4,.44,-.55).normalize()}
    },
@@ -87,9 +87,9 @@ if(renderer){
   })
  );
  scene.add(sky);
- const skyLight=new THREE.HemisphereLight(night?0x93a8c8:0xf8f1df,night?0x3b5043:0x4d6651,night?2.0:2.8);
+ const skyLight=new THREE.HemisphereLight(night?0x93a8c8:0xf8f1df,night?0x3b5043:0x4d6651,night?1.65:1.8);
  scene.add(skyLight);
- const sun=new THREE.DirectionalLight(night?0xc8c8bc:0xffe2b7,night?1.65:3.0);
+ const sun=new THREE.DirectionalLight(night?0xc8c8bc:0xffe2b7,night?1.5:2.15);
  sun.position.set(-28,48,22);
  sun.castShadow=tier==='high';
  sun.shadow.mapSize.set(1536,1536);
@@ -166,7 +166,7 @@ if(renderer){
   tier=tier==='high'?'medium':tier==='medium'?'low':'high';applyQuality();
  });
  resetButton.addEventListener('click',()=>{
-  camera.position.set(34,24,40);controls.target.set(0,1,0);controls.update();
+  camera.position.set(31,21,36);controls.target.set(0,1,0);controls.update();
  });
  try{
   const saved=JSON.parse(sessionStorage.getItem('psychworld-view-v1')||'null');

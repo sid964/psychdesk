@@ -23,7 +23,7 @@ export function createLandscape(THREE,scene,destinations,{coarse=false,reduced=f
   grass:new THREE.MeshStandardMaterial({color:0x5f815c,roughness:1,side:THREE.DoubleSide}),
   stone:new THREE.MeshStandardMaterial({color:0x9b9990,roughness:1}),
   sandy:new THREE.MeshStandardMaterial({vertexColors:true,roughness:1}),
-  water:new THREE.MeshPhysicalMaterial({color:night?0x4c7a8e:0x7ba9a2,roughness:.24,metalness:.05,transparent:true,opacity:.91,depthWrite:false,clearcoat:.28,clearcoatRoughness:.16})
+  water:new THREE.MeshPhysicalMaterial({color:night?0x416c81:0x5b9998,roughness:.13,metalness:.05,transparent:true,opacity:.91,depthWrite:false,clearcoat:.28,clearcoatRoughness:.16})
  };
  // The world continues into a hazy valley, rather than sitting on a floating cylinder.
  const worldSize=148,segments=coarse?104:172;
@@ -31,9 +31,9 @@ export function createLandscape(THREE,scene,destinations,{coarse=false,reduced=f
  grid.rotateX(-Math.PI/2);
  const positions=grid.attributes.position;
  const vertexColors=new Float32Array(positions.count*3);
- const low=new THREE.Color(night?0x596c58:0x8b9b74);
- const high=new THREE.Color(night?0x426355:0x55775b);
- const sunlit=new THREE.Color(night?0x657a61:0x9cb18b);
+ const low=new THREE.Color(night?0x4c6752:0x7b9670);
+ const high=new THREE.Color(night?0x385d50:0x456f55);
+ const sunlit=new THREE.Color(night?0x57755b:0x91a980);
  const color=new THREE.Color();
  for(let i=0;i<positions.count;i++){
   const x=positions.getX(i),z=positions.getZ(i),h=height(x,z);
@@ -43,12 +43,29 @@ export function createLandscape(THREE,scene,destinations,{coarse=false,reduced=f
   vertexColors[i*3]=color.r;vertexColors[i*3+1]=color.g;vertexColors[i*3+2]=color.b;
  }
  grid.setAttribute('color',new THREE.BufferAttribute(vertexColors,3));grid.computeVertexNormals();
- const ground=new THREE.Mesh(grid,new THREE.MeshStandardMaterial({vertexColors:true,roughness:1}));
+ const groundTextureCanvas=document.createElement('canvas');
+ groundTextureCanvas.width=groundTextureCanvas.height=256;
+ const gctx=groundTextureCanvas.getContext('2d');
+ let groundTexture=null;
+ if(gctx){
+  gctx.fillStyle='#f0f0ea';gctx.fillRect(0,0,256,256);
+  for(let i=0;i<17000;i++){
+   const x=rand(i*13+17)*256,y=rand(i*21+11)*256;
+   gctx.fillStyle=i%5===0?'#536c5340':i%3?'#66715d19':'#ffffff38';
+   gctx.fillRect(x,y,1+(i%4),1+(i%3));
+  }
+  groundTexture=new THREE.CanvasTexture(groundTextureCanvas);
+  groundTexture.colorSpace=THREE.SRGBColorSpace;
+  groundTexture.wrapS=groundTexture.wrapT=THREE.RepeatWrapping;
+  groundTexture.repeat.set(26,26);
+  groundTexture.anisotropy=coarse?1:4;
+ }
+ const ground=new THREE.Mesh(grid,new THREE.MeshStandardMaterial({map:groundTexture,vertexColors:true,roughness:1}));
  ground.receiveShadow=!coarse;
  scene.add(ground);
  // Gentle horizon ridge, rendered as soft atmospheric silhouettes.
  for(let band=0;band<2;band++){
-  const count=128,verts=[],indices=[];
+  const count=256,verts=[],indices=[];
   const radius=80+band*35;
   for(let i=0;i<=count;i++){
    const a=i/count*Math.PI*2,rr=radius+7*Math.sin(a*4.1+band)+4*Math.sin(a*9.7);
@@ -60,7 +77,7 @@ export function createLandscape(THREE,scene,destinations,{coarse=false,reduced=f
   const geo=new THREE.BufferGeometry();
   geo.setAttribute('position',new THREE.Float32BufferAttribute(verts,3));
   geo.setIndex(indices);geo.computeVertexNormals();
-  scene.add(new THREE.Mesh(geo,new THREE.MeshLambertMaterial({color:band?0x839b9a:0x6e8c84,side:THREE.DoubleSide})));
+  scene.add(new THREE.Mesh(geo,new THREE.MeshLambertMaterial({color:band?0x7c9593:0x627f78,side:THREE.DoubleSide})));
  }
  // Winding natural paths. Ground-level ribbon follows the sculpted relief.
  const routes=destinations.map((d,i)=>{
@@ -114,48 +131,148 @@ export function createLandscape(THREE,scene,destinations,{coarse=false,reduced=f
   }
   const normal=new THREE.CanvasTexture(rippleCanvas);
   normal.wrapS=normal.wrapT=THREE.RepeatWrapping;normal.repeat.set(4,3);normal.anisotropy=coarse?1:4;
-  mats.water.normalMap=normal;mats.water.normalScale.set(.14,.14);mats.water.needsUpdate=true;
+  mats.water.normalMap=normal;mats.water.normalScale.set(.28,.28);mats.water.needsUpdate=true;
  }
  const waterEdge=new THREE.Mesh(
   new THREE.RingGeometry(1,1.035,96),new THREE.MeshBasicMaterial({color:0xc4c4a3,transparent:true,opacity:.34,side:THREE.DoubleSide}));
  waterEdge.rotation.x=-Math.PI/2;waterEdge.scale.set(pond.rx,pond.rz,1);
  waterEdge.position.set(pond.x,-.31,pond.z);scene.add(waterEdge);
- // Tree crowns are smooth, overlapping foliage masses; no cone-tree silhouettes.
- const canopyGeom=new THREE.SphereGeometry(1,10,8);
- const canopyMats=[
-  new THREE.MeshStandardMaterial({color:night?0x607c65:0x718c63,roughness:1}),
-  new THREE.MeshStandardMaterial({color:night?0x567768:0x829b75,roughness:1}),
-  new THREE.MeshStandardMaterial({color:night?0x668579:0x5e846a,roughness:1}),
-  new THREE.MeshStandardMaterial({color:night?0x7b8b67:0x9eab81,roughness:1})
- ];
- const treeCenters=[];
- const treeCount=coarse?74:152;
- for(let i=0;i<treeCount*4&&treeCenters.length<treeCount;i++){
-  const a=rand(i*7+3)*Math.PI*2,r=12+Math.sqrt(rand(i*11+12))*49;
-  const x=Math.sin(a)*r,z=Math.cos(a)*r;
-  if(distanceToPath(x,z)<2.4||destinations.some(p=>Math.hypot(x-p.x,z-p.z)<5)||Math.hypot((x-pond.x)/pond.rx,(z-pond.z)/pond.rz)<1.22)continue;
-  treeCenters.push({x,z,h:3.2+rand(i*9+4)*4.8,kind:i%8,seed:i});
+ // Botanical cards break up spherical tree silhouettes into individual leaves.
+ // All foliage is generated locally from alpha textures: no external assets.
+ function foliageTexture(needle=false){
+  const canvas=document.createElement('canvas');canvas.width=canvas.height=384;
+  const ctx=canvas.getContext('2d');if(!ctx)return null;
+  ctx.clearRect(0,0,384,384);
+  const random=i=>rand(i*19+(needle?39:17));
+  // Internal fine twigs and leaf veins give the crowns depth at close zoom.
+  for(let i=0;i<29;i++){
+   const x=34+random(i*2)*316,y=42+random(i*2+1)*290;
+   ctx.strokeStyle=needle?'#314b3299':'#534f3499';ctx.lineWidth=1.0+(i%3)*.55;
+   ctx.beginPath();ctx.moveTo(x,y);ctx.quadraticCurveTo(192,192,192+(x-192)*.12,210);ctx.stroke();
+  }
+  for(let i=0;i<(needle?330:230);i++){
+   const x=35+random(i*5+31)*312,y=26+random(i*5+32)*332;
+   const a=random(i*5+33)*6.28,sz=needle?3+random(i*5+34)*8:6+random(i*5+34)*15;
+   const light=random(i*5+35);
+   ctx.save();ctx.translate(x,y);ctx.rotate(a);
+   if(needle){
+    ctx.fillStyle=light<.3?'#344e3baa':light<.65?'#567553dd':'#8ba478e8';
+    ctx.beginPath();ctx.moveTo(-sz,0);ctx.quadraticCurveTo(0,-1.5,sz*1.7,-sz*.24);
+    ctx.quadraticCurveTo(0,1.1,-sz,0);ctx.fill();
+   }else{
+    ctx.fillStyle=light<.25?'#355c3eea':light<.5?'#517b4cdd':light<.78?'#709460e8':'#99ad77df';
+    ctx.beginPath();ctx.moveTo(-sz*.9,0);
+    ctx.quadraticCurveTo(0,-sz*.66,sz,0);
+    ctx.quadraticCurveTo(0,sz*.46,-sz*.9,0);ctx.fill();
+    if(i%5===0){
+     ctx.strokeStyle='#c6c79a66';ctx.lineWidth=.75;
+     ctx.beginPath();ctx.moveTo(-sz*.6,0);ctx.lineTo(sz*.65,0);ctx.stroke();
+    }
+   }
+   ctx.restore();
+  }
+  const tex=new THREE.CanvasTexture(canvas);tex.colorSpace=THREE.SRGBColorSpace;
+  tex.anisotropy=coarse?1:4;return tex;
  }
- const trunkGeometry=new THREE.CylinderGeometry(.12,.21,1,8,1);
+ const leafTexture=foliageTexture(false),pineTexture=foliageTexture(true);
+ const leafMaterial=new THREE.MeshStandardMaterial({
+  color:0xffffff,map:leafTexture,side:THREE.DoubleSide,alphaTest:.2,
+  transparent:false,roughness:1,metalness:0,depthWrite:true
+ });
+ const needleMaterial=new THREE.MeshStandardMaterial({
+  color:0xffffff,map:pineTexture,side:THREE.DoubleSide,alphaTest:.23,
+  transparent:false,roughness:1,metalness:0,depthWrite:true
+ });
+ const canopyGeom=new THREE.SphereGeometry(1,14,10);
+ const crownPositions=canopyGeom.attributes.position;
+ for(let i=0;i<crownPositions.count;i++){
+  const x=crownPositions.getX(i),y=crownPositions.getY(i),z=crownPositions.getZ(i);
+  const irregular=1+.12*Math.sin(x*11+y*7)+.10*Math.cos(z*13+x*5);
+  crownPositions.setXYZ(i,x*irregular,y*(1+.08*Math.sin(z*9+x*3)),z*irregular);
+ }
+ canopyGeom.computeVertexNormals();
+ const canopyMats=[
+  new THREE.MeshStandardMaterial({color:night?0x3f5b47:0x466b4d,roughness:1}),
+  new THREE.MeshStandardMaterial({color:night?0x496958:0x5d8258,roughness:1}),
+  new THREE.MeshStandardMaterial({color:night?0x57705a:0x648f67,roughness:1}),
+  new THREE.MeshStandardMaterial({color:night?0x68775e:0x7d9a6b,roughness:1})
+ ];
+ // Bark is subtly striated instead of flat-shaded brown.
+ const barkCanvas=document.createElement('canvas');barkCanvas.width=128;barkCanvas.height=512;
+ const bark=barkCanvas.getContext('2d');
+ if(bark){
+  bark.fillStyle='#9e8267';bark.fillRect(0,0,128,512);
+  for(let i=0;i<750;i++){
+   const x=rand(i*13+9)*128,y=rand(i*31+6)*512,dy=6+rand(i*17)*47;
+   bark.strokeStyle=i%4===0?'#dbc1a62c':'#3e322835';bark.lineWidth=.6+rand(i*7)*2.3;
+   bark.beginPath();bark.moveTo(x,y);bark.quadraticCurveTo(x+4*Math.sin(y*.02),y+dy*.45,x+2,y+dy);bark.stroke();
+  }
+  const tex=new THREE.CanvasTexture(barkCanvas);tex.colorSpace=THREE.SRGBColorSpace;
+  tex.wrapS=tex.wrapT=THREE.RepeatWrapping;tex.repeat.set(1,3);
+  mats.bark.map=tex;mats.bark.needsUpdate=true;
+ }
+ const treeCenters=[];
+ const treeCount=coarse?72:145;
+ for(let i=0;i<treeCount*4&&treeCenters.length<treeCount;i++){
+  const a=rand(i*7+3)*Math.PI*2,r=11+Math.sqrt(rand(i*11+12))*49;
+  const x=Math.sin(a)*r,z=Math.cos(a)*r;
+  if(distanceToPath(x,z)<2.4||destinations.some(p=>Math.hypot(x-p.x,z-p.z)<5)||Math.hypot((x-pond.x)/pond.rx,(z-pond.z)/pond.rz)<1.24)continue;
+  treeCenters.push({x,z,h:3.5+rand(i*9+4)*5.3,kind:i%8,seed:i});
+ }
+ const trunkGeometry=new THREE.CylinderGeometry(.115,.22,1,10,1);
  const trunks=new THREE.InstancedMesh(trunkGeometry,mats.bark,treeCenters.length);
- const canopy=[0,1,2,3].map(k=>new THREE.InstancedMesh(canopyGeom,canopyMats[k],treeCenters.length*3));
+ const canopy=[0,1,2,3].map(i=>new THREE.InstancedMesh(canopyGeom,canopyMats[i],treeCenters.length*3));
+ const twigGeom=new THREE.CylinderGeometry(.045,.068,1,7);
+ const twigs=new THREE.InstancedMesh(twigGeom,mats.bark,treeCenters.length*3);
+ const leafCardMesh=new THREE.InstancedMesh(new THREE.PlaneGeometry(1,1),leafMaterial,treeCenters.length*12);
+ const pineCardMesh=new THREE.InstancedMesh(new THREE.PlaneGeometry(1,1),needleMaterial,treeCenters.length*12);
  const dummy=new THREE.Object3D(),canopyIndex=[0,0,0,0];
+ let twigCount=0,leafCount=0,pineCount=0;
+ const up=new THREE.Vector3(0,1,0);
  treeCenters.forEach((tree,i)=>{
-  const y=height(tree.x,tree.z),t=tree.h;
-  dummy.position.set(tree.x,y+t*.35,tree.z);dummy.scale.set(t*.23,t*.70,t*.23);
-  dummy.rotation.set(0,rand(i*13)*Math.PI*2,0);dummy.updateMatrix();trunks.setMatrixAt(i,dummy.matrix);
-  for(let j=0;j<3;j++){
-   const type=(i+j)%4,angle=j*Math.PI*2/3+rand(i*3)*2;
-   const size=t*(.29+rand(i*13+j)*.07);
-   dummy.position.set(tree.x+Math.cos(angle)*t*.14,y+t*(.67+.08*(j%2)),tree.z+Math.sin(angle)*t*.14);
-   dummy.scale.set(size,size*(.82+rand(j+i)*.2),size*.92);
-   dummy.rotation.set(.08*Math.sin(angle),0,.08*Math.cos(angle));
-   dummy.updateMatrix();canopy[type].setMatrixAt(canopyIndex[type]++,dummy.matrix);
+  const y=height(tree.x,tree.z),t=tree.h,pine=i%6===0;
+  dummy.position.set(tree.x,y+t*(pine?.45:.36),tree.z);
+  dummy.scale.set(t*.035,t*(pine?.9:.72),t*.035);
+  dummy.rotation.set(0,rand(i*13)*Math.PI*2,0);
+  dummy.updateMatrix();trunks.setMatrixAt(i,dummy.matrix);
+  if(!pine){
+   for(let j=0;j<3;j++){
+    const type=(i+j)%4,angle=j*Math.PI*2/3+rand(i*3)*2;
+    const size=t*(.19+rand(i*13+j)*.055);
+    dummy.position.set(tree.x+Math.cos(angle)*t*.19,y+t*(.66+.075*(j%2)),tree.z+Math.sin(angle)*t*.19);
+    dummy.scale.set(size,size*(.81+rand(j+i)*.13),size*.88);
+    dummy.rotation.set(.09*Math.sin(angle),0,.09*Math.cos(angle));
+    dummy.updateMatrix();canopy[type].setMatrixAt(canopyIndex[type]++,dummy.matrix);
+   }
+   for(let j=0;j<3;j++){
+    const a=j*2.095+rand(i*4)*1.8;
+    const start=new THREE.Vector3(tree.x,y+t*.49,tree.z);
+    const target=new THREE.Vector3(tree.x+Math.cos(a)*t*.22,y+t*(.65+j*.04),tree.z+Math.sin(a)*t*.22);
+    const dir=new THREE.Vector3().subVectors(target,start);
+    dummy.position.copy(start).add(target).multiplyScalar(.5);
+    dummy.scale.set(t*.12,dir.length(),t*.12);
+    dummy.quaternion.setFromUnitVectors(up,dir.normalize());dummy.updateMatrix();
+    twigs.setMatrixAt(twigCount++,dummy.matrix);
+   }
+  }
+  for(let j=0;j<(pine?12:10);j++){
+   const a=j*2.4+rand(i*31+4)*1.6,ratio=pine?j/12:.42+rand(i*17+j*11)*.42;
+   const tierHeight=pine?t*(.32+ratio*.65):t*(.56+ratio*.35);
+   const width=pine?t*(.16+.11*(1-ratio)):t*(.36+rand(i+j*13)*.15);
+   const radius=pine?t*(1-ratio)*.18:t*.24;
+   dummy.position.set(tree.x+Math.cos(a)*radius,y+tierHeight,tree.z+Math.sin(a)*radius);
+   dummy.scale.set(width*2.2,pine?t*.37:t*.58,1);
+   dummy.rotation.set((rand(i*j+5)-.5)*.28,a+(j%2)*Math.PI*.5,(rand(i*j+7)-.5)*.28);
+   dummy.updateMatrix();
+   if(pine)pineCardMesh.setMatrixAt(pineCount++,dummy.matrix);
+   else leafCardMesh.setMatrixAt(leafCount++,dummy.matrix);
   }
  });
- trunks.instanceMatrix.needsUpdate=true;trunks.castShadow=!coarse;
- scene.add(trunks);
+ trunks.instanceMatrix.needsUpdate=true;trunks.castShadow=!coarse;scene.add(trunks);
  canopy.forEach((mesh,i)=>{mesh.count=canopyIndex[i];mesh.instanceMatrix.needsUpdate=true;mesh.castShadow=!coarse;scene.add(mesh);});
+ twigs.count=twigCount;twigs.instanceMatrix.needsUpdate=true;scene.add(twigs);
+ leafCardMesh.count=leafCount;leafCardMesh.instanceMatrix.needsUpdate=true;leafCardMesh.castShadow=!coarse;scene.add(leafCardMesh);
+ pineCardMesh.count=pineCount;pineCardMesh.instanceMatrix.needsUpdate=true;pineCardMesh.castShadow=!coarse;scene.add(pineCardMesh);
  // Grass silhouettes and meadow flowers use instancing, not thousands of draw calls.
  const bladeGeo=new THREE.BufferGeometry();
  bladeGeo.setAttribute('position',new THREE.Float32BufferAttribute([
@@ -166,7 +283,7 @@ export function createLandscape(THREE,scene,destinations,{coarse=false,reduced=f
  const grassMats=[new THREE.MeshLambertMaterial({color:0x9fae79,side:THREE.DoubleSide}),
   new THREE.MeshLambertMaterial({color:0x77956e,side:THREE.DoubleSide}),
   new THREE.MeshLambertMaterial({color:0xb0b38a,side:THREE.DoubleSide})];
- const grassCounts=grassMats.map(()=>0),maxGrass=coarse?1200:4200;
+ const grassCounts=grassMats.map(()=>0),maxGrass=coarse?1900:8800;
  const patches=grassMats.map(m=>new THREE.InstancedMesh(bladeGeo,m,Math.ceil(maxGrass/3)+80));
  for(let i=0;i<maxGrass*3&&grassCounts.reduce((a,b)=>a+b,0)<maxGrass;i++){
   const x=(rand(i*13+42)-.5)*110,z=(rand(i*17+9)-.5)*110;
@@ -209,6 +326,48 @@ export function createLandscape(THREE,scene,destinations,{coarse=false,reduced=f
   dummy.updateMatrix();rocks.setMatrixAt(i,dummy.matrix);
  }
  rocks.instanceMatrix.needsUpdate=true;rocks.castShadow=!coarse;scene.add(rocks);
+ // Riverbank rocks and reeds soften the oval outline of the small pond.
+ const bankMat=new THREE.MeshStandardMaterial({color:0x858d7e,roughness:1});
+ const bankGeo=new THREE.DodecahedronGeometry(1,1);
+ const bankCount=coarse?80:190;
+ const bankRocks=new THREE.InstancedMesh(bankGeo,bankMat,bankCount);
+ for(let i=0;i<bankCount;i++){
+  const a=i*2.39996323+rand(i)*.18,dr=.99+rand(i*11+9)*.19;
+  const x=pond.x+Math.cos(a)*pond.rx*dr,z=pond.z+Math.sin(a)*pond.rz*dr;
+  const size=.12+rand(i*13)*.31,y=height(x,z);
+  dummy.position.set(x,y+size*.22,z);
+  dummy.scale.set(size*1.18,size*.45,size);
+  dummy.rotation.set(rand(i*13)*.25,rand(i*3)*6.28,0);
+  dummy.updateMatrix();bankRocks.setMatrixAt(i,dummy.matrix);
+ }
+ bankRocks.instanceMatrix.needsUpdate=true;scene.add(bankRocks);
+ const reedGeo=new THREE.CylinderGeometry(.017,.034,1,5);
+ const reedMat=new THREE.MeshLambertMaterial({color:0x79916e});
+ const reedCount=coarse?130:340;
+ const reeds=new THREE.InstancedMesh(reedGeo,reedMat,reedCount);
+ for(let i=0;i<reedCount;i++){
+  const angle=i*2.399963+rand(i*31)*.2;
+  const stretch=.96+rand(i*13)*.21;
+  const x=pond.x+Math.cos(angle)*pond.rx*stretch,z=pond.z+Math.sin(angle)*pond.rz*stretch;
+  const h=.28+rand(i*7)*1.05,y=height(x,z);
+  dummy.position.set(x,y+h*.5,z);dummy.scale.set(1,h,1);
+  dummy.rotation.set((rand(i*5)-.5)*.16,0,(rand(i*11)-.5)*.18);
+  dummy.updateMatrix();reeds.setMatrixAt(i,dummy.matrix);
+ }
+ reeds.instanceMatrix.needsUpdate=true;scene.add(reeds);
+ // Small reflective strokes make calm moving water legible at a distance.
+ const glintGeom=new THREE.PlaneGeometry(1,1);
+ const glintMat=new THREE.MeshBasicMaterial({color:0xe8e9db,transparent:true,opacity:.15,depthWrite:false,side:THREE.DoubleSide});
+ const glintCount=coarse?65:175,glints=new THREE.InstancedMesh(glintGeom,glintMat,glintCount);
+ for(let i=0;i<glintCount;i++){
+  const a=rand(i*11)*Math.PI*2,r=Math.sqrt(rand(i*13))*.93;
+  const x=pond.x+Math.cos(a)*r*pond.rx,z=pond.z+Math.sin(a)*r*pond.rz;
+  dummy.position.set(x,-.295,z);
+  dummy.rotation.set(-Math.PI/2,0,rand(i*7)*6.28);
+  dummy.scale.set(.18+rand(i*3)*.65,.018+rand(i*5)*.038,1);dummy.updateMatrix();
+  glints.setMatrixAt(i,dummy.matrix);
+ }
+ glints.instanceMatrix.needsUpdate=true;glints.renderOrder=2;scene.add(glints);
  // Varying haze makes distant landscape read as depth rather than flat stage.
  const clouds=[];
  const cloudCanvas=document.createElement('canvas');cloudCanvas.width=cloudCanvas.height=128;
