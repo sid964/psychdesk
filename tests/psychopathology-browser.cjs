@@ -9,7 +9,8 @@ const {chromium}=require('playwright');
  try{
   const page=await browser.newPage({viewport:{width:1280,height:800}});
   await page.goto('http://127.0.0.1:8765/',{waitUntil:'domcontentloaded'});
-  await page.locator('.rail-link[data-tab="psychopathology"]').click();
+  await page.locator('[data-tab="tools"]:visible').first().click();
+  await page.locator('[data-tab="psychopathology"]:visible').first().click();
   await page.waitForSelector('#psyGraph .psycourse-node',{timeout:12000});
   assert.equal(await page.locator('.psycourse-count strong').textContent(),'16');
   assert.ok((await page.locator('#psyGraph .psycourse-node').count())>=24);
@@ -47,7 +48,7 @@ const {chromium}=require('playwright');
   assert.notEqual(await page.locator('#psyGraph > g').getAttribute('transform'),prior);
   await page.locator('[data-psy-action="fit"]').click();
   assert.equal(await page.locator('#psyGraph > g').getAttribute('transform'),'translate(0 0) scale(1)');
-  await page.locator('.rail-link[data-tab="notes"]').click();
+  await page.locator('[data-tab="notes"]:visible').first().click();
   await page.waitForFunction(()=>!document.querySelector('#psyCourse'));
   console.log('Psychopathology graph browser smoke passed');
  }finally{await browser.close();}
