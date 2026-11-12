@@ -5,7 +5,7 @@ if(!main)return;
 let active=null,previousFocus=null;
 const allowed=new Set(['notes','materials','garden','recall','dictionary','focus','planner','tools','ink']);
 function attachLaunch(){
- const host=main.querySelector('.garden-entry');
+ const host=main.querySelector('.garden-art-wrap');
  if(!host||host.querySelector('#psychWorldLaunch'))return;
  const btn=document.createElement('button');
  btn.id='psychWorldLaunch';btn.type='button';
