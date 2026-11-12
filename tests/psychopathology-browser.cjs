@@ -21,6 +21,10 @@ fs.mkdirSync(screenshots,{recursive:true});
   assert.ok((await page.locator('#psyGraph .psycourse-node').count())>=24);
   assert.match(await page.locator('#psyGraphDetail').textContent(),/What Is a Psychological Disorder/);
   await page.screenshot({path:path.join(screenshots,'course-desktop.png'),animations:'disabled'});
+  for(const [number,start] of [[1,2],[2,30],[3,72],[4,102],[5,124],[6,180],[7,210],[8,266],[9,318],[10,356],[11,400],[12,444],[13,480],[14,516],[15,548],[16,574]]){
+   await page.locator('.psycourse-chapter-list [data-psy-node="ch'+number+'"]').click();
+   assert.ok((await page.locator('#psyGraphDetail').textContent()).includes('Starts on page '+start+'.'),'chapter '+number+' source page');
+  }
   // Search results select the chapter-linked concepts and open their explanation.
   await page.locator('#psyGraphSearch').fill('dysfunction');
   await page.locator('#psyGraphResults [data-psy-node="t-dysfunction"]').click();

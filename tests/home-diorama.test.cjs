@@ -25,3 +25,19 @@ test('garden preserves keyboard tree and pond controls and bounds saved objects'
  assert.equal((result.match(/class="garden-tree(?: garden-pine)?" role="button" tabindex="0"/g)||[]).length,4);
  assert.match(result,/class="garden-pond-hit"[^>]*role="button" tabindex="0"/);
 });
+test('garden releases replaced scenes and modal scenes from its observer',()=>{
+ const listeners={},frames=[],retained=new Set();let nodes=[],callback;
+ class Observer{constructor(cb){callback=cb}observe(node){retained.add(node)}unobserve(node){retained.delete(node)}}
+ const window={IntersectionObserver:Observer,addEventListener(name,fn){listeners[name]=fn}};
+ const document={querySelectorAll:()=>nodes,addEventListener(){},documentElement:{dataset:{}}};
+ vm.runInNewContext(fs.readFileSync('autopilot/garden.js','utf8'),{window,document,IntersectionObserver:Observer,requestAnimationFrame:fn=>frames.push(fn)});
+ const flush=()=>{while(frames.length)frames.shift()()};
+ const node=()=>({isConnected:true,dataset:{},classList:{toggle(){}},closest:()=>null});
+ const first=node();nodes=[first];window.PsychDeskGarden.scene([],[]);flush();assert.equal(retained.size,1);
+ first.isConnected=false;const replacement=node();nodes=[replacement];window.PsychDeskGarden.scene([],[]);flush();
+ assert.equal(retained.has(first),false,'old homepage scene must be released');assert.equal(retained.has(replacement),true);
+ replacement.isConnected=false;nodes=[];listeners['psychdesk:before-modal-close']();flush();
+ assert.equal(retained.size,0,'closed modal scene must be released');
+ const removed=node();nodes=[removed];window.PsychDeskGarden.scene([],[]);flush();removed.isConnected=false;nodes=[];
+ callback([{target:removed,isIntersecting:false}]);assert.equal(retained.size,0,'a detached observer target must be released');
+});

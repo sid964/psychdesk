@@ -123,17 +123,21 @@ function scene(saved,concepts){
 }
 // Pause decorative motion when off-screen or in a background tab.
 let watcher;
+const observedGardens=new Set();
+function releaseGarden(node){watcher?.unobserve(node);observedGardens.delete(node);}
 function observe(){
  const gardens=document.querySelectorAll('.garden-world');
+ for(const node of observedGardens)if(!node.isConnected)releaseGarden(node);
  if(!watcher&&'IntersectionObserver' in window)watcher=new IntersectionObserver(entries=>{
   for(const entry of entries){
+   if(!entry.target.isConnected){releaseGarden(entry.target);continue;}
    const paused=!entry.isIntersecting;
    entry.target.classList.toggle('garden-motion-paused',paused);
    entry.target.closest('.garden-landing')?.classList.toggle('garden-motion-paused',paused);
   }
  },{rootMargin:'70px'});
  gardens.forEach(node=>{
-  if(!node.dataset.gardenObserved){node.dataset.gardenObserved='1';watcher?.observe(node);}
+  if(watcher&&!observedGardens.has(node)){observedGardens.add(node);watcher.observe(node);}
  });
 }
 function scheduleObservation(){requestAnimationFrame(observe);}
@@ -142,6 +146,7 @@ document.addEventListener('visibilitychange',()=>{
 });
 window.addEventListener('psychdesk:tab-changed',scheduleObservation);
 window.addEventListener('psychdesk:data-replaced',scheduleObservation);
+window.addEventListener('psychdesk:before-modal-close',scheduleObservation);
 /* Ambient lighting follows local time; interaction is optional and never stores data. */
 function updateGardenLight(){
  const hour=new Date().getHours();

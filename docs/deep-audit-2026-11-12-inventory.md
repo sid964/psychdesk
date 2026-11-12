@@ -21,7 +21,7 @@ Baseline: `41934d734aeecf5a30de808e4e57105146b1398d`. 163 tracked files enumerat
 | `automation/data/curated-concepts.json` | Purpose/reference inventory only; semantic review pending |
 | `automation/scripts/validate_concepts.py` | Purpose/reference inventory only; semantic review pending |
 | `autopilot/garden.css` | Purpose/reference inventory only; semantic review pending |
-| `autopilot/garden.js` | Purpose/reference inventory only; semantic review pending |
+| `autopilot/garden.js` | Source/config reviewed |
 | `autopilot/imports.js` | Source/config reviewed |
 | `autopilot/phase2.css` | Purpose/reference inventory only; semantic review pending |
 | `autopilot/preparation.js` | Source/config reviewed |
@@ -31,7 +31,7 @@ Baseline: `41934d734aeecf5a30de808e4e57105146b1398d`. 163 tracked files enumerat
 | `cloud.js` | Source/config reviewed |
 | `design-accessibility.js` | Source/config reviewed |
 | `design-system.css` | Purpose/reference inventory only; semantic review pending |
-| `docs/psychopathology-source-audit.md` | Purpose/reference inventory only; semantic review pending |
+| `docs/psychopathology-source-audit.md` | Source/config reviewed |
 | `drive-indicator.js` | Source/config reviewed |
 | `drive-persistence.js` | Source/config reviewed |
 | `firebase-config.js` | Purpose/reference inventory only; semantic review pending |
@@ -57,7 +57,7 @@ Baseline: `41934d734aeecf5a30de808e4e57105146b1398d`. 163 tracked files enumerat
 | `materials.js` | Source/config reviewed |
 | `motion-lively.css` | Source/config reviewed |
 | `motion-runtime.js` | Source/config reviewed |
-| `motion.css` | Purpose/reference inventory only; semantic review pending |
+| `motion.css` | Source/config reviewed |
 | `motion.js` | Source/config reviewed |
 | `note-history.js` | Source/config reviewed |
 | `pdf-reader.css` | Purpose/reference inventory only; semantic review pending |
@@ -87,9 +87,9 @@ Baseline: `41934d734aeecf5a30de808e4e57105146b1398d`. 163 tracked files enumerat
 | `psychology-knowledge.js` | Source/config reviewed |
 | `psychology-online.css` | Purpose/reference inventory only; semantic review pending |
 | `psychology-online.js` | Source/config reviewed |
-| `psychopathology-course-data.js` | Purpose/reference inventory only; semantic review pending |
+| `psychopathology-course-data.js` | Source/config reviewed; chapter outline compared with original source |
 | `psychopathology-graph.css` | Purpose/reference inventory only; semantic review pending |
-| `psychopathology-graph.js` | Purpose/reference inventory only; semantic review pending |
+| `psychopathology-graph.js` | Source/config reviewed |
 | `quick-note.css` | Purpose/reference inventory only; semantic review pending |
 | `quick-note.js` | Source/config reviewed |
 | `reader-studio.css` | Purpose/reference inventory only; semantic review pending |
