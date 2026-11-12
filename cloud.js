@@ -247,7 +247,26 @@ async function api(url,options={}){
  return json??body;
 }
 const base='https://www.googleapis.com/drive/v3/files';const uploadBase='https://www.googleapis.com/upload/drive/v3/files';
-async function list(name,parent){let clause=`name = '${String(name).replace(/\\/g,'\\\\').replace(/'/g,"\\'")}' and '${parent}' in parents and trashed = false`;let p=new URLSearchParams({q:clause,fields:'nextPageToken,files(id,name,mimeType,modifiedTime)',pageSize:'100'});const response=await api(`${base}?${p.toString()}`);return response.files||[]}
+async function list(name,parent){
+ const clause=`name = '${String(name).replace(/\\/g,'\\\\').replace(/'/g,"\\'")}' and '${parent}' in parents and trashed = false`;
+ const files=[],seenTokens=new Set();
+ let pageToken='';
+ while(true){
+  const params=new URLSearchParams({q:clause,fields:'nextPageToken,incompleteSearch,files(id,name,mimeType,modifiedTime)',pageSize:'100'});
+  if(pageToken)params.set('pageToken',pageToken);
+  const response=await api(`${base}?${params.toString()}`);
+  // A partial/malformed response must never be mistaken for an empty Drive folder.
+  if(!response||typeof response!=='object'||!Array.isArray(response.files)||response.incompleteSearch===true)
+   throw Error('Google Drive returned an incomplete or invalid file listing. No files were changed; retry.');
+  files.push(...response.files);
+  const next=response.nextPageToken;
+  if(next==null||next==='')return files;
+  if(typeof next!=='string'||seenTokens.has(next)||seenTokens.size>=1000)
+   throw Error('Google Drive returned an invalid file listing page token. No files were changed; retry.');
+  seenTokens.add(next);
+  pageToken=next;
+ }
+}
 async function findOrMakeFolder(name,parent){let f=(await list(name,parent)).find(f=>f.mimeType==='application/vnd.google-apps.folder');if(f)return f.id;let d=await api(`${base}?fields=id`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,mimeType:'application/vnd.google-apps.folder',parents:[parent]})});return d.id}
 async function folderId(){return findOrMakeFolder('PsychDesk','root')}
 async function findFile(name,parent){return (await list(name,parent)).find(f=>f.name===name)}
