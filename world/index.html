@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d131a">
+<title>PsychDesk World</title>
+<link rel="stylesheet" href="world.css?v=1">
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}
+</script>
+</head>
+<body>
+<main class="world-shell">
+  <div id="worldCanvas" class="world-canvas" aria-label="Interactive three-dimensional psychology landscape"></div>
+  <header class="world-header">
+    <div class="world-brand"><small>PSYCHDESK · EXPLORE</small><strong>Psychology World</strong></div>
+    <div class="world-header-actions">
+      <button id="ambientToggle" type="button" aria-pressed="false">Ambient mode</button>
+      <button id="worldReset" type="button">Reset view</button>
+      <button id="worldClose" type="button" class="world-close" aria-label="Return to PsychDesk">✕</button>
+    </div>
+  </header>
+  <aside class="world-intro" aria-live="polite">
+    <span class="world-eyebrow">A SMALL PLACE TO THINK</span>
+    <h1>Wander. Discover. Study.</h1>
+    <p>Move through a peaceful world. Every place leads to a real PsychDesk study tool.</p>
+    <p class="world-hint">Drag to orbit · scroll or pinch to zoom · right-drag to pan · W A S D to wander</p>
+  </aside>
+  <div id="worldPins" class="world-pins" aria-label="Places in Psychology World"></div>
+  <div id="worldMessage" class="world-message" role="status"></div>
+  <nav class="world-places" aria-label="Visit a place">
+    <button type="button" data-visit="notes"><span>✎</span> Notebook House</button>
+    <button type="button" data-visit="materials"><span>▤</span> Research Library</button>
+    <button type="button" data-visit="flashcards"><span>◈</span> Memory Garden</button>
+    <button type="button" data-visit="dictionary"><span>ψ</span> Concept Observatory</button>
+    <button type="button" data-visit="focus"><span>◷</span> Quiet Clearing</button>
+  </nav>
+  <p class="world-accessibility">3D navigation is optional. Every destination above also works without 3D graphics.</p>
+</main>
+<script type="module" src="world.js?v=1"></script>
+</body>
+</html>
