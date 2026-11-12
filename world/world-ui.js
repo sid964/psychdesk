@@ -28,6 +28,7 @@ function showDetail(title,body,destination){
  document.getElementById('worldDetailText').textContent=String(body||'');
  detailVisit.hidden=!allowed.has(destination);
  detailVisit.dataset.visit=allowed.has(destination)?destination:'';
+ detailVisit.textContent=destination==='dictionary'?'Open Psychology Dictionary':'Open '+String(title||'study space');
  detail.hidden=false;
  detail.querySelector('#worldDetailClose')?.focus();
 }

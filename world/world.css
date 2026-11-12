@@ -61,3 +61,15 @@ button:disabled{opacity:.55;cursor:not-allowed}
 }
 @media(max-height:540px){.world-intro{top:72px}.world-intro p:not(.world-hint){display:none}.world-intro h1{font-size:27px}.world-places{bottom:27px}.world-accessibility{bottom:5px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+
+/* Exploration keeps the valley visible instead of replacing it with a modal. */
+.world-intro{transition:opacity .3s ease}
+body.world-exploring .world-intro{opacity:.22}
+.world-pin[aria-current="location"]{background:#725b42db;border-color:#f5ddac;box-shadow:0 6px 28px #090f1499}
+#worldTour{border-color:#d9caa18c}
+body.world-exploring #worldTour{background:#64513cc7;border-color:#eed7a4}
+@media(max-width:720px){
+ #worldTour{position:fixed;bottom:91px;right:12px;z-index:5;box-shadow:0 10px 26px #0b171d8a}
+ body.world-exploring .world-intro{opacity:.13}
+}
+@media(prefers-reduced-motion:reduce){.world-intro{transition:none}}

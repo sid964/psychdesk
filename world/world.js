@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { createLandscape } from './landscape.js?v=repair-20261112';
+import { createLandscape } from './landscape.js?v=immersive-20261112';
 import { createPlaces } from './places.js';
 import { createLife } from './life.js';
 
@@ -20,11 +20,12 @@ const message=document.getElementById('worldMessage');
 const ambientButton=document.getElementById('ambientToggle');
 const resetButton=document.getElementById('worldReset');
 const qualityButton=document.getElementById('qualityToggle');
+const tourButton=document.getElementById('worldTour');
 const status=document.getElementById('worldStatus');
 const coarse=matchMedia('(pointer: coarse)').matches;
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const lowMemory=Number(navigator.deviceMemory||8)<4;
-const quality=coarse||lowMemory?'medium':'high';
+let quality=coarse||lowMemory?'medium':'high';
 const night=new Date().getHours()>=19||new Date().getHours()<6;
 const tip=(title,body,destination)=>{
  if(window.PsychDeskWorldUI?.showDetail)window.PsychDeskWorldUI.showDetail(title,body,destination);
@@ -35,6 +36,7 @@ function error(text){
  host.style.display='none';
  if(ambientButton)ambientButton.disabled=true;
  if(qualityButton)qualityButton.disabled=true;
+ if(tourButton)tourButton.disabled=true;
 }
 let renderer;
 try{
@@ -43,6 +45,14 @@ try{
  error('3D rendering is unavailable on this device.');
 }
 if(renderer){
+ // Software WebGL (SwiftShader/llvmpipe) is common in remote desktops and
+ // unsupported GPU setups. Detailed bump shading and thousands of foliage
+ // triangles otherwise make the controls appear frozen.
+ try{
+  const gl=renderer.getContext(),ext=gl.getExtension('WEBGL_debug_renderer_info');
+  const driver=String((ext&&gl.getParameter(ext.UNMASKED_RENDERER_WEBGL))||gl.getParameter(gl.RENDERER)||'');
+  if(/swiftshader|llvmpipe|softpipe|software rasterizer/i.test(driver))quality='low';
+ }catch{}
  const scene=new THREE.Scene();
  const horizon=night?0x71858d:0xc3d2cc;
  scene.background=new THREE.Color(horizon);
@@ -52,8 +62,8 @@ if(renderer){
  camera.lookAt(0,1.5,0);
  renderer.outputColorSpace=THREE.SRGBColorSpace;
  renderer.toneMapping=THREE.ACESFilmicToneMapping;
- renderer.toneMappingExposure=night?1.18:1.26;
- const pixelRatio={high:1.8,medium:1.35,low:1};
+ renderer.toneMappingExposure=night?1.1:1.06;
+ const pixelRatio={high:1.75,medium:1.25,low:.9};
  let tier=quality;
  function applyQuality(){
   renderer.setPixelRatio(Math.min(devicePixelRatio||1,pixelRatio[tier]));
@@ -87,9 +97,9 @@ if(renderer){
   })
  );
  scene.add(sky);
- const skyLight=new THREE.HemisphereLight(night?0x93a8c8:0xf8f1df,night?0x3b5043:0x4d6651,night?2.0:2.8);
+ const skyLight=new THREE.HemisphereLight(night?0x93a8c8:0xf8f1df,night?0x3b5043:0x4d6651,night?1.25:1.65);
  scene.add(skyLight);
- const sun=new THREE.DirectionalLight(night?0xc8c8bc:0xffe2b7,night?1.65:3.0);
+ const sun=new THREE.DirectionalLight(night?0xc8c8bc:0xffe2b7,night?1.2:2.5);
  sun.position.set(-28,48,22);
  sun.castShadow=tier==='high';
  sun.shadow.mapSize.set(1536,1536);
@@ -108,10 +118,62 @@ if(renderer){
  const labels=destinations.map(d=>{
   const button=document.createElement('button');
   button.type='button';button.className='world-pin';
-  button.textContent=d.name;button.dataset.visit=d.id;
+  button.textContent=d.name;button.dataset.look=d.id;
+  button.setAttribute('aria-label','Approach '+d.name);
   pinsHost.appendChild(button);
   return {button,d,at:new THREE.Vector3(d.x,landscape.height(d.x,d.z)+(d.id==='dictionary'?7.7:d.id==='garden'?7:5.3),d.z)};
  });
+ // A guided camera visit is separate from opening a study tool. It keeps the
+ // World useful as a place to explore, with direct tool links always available.
+ const placeStories={
+  notes:'A quiet cottage for writing, returning to notes and finding a thought again.',
+  materials:'The library leads into reading materials and saved research.',
+  garden:'A living landmark for memories and discoveries saved while studying.',
+  recall:'A place to practice recalling what was learned, without rushing.',
+  dictionary:'Explore psychological ideas and the relationships between concepts.',
+  focus:'An open, quiet space that leads to focused study.'
+ };
+ const detail=document.getElementById('worldDetail');
+ let tourIndex=-1,cameraFlight=null;
+ function focusPlace(id){
+  const index=destinations.findIndex(d=>d.id===id);
+  if(index<0)return false;
+  const d=destinations[index];tourIndex=index;
+  const endTarget=new THREE.Vector3(d.x,landscape.height(d.x,d.z)+(id==='dictionary'?3.2:2.2),d.z);
+  const offset=new THREE.Vector3().subVectors(camera.position,controls.target);
+  offset.y=0;
+  if(offset.lengthSq()<.01)offset.set(1,0,1);
+  offset.normalize().multiplyScalar(id==='dictionary'?18:14.5);
+  const endPosition=endTarget.clone().add(offset).add(new THREE.Vector3(0,id==='dictionary'?10:8.2,0));
+  cameraFlight={startCamera:camera.position.clone(),startTarget:controls.target.clone(),endPosition,endTarget,progress:0};
+  if(reduced){
+   camera.position.copy(endPosition);controls.target.copy(endTarget);
+   cameraFlight=null;controls.update();
+  }
+  ambient=false;controls.autoRotate=false;
+  ambientButton.setAttribute('aria-pressed','false');ambientButton.textContent='Ambient mode';
+  labels.forEach(({button, d:location})=>button.setAttribute('aria-current',location.id===id?'location':'false'));
+  document.body.classList.add('world-exploring');
+  tip(d.name,placeStories[id],id);
+  if(tourButton){tourButton.textContent='Next place';tourButton.title='Next: '+destinations[(index+1)%destinations.length].name;}
+  if(status)status.textContent='Living landscape · viewing '+d.name;
+  // Remember the chosen destination even if the study room is opened mid-flight.
+  try{sessionStorage.setItem('psychworld-view-v1',JSON.stringify({camera:endPosition.toArray(),target:endTarget.toArray()}));}catch{}
+  return true;
+ }
+ function resetView(){
+  cameraFlight=null;tourIndex=-1;
+  camera.position.set(34,24,40);controls.target.set(0,1,0);controls.update();
+  labels.forEach(({button})=>button.removeAttribute('aria-current'));
+  document.body.classList.remove('world-exploring');
+  if(detail)detail.hidden=true;
+  if(tourButton){tourButton.textContent='Explore places';tourButton.title='Approach '+destinations[0].name;}
+  if(status)status.textContent='Living landscape · overview';
+  try{sessionStorage.setItem('psychworld-view-v1',JSON.stringify({camera:camera.position.toArray(),target:controls.target.toArray()}));}catch{}
+ }
+ labels.forEach(({button,d})=>button.addEventListener('click',()=>focusPlace(d.id)));
+ tourButton?.addEventListener('click',()=>focusPlace(destinations[(tourIndex+1)%destinations.length].id));
+ window.PsychDeskWorld3D={focusPlace,resetView};
  const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2(),canvas=renderer.domElement;
  const selectable=[...places.interactive,...life.people];
  function pick(event){
@@ -138,19 +200,31 @@ if(renderer){
   'Cognitive dissonance':'When beliefs and actions conflict, people may feel tension and try to reduce the inconsistency.'
  };
  let pointerDown=null;
- canvas.addEventListener('pointerdown',e=>{pointerDown={x:e.clientX,y:e.clientY};});
- canvas.addEventListener('pointermove',e=>{if(e.pointerType!=='touch')canvas.style.cursor=pick(e)?'pointer':'grab';});
+ canvas.addEventListener('pointerdown',e=>{cameraFlight=null;pointerDown={x:e.clientX,y:e.clientY};});
+ canvas.addEventListener('wheel',()=>{cameraFlight=null;},{passive:true});
+ let lastHover=0;
+ canvas.addEventListener('pointermove',e=>{
+  if(e.pointerType==='touch'||e.pointerType==='pen'&&e.buttons)return;
+  // Raycasting the entire scene on every mouse pixel needlessly stalls the GPU.
+  const now=performance.now();if(now-lastHover<70)return;lastHover=now;
+  canvas.style.cursor=pick(e)?'pointer':'grab';
+ });
  canvas.addEventListener('pointercancel',()=>{pointerDown=null;});
  canvas.addEventListener('pointerup',e=>{
   if(!pointerDown||Math.hypot(e.clientX-pointerDown.x,e.clientY-pointerDown.y)>7){pointerDown=null;return;}
   pointerDown=null;const selected=pick(e);if(!selected)return;
-  if(selected.kind==='place')visit(selected.value);
+  if(selected.kind==='place')focusPlace(selected.value);
   if(selected.kind==='concept')tip(selected.value,conceptInfo[selected.value]||'Visit the psychology dictionary to discover more.','dictionary');
   if(selected.kind==='person')tip('A living world',selected.value+'. Take a moment to explore, then open a study location.');
  });
  const keyState=new Set();
  window.addEventListener('keydown',e=>{
-  if(e.altKey||e.ctrlKey||e.metaKey||['INPUT','TEXTAREA','BUTTON'].includes(document.activeElement?.tagName))return;
+  if(e.altKey||e.ctrlKey||e.metaKey||['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName)||document.activeElement?.isContentEditable)return;
+  const number=Number(e.key);
+  if(e.key.length===1&&number>=1&&number<=destinations.length){
+   e.preventDefault();focusPlace(destinations[number-1].id);return;
+  }
+  if(document.activeElement?.tagName==='BUTTON')return;
   keyState.add(e.key.toLowerCase());
  });
  window.addEventListener('keyup',e=>keyState.delete(e.key.toLowerCase()));
@@ -165,9 +239,7 @@ if(renderer){
  qualityButton?.addEventListener('click',()=>{
   tier=tier==='high'?'medium':tier==='medium'?'low':'high';applyQuality();
  });
- resetButton.addEventListener('click',()=>{
-  camera.position.set(34,24,40);controls.target.set(0,1,0);controls.update();
- });
+ resetButton.addEventListener('click',resetView);
  try{
   const saved=JSON.parse(sessionStorage.getItem('psychworld-view-v1')||'null');
   if(saved?.camera?.length===3&&saved?.target?.length===3&&
@@ -184,8 +256,11 @@ if(renderer){
  });
  ro.observe(host);
  const forward=new THREE.Vector3(),right=new THREE.Vector3(),shift=new THREE.Vector3(),projected=new THREE.Vector3();
- let last=performance.now(),elapsed=0;
+ let last=performance.now(),lastPaint=0,elapsed=0;
  function animate(now){
+  const frameInterval=tier==='high'?1000/45:tier==='medium'?1000/30:1000/22;
+  if(now-lastPaint<frameInterval)return;
+  lastPaint=now;
   const delta=Math.min((now-last)/1000,.05);last=now;
   elapsed+=delta;
   forward.subVectors(controls.target,camera.position);forward.y=0;forward.normalize();
@@ -195,11 +270,20 @@ if(renderer){
   if(keyState.has('a')||keyState.has('arrowleft'))shift.sub(right);
   if(keyState.has('d')||keyState.has('arrowright'))shift.add(right);
   if(shift.lengthSq()){
+   cameraFlight=null;
    shift.normalize().multiplyScalar(delta*9);
    const next=controls.target.clone().add(shift);
    if(Math.hypot(next.x,next.z)<48){
     controls.target.add(shift);camera.position.add(shift);
    }
+  }
+  if(cameraFlight){
+   cameraFlight.progress=Math.min(1,cameraFlight.progress+delta*1.35);
+   const p=cameraFlight.progress;
+   const eased=p*p*(3-2*p);
+   camera.position.lerpVectors(cameraFlight.startCamera,cameraFlight.endPosition,eased);
+   controls.target.lerpVectors(cameraFlight.startTarget,cameraFlight.endTarget,eased);
+   if(p===1)cameraFlight=null;
   }
   controls.update();
   if(!reduced){landscape.animate(elapsed,delta);life.animate(elapsed,delta);}
@@ -216,11 +300,11 @@ if(renderer){
  }
  function visibility(){
   if(document.hidden)renderer.setAnimationLoop(null);
-  else{last=performance.now();renderer.setAnimationLoop(animate);}
+  else{last=performance.now();lastPaint=0;renderer.setAnimationLoop(animate);}
  }
  document.addEventListener('visibilitychange',visibility);
  visibility();
- if(status)status.textContent='Living landscape · '+(night?'evening':'daylight')+' · '+(reduced?'reduced motion':'gentle motion');
+ if(status)status.textContent='Living landscape · '+(night?'evening':'daylight')+' · '+tier+' graphics · '+(reduced?'reduced motion':'gentle motion');
  window.addEventListener('pageshow',visibility);
  window.addEventListener('pagehide',event=>{
   renderer.setAnimationLoop(null);

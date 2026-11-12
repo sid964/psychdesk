@@ -15,7 +15,7 @@ function lifecycle(){
   ro:{disconnect:()=>calls.resize++},controls:{dispose:()=>calls.controls++},
   scene:{traverse:fn=>{fn({geometry,material});fn({geometry,material:[material]})}},
   sun:{shadow:{dispose:()=>calls.shadow++}},status:{},night:false,reduced:false,
-  performance:{now:()=>123},last:0,animate});
+  performance:{now:()=>123},last:0,lastPaint:0,tier:'medium',animate});
  return {events,calls,loops,animate,document};
 }
 test('World suspends hidden rendering and resumes on visibility',()=>{
