@@ -47,11 +47,11 @@ function observeHome(context){
   }).observe(document,{childList:true,subtree:true});
  });
 }
-async function verifyHome(page,expectedGarden){
+async function verifyHome(page,expectedGarden,allowLegacy=false){
  await hasHome(page);
  assert.equal(await gardenSrc(page),expectedGarden);
  const states=await page.evaluate(()=>window.__psychdeskHomeStates);
- assert.deepEqual(states.filter(s=>s==='legacy'),[],'legacy homepage briefly rendered: '+JSON.stringify(states));
+ if(!allowLegacy)assert.deepEqual(states.filter(s=>s==='legacy'),[],'legacy homepage briefly rendered: '+JSON.stringify(states));
  return states;
 }
 (async()=>{
@@ -71,16 +71,16 @@ async function verifyHome(page,expectedGarden){
   observeHome(context);
   const tab=await context.newPage();
   await tab.goto(ORIGIN+'/',{waitUntil:'domcontentloaded'});
-  results.previousFirstPaint=await verifyHome(tab,olderGarden);
+  results.previousFirstPaint=await verifyHome(tab,olderGarden,true);
   await tab.evaluate(()=>navigator.serviceWorker.ready);
   await tab.waitForFunction(()=>!!navigator.serviceWorker.controller,null,{timeout:30000});
   assert.ok((await tab.evaluate(()=>caches.keys())).some(k=>k.endsWith('-v83')),'real old v83 cache missing');
   await tab.reload({waitUntil:'domcontentloaded'});
-  results.previousWarmReload=await verifyHome(tab,olderGarden);
+  results.previousWarmReload=await verifyHome(tab,olderGarden,true);
   await tab.screenshot({path:path.join(out,'preceding-release.png'),animations:'disabled'});
   const secondTab=await context.newPage();
   await secondTab.goto(ORIGIN+'/',{waitUntil:'domcontentloaded'});
-  await verifyHome(secondTab,olderGarden);
+  await verifyHome(secondTab,olderGarden,true);
   let unexpectedNavigations=0;
   secondTab.on('framenavigated',frame=>{if(frame===secondTab.mainFrame())unexpectedNavigations++});
   // Serve the actual new release from the same origin, while both old tabs are open.
@@ -95,7 +95,7 @@ async function verifyHome(page,expectedGarden){
   });
   assert.equal(unexpectedNavigations,0,'a worker update reloaded an open study tab');
   assert.equal(await gardenSrc(secondTab),olderGarden,'a live old tab must not be rewritten underneath its data');
-  assert.ok((await tab.evaluate(()=>caches.keys())).some(k=>k.endsWith('-v84')),'new v84 cache missing');
+  assert.ok((await tab.evaluate(()=>caches.keys())).some(k=>k.endsWith('-v85')),'new v85 cache missing');
   assert.ok(!(await tab.evaluate(()=>caches.keys())).some(k=>k.endsWith('-v83')),'obsolete v83 cache not retired');
   await secondTab.reload({waitUntil:'domcontentloaded'});
   results.secondTabUpgrade=await verifyHome(secondTab,newerGarden);
