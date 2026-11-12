@@ -27,3 +27,10 @@ html[data-theme="light"] .garden-home .garden-heading h1 em{color:#655c89!import
 .garden-home .garden-entry{flex-wrap:wrap}
 @media(max-width:720px){.garden-home .studio-study-paths{grid-template-columns:1fr;gap:5px}.garden-home .studio-study-paths button{min-height:53px;padding:10px 12px}.garden-home .garden-landing{padding:20px 16px 12px!important}.garden-home .garden-stories{grid-template-columns:1fr!important}}
 @media(prefers-reduced-motion:reduce){.garden-home .studio-study-paths button{transition:none}}
+
+/* The three destinations are compact text navigation, not another card dashboard. */
+.garden-home .studio-study-paths{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;margin:10px 0 14px;border-bottom:1px solid var(--line)}
+.garden-home .studio-study-paths button{min-height:49px;padding:8px 10px;border:0;border-right:1px solid var(--line);border-radius:0;background:transparent;box-shadow:none}
+.garden-home .studio-study-paths button:last-child{border-right:0}
+.garden-home .studio-study-paths button:hover{background:var(--paper)}
+@media(max-width:720px){.garden-home .studio-study-paths{grid-template-columns:repeat(3,minmax(0,1fr));gap:0}.garden-home .studio-study-paths button{min-height:49px;padding:8px}.garden-home .studio-study-paths button strong{font-size:11px;line-height:1.35}.garden-home .studio-study-paths button small{display:none}}

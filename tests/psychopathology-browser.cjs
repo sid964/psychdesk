@@ -59,6 +59,7 @@ fs.mkdirSync(screenshots,{recursive:true});
   await page.locator('.psychology-subject-card[data-tab="psychopathology"]').click();
   assert.match(await page.locator('.psycourse-progress').textContent(),/1 of 6/);
     // Zoom, reset and navigation return to legacy routes.
+  await page.locator('#psyGraphPanel > summary').click();
   const prior=await page.locator('#psyGraph > g').getAttribute('transform');
   await page.locator('[data-psy-action="zoomIn"]').click();
   assert.notEqual(await page.locator('#psyGraph > g').getAttribute('transform'),prior);
