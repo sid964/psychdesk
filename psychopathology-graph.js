@@ -53,16 +53,17 @@ function html(){
  loadProgress();
  const ready=topics.filter(t=>t.kind==='lesson').length,done=progress.completed.filter(id=>topics.some(t=>t.id===id&&t.kind==='lesson')).length;
  return '<section class="psycourse" id="psyCourse">'+
- '<nav class="psycourse-breadcrumb" aria-label="Psychology subject navigation"><button type="button" data-tab="psychology">← Overall psychology learning</button><span aria-hidden="true">/</span><span>Psychopathology</span></nav><header class="psycourse-heading"><div><div class="eyebrow">OVERALL PSYCHOLOGY · TEXTBOOK SUBJECT</div><h1>Psychopathology</h1><p>Learn in layers. Explore concepts as a connected knowledge graph.</p></div><div class="psycourse-count"><strong>16</strong><span>chapters</span></div></header>'+
+ '<nav class="psycourse-breadcrumb" aria-label="Psychology subject navigation"><button type="button" data-tab="psychology">← Overall psychology learning</button><span aria-hidden="true">/</span><span>Psychopathology</span></nav><header class="psycourse-heading"><div><div class="eyebrow">OVERALL PSYCHOLOGY · TEXTBOOK SUBJECT</div><h1>Psychopathology</h1><p>Choose a lesson, read, check understanding, and continue.</p></div><div class="psycourse-count"><strong>16</strong><span>chapters</span></div></header>'+
  '<div class="psycourse-progress" role="status">'+done+' of '+ready+' introductory lessons completed on this device <span aria-hidden="true">·</span> '+source.edition+'</div>'+
- '<div class="psycourse-layout"><div class="psycourse-map">'+
+ '<section class="psycourse-quickstart" aria-label="Chapter 1 lessons"><div class="psycourse-quickstart-intro"><span class="eyebrow">START HERE</span><h2>Chapter 1 · Historical context</h2><p>Six introductory lessons are ready to study.</p></div><div class="psycourse-lesson-list">'+topics.filter(t=>t.kind==='lesson').map((t,i)=>'<button type="button" class="psycourse-lesson-item" data-psy-node="t-'+t.id+'"><span>'+String(i+1).padStart(2,'0')+'</span><strong>'+safe(t.title)+'</strong><small>'+ (progress.completed.includes(t.id)?'✓ Done':'Read')+'</small></button>').join('')+'</div></section>'+
+ '<div class="psycourse-layout"><details class="psycourse-map" id="psyGraphPanel"><summary>Explore concept connections <small>Optional visual map</small></summary>'+
  '<div class="psycourse-tools"><label class="psycourse-search"><span class="sr-only">Search course concepts</span><input id="psyGraphSearch" type="search" value="'+safe(search)+'" placeholder="Find a concept…" autocomplete="off"></label>'+
  '<select id="psyGraphChapter" aria-label="Filter by chapter"><option value="all">All 16 chapters</option>'+chapters.map(c=>'<option value="'+c.number+'"'+(chapter===String(c.number)?' selected':'')+'>Chapter '+c.number+'</option>').join('')+'</select>'+
  '<button type="button" id="psyGraphMode" aria-pressed="'+(mode==='local'?'true':'false')+'" title="Show selected topic and immediate neighbors">'+(mode==='local'?'Global graph':'Local graph')+'</button></div>'+
  '<div class="psycourse-stage"><svg id="psyGraph" viewBox="0 0 '+W+' '+H+'" aria-label="Interactive concept graph. Drag to pan, scroll to zoom, select nodes to open lessons." role="group"></svg><div class="psycourse-zoom"><button type="button" data-psy-action="zoomIn" aria-label="Zoom in">+</button><button type="button" data-psy-action="zoomOut" aria-label="Zoom out">−</button><button type="button" data-psy-action="fit" aria-label="Reset graph view">Fit</button></div></div>'+
  '<div id="psyGraphResults" class="psycourse-results"></div><p class="psycourse-help">Drag empty space to pan · Scroll or use +/- to zoom · Drag a node to move it · Select a node to read</p></div>'+
- '<aside class="psycourse-detail" id="psyGraphDetail" aria-live="polite"></aside></div>'+
- '<section class="psycourse-outline"><h2>Textbook chapters</h2><div class="psycourse-chapter-list">'+chapters.map(c=>'<button type="button" data-psy-node="'+c.id+'"><span>'+String(c.number).padStart(2,'0')+'</span><span class="psycourse-chapter-title">'+safe(c.title)+'</span><small>p. '+c.startPage+'</small></button>').join('')+'</div></section>'+
+ '</details><article class="psycourse-detail" id="psyGraphDetail" aria-live="polite" aria-label="Selected lesson"></article></div>'+
+ '<details class="psycourse-outline"><summary>All 16 textbook chapters <small>Chapter 1 lessons available; other chapters are outlines</small></summary><div class="psycourse-chapter-list">'+chapters.map(c=>'<button type="button" data-psy-node="'+c.id+'"><span>'+String(c.number).padStart(2,'0')+'</span><span class="psycourse-chapter-title">'+safe(c.title)+'</span><small>p. '+c.startPage+'</small></button>').join('')+'</div></details>'+
  '<p class="psycourse-disclaimer">Academic source: Barlow, Durand & Hofmann, ninth edition (2023). Chapter 1 contains the first authored lessons; other chapters are mapped for future verified content. Lessons are original paraphrases, not a replacement copy of the textbook. Course progress currently stays on this device.</p></section>';
 }
 function textBlock(value){return '<p>'+safe(value)+'</p>';}
@@ -88,7 +89,11 @@ function detail(){
  body+='<div class="psycourse-links"><h3>Connected topics</h3>';
  const adjacent=edges.filter(e=>e.from===n.id||e.to===n.id).map(e=>nodeById.get(e.from===n.id?e.to:e.from)).filter(Boolean);
  body+=(adjacent.length?adjacent.map(a=>'<button type="button" data-psy-node="'+a.id+'">'+safe(a.title)+'</button>').join(''):'<p>No connections are published for this topic yet.</p>')+'</div>';
- target.innerHTML=body;
+ if(t?.kind==='lesson'){
+   const lessons=topics.filter(v=>v.kind==='lesson'),i=lessons.findIndex(v=>v.id===t.id);
+   body+='<nav class="psycourse-reader-nav" aria-label="Lesson navigation">'+(i>0?'<button type="button" data-psy-node="t-'+lessons[i-1].id+'">← Previous lesson</button>':'<span></span>')+(i<lessons.length-1?'<button type="button" data-psy-node="t-'+lessons[i+1].id+'">Next lesson →</button>':'<span>End of available lessons</span>')+'</nav>';
+  }
+  target.innerHTML=body;
  root.querySelectorAll('[data-psy-node]').forEach(b=>b.classList.toggle('is-selected',b.dataset.psyNode===selected));
 }
 function draw(){
@@ -174,7 +179,7 @@ function action(which){
  if(which==='complete'){
   const t=topics.find(x=>'t-'+x.id===selected);if(!t||t.kind!=='lesson')return;
   progress.completed=progress.completed.includes(t.id)?progress.completed.filter(x=>x!==t.id):progress.completed.concat(t.id);
-  if(saveProgress()){const target=root.querySelector('.psycourse-progress');if(target)target.textContent=progress.completed.filter(id=>topics.some(t=>t.id===id&&t.kind==='lesson')).length+' of '+topics.filter(t=>t.kind==='lesson').length+' introductory lessons completed on this device · '+source.edition;detail();}
+  if(saveProgress()){const target=root.querySelector('.psycourse-progress');if(target)target.textContent=progress.completed.filter(id=>topics.some(t=>t.id===id&&t.kind==='lesson')).length+' of '+topics.filter(t=>t.kind==='lesson').length+' introductory lessons completed on this device · '+source.edition;const list=root.querySelector('.psycourse-lesson-list');if(list)list.querySelectorAll('[data-psy-node]').forEach(button=>{const id=button.dataset.psyNode.slice(2);const label=button.querySelector('small');if(label)label.textContent=progress.completed.includes(id)?'✓ Done':'Read';});detail();}
  }
 }
 function onPointerDown(e){
@@ -231,7 +236,7 @@ function mount(){
  svg.addEventListener('pointercancel',onPointerEnd);
  svg.addEventListener('wheel',onWheel,{passive:false});
  svg.addEventListener('keydown',e=>{const n=e.target.closest('[data-psy-id]');if(n&&(e.key==='Enter'||e.key===' ')){e.preventDefault();select(n.dataset.psyId);}});
- detail();draw();animate();
+ detail();draw();const panel=root.querySelector('#psyGraphPanel');panel?.addEventListener('toggle',()=>{if(panel.open)animate();else if(raf){cancelAnimationFrame(raf);raf=0;}});if(panel?.open)animate();
 }
 window.PsychDeskPsychopathology={render:html,mount,chapters:()=>chapters.slice(),topics:()=>topics.slice()};
 })();

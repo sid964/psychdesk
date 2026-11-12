@@ -16,12 +16,12 @@ fs.mkdirSync(screenshots,{recursive:true});
   assert.equal(await page.locator('.study-tool-launcher[data-tab="psychopathology"]').count(),0,'Psychopathology must not be a top-level Explore tool');
   await page.locator('.study-tool-launcher[data-tab="psychology"]').click();
   await page.locator('.psychology-subject-card[data-tab="psychopathology"]').click();
-  await page.waitForSelector('#psyGraph .psycourse-node',{timeout:12000});
+  await page.waitForSelector('#psyGraphDetail');assert.equal(await page.locator('.psycourse-lesson-item').count(),6);await page.locator('#psyGraphPanel > summary').click();await page.waitForSelector('#psyGraph .psycourse-node',{timeout:12000});
   assert.equal(await page.locator('.psycourse-count strong').textContent(),'16');
   assert.ok((await page.locator('#psyGraph .psycourse-node').count())>=24);
   assert.match(await page.locator('#psyGraphDetail').textContent(),/What Is a Psychological Disorder/);
   await page.screenshot({path:path.join(screenshots,'course-desktop.png'),animations:'disabled'});
-  for(const [number,start] of [[1,2],[2,30],[3,72],[4,102],[5,124],[6,180],[7,210],[8,266],[9,318],[10,356],[11,400],[12,444],[13,480],[14,516],[15,548],[16,574]]){
+  await page.locator('.psycourse-outline > summary').click();for(const [number,start] of [[1,2],[2,30],[3,72],[4,102],[5,124],[6,180],[7,210],[8,266],[9,318],[10,356],[11,400],[12,444],[13,480],[14,516],[15,548],[16,574]]){
    await page.locator('.psycourse-chapter-list [data-psy-node="ch'+number+'"]').click();
    assert.ok((await page.locator('#psyGraphDetail').textContent()).includes('Starts on page '+start+'.'),'chapter '+number+' source page');
   }
@@ -59,6 +59,7 @@ fs.mkdirSync(screenshots,{recursive:true});
   await page.locator('.psychology-subject-card[data-tab="psychopathology"]').click();
   assert.match(await page.locator('.psycourse-progress').textContent(),/1 of 6/);
     // Zoom, reset and navigation return to legacy routes.
+  await page.locator('#psyGraphPanel > summary').click();
   const prior=await page.locator('#psyGraph > g').getAttribute('transform');
   await page.locator('[data-psy-action="zoomIn"]').click();
   assert.notEqual(await page.locator('#psyGraph > g').getAttribute('transform'),prior);
@@ -71,7 +72,7 @@ fs.mkdirSync(screenshots,{recursive:true});
   await page.locator('[data-tab="tools"]:visible').first().click();
   await page.locator('.study-tool-launcher[data-tab="psychology"]').click();
   await page.locator('.psychology-subject-card[data-tab="psychopathology"]').click();
-  await page.waitForSelector('#psyGraph .psycourse-node');
+  await page.locator('#psyGraphPanel > summary').click();await page.waitForSelector('#psyGraph .psycourse-node');
   const mobileOverflow=await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth);
   assert.ok(mobileOverflow<=3,'mobile course should not create horizontal page overflow: '+mobileOverflow);
   await page.screenshot({path:path.join(screenshots,'course-mobile.png'),animations:'disabled',fullPage:true});

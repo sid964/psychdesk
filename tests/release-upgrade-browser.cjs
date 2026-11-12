@@ -95,7 +95,7 @@ async function verifyHome(page,expectedGarden,allowLegacy=false){
   });
   assert.equal(unexpectedNavigations,0,'a worker update reloaded an open study tab');
   assert.equal(await gardenSrc(secondTab),olderGarden,'a live old tab must not be rewritten underneath its data');
-  assert.ok((await tab.evaluate(()=>caches.keys())).some(k=>k.endsWith('-v86')),'new v86 cache missing');
+  assert.ok((await tab.evaluate(()=>caches.keys())).some(k=>k.endsWith('-v87')),'new v87 cache missing');
   // Check the actual cache storage, not the truthiness of a polling handle.
   let cacheNames=await tab.evaluate(()=>caches.keys());
   for(let attempt=0;cacheNames.some(k=>k.endsWith('-v83'))&&attempt<15;attempt++){
