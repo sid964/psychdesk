@@ -17,6 +17,7 @@ test('16 chapters appear in the order of the ninth-edition table of contents',()
  assert.match(content.chapters[0].title,/Psychopathology in Historical Context/);
  assert.match(content.chapters[15].title,/Mental Health Services: Legal and Ethical Issues/);
  assert.equal(new Set(content.chapters.map(c=>c.id)).size,16);
+ assert.deepEqual(Array.from(content.chapters.map(c=>c.startPage)),[2,30,72,102,124,180,210,266,318,356,400,444,480,516,548,574]);
 });
 test('first chapter lessons have progressive depth, citation pages and fact-checked quizzes',()=>{
  const {content}=setup();
@@ -52,9 +53,26 @@ test('navigation, assets and cache release include the new course',()=>{
   assert.ok(html.includes(file),'missing HTML asset '+file);
   assert.ok(sw.includes('./'+file),'missing service-worker asset '+file);
  }
- assert.ok(html.includes('data-tab="psychopathology"'));
+ assert.ok(!html.includes('data-tab="psychopathology"'),'subject should not be a standalone sidebar navigation item');
+ assert.ok(app.includes('class="psychology-subject-card"'),'subject card is inside Overall Psychology Learning');
+ assert.ok(app.includes('Psychology subjects'));
+ assert.ok(app.includes('data-tab="psychopathology"'));
+ assert.ok(!app.includes("['psychopathology','◈','Psychopathology course'"),'not a separate Explore launcher');
  assert.ok(app.includes("tab==='psychopathology'"));
  assert.ok(app.includes('PsychDeskPsychopathology?.mount()'));
- assert.ok(html.includes('data-tab="psychology"'),'existing psychology prep preserved');
+ assert.ok(html.includes('data-tab="psychology"'),'existing overall psychology section preserved');
  assert.ok(html.includes('data-tab="mindmap"')||app.includes("tab==='mindmap'"),'personal mind map route preserved');
+ assert.match(read('psychopathology-graph.js'),/← Overall psychology learning/);
+ assert.match(read('world\/world-bridge.js'),/psychopathology/);
+});
+
+test('reattached ninth edition page references and Janelle case are accurately attributed',()=>{
+ const {content}=setup();
+ const expected={definition:'3–5',science:'6–8',supernatural:'8–11',biological:'12–14',psychological:'15–24',integrative:'25–26',dysfunction:'3–4',distress:'4',context:'4–5'};
+ for(const topic of content.topics)assert.equal(topic.page,expected[topic.id],topic.title+' page differs from source');
+ const janelle=content.topics.find(t=>t.id==='definition');
+ assert.equal(janelle.examplePage,'2–3');
+ assert.match(janelle.example,/16-year-old Janelle/);
+ assert.match(janelle.example,/blood-injection-injury phobia/);
+ assert.ok(content.topics.filter(t=>t.question).every(t=>t.correct>=0&&t.correct<t.choices.length));
 });
