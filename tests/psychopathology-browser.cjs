@@ -13,7 +13,9 @@ fs.mkdirSync(screenshots,{recursive:true});
   const page=await browser.newPage({viewport:{width:1280,height:800}});
   await page.goto('http://127.0.0.1:8765/',{waitUntil:'domcontentloaded'});
   await page.locator('[data-tab="tools"]:visible').first().click();
-  await page.locator('[data-tab="psychopathology"]:visible').first().click();
+  assert.equal(await page.locator('.study-tool-launcher[data-tab="psychopathology"]').count(),0,'Psychopathology must not be a top-level Explore tool');
+  await page.locator('.study-tool-launcher[data-tab="psychology"]').click();
+  await page.locator('.psychology-subject-card[data-tab="psychopathology"]').click();
   await page.waitForSelector('#psyGraph .psycourse-node',{timeout:12000});
   assert.equal(await page.locator('.psycourse-count strong').textContent(),'16');
   assert.ok((await page.locator('#psyGraph .psycourse-node').count())>=24);
@@ -46,7 +48,13 @@ fs.mkdirSync(screenshots,{recursive:true});
   await page.locator('[data-psy-action="flashcard"]').click();
   const cards=await page.evaluate(()=>window.PsychDeskCore.getData().cards.filter(c=>c.id==='psycourse-card-definition'));
   assert.equal(cards.length,1);
-  // Zoom, reset and navigation return to legacy routes.
+  // Breadcrumb returns to the parent subject list, without deleting progress.
+  await page.locator('.psycourse-breadcrumb [data-tab="psychology"]').click();
+  await page.waitForSelector('.psychology-subject-card[data-tab="psychopathology"]');
+  assert.equal(await page.locator('#psyCourse').count(),0);
+  await page.locator('.psychology-subject-card[data-tab="psychopathology"]').click();
+  assert.match(await page.locator('.psycourse-progress').textContent(),/1 of 6/);
+    // Zoom, reset and navigation return to legacy routes.
   const prior=await page.locator('#psyGraph > g').getAttribute('transform');
   await page.locator('[data-psy-action="zoomIn"]').click();
   assert.notEqual(await page.locator('#psyGraph > g').getAttribute('transform'),prior);
@@ -57,7 +65,8 @@ fs.mkdirSync(screenshots,{recursive:true});
   // Mobile access via Explore without exposing sideways page overflow.
   await page.setViewportSize({width:390,height:844});
   await page.locator('[data-tab="tools"]:visible').first().click();
-  await page.locator('[data-tab="psychopathology"]:visible').first().click();
+  await page.locator('.study-tool-launcher[data-tab="psychology"]').click();
+  await page.locator('.psychology-subject-card[data-tab="psychopathology"]').click();
   await page.waitForSelector('#psyGraph .psycourse-node');
   const mobileOverflow=await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth);
   assert.ok(mobileOverflow<=3,'mobile course should not create horizontal page overflow: '+mobileOverflow);
