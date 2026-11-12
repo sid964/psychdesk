@@ -35,7 +35,7 @@ test('Browser history is reversible for world-to-recall and all app tab changes'
 test('Main project preserves user data and world is lazy-loaded',()=>{
  const bridge=load('world/world-bridge.js'),html=load('index.html');
  assert.doesNotMatch(bridge,/(?:localStorage|firestore|firebase-sync)/i);
- assert.match(html,/src="world\/world-bridge\.js\?v=repair-20261112"/);
+ assert.match(html,/src="world\/world-bridge\.js\?v=clarity-1"/);
  assert.match(html,/id="settingsBtn"/);
  assert.doesNotMatch(html,/src="world\/world\.js"/);
 });

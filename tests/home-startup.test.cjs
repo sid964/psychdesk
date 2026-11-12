@@ -15,7 +15,7 @@ test('initial home waits for studio and keeps fallback for failed load',()=>{
 test('homepage uses natural copy and retains the interactive garden',()=>{
  const home=read('autopilot/studio.js');
  for(const phrase of ['Your reading','YOUR DESK','YOUR LAST NOTE','Your last workspace'])assert.ok(!home.includes(phrase),phrase);
- assert.match(home,/Welcome <em>back\.<\/em>/);
+ assert.match(home,/Continue <em>studying\.<\/em>/);
  assert.match(home,/RECENTLY ON THE DESK/);
  assert.match(home,/LATEST NOTE/);
  assert.match(home,/Open library/);

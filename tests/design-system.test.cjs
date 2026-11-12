@@ -42,7 +42,7 @@ test('accessible tab announcement does not replace route and settings handlers',
 
 test('new assets are cached with a changed version', () => {
   const sw = read('sw.js');
-  assert.match(sw, /psychdesk-study-world-immersive-v86/);
+  assert.match(sw, /psychdesk-study-course-first-v87/);
   assert.match(sw, /'\.\/design-system\.css'/);
   assert.match(sw, /'\.\/design-accessibility\.js'/);
 });
@@ -54,7 +54,7 @@ test('homepage now puts notebook and concept before the optional next step', () 
   const next = home.indexOf('(window.PsychDeskPhase6?.homeCard?.()||');
   const tools = home.indexOf('class="studio-quiet-tools garden-tool-drawer"');
   assert.ok(garden > -1 && stories > garden && next > stories && tools > next);
-  assert.match(home, /Make room for <em>ideas\.<\/em>/);
+  assert.match(home, /Start <em>studying\.<\/em>/);
   assert.doesNotMatch(home, /class="garden-scene-footer"/);
   assert.match(home, /saved in the garden/);
 });
@@ -96,7 +96,7 @@ test('mobile landing compacts the first screen without removing the living garde
   assert.match(home, /studio-garden-context/);
   assert.match(session, /'Open library'/);
   assert.match(html, /design-system\.css\?v=personal-desk-1/);
-  assert.match(html, /autopilot\/studio\.js\?v=repair-20261112/);
+  assert.match(html, /autopilot\/studio\.js\?v=clarity-1/);
   assert.match(html, /study-session\.js\?v=desk-startup-20261110/);
 });
 
