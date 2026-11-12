@@ -25,7 +25,7 @@ const status=document.getElementById('worldStatus');
 const coarse=matchMedia('(pointer: coarse)').matches;
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const lowMemory=Number(navigator.deviceMemory||8)<4;
-const quality=coarse||lowMemory?'medium':'high';
+let quality=coarse||lowMemory?'medium':'high';
 const night=new Date().getHours()>=19||new Date().getHours()<6;
 const tip=(title,body,destination)=>{
  if(window.PsychDeskWorldUI?.showDetail)window.PsychDeskWorldUI.showDetail(title,body,destination);
@@ -45,6 +45,14 @@ try{
  error('3D rendering is unavailable on this device.');
 }
 if(renderer){
+ // Software WebGL (SwiftShader/llvmpipe) is common in remote desktops and
+ // unsupported GPU setups. Detailed bump shading and thousands of foliage
+ // triangles otherwise make the controls appear frozen.
+ try{
+  const gl=renderer.getContext(),ext=gl.getExtension('WEBGL_debug_renderer_info');
+  const driver=String((ext&&gl.getParameter(ext.UNMASKED_RENDERER_WEBGL))||gl.getParameter(gl.RENDERER)||'');
+  if(/swiftshader|llvmpipe|softpipe|software rasterizer/i.test(driver))quality='low';
+ }catch{}
  const scene=new THREE.Scene();
  const horizon=night?0x71858d:0xc3d2cc;
  scene.background=new THREE.Color(horizon);
@@ -248,8 +256,11 @@ if(renderer){
  });
  ro.observe(host);
  const forward=new THREE.Vector3(),right=new THREE.Vector3(),shift=new THREE.Vector3(),projected=new THREE.Vector3();
- let last=performance.now(),elapsed=0;
+ let last=performance.now(),lastPaint=0,elapsed=0;
  function animate(now){
+  const frameInterval=tier==='high'?1000/45:tier==='medium'?1000/30:1000/22;
+  if(now-lastPaint<frameInterval)return;
+  lastPaint=now;
   const delta=Math.min((now-last)/1000,.05);last=now;
   elapsed+=delta;
   forward.subVectors(controls.target,camera.position);forward.y=0;forward.normalize();
@@ -289,11 +300,11 @@ if(renderer){
  }
  function visibility(){
   if(document.hidden)renderer.setAnimationLoop(null);
-  else{last=performance.now();renderer.setAnimationLoop(animate);}
+  else{last=performance.now();lastPaint=0;renderer.setAnimationLoop(animate);}
  }
  document.addEventListener('visibilitychange',visibility);
  visibility();
- if(status)status.textContent='Living landscape · '+(night?'evening':'daylight')+' · '+(reduced?'reduced motion':'gentle motion');
+ if(status)status.textContent='Living landscape · '+(night?'evening':'daylight')+' · '+tier+' graphics · '+(reduced?'reduced motion':'gentle motion');
  window.addEventListener('pageshow',visibility);
  window.addEventListener('pagehide',event=>{
   renderer.setAnimationLoop(null);
