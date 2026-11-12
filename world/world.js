@@ -11,33 +11,13 @@ const destinations=[
  {id:'dictionary',name:'Concept Observatory',x:-10,z:-8,color:0xada4ca,kind:'tower'},
  {id:'focus',name:'Quiet Clearing',x:10,z:9,color:0xb5a997,kind:'clearing'}
 ];
-const allowed=new Set(destinations.map(p=>p.id));
 const canvasHost=document.getElementById('worldCanvas');
 const pinsHost=document.getElementById('worldPins');
 const message=document.getElementById('worldMessage');
 const ambientButton=document.getElementById('ambientToggle');
 const motionReduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const coarse=window.matchMedia('(pointer: coarse)').matches;
-const tabFromTarget=target=>target?.closest?.('[data-visit]')?.dataset.visit;
-function visit(tab){
- if(!allowed.has(tab))return;
- if(window.parent!==window){
-  window.parent.postMessage({type:'psychworld:visit',tab},location.origin);
- }else{
-  location.href='../index.html';
- }
-}
-document.addEventListener('click',event=>{const tab=tabFromTarget(event.target);if(tab)visit(tab);});
-document.getElementById('worldClose').addEventListener('click',()=>{
- if(window.parent!==window)window.parent.postMessage({type:'psychworld:close'},location.origin);
- else location.href='../index.html';
-});
-document.addEventListener('keydown',e=>{
- if(e.key==='Escape'){
-  if(window.parent!==window)window.parent.postMessage({type:'psychworld:close'},location.origin);
-  else location.href='../index.html';
- }
-});
+const visit=tab=>window.PsychDeskWorldUI?.visit?.(tab);
 function fail(text){
  message.textContent=text+' You can still use the study destinations below.';
  canvasHost.style.display='none';
