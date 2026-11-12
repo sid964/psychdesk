@@ -120,42 +120,142 @@ export function createLandscape(THREE,scene,destinations,{coarse=false,reduced=f
   new THREE.RingGeometry(1,1.035,96),new THREE.MeshBasicMaterial({color:0xc4c4a3,transparent:true,opacity:.34,side:THREE.DoubleSide}));
  waterEdge.rotation.x=-Math.PI/2;waterEdge.scale.set(pond.rx,pond.rz,1);
  waterEdge.position.set(pond.x,-.31,pond.z);scene.add(waterEdge);
- // Tree crowns are smooth, overlapping foliage masses; no cone-tree silhouettes.
- const canopyGeom=new THREE.SphereGeometry(1,10,8);
- const canopyMats=[
-  new THREE.MeshStandardMaterial({color:night?0x607c65:0x718c63,roughness:1}),
-  new THREE.MeshStandardMaterial({color:night?0x567768:0x829b75,roughness:1}),
-  new THREE.MeshStandardMaterial({color:night?0x668579:0x5e846a,roughness:1}),
-  new THREE.MeshStandardMaterial({color:night?0x7b8b67:0x9eab81,roughness:1})
- ];
- const treeCenters=[];
- const treeCount=coarse?74:152;
- for(let i=0;i<treeCount*4&&treeCenters.length<treeCount;i++){
-  const a=rand(i*7+3)*Math.PI*2,r=12+Math.sqrt(rand(i*11+12))*49;
-  const x=Math.sin(a)*r,z=Math.cos(a)*r;
-  if(distanceToPath(x,z)<2.4||destinations.some(p=>Math.hypot(x-p.x,z-p.z)<5)||Math.hypot((x-pond.x)/pond.rx,(z-pond.z)/pond.rz)<1.22)continue;
-  treeCenters.push({x,z,h:3.2+rand(i*9+4)*4.8,kind:i%8,seed:i});
+ // Botanical cards break up spherical tree silhouettes into individual leaves.
+ // All foliage is generated locally from alpha textures: no external assets.
+ function foliageTexture(needle=false){
+  const canvas=document.createElement('canvas');canvas.width=canvas.height=384;
+  const ctx=canvas.getContext('2d');if(!ctx)return null;
+  ctx.clearRect(0,0,384,384);
+  const random=i=>rand(i*19+(needle?39:17));
+  // Internal fine twigs and leaf veins give the crowns depth at close zoom.
+  for(let i=0;i<29;i++){
+   const x=34+random(i*2)*316,y=42+random(i*2+1)*290;
+   ctx.strokeStyle=needle?'#314b3299':'#534f3499';ctx.lineWidth=1.0+(i%3)*.55;
+   ctx.beginPath();ctx.moveTo(x,y);ctx.quadraticCurveTo(192,192,192+(x-192)*.12,210);ctx.stroke();
+  }
+  for(let i=0;i<(needle?330:230);i++){
+   const x=35+random(i*5+31)*312,y=26+random(i*5+32)*332;
+   const a=random(i*5+33)*6.28,sz=needle?3+random(i*5+34)*8:6+random(i*5+34)*15;
+   const light=random(i*5+35);
+   ctx.save();ctx.translate(x,y);ctx.rotate(a);
+   if(needle){
+    ctx.fillStyle=light<.3?'#344e3baa':light<.65?'#567553dd':'#8ba478e8';
+    ctx.beginPath();ctx.moveTo(-sz,0);ctx.quadraticCurveTo(0,-1.5,sz*1.7,-sz*.24);
+    ctx.quadraticCurveTo(0,1.1,-sz,0);ctx.fill();
+   }else{
+    ctx.fillStyle=light<.25?'#355c3eea':light<.5?'#517b4cdd':light<.78?'#709460e8':'#99ad77df';
+    ctx.beginPath();ctx.moveTo(-sz*.9,0);
+    ctx.quadraticCurveTo(0,-sz*.66,sz,0);
+    ctx.quadraticCurveTo(0,sz*.46,-sz*.9,0);ctx.fill();
+    if(i%5===0){
+     ctx.strokeStyle='#c6c79a66';ctx.lineWidth=.75;
+     ctx.beginPath();ctx.moveTo(-sz*.6,0);ctx.lineTo(sz*.65,0);ctx.stroke();
+    }
+   }
+   ctx.restore();
+  }
+  const tex=new THREE.CanvasTexture(canvas);tex.colorSpace=THREE.SRGBColorSpace;
+  tex.anisotropy=coarse?1:4;return tex;
  }
- const trunkGeometry=new THREE.CylinderGeometry(.12,.21,1,8,1);
+ const leafTexture=foliageTexture(false),pineTexture=foliageTexture(true);
+ const leafMaterial=new THREE.MeshStandardMaterial({
+  color:0xffffff,map:leafTexture,side:THREE.DoubleSide,alphaTest:.2,
+  transparent:false,roughness:1,metalness:0,depthWrite:true
+ });
+ const needleMaterial=new THREE.MeshStandardMaterial({
+  color:0xffffff,map:pineTexture,side:THREE.DoubleSide,alphaTest:.23,
+  transparent:false,roughness:1,metalness:0,depthWrite:true
+ });
+ const canopyGeom=new THREE.SphereGeometry(1,14,10);
+ const crownPositions=canopyGeom.attributes.position;
+ for(let i=0;i<crownPositions.count;i++){
+  const x=crownPositions.getX(i),y=crownPositions.getY(i),z=crownPositions.getZ(i);
+  const irregular=1+.12*Math.sin(x*11+y*7)+.10*Math.cos(z*13+x*5);
+  crownPositions.setXYZ(i,x*irregular,y*(1+.08*Math.sin(z*9+x*3)),z*irregular);
+ }
+ canopyGeom.computeVertexNormals();
+ const canopyMats=[
+  new THREE.MeshStandardMaterial({color:night?0x3f5b47:0x466b4d,roughness:1}),
+  new THREE.MeshStandardMaterial({color:night?0x496958:0x5d8258,roughness:1}),
+  new THREE.MeshStandardMaterial({color:night?0x57705a:0x648f67,roughness:1}),
+  new THREE.MeshStandardMaterial({color:night?0x68775e:0x7d9a6b,roughness:1})
+ ];
+ // Bark is subtly striated instead of flat-shaded brown.
+ const barkCanvas=document.createElement('canvas');barkCanvas.width=128;barkCanvas.height=512;
+ const bark=barkCanvas.getContext('2d');
+ if(bark){
+  bark.fillStyle='#9e8267';bark.fillRect(0,0,128,512);
+  for(let i=0;i<750;i++){
+   const x=rand(i*13+9)*128,y=rand(i*31+6)*512,dy=6+rand(i*17)*47;
+   bark.strokeStyle=i%4===0?'#dbc1a62c':'#3e322835';bark.lineWidth=.6+rand(i*7)*2.3;
+   bark.beginPath();bark.moveTo(x,y);bark.quadraticCurveTo(x+4*Math.sin(y*.02),y+dy*.45,x+2,y+dy);bark.stroke();
+  }
+  const tex=new THREE.CanvasTexture(barkCanvas);tex.colorSpace=THREE.SRGBColorSpace;
+  tex.wrapS=tex.wrapT=THREE.RepeatWrapping;tex.repeat.set(1,3);
+  mats.bark.map=tex;mats.bark.needsUpdate=true;
+ }
+ const treeCenters=[];
+ const treeCount=coarse?72:145;
+ for(let i=0;i<treeCount*4&&treeCenters.length<treeCount;i++){
+  const a=rand(i*7+3)*Math.PI*2,r=11+Math.sqrt(rand(i*11+12))*49;
+  const x=Math.sin(a)*r,z=Math.cos(a)*r;
+  if(distanceToPath(x,z)<2.4||destinations.some(p=>Math.hypot(x-p.x,z-p.z)<5)||Math.hypot((x-pond.x)/pond.rx,(z-pond.z)/pond.rz)<1.24)continue;
+  treeCenters.push({x,z,h:3.5+rand(i*9+4)*5.3,kind:i%8,seed:i});
+ }
+ const trunkGeometry=new THREE.CylinderGeometry(.115,.22,1,10,1);
  const trunks=new THREE.InstancedMesh(trunkGeometry,mats.bark,treeCenters.length);
- const canopy=[0,1,2,3].map(k=>new THREE.InstancedMesh(canopyGeom,canopyMats[k],treeCenters.length*3));
+ const canopy=[0,1,2,3].map(i=>new THREE.InstancedMesh(canopyGeom,canopyMats[i],treeCenters.length*3));
+ const twigGeom=new THREE.CylinderGeometry(.045,.068,1,7);
+ const twigs=new THREE.InstancedMesh(twigGeom,mats.bark,treeCenters.length*3);
+ const leafCardMesh=new THREE.InstancedMesh(new THREE.PlaneGeometry(1,1),leafMaterial,treeCenters.length*12);
+ const pineCardMesh=new THREE.InstancedMesh(new THREE.PlaneGeometry(1,1),needleMaterial,treeCenters.length*12);
  const dummy=new THREE.Object3D(),canopyIndex=[0,0,0,0];
+ let twigCount=0,leafCount=0,pineCount=0;
+ const up=new THREE.Vector3(0,1,0);
  treeCenters.forEach((tree,i)=>{
-  const y=height(tree.x,tree.z),t=tree.h;
-  dummy.position.set(tree.x,y+t*.35,tree.z);dummy.scale.set(t*.23,t*.70,t*.23);
-  dummy.rotation.set(0,rand(i*13)*Math.PI*2,0);dummy.updateMatrix();trunks.setMatrixAt(i,dummy.matrix);
-  for(let j=0;j<3;j++){
-   const type=(i+j)%4,angle=j*Math.PI*2/3+rand(i*3)*2;
-   const size=t*(.29+rand(i*13+j)*.07);
-   dummy.position.set(tree.x+Math.cos(angle)*t*.14,y+t*(.67+.08*(j%2)),tree.z+Math.sin(angle)*t*.14);
-   dummy.scale.set(size,size*(.82+rand(j+i)*.2),size*.92);
-   dummy.rotation.set(.08*Math.sin(angle),0,.08*Math.cos(angle));
-   dummy.updateMatrix();canopy[type].setMatrixAt(canopyIndex[type]++,dummy.matrix);
+  const y=height(tree.x,tree.z),t=tree.h,pine=i%6===0;
+  dummy.position.set(tree.x,y+t*(pine?.45:.36),tree.z);
+  dummy.scale.set(t*.035,t*(pine?.9:.72),t*.035);
+  dummy.rotation.set(0,rand(i*13)*Math.PI*2,0);
+  dummy.updateMatrix();trunks.setMatrixAt(i,dummy.matrix);
+  if(!pine){
+   for(let j=0;j<3;j++){
+    const type=(i+j)%4,angle=j*Math.PI*2/3+rand(i*3)*2;
+    const size=t*(.19+rand(i*13+j)*.055);
+    dummy.position.set(tree.x+Math.cos(angle)*t*.19,y+t*(.66+.075*(j%2)),tree.z+Math.sin(angle)*t*.19);
+    dummy.scale.set(size,size*(.81+rand(j+i)*.13),size*.88);
+    dummy.rotation.set(.09*Math.sin(angle),0,.09*Math.cos(angle));
+    dummy.updateMatrix();canopy[type].setMatrixAt(canopyIndex[type]++,dummy.matrix);
+   }
+   for(let j=0;j<3;j++){
+    const a=j*2.095+rand(i*4)*1.8;
+    const start=new THREE.Vector3(tree.x,y+t*.49,tree.z);
+    const target=new THREE.Vector3(tree.x+Math.cos(a)*t*.22,y+t*(.65+j*.04),tree.z+Math.sin(a)*t*.22);
+    const dir=new THREE.Vector3().subVectors(target,start);
+    dummy.position.copy(start).add(target).multiplyScalar(.5);
+    dummy.scale.set(t*.12,dir.length(),t*.12);
+    dummy.quaternion.setFromUnitVectors(up,dir.normalize());dummy.updateMatrix();
+    twigs.setMatrixAt(twigCount++,dummy.matrix);
+   }
+  }
+  for(let j=0;j<(pine?12:10);j++){
+   const a=j*2.4+rand(i*31+4)*1.6,ratio=pine?j/12:.42+rand(i*17+j*11)*.42;
+   const tierHeight=pine?t*(.32+ratio*.65):t*(.56+ratio*.35);
+   const width=pine?t*(.16+.11*(1-ratio)):t*(.36+rand(i+j*13)*.15);
+   const radius=pine?t*(1-ratio)*.18:t*.24;
+   dummy.position.set(tree.x+Math.cos(a)*radius,y+tierHeight,tree.z+Math.sin(a)*radius);
+   dummy.scale.set(width*2.2,pine?t*.37:t*.58,1);
+   dummy.rotation.set((rand(i*j+5)-.5)*.28,a+(j%2)*Math.PI*.5,(rand(i*j+7)-.5)*.28);
+   dummy.updateMatrix();
+   if(pine)pineCardMesh.setMatrixAt(pineCount++,dummy.matrix);
+   else leafCardMesh.setMatrixAt(leafCount++,dummy.matrix);
   }
  });
- trunks.instanceMatrix.needsUpdate=true;trunks.castShadow=!coarse;
- scene.add(trunks);
+ trunks.instanceMatrix.needsUpdate=true;trunks.castShadow=!coarse;scene.add(trunks);
  canopy.forEach((mesh,i)=>{mesh.count=canopyIndex[i];mesh.instanceMatrix.needsUpdate=true;mesh.castShadow=!coarse;scene.add(mesh);});
+ twigs.count=twigCount;twigs.instanceMatrix.needsUpdate=true;scene.add(twigs);
+ leafCardMesh.count=leafCount;leafCardMesh.instanceMatrix.needsUpdate=true;leafCardMesh.castShadow=!coarse;scene.add(leafCardMesh);
+ pineCardMesh.count=pineCount;pineCardMesh.instanceMatrix.needsUpdate=true;pineCardMesh.castShadow=!coarse;scene.add(pineCardMesh);
  // Grass silhouettes and meadow flowers use instancing, not thousands of draw calls.
  const bladeGeo=new THREE.BufferGeometry();
  bladeGeo.setAttribute('position',new THREE.Float32BufferAttribute([
