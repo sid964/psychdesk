@@ -117,7 +117,7 @@ function draw(){
 }
 function select(id){
  if(!nodeById.has(id))return;
- selected=id;if(nodeById.get(id).type==='topic'){progress.last=id;saveProgress();}
+ selected=id;if(nodeById.get(id).type==='topic'){progress.last=id;saveProgress();}if(mode==='local'){const p=position(nodeById.get(id));transform={x:W/2-p.x,y:H/2-p.y,z:1};}
  if(chapter!=='all'){const n=nodeById.get(id);if(n.type==='course'||(n.chapter&&String(n.chapter)!==chapter))chapter='all';}
  if(root){const box=root.querySelector('#psyGraphChapter');if(box)box.value=chapter;detail();draw();}
 }
@@ -199,7 +199,9 @@ function onPointerMove(e){
 function onPointerEnd(e){
  if(!pointer||e.pointerId!==pointer.id)return;
  const p=pointer;pointer=null;
+ if(p.node)position(nodeById.get(p.node)).pinned=false;
  if(e.type!=='pointercancel'&&p.node&&!p.moved)select(p.node);
+ if(p.moved)animate();
 }
 function onWheel(e){
  e.preventDefault();
@@ -221,7 +223,7 @@ function mount(){
   }
  });
  root.querySelector('#psyGraphChapter').addEventListener('change',e=>{chapter=e.target.value;mode='global';root.querySelector('#psyGraphMode').textContent='Local graph';root.querySelector('#psyGraphMode').setAttribute('aria-pressed','false');draw();});
- root.querySelector('#psyGraphMode').addEventListener('click',e=>{mode=mode==='global'?'local':'global';e.target.textContent=mode==='local'?'Global graph':'Local graph';e.target.setAttribute('aria-pressed',mode==='local'?'true':'false');draw();});
+ root.querySelector('#psyGraphMode').addEventListener('click',e=>{mode=mode==='global'?'local':'global';e.target.textContent=mode==='local'?'Global graph':'Local graph';e.target.setAttribute('aria-pressed',mode==='local'?'true':'false');if(mode==='local'){const p=position(nodeById.get(selected));transform={x:W/2-p.x,y:H/2-p.y,z:1};}else transform={x:0,y:0,z:1};draw();});
  root.querySelector('#psyGraphSearch').addEventListener('input',e=>{search=e.target.value.slice(0,100);draw();});
  svg.addEventListener('pointerdown',onPointerDown);
  svg.addEventListener('pointermove',onPointerMove);
