@@ -22,6 +22,8 @@ const path=require('node:path');
   if(!hasCanvas){
    throw new Error('Natural 3D scene failed to initialize: '+(await world.locator('#worldMessage').textContent()));
   }
+  await page.waitForFunction(()=>document.querySelector('#psychWorldOverlay iframe')?.contentDocument?.getElementById('worldStatus')?.textContent?.startsWith('Living landscape'),{timeout:15000});
+  assert.equal(await world.locator('#worldMessage').textContent(),'','3D scene reported a rendering error');
   const dir=path.join(process.cwd(),'browser-audit-artifacts','world');
   fs.mkdirSync(dir,{recursive:true});
   await page.waitForTimeout(1800);
