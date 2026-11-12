@@ -11,6 +11,7 @@ on:
       - 'reference-manager.js'
       - 'autopilot/**'
       - 'tests/repair-browser.cjs'
+      - 'tests/release-upgrade-browser.cjs'
       - 'world/**'
       - 'psychopathology-*'
       - 'tests/world-*.cjs'
@@ -28,6 +29,7 @@ on:
       - 'reference-manager.js'
       - 'autopilot/**'
       - 'tests/repair-browser.cjs'
+      - 'tests/release-upgrade-browser.cjs'
       - 'world/**'
       - 'psychopathology-*'
       - 'tests/world-*.cjs'
@@ -61,6 +63,13 @@ jobs:
           done
       - name: Responsive study persistence and offline routing smoke
         run: node tests/repair-browser.cjs
+      - name: Prepare the preceding published release (read-only archive)
+        run: |
+          git fetch --no-tags --depth=1 origin 1fe8a2df41097d3b541e487d99bb4bd7e714e9cc
+          mkdir -p /tmp/psychdesk-preceding
+          git archive 1fe8a2df41097d3b541e487d99bb4bd7e714e9cc | tar -x -C /tmp/psychdesk-preceding
+      - name: Old-cache upgrade, multi-tab and offline smoke
+        run: node tests/release-upgrade-browser.cjs
       - name: World Back/Forward navigation smoke
         run: node tests/world-navigation-browser.cjs
       - name: Psychopathology graph interaction smoke

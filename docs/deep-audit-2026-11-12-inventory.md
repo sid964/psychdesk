@@ -186,3 +186,27 @@ Every local `src`/`href` in both HTML entrypoints is now checked against existin
 ## Pending review
 
 Files marked inventory-only remain pending, including academic module semantics, remaining phase modules, CSS cascade and older browser scripts. Note/Drive, references, ink and sticky modules have since received a second source pass; real account/hardware behavior is still unverified. Existing tests were executed, but their entire logic has not been reviewed.
+
+## Continuation inventory reconciliation — 12 November 2026, PR #75
+
+At current main `3ffea02b1de15b80b9df9364f2e48b625758ffef`, GitHub's recursive tree lists 175 tracked files; 12 are not represented in the original 163-file baseline table. PR #75 adds one test file, bringing the branch tree to **176 tracked files**. Original baseline: **74 fully reviewed**, four partially reviewed, 83 inventory/purpose only and two binary presence/reference checks. The table below explicitly accounts for all 13 additions relative to the old baseline. "Source reviewed" means the file was read, not that all behaviors inside it were exercised in a real browser.
+
+| Additional file (not in original 163-file list) | Continuation inspection |
+| --- | --- |
+| `docs/deep-audit-2026-11-12.md` | Complete document read, updated checkpoint |
+| `docs/deep-audit-2026-11-12-inventory.md` | Complete document read, updated inventory |
+| `tests/autopilot-queue.test.cjs` | Present, complete semantic review pending |
+| `tests/landscape-benchmark.mjs` | Present, complete semantic review pending |
+| `tests/motion-lifecycle.test.cjs` | Present, complete semantic review pending |
+| `tests/reference-lifecycle.test.cjs` | Present, complete semantic review pending |
+| `tests/repair-browser.cjs` | Source reviewed in this continuation; Chromium CI passed |
+| `tests/service-worker-routing.test.cjs` | Source reviewed in this continuation; unit checks passed |
+| `tests/tour-world.test.cjs` | Present, complete semantic review pending |
+| `tests/world-history.test.cjs` | Present, complete semantic review pending |
+| `tests/world-lifecycle.test.cjs` | Present, complete semantic review pending |
+| `tests/world-ui.test.cjs` | Present, complete semantic review pending |
+| `tests/release-upgrade-browser.cjs` | Newly added, source reviewed and passed in browser CI |
+
+**Verified review accounting for the branch: 79 / 176 tracked files fully reviewed; 97 not fully reviewed.** This is a recorded-source-review count only. Existing fully reviewed source files modified here (`cloud.js`, `study-studio.js`, `index.html`, `sw.js`, two already-reviewed unit tests and browser workflow) do not add to the baseline numerator again. `tests/persistence.test.mjs` remains only partly reviewed; the newly added Drive test sections were read and executed but the entire file has not received an independent full semantic pass. No cleanup candidate is proven safe, and no file has been deleted.
+
+The new historical-upgrade test verifies a prior real release from a read-only `git archive` and a controlled local server. It is not a substitute for personal Google OAuth, long-term Drive permission, physical hardware, or second-engine testing. The manual browser visual audit remains available separately.
