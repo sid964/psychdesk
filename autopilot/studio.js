@@ -70,7 +70,7 @@ function renderHome(){
   resume?.tab==='notes'?'Continue <em>writing.</em>':
   resume?.tab==='materials'?'Back to <em>reading.</em>':
   resume?.tab==='focus'?'A little <em>focus.</em>':
-  hasHistory?'Welcome <em>back.</em>':'Make room for <em>ideas.</em>';
+  hasHistory?'Continue <em>studying.</em>':'Start <em>studying.</em>';
  const shortTitle=value=>{const title=String(value||'Untitled').trim();return title.length>48?title.slice(0,46)+'…':title;};
  const introduction=resume?.tab==='reader'
   ?'Page '+resume.page+' in <strong>'+h(shortTitle(resume.title))+'</strong>.'
@@ -91,6 +91,7 @@ function renderHome(){
  '<div class="garden-art-wrap">'+scene+'</div>'+
 
  '</section>'+
+ '<nav class="studio-study-paths" aria-label="Study destinations"><button type="button" data-tab="psychology"><strong>Psychology subjects</strong><small>Courses and lessons</small></button><button type="button" data-tab="materials"><strong>Reading library</strong><small>Books and documents</small></button><button type="button" data-tab="recall"><strong>Flashcards</strong><small>Remember and revise</small></button></nav>'+
  '<div class="garden-path-marker studio-garden-context"><span aria-hidden="true"></span>'+gardenStatusMarkup()+'<span aria-hidden="true"></span></div>'+
  '<section class="desk-shelf" aria-label="Recent notes and psychology ideas"><div class="desk-shelf-heading"><span class="studio-kicker">RECENTLY ON THE DESK</span><button type="button" class="garden-text-btn" data-tab="materials">Open library ↗</button></div><div class="garden-stories">'+
  '<section class="garden-notebook" aria-label="Latest note or workspace"><div class="garden-book-icon" aria-hidden="true"><span>✧</span></div>'+notebookCard+'</section>'+ 

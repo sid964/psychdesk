@@ -36,12 +36,12 @@ function push(view){
  catch(error){console.warn('PsychDesk history push:',error);}
 }
 function attachLaunch(){
- const host=main.querySelector('.garden-art-wrap');
+ const host=main.querySelector('.garden-entry');
  if(!host||host.querySelector('#psychWorldLaunch'))return;
  const btn=document.createElement('button');
  btn.id='psychWorldLaunch';btn.type='button';
  btn.className='garden-soft-btn psychworld-launch';
- btn.textContent='Explore 3D World';
+ btn.textContent='Enter 3D world';
  btn.setAttribute('aria-haspopup','dialog');
  btn.addEventListener('click',()=>openWorld());
  host.append(btn);

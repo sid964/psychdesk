@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#21333d">
 <meta name="description" content="Explore a peaceful living landscape within PsychDesk, with a notebook cottage, memory garden, research library and other study destinations.">
 <title>PsychDesk — Living World</title>
-<link rel="stylesheet" href="world.css?v=immersive-20261112">
+<link rel="stylesheet" href="world.css?v=clarity-1">
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}
 </script>
@@ -17,17 +17,19 @@
   <header class="world-header">
     <div class="world-brand"><small>PSYCHDESK / LIVING WORLD</small><strong>A place to think</strong></div>
     <div class="world-header-actions">
-      <button id="ambientToggle" type="button" aria-pressed="false">Ambient mode</button>
-      <button id="qualityToggle" type="button">Quality: Auto</button>
-      <button id="worldTour" type="button" aria-label="Focus on the next study destination">Explore places</button>
-      <button id="worldReset" type="button">Reset camera</button>
+      <details class="world-scene-options"><summary>Scene options</summary><div class="world-scene-menu">
+        <button id="ambientToggle" type="button" aria-pressed="false">Ambient mode</button>
+        <button id="qualityToggle" type="button">Quality: Auto</button>
+        <button id="worldReset" type="button">Reset camera</button>
+      </div></details>
+      <button id="worldTour" type="button" aria-label="Focus on the next study destination">Explore</button>
       <button id="worldClose" type="button" class="world-close" aria-label="Return to PsychDesk">✕</button>
     </div>
   </header>
   <aside class="world-intro" aria-live="polite">
     <span class="world-eyebrow">A LITTLE WORLD FOR LEARNING</span>
-    <h1>Room to think.</h1>
-    <p>A quiet valley with paths to knowledge. Wander, watch the world breathe, or find a place to study.</p>
+    <h1>Explore and study.</h1>
+    <p>Choose a place to open notes, books, flashcards or focus. Or just explore the landscape.</p>
     <p class="world-hint">Drag to orbit · scroll or pinch to zoom · select a place to approach · W A S D to wander · 1–6 for landmarks</p>
   </aside>
   <div id="worldPins" class="world-pins" aria-label="Places to explore"></div>

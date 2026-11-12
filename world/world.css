@@ -73,3 +73,12 @@ body.world-exploring #worldTour{background:#64513cc7;border-color:#eed7a4}
  body.world-exploring .world-intro{opacity:.13}
 }
 @media(prefers-reduced-motion:reduce){.world-intro{transition:none}}
+
+/* Secondary scene controls stay available without crowding the landscape. */
+.world-scene-options{position:relative;pointer-events:auto}
+.world-scene-options>summary{min-height:40px;display:flex;align-items:center;cursor:pointer;color:#f4f1e9;border:1px solid #f2e8d455;background:#1b2833a3;border-radius:50px;padding:9px 13px;font-size:11px;font-weight:620;list-style:none;backdrop-filter:blur(14px)}
+.world-scene-options>summary::-webkit-details-marker{display:none}
+.world-scene-options>summary:focus-visible{outline:2px solid #f8dfb2;outline-offset:3px}
+.world-scene-menu{position:absolute;top:calc(100% + 8px);right:0;display:grid;gap:6px;min-width:170px;padding:9px;background:#14242eea;border:1px solid #f2e8d455;border-radius:15px;box-shadow:0 15px 35px #0006;backdrop-filter:blur(18px)}
+.world-scene-menu button{white-space:nowrap;text-align:left;box-shadow:none}
+@media(max-width:720px){.world-scene-options>summary{min-height:34px;padding:7px 8px;font-size:10px}.world-scene-menu{min-width:152px;z-index:8}.world-intro{max-width:184px}}
