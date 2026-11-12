@@ -43,10 +43,13 @@ jobs:
           python3 -m http.server 8765 --bind 127.0.0.1 >/tmp/psychdesk-web.log 2>&1 &
           for n in $(seq 1 30); do curl -fsS http://127.0.0.1:8765/index.html >/dev/null && break; sleep 1; done
       - name: Verify psychology world contracts
-        run: node --test tests/world-contract.test.cjs
+        run: node --test tests/world-contract.test.cjs tests/world-natural.test.cjs
       - name: Verify world navigation and saved concepts
         if: matrix.browser == 'chromium'
         run: node tests/world-browser.cjs
+      - name: Verify natural world renderer and browser Back navigation
+        if: matrix.browser == 'chromium'
+        run: node tests/world-navigation-browser.cjs
       - name: Audit local desktop and mobile experience
         run: node tests/browser-audit.cjs ${{ matrix.browser == 'firefox' && '--firefox' || '' }}
       - name: Observe live GitHub Pages without modifying user data

@@ -1,233 +1,238 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { createLandscape } from './landscape.js';
+import { createPlaces } from './places.js';
+import { createLife } from './life.js';
 
-// A lightweight, optional world. PsychDesk study data remains in the parent app.
-// Every destination is also available through the semantic HTML navigation.
+// An atmospheric landscape, not a low-poly island: organic terrain, architecture,
+// resident walkers and wildlife. All actual study records stay in PsychDesk.
 const destinations=[
- {id:'notes',name:'Notebook House',x:-10,z:7,color:0xc99077,kind:'house'},
- {id:'materials',name:'Research Library',x:0,z:-10,color:0x9fa6be,kind:'library'},
- {id:'garden',name:'Memory Garden',x:10,z:-5,color:0xc8ae83,kind:'garden'},
- {id:'recall',name:'Recall Pavilion',x:0,z:10,color:0xc9a98b,kind:'house'},
- {id:'dictionary',name:'Concept Observatory',x:-10,z:-8,color:0xada4ca,kind:'tower'},
- {id:'focus',name:'Quiet Clearing',x:10,z:9,color:0xb5a997,kind:'clearing'}
+ {id:'notes',name:'Notebook Cottage',x:-13,z:7},
+ {id:'materials',name:'Research Library',x:-1,z:-14},
+ {id:'garden',name:'Memory Garden',x:13,z:-7},
+ {id:'recall',name:'Recall Pavilion',x:-1,z:12},
+ {id:'dictionary',name:'Concept Observatory',x:-14,z:-10},
+ {id:'focus',name:'Quiet Clearing',x:15,z:9}
 ];
-const canvasHost=document.getElementById('worldCanvas');
+const host=document.getElementById('worldCanvas');
 const pinsHost=document.getElementById('worldPins');
 const message=document.getElementById('worldMessage');
 const ambientButton=document.getElementById('ambientToggle');
-const motionReduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const coarse=window.matchMedia('(pointer: coarse)').matches;
+const resetButton=document.getElementById('worldReset');
+const qualityButton=document.getElementById('qualityToggle');
+const status=document.getElementById('worldStatus');
+const coarse=matchMedia('(pointer: coarse)').matches;
+const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const lowMemory=Number(navigator.deviceMemory||8)<4;
+const quality=coarse||lowMemory?'medium':'high';
+const night=new Date().getHours()>=19||new Date().getHours()<6;
+const tip=(title,body,destination)=>{
+ if(window.PsychDeskWorldUI?.showDetail)window.PsychDeskWorldUI.showDetail(title,body,destination);
+};
 const visit=tab=>window.PsychDeskWorldUI?.visit?.(tab);
-function fail(text){
- message.textContent=text+' You can still use the study destinations below.';
- canvasHost.style.display='none';
+function error(text){
+ message.textContent=text+' The study destinations below remain available.';
+ host.style.display='none';
+ if(ambientButton)ambientButton.disabled=true;
+ if(qualityButton)qualityButton.disabled=true;
 }
 let renderer;
-try{renderer=new THREE.WebGLRenderer({antialias:!coarse,alpha:false,powerPreference:'default'});}
-catch{fail('3D graphics are unavailable on this device.');}
+try{
+ renderer=new THREE.WebGLRenderer({antialias:!coarse&&!lowMemory,alpha:false,powerPreference:'high-performance',stencil:false});
+}catch{
+ error('3D rendering is unavailable on this device.');
+}
 if(renderer){
  const scene=new THREE.Scene();
- const hour=new Date().getHours();
- const night=hour>=19||hour<6;
- scene.background=new THREE.Color(night?0x142533:0x8ea8b3);
- scene.fog=new THREE.Fog(night?0x142533:0x8ea8b3,38,92);
- const camera=new THREE.PerspectiveCamera(43,1,.1,180);
- camera.position.set(26,25,28);
- canvasHost.appendChild(renderer.domElement);
+ const horizon=night?0x71858d:0xc3d2cc;
+ scene.background=new THREE.Color(horizon);
+ scene.fog=new THREE.FogExp2(horizon,night?.012:.0097);
+ const camera=new THREE.PerspectiveCamera(49,1,.12,240);
+ camera.position.set(34,24,40);
+ camera.lookAt(0,1.5,0);
+ renderer.outputColorSpace=THREE.SRGBColorSpace;
+ renderer.toneMapping=THREE.ACESFilmicToneMapping;
+ renderer.toneMappingExposure=night?1.18:1.26;
+ const pixelRatio={high:1.8,medium:1.35,low:1};
+ let tier=quality;
+ function applyQuality(){
+  renderer.setPixelRatio(Math.min(devicePixelRatio||1,pixelRatio[tier]));
+  renderer.shadowMap.enabled=tier==='high';
+  if(sun) sun.castShadow=tier==='high';
+  if(qualityButton)qualityButton.textContent='Quality: '+tier[0].toUpperCase()+tier.slice(1);
+  const width=host.clientWidth,height=host.clientHeight;
+  if(width&&height)renderer.setSize(width,height,false);
+ }
+ renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+ renderer.shadowMap.enabled=tier==='high';
+ host.appendChild(renderer.domElement);
  const controls=new OrbitControls(camera,renderer.domElement);
- controls.target.set(0,0,0);controls.enableDamping=!motionReduced;controls.dampingFactor=.055;
- controls.minDistance=9;controls.maxDistance=62;controls.maxPolarAngle=Math.PI*.48;
- controls.minPolarAngle=.18;controls.enablePan=true;
- const hemisphere=new THREE.HemisphereLight(night?0xa2b9df:0xfff3dc,0x33463a,night?1.25:2.05);
- scene.add(hemisphere);
- const sunlight=new THREE.DirectionalLight(night?0xb4c9e0:0xffdfb9,night?1.6:2.5);
- sunlight.position.set(-10,22,12);scene.add(sunlight);
- const material=(color,roughness=1)=>new THREE.MeshStandardMaterial({color,roughness,flatShading:true});
- const earth=material(0x6b6153),grass=material(night?0x53675e:0x76947a),pathmat=material(0xc4b59e);
- const watermat=new THREE.MeshStandardMaterial({color:night?0x406477:0x6ea8aa,roughness:.33,metalness:.07,transparent:true,opacity:.86});
- const trunkMat=material(0x796351),leafMat=[material(0x71866e),material(0x93a385),material(0x607b74),material(0xaab08b)];
- const windowMat=material(night?0xffd69f:0xf7ecd0),stone=material(0x9ca39b);
- const cylinder=(r1,r2,h,segments,mat,x,y,z)=>{
-  const o=new THREE.Mesh(new THREE.CylinderGeometry(r1,r2,h,segments),mat);
-  o.position.set(x,y,z);scene.add(o);return o;
- };
- cylinder(40,40,.13,64,watermat,0,-1.35,0);
- cylinder(22.4,21.2,2.4,48,earth,0,-1.45,0);
- cylinder(22.45,22.45,.22,48,grass,0,-.16,0);
- // Each path connects the central meeting place to an educational destination.
- cylinder(3.2,3.2,.08,32,pathmat,0,.02,0);
- for(const p of destinations){
-  const dx=p.x,dz=p.z,dist=Math.hypot(dx,dz);
-  const strip=new THREE.Mesh(new THREE.BoxGeometry(2.3,.055,dist),pathmat);
-  strip.position.set(dx/2,-.01,dz/2);strip.rotation.y=Math.atan2(dx,dz);scene.add(strip);
- }
- // Rocks, hand-placed groves and a soft landmark horizon.
- for(let i=0;i<46;i++){
-  const angle=i*2.39996323,rad=9+(i%7)*1.83;
-  const x=Math.cos(angle)*rad,z=Math.sin(angle)*rad;
-  if(destinations.some(p=>Math.hypot(x-p.x,z-p.z)<4.2))continue;
-  const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.16,.24,1.65,6),trunkMat);
-  trunk.position.set(x,.83,z);scene.add(trunk);
-  const crown=new THREE.Mesh(new THREE.ConeGeometry(.9+(i%3)*.18,2.65+(i%4)*.16,6),leafMat[i%leafMat.length]);
-  crown.position.set(x,2.45,z);crown.rotation.y=angle;scene.add(crown);
-  if(i%4===0){
-   const rock=new THREE.Mesh(new THREE.DodecahedronGeometry(.45,0),stone);
-   rock.position.set(x+.95,.22,z-.6);rock.scale.y=.58;scene.add(rock);
-  }
- }
- const interactive=[];
- function box(parent,w,h,d,mat,x,y,z){
-  const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);
-  mesh.position.set(x,y,z);parent.add(mesh);return mesh;
- }
- for(const p of destinations){
-  const group=new THREE.Group();group.position.set(p.x,.12,p.z);
-  group.userData.placeId=p.id;scene.add(group);interactive.push(group);
-  const wall=material(p.color),roof=material(p.kind==='tower'?0x666078:0x715c5a);
-  if(p.kind==='garden'){
-   const soil=new THREE.Mesh(new THREE.CylinderGeometry(3,3,.28,12),material(0x87957b));
-   soil.position.y=.02;group.add(soil);
-   for(let j=0;j<8;j++){
-    const t=j*Math.PI/4,stem=box(group,.12,.9,.12,leafMat[j%4],Math.cos(t)*2,.52,Math.sin(t)*2);
-    const blossom=new THREE.Mesh(new THREE.DodecahedronGeometry(.4,0),material(j%2?0xf3d2b5:0xd5b4b9));
-    blossom.position.set(stem.position.x,1.15,stem.position.z);group.add(blossom);
-   }
-   const tree=new THREE.Mesh(new THREE.DodecahedronGeometry(1.6,1),leafMat[1]);
-   tree.position.set(0,2.6,0);group.add(tree);
-  }else if(p.kind==='clearing'){
-   const floor=new THREE.Mesh(new THREE.CylinderGeometry(3.2,3.2,.14,18),material(0xbaa992));
-   floor.position.y=.08;group.add(floor);
-   for(let j=0;j<5;j++){
-    const a=j*2*Math.PI/5;
-    box(group,.35,.5,.35,trunkMat,Math.cos(a)*2,.4,Math.sin(a)*2);
-   }
-   // The clearing remains open for calm, unobstructed reading.
-  }else if(p.kind==='tower'){
-   const base=new THREE.Mesh(new THREE.CylinderGeometry(1.5,1.85,3.8,8),wall);
-   base.position.y=1.85;group.add(base);
-   const dome=new THREE.Mesh(new THREE.ConeGeometry(2,1.75,8),roof);
-   dome.position.y=4.6;group.add(dome);
-   box(group,1.1,1,.12,windowMat,0,2.3,1.45);
-  }else{
-   const w=p.kind==='library'?5:3.6,h=p.kind==='library'?3:2.65;
-   box(group,w,h,3.4,wall,0,h/2,0);
-   const top=new THREE.Mesh(new THREE.ConeGeometry(p.kind==='library'?3.95:3.2,1.75,4),roof);
-   top.position.y=h+.67;top.rotation.y=Math.PI/4;group.add(top);
-   box(group,1.05,1.2,.13,windowMat,-w/4,1.6,1.74);
-   box(group,1.05,1.2,.13,windowMat,w/4,1.6,1.74);
-   box(group,.82,1.45,.16,trunkMat,0,.73,1.79);
-  }
-  const halo=new THREE.Mesh(new THREE.RingGeometry(2.6,2.75,40),new THREE.MeshBasicMaterial({color:0xf4deb1,side:THREE.DoubleSide,transparent:true,opacity:.62}));
-  halo.rotation.x=-Math.PI/2;halo.position.y=.12;group.add(halo);
- }
- // Deliberate, low-cost environmental motion (no particles or postprocessing).
- const clouds=[];
- for(let i=0;i<4;i++){
-  const cloud=new THREE.Group();
-  for(let j=0;j<3;j++){
-   const puff=new THREE.Mesh(new THREE.IcosahedronGeometry(1.7+(j%2)*.55,1),new THREE.MeshBasicMaterial({color:night?0x617486:0xe8dfcb,transparent:true,opacity:.42}));
-   puff.position.set((j-1)*1.7,j===1?.55:0,0);cloud.add(puff);
-  }
-  cloud.position.set(-17+i*12,12+i%2*2,-20+(i%3)*15);scene.add(cloud);clouds.push(cloud);
- }
- const labels=destinations.map(p=>{
-  const button=document.createElement('button');button.type='button';button.className='world-pin';
-  button.textContent=p.name;button.dataset.visit=p.id;pinsHost.appendChild(button);
-  return {button,p,point:new THREE.Vector3(p.x,p.kind==='tower'?6.4:4.7,p.z)};
+ controls.target.set(0,1,0);controls.minDistance=8;controls.maxDistance=76;
+ controls.maxPolarAngle=Math.PI*.455;controls.minPolarAngle=.18;
+ controls.enableDamping=!reduced;controls.dampingFactor=.065;
+ controls.zoomSpeed=.78;controls.rotateSpeed=.57;controls.panSpeed=.8;
+ controls.screenSpacePanning=true;
+ // Horizon atmosphere with warm sun haze, not a solid artificial sky box.
+ const sky=new THREE.Mesh(new THREE.SphereGeometry(195,40,24),
+  new THREE.ShaderMaterial({
+   uniforms:{
+    upper:{value:new THREE.Color(night?0x1d3449:0x82a9b5)},
+    lower:{value:new THREE.Color(night?0x899397:0xe2e0cb)},
+    sunColor:{value:new THREE.Color(night?0xc1bdba:0xffddb1)},
+    sunDirection:{value:new THREE.Vector3(-.4,.44,-.55).normalize()}
+   },
+   vertexShader:'varying vec3 vDir; void main(){vDir=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}',
+   fragmentShader:'varying vec3 vDir;uniform vec3 upper;uniform vec3 lower;uniform vec3 sunColor;uniform vec3 sunDirection;void main(){vec3 d=normalize(vDir);float h=smoothstep(-.18,.75,d.y);vec3 c=mix(lower,upper,h);float glow=pow(max(dot(d,sunDirection),0.0),22.0)*.19; c=mix(c,sunColor,glow);gl_FragColor=vec4(c,1.0);}',
+   side:THREE.BackSide,depthWrite:false,fog:false
+  })
+ );
+ scene.add(sky);
+ const skyLight=new THREE.HemisphereLight(night?0x93a8c8:0xf8f1df,night?0x3b5043:0x4d6651,night?2.0:2.8);
+ scene.add(skyLight);
+ const sun=new THREE.DirectionalLight(night?0xc8c8bc:0xffe2b7,night?1.65:3.0);
+ sun.position.set(-28,48,22);
+ sun.castShadow=tier==='high';
+ sun.shadow.mapSize.set(1536,1536);
+ sun.shadow.camera.near=.5;sun.shadow.camera.far=135;
+ sun.shadow.camera.left=-46;sun.shadow.camera.right=46;
+ sun.shadow.camera.top=46;sun.shadow.camera.bottom=-46;
+ sun.shadow.bias=-.0005;
+ sun.shadow.normalBias=.025;
+ sun.shadow.radius=3;
+ scene.add(sun);
+ applyQuality();
+ const landscape=createLandscape(THREE,scene,destinations,{coarse:tier!=='high',reduced,night});
+ const places=createPlaces(THREE,scene,destinations,landscape.height,{coarse:tier!=='high',night});
+ const life=createLife(THREE,scene,landscape.routes,landscape.height,{coarse:tier!=='high',reduced,night});
+ // The scene can be used even if decoration fails to load; navigation is independent.
+ const labels=destinations.map(d=>{
+  const button=document.createElement('button');
+  button.type='button';button.className='world-pin';
+  button.textContent=d.name;button.dataset.visit=d.id;
+  pinsHost.appendChild(button);
+  return {button,d,at:new THREE.Vector3(d.x,landscape.height(d.x,d.z)+(d.id==='dictionary'?7.7:d.id==='garden'?7:5.3),d.z)};
  });
- const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
- const canvas=renderer.domElement;
- function hit(event){
-  const rect=canvas.getBoundingClientRect();
-  pointer.x=((event.clientX-rect.left)/rect.width)*2-1;
-  pointer.y=-((event.clientY-rect.top)/rect.height)*2+1;
+ const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2(),canvas=renderer.domElement;
+ const selectable=[...places.interactive,...life.people];
+ function pick(event){
+  const bounds=canvas.getBoundingClientRect();
+  pointer.set((event.clientX-bounds.left)/bounds.width*2-1,-(event.clientY-bounds.top)/bounds.height*2+1);
   raycaster.setFromCamera(pointer,camera);
-  for(const h of raycaster.intersectObjects(interactive,true)){
-   let node=h.object;
-   while(node&&!node.userData.placeId)node=node.parent;
-   if(node?.userData.placeId)return node.userData.placeId;
+  for(const hit of raycaster.intersectObjects(selectable,true)){
+   let node=hit.object,concept=null,person=null,place=null;
+   while(node){
+    if(!concept&&node.userData?.concept)concept=node.userData.concept;
+    if(!person&&node.userData?.person)person=node.userData.name;
+    if(!place&&node.userData?.placeId)place=node.userData.placeId;
+    node=node.parent;
+   }
+   if(concept)return {kind:'concept',value:concept};
+   if(person)return {kind:'person',value:person};
+   if(place)return {kind:'place',value:place};
   }
   return null;
  }
- let pressed=null;
- canvas.addEventListener('pointerdown',e=>{pressed={x:e.clientX,y:e.clientY};});
- canvas.addEventListener('pointermove',e=>{
-  if(e.pointerType==='touch')return;
-  canvas.style.cursor=hit(e)?'pointer':'grab';
- });
+ const conceptInfo={
+  'Spacing effect':'A little review spread over time usually lasts longer than the same practice packed into one session.',
+  Attention:'Attention selects some information for deeper processing. It can also hide surprisingly visible events.',
+  'Cognitive dissonance':'When beliefs and actions conflict, people may feel tension and try to reduce the inconsistency.'
+ };
+ let pointerDown=null;
+ canvas.addEventListener('pointerdown',e=>{pointerDown={x:e.clientX,y:e.clientY};});
+ canvas.addEventListener('pointermove',e=>{if(e.pointerType!=='touch')canvas.style.cursor=pick(e)?'pointer':'grab';});
+ canvas.addEventListener('pointercancel',()=>{pointerDown=null;});
  canvas.addEventListener('pointerup',e=>{
-  if(pressed&&Math.hypot(e.clientX-pressed.x,e.clientY-pressed.y)<6){
-   const id=hit(e);if(id)visit(id);
-  }
-  pressed=null;
+  if(!pointerDown||Math.hypot(e.clientX-pointerDown.x,e.clientY-pointerDown.y)>7){pointerDown=null;return;}
+  pointerDown=null;const selected=pick(e);if(!selected)return;
+  if(selected.kind==='place')visit(selected.value);
+  if(selected.kind==='concept')tip(selected.value,conceptInfo[selected.value]||'Visit the psychology dictionary to discover more.','dictionary');
+  if(selected.kind==='person')tip('A living world',selected.value+'. Take a moment to explore, then open a study location.');
  });
- const keys=new Set();
- window.addEventListener('keydown',e=>{if(!e.altKey&&!e.ctrlKey&&!e.metaKey&&!['INPUT','TEXTAREA','BUTTON'].includes(document.activeElement?.tagName))keys.add(e.key.toLowerCase());});
- window.addEventListener('keyup',e=>keys.delete(e.key.toLowerCase()));
- window.addEventListener('blur',()=>keys.clear());
+ const keyState=new Set();
+ window.addEventListener('keydown',e=>{
+  if(e.altKey||e.ctrlKey||e.metaKey||['INPUT','TEXTAREA','BUTTON'].includes(document.activeElement?.tagName))return;
+  keyState.add(e.key.toLowerCase());
+ });
+ window.addEventListener('keyup',e=>keyState.delete(e.key.toLowerCase()));
+ window.addEventListener('blur',()=>keyState.clear());
  let ambient=false;
  ambientButton.addEventListener('click',()=>{
-  ambient=!ambient;controls.autoRotate=ambient&&!motionReduced;
-  controls.autoRotateSpeed=.3;ambientButton.setAttribute('aria-pressed',String(ambient));
+  ambient=!ambient;
+  controls.autoRotate=ambient&&!reduced;controls.autoRotateSpeed=.24;
+  ambientButton.setAttribute('aria-pressed',String(ambient));
   ambientButton.textContent=ambient?'Ambient mode on':'Ambient mode';
  });
- function reset(){
-  camera.position.set(26,25,28);controls.target.set(0,0,0);controls.update();
- }
- document.getElementById('worldReset').addEventListener('click',reset);
+ qualityButton?.addEventListener('click',()=>{
+  tier=tier==='high'?'medium':tier==='medium'?'low':'high';applyQuality();
+ });
+ resetButton.addEventListener('click',()=>{
+  camera.position.set(34,24,40);controls.target.set(0,1,0);controls.update();
+ });
  try{
   const saved=JSON.parse(sessionStorage.getItem('psychworld-view-v1')||'null');
-  if(saved?.camera?.length===3&&saved?.target?.length===3&&[...saved.camera,...saved.target].every(v=>Number.isFinite(v)&&Math.abs(v)<100)){
+  if(saved?.camera?.length===3&&saved?.target?.length===3&&
+     [...saved.camera,...saved.target].every(v=>Number.isFinite(v)&&Math.abs(v)<110)){
    camera.position.fromArray(saved.camera);controls.target.fromArray(saved.target);
   }
  }catch{}
  controls.addEventListener('end',()=>{
   try{sessionStorage.setItem('psychworld-view-v1',JSON.stringify({camera:camera.position.toArray(),target:controls.target.toArray()}));}catch{}
  });
- const observer=new ResizeObserver(()=>{
-  const width=canvasHost.clientWidth,height=canvasHost.clientHeight;
+ const ro=new ResizeObserver(()=>{
+  const width=host.clientWidth,height=host.clientHeight;
   if(width&&height){camera.aspect=width/height;camera.updateProjectionMatrix();renderer.setSize(width,height,false);}
  });
- observer.observe(canvasHost);
- renderer.setPixelRatio(Math.min(devicePixelRatio||1,coarse?1.25:1.75));
- let previous=performance.now(),elapsed=0;
- const forward=new THREE.Vector3(),right=new THREE.Vector3(),shift=new THREE.Vector3(),screen=new THREE.Vector3();
+ ro.observe(host);
+ const forward=new THREE.Vector3(),right=new THREE.Vector3(),shift=new THREE.Vector3(),projected=new THREE.Vector3();
+ let last=performance.now(),elapsed=0;
  function animate(now){
-  const delta=Math.min((now-previous)/1000,.05);previous=now;elapsed+=delta;
+  const delta=Math.min((now-last)/1000,.05);last=now;
+  elapsed+=delta;
   forward.subVectors(controls.target,camera.position);forward.y=0;forward.normalize();
   right.set(-forward.z,0,forward.x);shift.set(0,0,0);
-  if(keys.has('w'))shift.add(forward);
-  if(keys.has('s'))shift.sub(forward);
-  if(keys.has('a'))shift.sub(right);
-  if(keys.has('d'))shift.add(right);
+  if(keyState.has('w')||keyState.has('arrowup'))shift.add(forward);
+  if(keyState.has('s')||keyState.has('arrowdown'))shift.sub(forward);
+  if(keyState.has('a')||keyState.has('arrowleft'))shift.sub(right);
+  if(keyState.has('d')||keyState.has('arrowright'))shift.add(right);
   if(shift.lengthSq()){
-   shift.normalize().multiplyScalar(delta*8);
+   shift.normalize().multiplyScalar(delta*9);
    const next=controls.target.clone().add(shift);
-   if(Math.hypot(next.x,next.z)<20){controls.target.add(shift);camera.position.add(shift);}
+   if(Math.hypot(next.x,next.z)<48){
+    controls.target.add(shift);camera.position.add(shift);
+   }
   }
-  if(!motionReduced)clouds.forEach((c,i)=>{c.position.x+=delta*(.045+i*.008);if(c.position.x>35)c.position.x=-35;});
   controls.update();
-  for(const {button,point} of labels){
-   screen.copy(point).project(camera);
-   const visible=screen.z<1&&screen.z>-1&&Math.abs(screen.x)<.9&&Math.abs(screen.y)<.84;
+  if(!reduced){landscape.animate(elapsed,delta);life.animate(elapsed,delta);}
+  for(const {button,at} of labels){
+   projected.copy(at).project(camera);
+   const visible=projected.z>-1&&projected.z<1&&Math.abs(projected.x)<.86&&Math.abs(projected.y)<.82;
    button.hidden=!visible;
-   if(visible){button.style.left=((screen.x+1)/2*100)+'%';button.style.top=((-screen.y+1)/2*100)+'%';}
+   if(visible){
+    button.style.left=((projected.x+1)*50)+'%';
+    button.style.top=((1-projected.y)*50)+'%';
+   }
   }
   renderer.render(scene,camera);
  }
  function visibility(){
-  if(document.hidden){renderer.setAnimationLoop(null);}
-  else{previous=performance.now();renderer.setAnimationLoop(animate);}
+  if(document.hidden)renderer.setAnimationLoop(null);
+  else{last=performance.now();renderer.setAnimationLoop(animate);}
  }
  document.addEventListener('visibilitychange',visibility);
  visibility();
+ if(status)status.textContent='Living landscape · '+(night?'evening':'daylight')+' · '+(reduced?'reduced motion':'gentle motion');
  window.addEventListener('pagehide',()=>{
-  renderer.setAnimationLoop(null);observer.disconnect();controls.dispose();
-  const geometries=new Set(),materials=new Set();
-  scene.traverse(obj=>{
-   if(obj.geometry)geometries.add(obj.geometry);
-   if(obj.material)(Array.isArray(obj.material)?obj.material:[obj.material]).forEach(m=>materials.add(m));
+  renderer.setAnimationLoop(null);ro.disconnect();controls.dispose();
+  const geometries=new Set(),materials=new Set(),textures=new Set();
+  scene.traverse(node=>{
+   if(node.geometry)geometries.add(node.geometry);
+   const raw=node.material;if(raw)(Array.isArray(raw)?raw:[raw]).forEach(m=>materials.add(m));
   });
-  geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());renderer.dispose();
+  geometries.forEach(g=>g.dispose());
+  materials.forEach(m=>{
+   for(const key of ['map','normalMap','roughnessMap','emissiveMap'])if(m[key])textures.add(m[key]);
+   m.dispose();
+  });
+  textures.forEach(t=>t.dispose());renderer.dispose();
  },{once:true});
 }

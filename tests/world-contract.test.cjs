@@ -19,7 +19,7 @@ test('world assets are self-contained static pages with accessible destinations'
  assert.deepEqual(routes.sort(),['dictionary','focus','garden','materials','notes','recall'].sort());
  assert.match(html,/aria-label="Visit a place"/);
  assert.match(html,/three\.module\.js/);
- assert.match(html,/world\.js\?v=1/);
+ assert.match(html,/world\.js\?v=natural-2/);
 });
 test('world scripts parse and have origin-checked navigation',()=>{
  for(const name of ['world/world.js','world/world-bridge.js','world/world-ui.js']){
@@ -30,9 +30,9 @@ test('world scripts parse and have origin-checked navigation',()=>{
  assert.match(ui,/data-visit/);
  assert.match(ui,/psychworld:visit/);
  const bridge=read('world/world-bridge.js');
- assert.match(bridge,/e\.origin!==location\.origin/);
- assert.match(bridge,/e\.source!==active\.querySelector/);
- assert.match(bridge,/setTab\?\.\(tab\)/);
+ assert.match(bridge,/event\.origin!==location\.origin/);
+ assert.match(bridge,/event\.source!==active\.querySelector/);
+ assert.match(bridge,/setTab\?\.\(destination\)/);
  assert.match(bridge,/button\.dataset\.auto='garden'/);
 });
 test('3D world cannot mutate saved study records',()=>{

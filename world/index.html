@@ -3,47 +3,58 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0d131a">
-<title>PsychDesk World</title>
-<link rel="stylesheet" href="world.css?v=1">
+<meta name="theme-color" content="#21333d">
+<meta name="description" content="Explore a peaceful living landscape within PsychDesk, with a notebook cottage, memory garden, research library and other study destinations.">
+<title>PsychDesk — Living World</title>
+<link rel="stylesheet" href="world.css?v=natural-2">
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}
 </script>
 </head>
 <body>
 <main class="world-shell">
-  <div id="worldCanvas" class="world-canvas" aria-label="Interactive three-dimensional psychology landscape"></div>
+  <div id="worldCanvas" class="world-canvas" aria-label="An interactive three-dimensional forest valley with places to study"></div>
   <header class="world-header">
-    <div class="world-brand"><small>PSYCHDESK · EXPLORE</small><strong>Psychology World</strong></div>
+    <div class="world-brand"><small>PSYCHDESK / LIVING WORLD</small><strong>A place to think</strong></div>
     <div class="world-header-actions">
       <button id="ambientToggle" type="button" aria-pressed="false">Ambient mode</button>
-      <button id="worldReset" type="button">Reset view</button>
+      <button id="qualityToggle" type="button">Quality: Auto</button>
+      <button id="worldReset" type="button">Reset camera</button>
       <button id="worldClose" type="button" class="world-close" aria-label="Return to PsychDesk">✕</button>
     </div>
   </header>
   <aside class="world-intro" aria-live="polite">
-    <span class="world-eyebrow">A SMALL PLACE TO THINK</span>
-    <h1>Wander. Discover. Study.</h1>
-    <p>Move through a peaceful world. Every place leads to a real PsychDesk study tool.</p>
-    <p class="world-hint">Drag to orbit · scroll or pinch to zoom · right-drag to pan · W A S D to wander</p>
+    <span class="world-eyebrow">A LITTLE WORLD FOR LEARNING</span>
+    <h1>Room to think.</h1>
+    <p>A quiet valley with paths to knowledge. Wander, watch the world breathe, or find a place to study.</p>
+    <p class="world-hint">Drag to look around · scroll to zoom · W A S D to wander</p>
   </aside>
-  <div id="worldPins" class="world-pins" aria-label="Places in Psychology World"></div>
+  <div id="worldPins" class="world-pins" aria-label="Places to explore"></div>
   <div id="worldMessage" class="world-message" role="status"></div>
+  <section id="worldDetail" class="world-detail" aria-label="World discovery" hidden>
+    <button type="button" id="worldDetailClose" aria-label="Dismiss discovery">✕</button>
+    <span class="world-eyebrow">A MOMENT OF CURIOSITY</span>
+    <h2 id="worldDetailTitle"></h2>
+    <p id="worldDetailText"></p>
+    <button id="worldDetailVisit" type="button" hidden>Explore this in the dictionary</button>
+  </section>
   <nav class="world-places" aria-label="Visit a place">
-    <button type="button" data-visit="notes"><span>✎</span> Notebook House</button>
+    <button type="button" data-visit="notes"><span>✎</span> Notebook Cottage</button>
     <button type="button" data-visit="materials"><span>▤</span> Research Library</button>
     <button type="button" data-visit="garden"><span>✿</span> Memory Garden</button>
     <button type="button" data-visit="recall"><span>◈</span> Recall Pavilion</button>
-    <button type="button" data-visit="dictionary"><span>ψ</span> Concept Observatory</button>
+    <button type="button" data-visit="dictionary"><span>ψ</span> Observatory</button>
     <button type="button" data-visit="focus"><span>◷</span> Quiet Clearing</button>
   </nav>
-  <p class="world-accessibility">3D navigation is optional. Every destination above also works without 3D graphics.</p>
+  <p id="worldStatus" class="world-accessibility">Live landscape · no paid services · graphics optional</p>
 </main>
-<script src="world-ui.js?v=1" defer></script>
+<script src="world-ui.js?v=natural-2" defer></script>
 <script type="module">
-import('./world.js?v=1').catch(()=>{
- document.getElementById('worldMessage').textContent='The 3D view could not load. All study destinations still work.';
+import('./world.js?v=natural-2').catch(error=>{
+ console.warn('PsychDesk World renderer could not load:',error);
+ document.getElementById('worldMessage').textContent='The 3D environment could not load. All study destinations remain available below.';
  document.getElementById('ambientToggle').disabled=true;
+ document.getElementById('qualityToggle').disabled=true;
 });
 </script>
 </body>
