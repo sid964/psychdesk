@@ -17,7 +17,7 @@ function environment(storage=new Map(),writeError=false,tabSession=new Map()) {
  window.PsychDeskCore.toast=message=>toasts.push(message);
  let uid=null,oauth=null;window.PsychDeskFirebase={getUserId:()=>uid,getConnectionStatus:()=>({email:uid?uid+'@example.test':''})};
  context.google=window.google={accounts:{oauth2:{initTokenClient:options=>{oauth=options;return {requestAccessToken(){}}},revoke(){}}}};
- const cloudSource=source('cloud.js').replace('window.PsychDeskCloud=', 'window.__cloud={connectDrive,api,settingsView,openSettings,pullDrive};window.PsychDeskCloud=');
+ const cloudSource=source('cloud.js').replace('window.PsychDeskCloud=', 'window.__cloud={connectDrive,api,settingsView,openSettings,pullDrive,findFile};window.PsychDeskCloud=');
  vm.runInContext(cloudSource,context);
  const ready=()=>window.dispatchEvent(new Event('psychdesk:account-ready'));
  const saveClient=value=>{window.__cloud.openSettings();const form=document.querySelector('#googleSettingsForm');form.value=value;form.listeners.submit({preventDefault(){}})};
@@ -492,4 +492,26 @@ test('initial signed-out Firebase callback still leaves a cached private workspa
  const fb=firebase(env);await fb.change(null);
  assert.equal(env.core.getStorageKey(),'psychdesk-v1');assert.equal(env.core.getData().notes.length,0);
  assert.equal(JSON.parse(storage.get('psychdesk-user-alice')).notes[0].body,'Private account data');
+});
+
+test('Drive file lookup checks later pages before deciding an existing file is absent',async()=>{
+ const env=environment();env.saveClient(CLIENT);await authorize(env);
+ const requests=[];
+ env.context.fetch=async url=>{
+  const parsed=new URL(url);requests.push(parsed);
+  const data=parsed.searchParams.get('pageToken')==='page-2'
+   ? {files:[{id:'existing-backup',name:'psychdesk-backup.json',mimeType:'application/json'}]}
+   : {files:[{id:'unrelated',name:'other.txt',mimeType:'text/plain'}],nextPageToken:'page-2'};
+  return {ok:true,status:200,text:async()=>JSON.stringify(data)};
+ };
+ const file=await env.cloud.findFile('psychdesk-backup.json','root');
+ assert.equal(file?.id,'existing-backup');
+ assert.equal(requests.length,2,'a nextPageToken must be followed');
+ assert.equal(requests[1].searchParams.get('pageToken'),'page-2');
+});
+
+test('malformed Drive listings are not interpreted as an empty safe folder',async()=>{
+ const env=environment();env.saveClient(CLIENT);await authorize(env);
+ env.context.fetch=async()=>({ok:true,status:200,text:async()=>JSON.stringify({nextPageToken:'other-page'})});
+ await assert.rejects(env.cloud.findFile('psychdesk-backup.json','root'),/invalid|incomplete|malformed|missing|listing/i);
 });
