@@ -19,7 +19,7 @@ test('world assets are self-contained static pages with accessible destinations'
  assert.deepEqual(routes.sort(),['dictionary','focus','garden','materials','notes','recall'].sort());
  assert.match(html,/aria-label="Visit a place"/);
  assert.match(html,/three\.module\.js/);
- assert.match(html,/world\.js\?v=repair-20261112/);
+ assert.match(html,/world\.js\?v=immersive-20261112/);
 });
 test('world scripts parse and have origin-checked navigation',()=>{
  for(const name of ['world/world.js','world/world-bridge.js','world/world-ui.js']){
