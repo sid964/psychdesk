@@ -21,6 +21,8 @@ test('Guided exploration previews a landmark without navigating away',()=>{
  assert.match(ui,/detailVisit\.dataset\.visit/);
  assert.match(ui,/psychworld:visit/);
  assert.match(world,/tourButton\?\.addEventListener/);
+ assert.match(world,/swiftshader\|llvmpipe/);
+ assert.match(world,/frameInterval=tier===/);
  assert.doesNotMatch(world,/button\.dataset\.visit=d\.id/);
 });
 
