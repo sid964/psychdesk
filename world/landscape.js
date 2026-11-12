@@ -146,14 +146,35 @@ export function createLandscape(THREE,scene,destinations,{coarse=false,reduced=f
  waterEdge.rotation.x=-Math.PI/2;waterEdge.scale.set(pond.rx,pond.rz,1);
  waterEdge.position.set(pond.x,-.31,pond.z);scene.add(waterEdge);
  // Tree crowns are smooth, overlapping foliage masses; no cone-tree silhouettes.
- const canopyGeom=new THREE.SphereGeometry(1,10,8);
+ const canopyGeom=new THREE.SphereGeometry(1,coarse?10:14,coarse?8:11);
+  // Generated foliage microtexture makes each crown react to natural lighting.
+  const leafCanvas=document.createElement('canvas');leafCanvas.width=leafCanvas.height=128;
+  const leafContext=leafCanvas.getContext('2d');
+  let leafSurface=null;
+  if(leafContext){
+   const image=leafContext.createImageData(128,128);
+   for(let y=0;y<128;y++)for(let x=0;x<128;x++){
+    const at=(y*128+x)*4;
+    const vein=Math.sin(x*.78+y*.43)*6+Math.cos(x*.36-y*.62)*9;
+    const v=Math.round(clamp(225+vein+(rand(x*137+y*41)-.5)*43,166,255));
+    image.data[at]=v;image.data[at+1]=v;image.data[at+2]=v-5;image.data[at+3]=255;
+   }
+   leafContext.putImageData(image,0,0);
+   leafSurface=new THREE.CanvasTexture(leafCanvas);
+   leafSurface.colorSpace=THREE.SRGBColorSpace;
+   leafSurface.wrapS=leafSurface.wrapT=THREE.RepeatWrapping;
+   leafSurface.repeat.set(3,2);leafSurface.anisotropy=coarse?1:4;
+  }
  const canopyMats=[
   new THREE.MeshStandardMaterial({color:night?0x607c65:0x718c63,roughness:1}),
   new THREE.MeshStandardMaterial({color:night?0x567768:0x829b75,roughness:1}),
   new THREE.MeshStandardMaterial({color:night?0x668579:0x5e846a,roughness:1}),
   new THREE.MeshStandardMaterial({color:night?0x7b8b67:0x9eab81,roughness:1})
  ];
- const treeCenters=[];
+ canopyMats.forEach(material=>{
+   if(leafSurface){material.map=leafSurface;if(!coarse){material.bumpMap=leafSurface;material.bumpScale=.025;}}
+  });
+  const treeCenters=[];
  const treeCount=coarse?74:152;
  for(let i=0;i<treeCount*4&&treeCenters.length<treeCount;i++){
   const a=rand(i*7+3)*Math.PI*2,r=12+Math.sqrt(rand(i*11+12))*49;
@@ -161,26 +182,42 @@ export function createLandscape(THREE,scene,destinations,{coarse=false,reduced=f
   if(distanceToPath(x,z)<2.4||destinations.some(p=>Math.hypot(x-p.x,z-p.z)<5)||Math.hypot((x-pond.x)/pond.rx,(z-pond.z)/pond.rz)<1.22)continue;
   treeCenters.push({x,z,h:3.2+rand(i*9+4)*4.8,kind:i%8,seed:i});
  }
- const trunkGeometry=new THREE.CylinderGeometry(.12,.21,1,8,1);
- const trunks=new THREE.InstancedMesh(trunkGeometry,mats.bark,treeCenters.length);
- const canopy=[0,1,2,3].map(k=>new THREE.InstancedMesh(canopyGeom,canopyMats[k],treeCenters.length*3));
- const dummy=new THREE.Object3D(),canopyIndex=[0,0,0,0];
- treeCenters.forEach((tree,i)=>{
-  const y=height(tree.x,tree.z),t=tree.h;
-  dummy.position.set(tree.x,y+t*.35,tree.z);dummy.scale.set(t*.23,t*.70,t*.23);
-  dummy.rotation.set(0,rand(i*13)*Math.PI*2,0);dummy.updateMatrix();trunks.setMatrixAt(i,dummy.matrix);
-  for(let j=0;j<3;j++){
-   const type=(i+j)%4,angle=j*Math.PI*2/3+rand(i*3)*2;
-   const size=t*(.29+rand(i*13+j)*.07);
-   dummy.position.set(tree.x+Math.cos(angle)*t*.14,y+t*(.67+.08*(j%2)),tree.z+Math.sin(angle)*t*.14);
-   dummy.scale.set(size,size*(.82+rand(j+i)*.2),size*.92);
-   dummy.rotation.set(.08*Math.sin(angle),0,.08*Math.cos(angle));
-   dummy.updateMatrix();canopy[type].setMatrixAt(canopyIndex[type]++,dummy.matrix);
-  }
- });
- trunks.instanceMatrix.needsUpdate=true;trunks.castShadow=!coarse;
- scene.add(trunks);
- canopy.forEach((mesh,i)=>{mesh.count=canopyIndex[i];mesh.instanceMatrix.needsUpdate=true;mesh.castShadow=!coarse;scene.add(mesh);});
+ const trunkGeometry=new THREE.CylinderGeometry(.12,.24,1,9,1);
+  const trunks=new THREE.InstancedMesh(trunkGeometry,mats.bark,treeCenters.length);
+  const limbGeometry=new THREE.CylinderGeometry(.08,.13,1,7);
+  const limbs=new THREE.InstancedMesh(limbGeometry,mats.bark,treeCenters.length*3);
+  const clusters=coarse?5:7;
+  const canopy=[0,1,2,3].map(k=>new THREE.InstancedMesh(canopyGeom,canopyMats[k],treeCenters.length*clusters));
+  const dummy=new THREE.Object3D(),canopyIndex=[0,0,0,0];
+  const limbStart=new THREE.Vector3(),direction=new THREE.Vector3(),up=new THREE.Vector3(0,1,0);
+  treeCenters.forEach((tree,i)=>{
+   const y=height(tree.x,tree.z),t=tree.h;
+   dummy.position.set(tree.x,y+t*.34,tree.z);dummy.scale.set(t*.21,t*.68,t*.21);
+   dummy.rotation.set(0,rand(i*13)*Math.PI*2,0);dummy.updateMatrix();trunks.setMatrixAt(i,dummy.matrix);
+   // Inclined woody limbs and uneven foliage break up the toy-like silhouette.
+   for(let j=0;j<3;j++){
+    const angle=j*Math.PI*2/3+rand(i*7)*2;
+    limbStart.set(tree.x,y+t*.48,tree.z);
+    direction.set(Math.cos(angle)*t*(.22+rand(i*31+j)*.06),t*(.33+rand(i*17+j)*.08),Math.sin(angle)*t*.24);
+    dummy.position.copy(limbStart).addScaledVector(direction,.5);
+    dummy.quaternion.setFromUnitVectors(up,direction.clone().normalize());
+    dummy.scale.set(t*.50,direction.length(),t*.50);
+    dummy.updateMatrix();limbs.setMatrixAt(i*3+j,dummy.matrix);
+   }
+   for(let j=0;j<clusters;j++){
+    const angle=(j+rand(i*23+j)*.26)*Math.PI*2/clusters;
+    const spread=t*(.13+rand(i*41+j*7)*.13);
+    const type=(i+j)%4,size=t*(.22+rand(i*13+j)*.075);
+    dummy.position.set(tree.x+Math.cos(angle)*spread,y+t*(.71+rand(i*31+j)*.18),tree.z+Math.sin(angle)*spread);
+    dummy.scale.set(size*(.96+rand(i*19+j)*.2),size*(.78+rand(i*23+j)*.26),size*(.88+rand(i*29+j)*.22));
+    dummy.rotation.set(.16*Math.sin(angle),angle*.5,.14*Math.cos(angle));
+    dummy.updateMatrix();canopy[type].setMatrixAt(canopyIndex[type]++,dummy.matrix);
+   }
+  });
+  trunks.instanceMatrix.needsUpdate=true;trunks.castShadow=!coarse;
+  limbs.instanceMatrix.needsUpdate=true;limbs.castShadow=!coarse;
+  scene.add(trunks,limbs);
+  canopy.forEach((mesh,i)=>{mesh.count=canopyIndex[i];mesh.instanceMatrix.needsUpdate=true;mesh.castShadow=!coarse;scene.add(mesh);});
  // Grass silhouettes and meadow flowers use instancing, not thousands of draw calls.
  const bladeGeo=new THREE.BufferGeometry();
  bladeGeo.setAttribute('position',new THREE.Float32BufferAttribute([
