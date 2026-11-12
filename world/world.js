@@ -109,10 +109,59 @@ if(renderer){
  const labels=destinations.map(d=>{
   const button=document.createElement('button');
   button.type='button';button.className='world-pin';
-  button.textContent=d.name;button.dataset.visit=d.id;
+  button.textContent=d.name;button.dataset.look=d.id;
+  button.setAttribute('aria-label','Approach '+d.name);
   pinsHost.appendChild(button);
   return {button,d,at:new THREE.Vector3(d.x,landscape.height(d.x,d.z)+(d.id==='dictionary'?7.7:d.id==='garden'?7:5.3),d.z)};
  });
+ // A guided camera visit is separate from opening a study tool. It keeps the
+ // World useful as a place to explore, with direct tool links always available.
+ const placeStories={
+  notes:'A quiet cottage for writing, returning to notes and finding a thought again.',
+  materials:'The library leads into reading materials and saved research.',
+  garden:'A living landmark for memories and discoveries saved while studying.',
+  recall:'A place to practice recalling what was learned, without rushing.',
+  dictionary:'Explore psychological ideas and the relationships between concepts.',
+  focus:'An open, quiet space that leads to focused study.'
+ };
+ const detail=document.getElementById('worldDetail');
+ let tourIndex=-1,cameraFlight=null;
+ function focusPlace(id){
+  const index=destinations.findIndex(d=>d.id===id);
+  if(index<0)return false;
+  const d=destinations[index];tourIndex=index;
+  const endTarget=new THREE.Vector3(d.x,landscape.height(d.x,d.z)+(id==='dictionary'?3.2:2.2),d.z);
+  const offset=new THREE.Vector3().subVectors(camera.position,controls.target);
+  offset.y=0;
+  if(offset.lengthSq()<.01)offset.set(1,0,1);
+  offset.normalize().multiplyScalar(id==='dictionary'?18:14.5);
+  const endPosition=endTarget.clone().add(offset).add(new THREE.Vector3(0,id==='dictionary'?10:8.2,0));
+  cameraFlight={startCamera:camera.position.clone(),startTarget:controls.target.clone(),endPosition,endTarget,progress:0};
+  if(reduced){
+   camera.position.copy(endPosition);controls.target.copy(endTarget);
+   cameraFlight=null;controls.update();
+  }
+  ambient=false;controls.autoRotate=false;
+  ambientButton.setAttribute('aria-pressed','false');ambientButton.textContent='Ambient mode';
+  labels.forEach(({button, d:location})=>button.setAttribute('aria-current',location.id===id?'location':'false'));
+  document.body.classList.add('world-exploring');
+  tip(d.name,placeStories[id],id);
+  if(tourButton){tourButton.textContent='Next place';tourButton.title='Next: '+destinations[(index+1)%destinations.length].name;}
+  if(status)status.textContent='Living landscape · viewing '+d.name;
+  return true;
+ }
+ function resetView(){
+  cameraFlight=null;tourIndex=-1;
+  camera.position.set(34,24,40);controls.target.set(0,1,0);controls.update();
+  labels.forEach(({button})=>button.removeAttribute('aria-current'));
+  document.body.classList.remove('world-exploring');
+  if(detail)detail.hidden=true;
+  if(tourButton){tourButton.textContent='Explore places';tourButton.title='Approach '+destinations[0].name;}
+  if(status)status.textContent='Living landscape · overview';
+ }
+ labels.forEach(({button,d})=>button.addEventListener('click',()=>focusPlace(d.id)));
+ tourButton?.addEventListener('click',()=>focusPlace(destinations[(tourIndex+1)%destinations.length].id));
+ window.PsychDeskWorld3D={focusPlace,resetView};
  const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2(),canvas=renderer.domElement;
  const selectable=[...places.interactive,...life.people];
  function pick(event){
