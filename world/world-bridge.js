@@ -3,7 +3,7 @@
 (()=>{'use strict';
 const main=document.getElementById('main');
 if(!main)return;
-const allowed=new Set(['today','notes','materials','garden','recall','dictionary','focus','planner','tools','ink','reader','research','timeline','connections','stickies','university','psychology','search','voice','board','mindmap','insights']);
+const allowed=new Set(['today','notes','materials','garden','recall','dictionary','focus','planner','tools','ink','reader','research','timeline','connections','stickies','university','psychology','psychopathology','search','voice','board','mindmap','insights']);
 const KEY='psychdeskViewV1';
 let active=null,previousFocus=null,tab='today',restoring=false;
 function validView(view){

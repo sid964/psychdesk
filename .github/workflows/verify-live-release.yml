@@ -4,44 +4,43 @@ on:
     branches: [main]
     paths:
       - 'index.html'
-      - 'home-diorama.css'
-      - 'autopilot/studio.js'
-      - 'study-session.js'
       - 'app.js'
       - 'sw.js'
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: psychdesk-live-release-main
+  cancel-in-progress: true
 jobs:
   verify-pages:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 7
     steps:
-      - name: Confirm Pages serves the current home and startup cache
+      - uses: actions/checkout@v4
+      - name: Confirm GitHub Pages serves the actual commit
         shell: bash
         run: |
           set -euo pipefail
           SITE='https://sid964.github.io/psychdesk'
-          for attempt in $(seq 1 48); do
-            query="release=$GITHUB_SHA&attempt=$attempt"
-            html=$(curl -fsSL --max-time 12 "$SITE/index.html?$query" || true)
-            sw=$(curl -fsSL --max-time 12 "$SITE/sw.js?$query" || true)
-            studio=$(curl -fsSL --max-time 12 "$SITE/autopilot/studio.js?$query" || true)
-            css=$(curl -fsSL --max-time 12 "$SITE/home-diorama.css?$query" || true)
-            if [[ "$html" == *'app.js?v=desk-startup-20261110'* &&
-                  "$html" == *'autopilot/studio.js?v=desk-startup-20261110'* &&
-                  "$html" == *'home-diorama.css?v=desk-startup-20261110'* &&
-                  "$sw" == *'psychdesk-study-adoption-neutral-desk-v78'* &&
-                  "$sw" == *"cache:'no-store'"* &&
-                  "$studio" == *'PICK UP WHERE YOU LEFT OFF'* &&
-                  "$studio" == *'Open library'* &&
-                  "$css" == *'Open study desk'* ]]; then
-              echo "LIVE_RELEASE_VERIFIED: current desk and startup cache on Pages"
-              echo "RELEASE_COMMIT=$GITHUB_SHA"
-              exit 0
+          expected_html=$(sha256sum index.html | cut -d' ' -f1)
+          expected_app=$(sha256sum app.js | cut -d' ' -f1)
+          expected_sw=$(sha256sum sw.js | cut -d' ' -f1)
+          for attempt in $(seq 1 30); do
+            curl -fsSL --max-time 15 -H 'Cache-Control: no-cache' "$SITE/index.html?release=$GITHUB_SHA&n=$attempt" -o /tmp/psychdesk-live-index || true
+            curl -fsSL --max-time 15 -H 'Cache-Control: no-cache' "$SITE/app.js?release=$GITHUB_SHA&n=$attempt" -o /tmp/psychdesk-live-app || true
+            curl -fsSL --max-time 15 -H 'Cache-Control: no-cache' "$SITE/sw.js?release=$GITHUB_SHA&n=$attempt" -o /tmp/psychdesk-live-sw || true
+            if [[ -s /tmp/psychdesk-live-index && -s /tmp/psychdesk-live-app && -s /tmp/psychdesk-live-sw ]]; then
+              live_html=$(sha256sum /tmp/psychdesk-live-index | cut -d' ' -f1)
+              live_app=$(sha256sum /tmp/psychdesk-live-app | cut -d' ' -f1)
+              live_sw=$(sha256sum /tmp/psychdesk-live-sw | cut -d' ' -f1)
+              if [[ "$live_html" == "$expected_html" && "$live_app" == "$expected_app" && "$live_sw" == "$expected_sw" ]]; then
+                echo "LIVE_RELEASE_VERIFIED: GitHub Pages matches commit $GITHUB_SHA"
+                exit 0
+              fi
             fi
-            echo "Attempt $attempt: Pages propagation pending"
-            sleep 8
+            echo "Attempt $attempt: awaiting matching Pages files for $GITHUB_SHA"
+            sleep 6
           done
-          echo "::error::Pages did not serve the current home/startup release"
+          echo "::error::Pages did not serve index.html, app.js and sw.js from this commit"
           exit 1

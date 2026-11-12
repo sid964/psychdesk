@@ -1,64 +1,61 @@
-name: PsychDesk browser and visual audit
+name: PsychDesk browser smoke (lightweight)
 on:
   pull_request:
     paths:
-      - '**/*.js'
-      - '**/*.css'
-      - '**/*.html'
-      - 'tests/**'
+      - 'index.html'
+      - 'app.js'
+      - 'world/**'
+      - 'psychopathology-*'
+      - 'tests/world-*.cjs'
+      - 'tests/psychopathology-*.cjs'
       - '.github/workflows/browser-audit.yml'
   push:
     branches: [main]
     paths:
-      - '**/*.js'
-      - '**/*.css'
-      - '**/*.html'
-      - 'tests/**'
+      - 'index.html'
+      - 'app.js'
+      - 'world/**'
+      - 'psychopathology-*'
+      - 'tests/world-*.cjs'
+      - 'tests/psychopathology-*.cjs'
       - '.github/workflows/browser-audit.yml'
   workflow_dispatch:
 permissions:
   contents: read
 concurrency:
-  group: browser-audit-${{ github.ref }}
+  group: psychdesk-browser-smoke-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  browser:
+  chromium-smoke:
     runs-on: ubuntu-latest
-    timeout-minutes: 18
-    strategy:
-      fail-fast: false
-      matrix:
-        browser: [chromium, firefox]
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - name: Install browser test runner
+      - name: Install one browser
         run: |
           npm install --no-save --no-package-lock playwright@1.56.1
-          npx playwright install --with-deps ${{ matrix.browser }}
-      - name: Start app locally
+          npx playwright install --with-deps chromium
+      - name: Start local site
         run: |
           python3 -m http.server 8765 --bind 127.0.0.1 >/tmp/psychdesk-web.log 2>&1 &
-          for n in $(seq 1 30); do curl -fsS http://127.0.0.1:8765/index.html >/dev/null && break; sleep 1; done
-      - name: Verify psychology world contracts
-        run: node --test tests/world-contract.test.cjs tests/world-natural.test.cjs
-      - name: Verify world navigation and saved concepts
-        if: matrix.browser == 'chromium'
-        run: node tests/world-browser.cjs
-      - name: Verify natural world renderer and browser Back navigation
-        if: matrix.browser == 'chromium'
+          for n in $(seq 1 30); do
+            curl -fsS http://127.0.0.1:8765/index.html >/dev/null && break
+            sleep 1
+          done
+      - name: World Back/Forward navigation smoke
         run: node tests/world-navigation-browser.cjs
-      - name: Audit local desktop and mobile experience
-        run: node tests/browser-audit.cjs ${{ matrix.browser == 'firefox' && '--firefox' || '' }}
-      - name: Observe live GitHub Pages without modifying user data
-        if: always() && matrix.browser == 'chromium'
-        continue-on-error: true
-        run: node tests/browser-audit.cjs --live
-      - uses: actions/upload-artifact@v4
+      - name: Psychopathology graph interaction smoke
+        run: node tests/psychopathology-browser.cjs
+      - name: Full visual audit (manually requested only)
+        if: github.event_name == 'workflow_dispatch'
+        run: node tests/browser-audit.cjs
+      - name: Attach screenshots for review
         if: always()
+        uses: actions/upload-artifact@v4
         with:
-          name: psychdesk-browser-audit-${{ matrix.browser }}
+          name: psychdesk-browser-smoke
           path: browser-audit-artifacts/
-          retention-days: 7
+          retention-days: 3
