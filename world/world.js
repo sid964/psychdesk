@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { createLandscape } from './landscape.js?v=repair-20261112';
+import { createLandscape } from './landscape.js?v=immersive-20261112';
 import { createPlaces } from './places.js';
 import { createLife } from './life.js';
 
@@ -20,6 +20,7 @@ const message=document.getElementById('worldMessage');
 const ambientButton=document.getElementById('ambientToggle');
 const resetButton=document.getElementById('worldReset');
 const qualityButton=document.getElementById('qualityToggle');
+const tourButton=document.getElementById('worldTour');
 const status=document.getElementById('worldStatus');
 const coarse=matchMedia('(pointer: coarse)').matches;
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -52,8 +53,8 @@ if(renderer){
  camera.lookAt(0,1.5,0);
  renderer.outputColorSpace=THREE.SRGBColorSpace;
  renderer.toneMapping=THREE.ACESFilmicToneMapping;
- renderer.toneMappingExposure=night?1.18:1.26;
- const pixelRatio={high:1.8,medium:1.35,low:1};
+ renderer.toneMappingExposure=night?1.1:1.06;
+ const pixelRatio={high:1.75,medium:1.25,low:.9};
  let tier=quality;
  function applyQuality(){
   renderer.setPixelRatio(Math.min(devicePixelRatio||1,pixelRatio[tier]));
@@ -87,9 +88,9 @@ if(renderer){
   })
  );
  scene.add(sky);
- const skyLight=new THREE.HemisphereLight(night?0x93a8c8:0xf8f1df,night?0x3b5043:0x4d6651,night?2.0:2.8);
+ const skyLight=new THREE.HemisphereLight(night?0x93a8c8:0xf8f1df,night?0x3b5043:0x4d6651,night?1.25:1.65);
  scene.add(skyLight);
- const sun=new THREE.DirectionalLight(night?0xc8c8bc:0xffe2b7,night?1.65:3.0);
+ const sun=new THREE.DirectionalLight(night?0xc8c8bc:0xffe2b7,night?1.2:2.5);
  sun.position.set(-28,48,22);
  sun.castShadow=tier==='high';
  sun.shadow.mapSize.set(1536,1536);
@@ -139,7 +140,13 @@ if(renderer){
  };
  let pointerDown=null;
  canvas.addEventListener('pointerdown',e=>{pointerDown={x:e.clientX,y:e.clientY};});
- canvas.addEventListener('pointermove',e=>{if(e.pointerType!=='touch')canvas.style.cursor=pick(e)?'pointer':'grab';});
+ let lastHover=0;
+ canvas.addEventListener('pointermove',e=>{
+  if(e.pointerType==='touch'||e.pointerType==='pen'&&e.buttons)return;
+  // Raycasting the entire scene on every mouse pixel needlessly stalls the GPU.
+  const now=performance.now();if(now-lastHover<70)return;lastHover=now;
+  canvas.style.cursor=pick(e)?'pointer':'grab';
+ });
  canvas.addEventListener('pointercancel',()=>{pointerDown=null;});
  canvas.addEventListener('pointerup',e=>{
   if(!pointerDown||Math.hypot(e.clientX-pointerDown.x,e.clientY-pointerDown.y)>7){pointerDown=null;return;}
