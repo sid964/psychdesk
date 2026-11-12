@@ -3,7 +3,7 @@
 const main=document.getElementById('main');
 if(!main)return;
 let active=null,previousFocus=null;
-const allowed=new Set(['notes','materials','flashcards','dictionary','focus','planner','tools','ink']);
+const allowed=new Set(['notes','materials','garden','flashcards','dictionary','focus','planner','tools','ink']);
 function attachLaunch(){
  const host=main.querySelector('.garden-entry');
  if(!host||host.querySelector('#psychWorldLaunch'))return;
@@ -32,7 +32,10 @@ function receive(e){
  if(data.type==='psychworld:close'){closeWorld();return;}
  if(data.type==='psychworld:visit'&&allowed.has(data.tab)){
   const tab=data.tab;closeWorld();
-  window.PsychDeskCore?.setTab?.(tab);
+  if(tab==='garden'){
+   const button=document.createElement('button');button.type='button';button.hidden=true;
+   button.dataset.auto='garden';document.body.append(button);button.click();button.remove();
+  }else window.PsychDeskCore?.setTab?.(tab);
  }
 }
 function openWorld(){
