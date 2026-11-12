@@ -119,7 +119,11 @@
    checkingDrive=false;generation++;repaint();
   }
  });
- window.addEventListener('psychdesk:drive-connected',()=>{if(active){driveError='';driveVerified=false;checkingDrive=false;generation++;refresh();}});
+ window.addEventListener('psychdesk:drive-connected',()=>{
+  // verifyDriveConnection emits this before its promise resolves. Let the
+  // active check settle; invalidating it here recursively starts another one.
+  if(active&&!checkingDrive){driveError='';driveVerified=false;generation++;refresh();}
+ });
  window.addEventListener('psychdesk:session-reset',()=>{if(active){driveVerified=false;driveError='';generation++;refresh();}});
  window.addEventListener('online',refresh);
  window.addEventListener('offline',refresh);

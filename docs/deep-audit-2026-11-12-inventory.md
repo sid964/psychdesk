@@ -52,7 +52,7 @@ Baseline: `41934d734aeecf5a30de808e4e57105146b1398d`. 163 tracked files enumerat
 | `ink-notes.js` | Source/config reviewed |
 | `library.css` | Purpose/reference inventory only; semantic review pending |
 | `lidar-scan.css` | Purpose/reference inventory only; semantic review pending |
-| `lidar-scan.js` | Purpose/reference inventory only; semantic review pending |
+| `lidar-scan.js` | Source/config reviewed |
 | `manifest.webmanifest` | Source/config reviewed |
 | `materials.js` | Source/config reviewed |
 | `motion-lively.css` | Source/config reviewed |
@@ -95,7 +95,7 @@ Baseline: `41934d734aeecf5a30de808e4e57105146b1398d`. 163 tracked files enumerat
 | `reader-studio.css` | Purpose/reference inventory only; semantic review pending |
 | `reference-manager.js` | Source/config reviewed |
 | `setup-status.css` | Purpose/reference inventory only; semantic review pending |
-| `setup-status.js` | Purpose/reference inventory only; semantic review pending |
+| `setup-status.js` | Source/config reviewed |
 | `sticky-notes.css` | Purpose/reference inventory only; semantic review pending |
 | `sticky-notes.js` | Source/config reviewed |
 | `studio-v4.css` | Purpose/reference inventory only; semantic review pending |
@@ -156,7 +156,7 @@ Baseline: `41934d734aeecf5a30de808e4e57105146b1398d`. 163 tracked files enumerat
 | `tests/world-navigation-browser.cjs` | Source/config reviewed |
 | `theme.js` | Source/config reviewed |
 | `tour.css` | Purpose/reference inventory only; semantic review pending |
-| `tour.js` | Purpose/reference inventory only; semantic review pending |
+| `tour.js` | Source/config reviewed |
 | `workspace-refine.css` | Purpose/reference inventory only; semantic review pending |
 | `world/index.html` | Source/config reviewed |
 | `world/landscape.js` | Source/config reviewed |

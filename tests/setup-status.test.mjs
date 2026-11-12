@@ -50,3 +50,19 @@ test('failed Drive verification shows a reconnect path rather than success',asyn
  assert.match(ui.nodes.get('setup-details').textContent,/Drive permission denied/);
  ui.window.PsychDeskSetup.close();
 });
+
+test('Drive success event from the active verification does not start a verification loop',async()=>{
+ let checked=0,ui;
+ ui=harness(async()=>{
+  await Promise.resolve();checked++;
+  if(checked>4)throw Error('Regression safety stop: repeated verification');
+  ui.emit('psychdesk:drive-connected'); // Real cloud.verifyDriveConnection emits this before resolving.
+  return {email:'student@example.test'};
+ });
+ ui.window.PsychDeskSetup.start();
+ ui.setState({signedIn:true,uid:'student',email:'student@example.test',synced:true});ui.setDrive(true);
+ ui.window.PsychDeskSetup.refresh();await new Promise(setImmediate);
+ assert.equal(checked,1,'one check must not recursively request another');
+ assert.equal(ui.nodes.get('setup-title').textContent,'All set — ready to study');
+ ui.window.PsychDeskSetup.close();
+});
