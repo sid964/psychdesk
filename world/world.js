@@ -211,11 +211,12 @@ if(renderer){
  });
  const keyState=new Set();
  window.addEventListener('keydown',e=>{
-  if(e.altKey||e.ctrlKey||e.metaKey||['INPUT','TEXTAREA','BUTTON','SELECT'].includes(document.activeElement?.tagName))return;
+  if(e.altKey||e.ctrlKey||e.metaKey||['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName)||document.activeElement?.isContentEditable)return;
   const number=Number(e.key);
   if(e.key.length===1&&number>=1&&number<=destinations.length){
    e.preventDefault();focusPlace(destinations[number-1].id);return;
   }
+  if(document.activeElement?.tagName==='BUTTON')return;
   keyState.add(e.key.toLowerCase());
  });
  window.addEventListener('keyup',e=>keyState.delete(e.key.toLowerCase()));
