@@ -36,6 +36,7 @@ function error(text){
  host.style.display='none';
  if(ambientButton)ambientButton.disabled=true;
  if(qualityButton)qualityButton.disabled=true;
+ if(tourButton)tourButton.disabled=true;
 }
 let renderer;
 try{
