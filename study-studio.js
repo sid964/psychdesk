@@ -86,5 +86,9 @@ function enhance(root,tab){
   const action=document.createElement('button');action.type='button';action.className='secondary studio-plan';action.dataset.tab='planner';action.textContent='Plan one small next step →';root.querySelector('.hero')?.append(action);
  }
 }
-window.PsychDeskStudio={enhance};core.render();
+window.PsychDeskStudio={enhance};
+// The following deferred autopilot/studio script owns the first homepage render.
+// Rendering here paints the obsolete fallback home for a frame before it replaces it.
+const studioWillRender=Array.from(document.scripts||[]).some(s=>s.getAttribute?.('src')?.startsWith('autopilot/studio.js'));
+if(!studioWillRender)core.render();
 })();
