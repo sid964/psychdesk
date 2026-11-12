@@ -1,4 +1,4 @@
-.garden-home .garden-art-wrap .psychworld-launch{position:absolute!important;z-index:8;bottom:3px;left:50%;transform:translateX(-50%)!important;min-height:43px!important;padding:9px 15px!important;border:1px solid #d9d0b4b8!important;border-radius:22px!important;background:#1b2530f2!important;color:#f5eee0!important;box-shadow:0 7px 24px #0007!important;white-space:nowrap!important;font-size:12px!important}
+.garden-home .garden-art-wrap .psychworld-launch{position:absolute!important;z-index:8;bottom:3px;left:50%;pointer-events:auto!important;transform:translateX(-50%)!important;min-height:43px!important;padding:9px 15px!important;border:1px solid #d9d0b4b8!important;border-radius:22px!important;background:#1b2530f2!important;color:#f5eee0!important;box-shadow:0 7px 24px #0007!important;white-space:nowrap!important;font-size:12px!important}
 .garden-home .garden-art-wrap .psychworld-launch:hover{background:#394451!important}
 .garden-home .garden-art-wrap .psychworld-launch:focus-visible{outline:3px solid #e6d2a4;outline-offset:3px}
 #psychWorldOverlay{position:fixed;inset:0;z-index:100000;isolation:isolate;background:#07101b;overflow:hidden}
