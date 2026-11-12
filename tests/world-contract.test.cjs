@@ -22,10 +22,13 @@ test('world assets are self-contained static pages with accessible destinations'
  assert.match(html,/world\.js\?v=1/);
 });
 test('world scripts parse and have origin-checked navigation',()=>{
- for(const name of ['world/world.js','world/world-bridge.js']){
+ for(const name of ['world/world.js','world/world-bridge.js','world/world-ui.js']){
   const content=read(name).replace(/^import .*?;\s*$/gm,'');
   assert.doesNotThrow(()=>new vm.Script(content,{filename:name}));
  }
+ const ui=read('world/world-ui.js');
+ assert.match(ui,/data-visit/);
+ assert.match(ui,/psychworld:visit/);
  const bridge=read('world/world-bridge.js');
  assert.match(bridge,/e\.origin!==location\.origin/);
  assert.match(bridge,/e\.source!==active\.querySelector/);
