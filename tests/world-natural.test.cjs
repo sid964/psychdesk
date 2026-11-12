@@ -28,14 +28,14 @@ test('Browser history is reversible for world-to-recall and all app tab changes'
  assert.match(bridge,/history\.replaceState/);
  assert.match(bridge,/window\.addEventListener\('popstate'/);
  assert.match(bridge,/psychdesk:tab-changed/);
- assert.match(bridge,/if\(origin\?\.kind==='world'\)replace\(\{kind:'tab',tab:origin\.from\}\)/);
+ assert.doesNotMatch(bridge,/replace\(\{kind:'tab',tab:origin\.from\}\)/);
  assert.match(bridge,/e\.origin|event\.origin/);
  assert.match(bridge,/event\.source!==active\.querySelector/);
 });
 test('Main project preserves user data and world is lazy-loaded',()=>{
  const bridge=load('world/world-bridge.js'),html=load('index.html');
  assert.doesNotMatch(bridge,/(?:localStorage|firestore|firebase-sync)/i);
- assert.match(html,/src="world\/world-bridge\.js\?v=natural-2"/);
+ assert.match(html,/src="world\/world-bridge\.js\?v=repair-20261112"/);
  assert.match(html,/id="settingsBtn"/);
  assert.doesNotMatch(html,/src="world\/world\.js"/);
 });

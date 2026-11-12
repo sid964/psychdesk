@@ -13,6 +13,9 @@ const path=require('node:path');
   await page.locator('#psychWorldLaunch').click();
   await page.locator('#psychWorldOverlay iframe').waitFor();
   assert.equal(new URL(page.url()).hash,'#pd-world');
+  assert.equal(await page.locator('.app-shell').evaluate(el=>el.inert),true,'covered app must be inert');
+  await page.keyboard.press('Shift+Tab');
+  assert.equal(await page.locator('#psychWorldOverlay').evaluate(el=>el.contains(document.activeElement)),true,'reverse Tab remains in World');
   let world=page.frameLocator('#psychWorldOverlay iframe');
   await world.locator('.world-places [data-visit="recall"]').waitFor({timeout:18000});
   const hasCanvas=await world.locator('#worldCanvas canvas').waitFor({state:'attached',timeout:18000})
@@ -35,8 +38,8 @@ const path=require('node:path');
    document.querySelector('#main h1')?.textContent?.includes('Recall'),{timeout:10000});
   assert.equal(await page.locator('#psychWorldOverlay').count(),0);
   await page.goBack({waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>location.hash==='#pd-today'&&document.querySelector('#main .garden-landing'),{timeout:10000});
-  console.log('Back from Recall returns to PsychDesk home');
+  await page.waitForFunction(()=>location.hash==='#pd-world'&&document.querySelector('#psychWorldOverlay iframe'),{timeout:10000});
+  console.log('Back from Recall restores the World');
   await page.goForward({waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>location.hash==='#pd-recall'&&document.querySelector('#main h1')?.textContent?.includes('Recall'),{timeout:10000});
   console.log('Forward restores Recall');
@@ -49,6 +52,35 @@ const path=require('node:path');
   await page.goto('http://127.0.0.1:8765/#pd-dictionary',{waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>document.querySelector('#main h1')?.textContent?.includes('Dictionary'),{timeout:12000});
   console.log('Direct study deep-link restores Dictionary');
+  // Scene initialization above is real WebGL. The remaining checks exercise
+  // the supported graphics-unavailable navigation path, avoiding six redundant
+  // software-GPU scene rebuilds in a lightweight CI smoke run.
+  await page.route('**/world/world.js?*',route=>route.abort());
+
+  // Every World destination retains the World as its actual predecessor.
+  for(const destination of ['notes','materials','garden','dictionary','focus']){
+   await page.evaluate(()=>window.PsychDeskWorldNavigation.openWorld());
+   await page.frameLocator('#psychWorldOverlay iframe').locator('.world-places [data-visit="'+destination+'"]').click();
+   await page.waitForFunction(tab=>location.hash==='#pd-'+tab,destination);
+   await page.goBack();
+   await page.locator('#psychWorldOverlay iframe').waitFor();
+   assert.equal(new URL(page.url()).hash,'#pd-world');
+   if(destination==='notes'){
+    await page.reload({waitUntil:'domcontentloaded'});
+    await page.locator('#psychWorldOverlay iframe').waitFor();
+   }
+   await page.goForward();
+   await page.waitForFunction(tab=>location.hash==='#pd-'+tab,destination);
+   assert.equal(await page.locator('#psychWorldOverlay').count(),0);
+   await page.evaluate(()=>{window.PsychDeskCore.closeModal();window.PsychDeskCore.setTab('today');});
+  }
+  const direct=await browser.newPage();
+  await direct.goto('http://127.0.0.1:8765/#pd-world',{waitUntil:'domcontentloaded'});
+  await direct.locator('#psychWorldOverlay .psychworld-exit').click();
+  await direct.waitForFunction(()=>location.hash==='#pd-today'&&!document.querySelector('#psychWorldOverlay'));
+  await direct.close();
+  console.log('All six destinations, reload, direct close and Forward verified');
+
   assert.equal(errors.length,0,'Page errors: '+errors.join(' | '));
  }finally{await browser.close();}
 })().catch(err=>{console.error(err);process.exitCode=1;});

@@ -12,7 +12,7 @@ const safeURL=value=>{try{const u=new URL(text(value));return /^(http|https):$/.
 const cleanDOI=value=>text(value).replace(/^doi:\s*/i,'').replace(/^https?:\/\/(?:dx\.)?doi\.org\//i,'');
 const validDOI=value=>/^10\.\d{4,9}\/[-._;()/:a-z0-9]+$/i.test(value)&&value.length<=190;
 const normalizeType=value=>known.has(value)?value:'journal';
-let search='',subjectFilter='all',typeFilter='all',sort='newest',pendingImport=[];
+let search='',subjectFilter='all',typeFilter='all',sort='newest',pendingImport=[],requestGeneration=0;
 const normalized=row=>({
  id:row.id||'',type:normalizeType(row.type||'journal'),title:take(row.title,230),authors:take(row.authors,400),
  year:Number(row.year)||null,doi:cleanDOI(row.doi),url:safeURL(row.url),journal:take(row.journal||row.containerTitle,220),
@@ -161,6 +161,7 @@ function saveForm(e){
 }
 async function doiLookup(){
  const el=$('#refLookupInput'),status=$('#refLookupStatus');
+ const owner=data(),request=++requestGeneration;
  const doi=cleanDOI(el?.value);
  if(!validDOI(doi)){if(status)status.textContent='Enter a valid DOI or https://doi.org/… link.';return;}
  if(status)status.textContent='Looking up publication metadata…';
@@ -169,6 +170,7 @@ async function doiLookup(){
   const response=await fetch('https://api.crossref.org/works/'+encodeURIComponent(doi),{signal:ctrl.signal,headers:{Accept:'application/json'}});
   if(!response.ok)throw Error('Crossref did not return metadata for that DOI.');
   const item=(await response.json()).message||{};
+  if(owner!==data()||request!==requestGeneration||status!==$('#refLookupStatus'))return;
   const authors=(item.author||[]).map(x=>[x.given,x.family].filter(Boolean).join(' ')).filter(Boolean).join('; ');
   const type=item.type==='book'?'book':item.type==='book-chapter'?'chapter':item.type==='proceedings-article'?'conference':item.type==='dissertation'?'thesis':item.type==='report'?'report':'journal';
   const r={type,title:item.title?.[0]||'',authors,year:item.published?.['date-parts']?.[0]?.[0]||item.issued?.['date-parts']?.[0]?.[0]||null,
@@ -176,7 +178,7 @@ async function doiLookup(){
   if(status)status.textContent='Metadata found. Review before saving.';
   referenceForm(r);
  }catch(e){
-  if(status)status.textContent='Lookup unavailable: '+take(e?.message||e,180)+'. You can enter a reference manually.';
+  if(owner===data()&&request===requestGeneration&&status=== $('#refLookupStatus')&&status)status.textContent='Lookup unavailable: '+take(e?.message||e,180)+'. You can enter a reference manually.';
  }finally{clearTimeout(time);}
 }
 // Text-based interchange formats. Parse only metadata; no imported content is evaluated.
@@ -324,9 +326,11 @@ function importModal(parsed,filename){
 }
 async function loadFile(file){
  if(!file)return;
+ const owner=data(),request=++requestGeneration;
  if(file.size>1024*1024){core.toast('Import files are limited to 1 MB. Split your bibliography and try again.');return;}
  try{
   const content=await file.text(),ext=file.name.toLowerCase();
+  if(owner!==data()||request!==requestGeneration)return;
   const parsed=/\.ris$/.test(ext)?parseRIS(content):/\.(bib|bibtex)$/.test(ext)?parseBibTeX(content):
    /@\w+\s*[\{\(]/.test(content)?parseBibTeX(content):parseRIS(content);
   if(!parsed.length){core.toast('No supported references found. Check RIS/BibTeX format.');return;}
@@ -380,6 +384,6 @@ document.addEventListener('click',e=>{
   case 'cancelImport':pendingImport=[];core.closeModal();break;
  }
 });
-window.addEventListener('psychdesk:session-reset',()=>{search='';subjectFilter='all';typeFilter='all';sort='newest';pendingImport=[];});
+window.addEventListener('psychdesk:session-reset',()=>{requestGeneration++;search='';subjectFilter='all';typeFilter='all';sort='newest';pendingImport=[];});
 window.PsychDeskReferences={render,normalized,apaDraft,parseRIS,parseBibTeX,exportRIS,exportBibTeX,importPreview,authorsList,dedupeKey,cleanDOI,validDOI};
 })();

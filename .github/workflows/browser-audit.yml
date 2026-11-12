@@ -4,6 +4,13 @@ on:
     paths:
       - 'index.html'
       - 'app.js'
+      - 'sw.js'
+      - 'firebase-sync.js'
+      - 'motion-runtime.js'
+      - 'sticky-notes.js'
+      - 'reference-manager.js'
+      - 'autopilot/**'
+      - 'tests/repair-browser.cjs'
       - 'world/**'
       - 'psychopathology-*'
       - 'tests/world-*.cjs'
@@ -14,6 +21,13 @@ on:
     paths:
       - 'index.html'
       - 'app.js'
+      - 'sw.js'
+      - 'firebase-sync.js'
+      - 'motion-runtime.js'
+      - 'sticky-notes.js'
+      - 'reference-manager.js'
+      - 'autopilot/**'
+      - 'tests/repair-browser.cjs'
       - 'world/**'
       - 'psychopathology-*'
       - 'tests/world-*.cjs'
@@ -45,6 +59,8 @@ jobs:
             curl -fsS http://127.0.0.1:8765/index.html >/dev/null && break
             sleep 1
           done
+      - name: Responsive study persistence and offline routing smoke
+        run: node tests/repair-browser.cjs
       - name: World Back/Forward navigation smoke
         run: node tests/world-navigation-browser.cjs
       - name: Psychopathology graph interaction smoke

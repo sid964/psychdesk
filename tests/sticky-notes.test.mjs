@@ -81,3 +81,18 @@ test('sticky autosave failure restores the previous collection and retains unsav
  env.events.click({target:{closest:q=>q==='[data-sticky]'?{dataset:{sticky:'save'}}:null},preventDefault(){}});
  assert.match(env.data.stickies[0].rawText,/Second longer updated/);
 });
+
+for(const action of ['new','edit','fromNote'])test('failed sticky save protects writing when switching via '+action,()=>{
+ const env=harness();
+ env.events.input({target:{id:'stickyText',value:'An existing saved collection'}});env.runSave();
+ const savedId=env.data.stickies[0].groupId;
+ env.events.input({target:{id:'stickyText',value:'Unsaved writing that must remain available'}});
+ env.setSaveWorks(false);env.runSave(); // Clears the debounce timer; failure still needs protection.
+ if(action==='fromNote')env.window.PsychDeskStickies.fromNote({id:'n1',title:'Other note',body:'Replacement text'});
+ else if(action==='edit')env.window.PsychDeskStickies.edit(savedId);
+ else env.events.click({target:{closest:()=>({dataset:{sticky:'new'}})},preventDefault(){}});
+ assert.match(env.window.PsychDeskStickies.render(),/Unsaved writing that must remain available/);
+ assert.doesNotMatch(env.window.PsychDeskStickies.render(),/>Replacement text<\/textarea>/);
+ env.setSaveWorks(true);assert.equal(env.window.PsychDeskStickies.save(),true);
+ assert.equal(env.data.stickies[0].rawText,'Unsaved writing that must remain available');
+});

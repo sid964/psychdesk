@@ -72,10 +72,13 @@ export function createLandscape(THREE,scene,destinations,{coarse=false,reduced=f
    new THREE.Vector3(d.x,0,d.z)
   ],false,'centripetal',.42);
  });
+ // Routes do not change after construction. Reuse their exact samples instead
+ // of allocating and evaluating 216 spline points for every meadow candidate.
+ const pathSamples=routes.flatMap(path=>Array.from({length:36},(_,j)=>path.getPoint(j/35)));
  function distanceToPath(x,z){
   let best=1e4;
-  for(const path of routes)for(let j=0;j<=35;j++){
-   const p=path.getPoint(j/35);best=Math.min(best,Math.hypot(x-p.x,z-p.z));
+  for(const p of pathSamples){
+   best=Math.min(best,Math.hypot(x-p.x,z-p.z));
   }
   return best;
  }

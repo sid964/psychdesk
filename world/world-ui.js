@@ -16,7 +16,11 @@ document.addEventListener('click',event=>{
  if(tab)visit(tab);
 });
 document.getElementById('worldClose').addEventListener('click',close);
-document.addEventListener('keydown',event=>{if(event.key==='Escape'){document.getElementById('worldDetail').hidden=true;close();}});
+document.addEventListener('keydown',event=>{
+ if(event.key!=='Escape')return;
+ if(!detail.hidden){detail.hidden=true;document.getElementById('worldClose').focus();}
+ else close();
+});
 const detail=document.getElementById('worldDetail'),detailVisit=document.getElementById('worldDetailVisit');
 document.getElementById('worldDetailClose').addEventListener('click',()=>detail.hidden=true);
 function showDetail(title,body,destination){

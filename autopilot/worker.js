@@ -16,7 +16,7 @@ function analyze(source){
   if(m&&m[2].split(/\s+/).length>=3){
    const term=clean(m[1]),answer=clean(m[2]);
    const k=word(term);
-   if(!seen.has(k)&&!/^the|an|this|that|note|example$/i.test(term)){
+   if(!seen.has(k)&&!/^(?:the|an|this|that|note|example)$/i.test(term)){
     seen.add(k);terms.push(term);
     cards.push({question:'What is '+term+'?',answer,origin:'explicit definition',term});
    }
@@ -54,7 +54,7 @@ function analyze(source){
   return {id:s.id,hits,matched};
  }):tags.map(([id])=>({id,hits:categoryScores.get(id)?.hits||0,matched:categoryScores.get(id)?.matched||[]})))
  .sort((a,b)=>b.hits-a.hits||a.id.localeCompare(b.id));
- const guess=scored[0]?.hits>=2&&scored[0].hits>scored[1]?.hits?scored[0].id:'';
+ const guess=scored[0]?.hits>=2&&scored[0].hits>(scored[1]?.hits||0)?scored[0].id:'';
  const confidence=guess?Math.min(.96,.58+scored[0].hits*.11):0;
  const outline=headings.slice(0,40);
  return {sourceId:source.id,revision:source.revision,terms:terms.slice(0,60),cards:cards.slice(0,25),outline,questions:questions.slice(0,25),years:dates.slice(0,30),researchers:people.slice(0,30),dois:dois.slice(0,20),suggestion:{subjectId:guess,confidence,matched:guess?scored[0].matched.slice(0,8):[]},type:/\blecture|transcript\b/i.test(source.title||'')?'lecture':outline.some(s=>/^chapter\b/i.test(s))?'chapter':'note',excerpt:clean(text).slice(0,320)};

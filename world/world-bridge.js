@@ -5,10 +5,10 @@ const main=document.getElementById('main');
 if(!main)return;
 const allowed=new Set(['today','notes','materials','garden','recall','dictionary','focus','planner','tools','ink','reader','research','timeline','connections','stickies','university','psychology','psychopathology','search','voice','board','mindmap','insights']);
 const KEY='psychdeskViewV1';
-let active=null,previousFocus=null,tab='today',restoring=false;
+let active=null,previousFocus=null,tab='today',restoring=false,background=[];
 function validView(view){
  if(!view||typeof view!=='object')return null;
- if(view.kind==='world')return {kind:'world',from:allowed.has(view.from)?view.from:'today'};
+ if(view.kind==='world')return {kind:'world',from:allowed.has(view.from)?view.from:'today',returnToPrevious:view.returnToPrevious===true};
  if(view.kind==='garden')return {kind:'garden',from:'today'};
  if(view.kind==='tab'&&allowed.has(view.tab)&&view.tab!=='garden')return {kind:'tab',tab:view.tab};
  return null;
@@ -49,6 +49,8 @@ function attachLaunch(){
 function destroyWorld(){
  if(!active)return;
  active.remove();active=null;
+ for(const [element,wasInert] of background)element.inert=wasInert;
+ background=[];
  document.body.classList.remove('psychworld-open');
  window.removeEventListener('message',receive);
  document.removeEventListener('keydown',escape);
@@ -57,19 +59,21 @@ function destroyWorld(){
 }
 function requestClose(){
  if(!active)return;
- if(history.state?.[KEY]?.kind==='world')history.back();
- else{destroyWorld();if(tab!=='today')window.PsychDeskCore?.setTab?.('today');}
+ const view=validView(history.state?.[KEY]);
+ if(view?.kind==='world'&&view.returnToPrevious)history.back();
+ else{
+  // A direct World URL has no known in-app predecessor. Close in place,
+  // rather than sending the visitor back to an unrelated external page.
+  const destination={kind:'tab',tab:view?.from||'today'};
+  replace(destination);restore(destination);
+ }
 }
 function escape(event){
  if(event.key==='Escape'){event.preventDefault();requestClose();}
- if(event.key==='Tab'&&active){
-  const close=active.querySelector('.psychworld-exit');
-  if(event.target===close&&event.shiftKey){event.preventDefault();close.focus();}
- }
 }
 function openWorld(fromHistory=false){
  if(active)return;
- if(!fromHistory)push({kind:'world',from:tab});
+ if(!fromHistory)push({kind:'world',from:tab,returnToPrevious:true});
  previousFocus=document.activeElement;
  const layer=document.createElement('section');
  layer.id='psychWorldOverlay';layer.setAttribute('role','dialog');
@@ -82,6 +86,12 @@ function openWorld(fromHistory=false){
  close.addEventListener('click',requestClose);
  layer.append(frame,close);
  document.body.append(layer);active=layer;
+ // aria-modal alone does not remove the covered application/tour from Tab
+ // order. Preserve prior inert state and let native focus traverse the iframe
+ // and exit button, in either direction, without reaching hidden controls.
+ background=Array.from(document.body.children||[]).filter(element=>element!==layer)
+  .map(element=>[element,Boolean(element.inert)]);
+ for(const [element] of background)element.inert=true;
  document.body.classList.add('psychworld-open');
  window.addEventListener('message',receive);
  document.addEventListener('keydown',escape);
@@ -99,11 +109,8 @@ function receive(event){
  if(data.type==='psychworld:close'){requestClose();return;}
  if(data.type!=='psychworld:visit'||!allowed.has(data.tab)||data.tab==='today')return;
  const destination=data.tab;
- const origin=validView(history.state?.[KEY]);
  destroyWorld();
- // A study room should go BACK to PsychDesk's desk, not to the browser's
- // start page. Replace the temporary World entry with its home section.
- if(origin?.kind==='world')replace({kind:'tab',tab:origin.from});
+ // Keep the World entry: Back restores it and Forward restores the room.
  if(destination==='garden'){
   push({kind:'garden',from:'today'});
   openGarden();
@@ -132,7 +139,15 @@ function restore(view){
 const initial=validView(history.state?.[KEY])||routeFromHash()||{kind:'tab',tab:'today'};
 if(!validView(history.state?.[KEY]))replace(initial);
 window.addEventListener('popstate',event=>{
- const next=validView(event.state?.[KEY])||routeFromHash()||{kind:'tab',tab:'today'};
+ const routed=validView(event.state?.[KEY])||routeFromHash();
+ if(!routed&&location.hash){
+  // Native in-page anchors (skip link and Tools section jumps) are not app
+  // routes. Preserve their fragment and current view instead of rendering Home.
+  try{history.replaceState({...history.state,[KEY]:{kind:'tab',tab}},'',location.href);}
+  catch(error){console.warn('PsychDesk anchor history:',error);}
+  return;
+ }
+ const next=routed||{kind:'tab',tab:'today'};
  restore(next);
 });
 window.addEventListener('psychdesk:tab-changed',event=>{
