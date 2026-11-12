@@ -13,6 +13,9 @@ const path=require('node:path');
   await page.locator('#psychWorldLaunch').click();
   await page.locator('#psychWorldOverlay iframe').waitFor();
   assert.equal(new URL(page.url()).hash,'#pd-world');
+  assert.equal(await page.locator('.app-shell').evaluate(el=>el.inert),true,'covered app must be inert');
+  await page.keyboard.press('Shift+Tab');
+  assert.equal(await page.locator('#psychWorldOverlay').evaluate(el=>el.contains(document.activeElement)),true,'reverse Tab remains in World');
   let world=page.frameLocator('#psychWorldOverlay iframe');
   await world.locator('.world-places [data-visit="recall"]').waitFor({timeout:18000});
   const hasCanvas=await world.locator('#worldCanvas canvas').waitFor({state:'attached',timeout:18000})

@@ -121,6 +121,10 @@ async function signIn(){
  }finally{loginInProgress=false;}
 }
 async function accountChanged(next){
+ // Firebase may resolve its initial signed-out state after the guest has
+ // already begun writing. No identity changed: keep that editor/reader open.
+ // A cached signed-in workspace must still switch safely back to guest below.
+ if(!next&&!user&&core.getStorageKey()==='psychdesk-v1'){updateBadge();return;}
  // Flush the old account's editor while it still has its original owner.
  core.closeModal();
  accountEpoch++;

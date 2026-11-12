@@ -45,7 +45,7 @@
  }
  function refresh(){
   document.documentElement.dataset.motion=mode;
-  const idleOff=!canAnimate()||mode==='quiet'||tab==='focus'||document.body.classList.contains('psychdesk-quiet');
+  const idleOff=!canAnimate()||mode==='quiet'||tab==='focus'||document.body.classList.contains('psychdesk-quiet')||document.body.classList.contains('psychworld-open');
   document.documentElement.classList.toggle('psychdesk-ambient-off',idleOff);
   if(!canAnimate())cancel();
   document.dispatchEvent(new CustomEvent('psychdesk:motion-changed',{detail:{mode,enabled:canAnimate()}}));

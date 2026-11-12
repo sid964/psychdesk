@@ -476,3 +476,20 @@ test('new edits during slow initial cloud loading are preserved and flagged for 
  snapshot.resolve({exists:()=>true,data:()=>({revision:4,data:backup()})});await loading;
  assert.equal(env.core.getData().notes[0].body,'Do not replace');assert.equal(env.window.PsychDeskFirebase.getConnectionStatus().conflict,true);assert.equal(fb.api.getState().dirty,true);
 });
+
+test('late initial signed-out Firebase callback leaves an active guest editor alone',async()=>{
+ const env=environment();env.core.getData().notes.push({id:'guest-note',title:'Writing now',body:'Do not interrupt this editor'});
+ let closed=0,resets=0;env.core.closeModal=()=>closed++;
+ env.window.addEventListener('psychdesk:session-reset',()=>resets++);
+ const fb=firebase(env);await fb.change(null);
+ assert.equal(closed,0);assert.equal(resets,0);assert.equal(env.core.getStorageKey(),'psychdesk-v1');
+ assert.equal(env.core.getData().notes[0].body,'Do not interrupt this editor');
+});
+test('initial signed-out Firebase callback still leaves a cached private workspace safely',async()=>{
+ const privateData={...backup(),notes:[{id:'private',title:'Private note',body:'Private account data'}]};
+ const storage=new Map([['psychdesk-last-user-v3','alice'],['psychdesk-user-alice',JSON.stringify(privateData)]]);
+ const env=environment(storage);assert.equal(env.core.getStorageKey(),'psychdesk-user-alice');
+ const fb=firebase(env);await fb.change(null);
+ assert.equal(env.core.getStorageKey(),'psychdesk-v1');assert.equal(env.core.getData().notes.length,0);
+ assert.equal(JSON.parse(storage.get('psychdesk-user-alice')).notes[0].body,'Private account data');
+});

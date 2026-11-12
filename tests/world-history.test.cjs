@@ -10,7 +10,7 @@ function environment(hash='',previous=false){
  const document={activeElement:null,addEventListener(){},removeEventListener(){},
   getElementById:id=>id==='main'?{querySelector:()=>null}:null,
   createElement(tag){const node={tag,dataset:{},contentWindow:{},isConnected:true,setAttribute(){},addEventListener(){},focus(){},append(...items){this.items=items},click(){},remove(){if(active===this)active=null},querySelector(selector){return selector==='iframe'?this.items?.find(x=>x.tag==='iframe'):this.items?.find(x=>x.tag==='button')}};return node},
-  body:{classList:{add(){},remove(){}},append(node){if(node.tag==='section')active=node}}};
+  body:{children:[{inert:false},{inert:true}],classList:{add(){},remove(){}},append(node){this.children.push(node);if(node.tag==='section')active=node}}};
  const entries=previous?[{url:'https://external.test/',state:null}]:[];
  entries.push({url:location.href,state:null});let position=entries.length-1;
  function go(delta){backCalls+=delta<0?1:0;position+=delta;const entry=entries[position];if(!entry)throw Error('Left app history');location.href=entry.url;const event=new Event('popstate');event.state=entry.state;events.dispatchEvent(event);}
@@ -18,7 +18,7 @@ function environment(hash='',previous=false){
  const window={addEventListener:events.addEventListener.bind(events),removeEventListener:events.removeEventListener.bind(events),PsychDeskCore:{closeModal(){closed++},setTab(tab){currentTab=tab;const event=new Event('psychdesk:tab-changed');event.tab=tab;events.dispatchEvent(event)}}};
  const context={window,document,location,history,URL,console,queueMicrotask:fn=>fn(),MutationObserver:class{observe(){}}};
  vm.runInNewContext(fs.readFileSync('world/world-bridge.js','utf8'),context);
- return {window,location,history,entries,get active(){return active},get closed(){return closed},get tab(){return currentTab},get backCalls(){return backCalls},forward:()=>go(1),visit(tab,override={}){const event=new Event('message');Object.assign(event,{origin:location.origin,source:active?.querySelector('iframe').contentWindow,data:{type:'psychworld:visit',tab}},override);events.dispatchEvent(event)}};
+ return {window,location,history,entries,document,get active(){return active},get closed(){return closed},get tab(){return currentTab},get backCalls(){return backCalls},forward:()=>go(1),anchor(hash){history.pushState(null,'',hash);const event=new Event('popstate');event.state=null;events.dispatchEvent(event)},visit(tab,override={}){const event=new Event('message');Object.assign(event,{origin:location.origin,source:active?.querySelector('iframe').contentWindow,data:{type:'psychworld:visit',tab}},override);events.dispatchEvent(event)}};
 }
 for(const destination of ['notes','materials','recall','dictionary','focus','garden'])test('World → '+destination+' → Back → Forward preserves route order',()=>{
  const env=environment('',true);env.window.PsychDeskWorldNavigation.openWorld();env.visit(destination);
@@ -43,4 +43,18 @@ test('untrusted frame messages cannot navigate the parent',()=>{
  const env=environment();env.window.PsychDeskWorldNavigation.openWorld();
  env.visit('recall',{origin:'https://untrusted.test'});assert.ok(env.active);
  env.visit('recall',{source:{}});assert.ok(env.active);assert.equal(env.location.hash,'#pd-world');
+});
+
+test('World hides covered controls from keyboard focus and restores previous inert state',()=>{
+ const env=environment();const [shell,alreadyInert]=env.document.body.children;
+ env.window.PsychDeskWorldNavigation.openWorld();assert.equal(shell.inert,true);assert.equal(alreadyInert.inert,true);
+ assert.notEqual(env.active.inert,true,'World itself must remain interactive');
+ env.window.PsychDeskWorldNavigation.closeWorld();assert.equal(shell.inert,false);assert.equal(alreadyInert.inert,true);
+});
+
+for(const hash of ['#main','#studio-tool-group-3'])test('native anchor '+hash+' preserves its study view through Back/Forward',()=>{
+ const env=environment();env.window.PsychDeskCore.setTab('tools');env.anchor(hash);
+ assert.equal(env.tab,'tools');assert.equal(env.location.hash,hash);assert.equal(env.history.state[KEY].tab,'tools');
+ env.window.PsychDeskCore.setTab('notes');env.history.back();assert.equal(env.tab,'tools');assert.equal(env.location.hash,hash);
+ env.forward();assert.equal(env.tab,'notes');assert.equal(env.location.hash,'#pd-notes');
 });

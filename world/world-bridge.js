@@ -5,7 +5,7 @@ const main=document.getElementById('main');
 if(!main)return;
 const allowed=new Set(['today','notes','materials','garden','recall','dictionary','focus','planner','tools','ink','reader','research','timeline','connections','stickies','university','psychology','psychopathology','search','voice','board','mindmap','insights']);
 const KEY='psychdeskViewV1';
-let active=null,previousFocus=null,tab='today',restoring=false;
+let active=null,previousFocus=null,tab='today',restoring=false,background=[];
 function validView(view){
  if(!view||typeof view!=='object')return null;
  if(view.kind==='world')return {kind:'world',from:allowed.has(view.from)?view.from:'today',returnToPrevious:view.returnToPrevious===true};
@@ -49,6 +49,8 @@ function attachLaunch(){
 function destroyWorld(){
  if(!active)return;
  active.remove();active=null;
+ for(const [element,wasInert] of background)element.inert=wasInert;
+ background=[];
  document.body.classList.remove('psychworld-open');
  window.removeEventListener('message',receive);
  document.removeEventListener('keydown',escape);
@@ -68,10 +70,6 @@ function requestClose(){
 }
 function escape(event){
  if(event.key==='Escape'){event.preventDefault();requestClose();}
- if(event.key==='Tab'&&active){
-  const close=active.querySelector('.psychworld-exit');
-  if(event.target===close&&event.shiftKey){event.preventDefault();close.focus();}
- }
 }
 function openWorld(fromHistory=false){
  if(active)return;
@@ -88,6 +86,12 @@ function openWorld(fromHistory=false){
  close.addEventListener('click',requestClose);
  layer.append(frame,close);
  document.body.append(layer);active=layer;
+ // aria-modal alone does not remove the covered application/tour from Tab
+ // order. Preserve prior inert state and let native focus traverse the iframe
+ // and exit button, in either direction, without reaching hidden controls.
+ background=Array.from(document.body.children||[]).filter(element=>element!==layer)
+  .map(element=>[element,Boolean(element.inert)]);
+ for(const [element] of background)element.inert=true;
  document.body.classList.add('psychworld-open');
  window.addEventListener('message',receive);
  document.addEventListener('keydown',escape);
@@ -135,7 +139,15 @@ function restore(view){
 const initial=validView(history.state?.[KEY])||routeFromHash()||{kind:'tab',tab:'today'};
 if(!validView(history.state?.[KEY]))replace(initial);
 window.addEventListener('popstate',event=>{
- const next=validView(event.state?.[KEY])||routeFromHash()||{kind:'tab',tab:'today'};
+ const routed=validView(event.state?.[KEY])||routeFromHash();
+ if(!routed&&location.hash){
+  // Native in-page anchors (skip link and Tools section jumps) are not app
+  // routes. Preserve their fragment and current view instead of rendering Home.
+  try{history.replaceState({...history.state,[KEY]:{kind:'tab',tab}},'',location.href);}
+  catch(error){console.warn('PsychDesk anchor history:',error);}
+  return;
+ }
+ const next=routed||{kind:'tab',tab:'today'};
  restore(next);
 });
 window.addEventListener('psychdesk:tab-changed',event=>{

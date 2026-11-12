@@ -64,29 +64,29 @@ Baseline: `41934d734aeecf5a30de808e4e57105146b1398d`. 163 tracked files enumerat
 | `pdf-reader.js` | Source/config reviewed |
 | `phase-release.css` | Purpose/reference inventory only; semantic review pending |
 | `phase3-knowledge.css` | Purpose/reference inventory only; semantic review pending |
-| `phase3-knowledge.js` | Purpose/reference inventory only; semantic review pending |
+| `phase3-knowledge.js` | Source/config reviewed |
 | `phase4-garden.css` | Purpose/reference inventory only; semantic review pending |
-| `phase4-garden.js` | Purpose/reference inventory only; semantic review pending |
+| `phase4-garden.js` | Source/config reviewed |
 | `phase5-chapters.css` | Purpose/reference inventory only; semantic review pending |
 | `phase5-chapters.js` | Source/config reviewed |
 | `phase6-next-step.css` | Purpose/reference inventory only; semantic review pending |
-| `phase6-next-step.js` | Purpose/reference inventory only; semantic review pending |
+| `phase6-next-step.js` | Source/config reviewed |
 | `phase7-weak-concepts.css` | Purpose/reference inventory only; semantic review pending |
 | `phase7-weak-concepts.js` | Source/config reviewed |
 | `phase8-reflection.css` | Purpose/reference inventory only; semantic review pending |
 | `phase8-reflection.js` | Source/config reviewed |
 | `planner-refine.css` | Purpose/reference inventory only; semantic review pending |
 | `preparation.css` | Purpose/reference inventory only; semantic review pending |
-| `psychology-academic.js` | Purpose/reference inventory only; semantic review pending |
+| `psychology-academic.js` | Source/config reviewed |
 | `psychology-connections.js` | Source/config reviewed |
 | `psychology-data.js` | Purpose/reference inventory only; semantic review pending |
 | `psychology-expanded-data.js` | Purpose/reference inventory only; semantic review pending |
 | `psychology-imports.css` | Purpose/reference inventory only; semantic review pending |
 | `psychology-imports.js` | Purpose/reference inventory only; semantic review pending |
 | `psychology-knowledge.css` | Purpose/reference inventory only; semantic review pending |
-| `psychology-knowledge.js` | Purpose/reference inventory only; semantic review pending |
+| `psychology-knowledge.js` | Source/config reviewed |
 | `psychology-online.css` | Purpose/reference inventory only; semantic review pending |
-| `psychology-online.js` | Purpose/reference inventory only; semantic review pending |
+| `psychology-online.js` | Source/config reviewed |
 | `psychopathology-course-data.js` | Purpose/reference inventory only; semantic review pending |
 | `psychopathology-graph.css` | Purpose/reference inventory only; semantic review pending |
 | `psychopathology-graph.js` | Purpose/reference inventory only; semantic review pending |

@@ -16,6 +16,7 @@ This is a bounded repair pass and an actionable checkpoint, **not a claim that t
 | ID | Severity | Reproduction / root cause | Minimal repair | Evidence |
 | --- | --- | --- | --- | --- |
 | H1 | P1 | Home → World → Recall → Back returns home. Bridge replaces World entry before entering a destination. | Keep World as actual predecessor; Back/Forward restore it. | Reproduced on published site; actual bridge behavioral tests cover all six destinations; expanded browser regression. |
+| H3 | P1 | Tools section jump/skip-link hashes were treated as unknown app routes and returned Home. Preserve the current view on native anchor entries without changing their fragment. | Reproduced live; bridge anchor Back/Forward tests; responsive browser anchor assertions. |
 | H2 | P1 | Direct `#pd-world` entry → close calls Back without a known in-app predecessor. | Mark normally pushed World entries; close direct entries in place. | Test includes an external predecessor and asserts zero Back calls/no added entry. |
 | C1 | P1 | Offline navigation to World receives root `index.html`; World assets were absent from precache. | Match each navigation document to its own current-cache HTML; precache World fallback and missing active lidar assets. | Executable service-worker routing and entrypoint asset-inventory tests. Real offline browser check added. |
 | W1 | P1 | Persisted pagehide disposes renderer/controls; browser page-cache restoration has no pageshow restart. | Pause for persisted pagehide, resume on pageshow, dispose only on final exit. | Lifecycle block executes with resource counters; browser GPU behavior still needs CI/device verification. |
@@ -26,11 +27,14 @@ This is a bounded repair pass and an actionable checkpoint, **not a claim that t
 | A3 | P2 | Edit/delete a note while analysis is pending; old result can file the edited note and retain a stale artifact. | Recheck current revision after analysis and before automatic subject assignment; mark stale jobs; stop starting jobs after mode becomes calm. | Asynchronous queue tests cover edit, deletion, and unchanged successful reversible organization. |
 | P1 | P2 | Landscape repeatedly evaluates the same 216 route samples for every vegetation candidate. | Cache exact immutable route samples once. | CPU benchmark with real Three.js 0.180.0; byte-identical generated geometry/instances at both tiers. |
 
-Second-pass findings:
+Second-pass findings (including an additional live keyboard reproduction):
 
 | ID | Severity | Root cause and repair | Verification |
 | --- | --- | --- | --- |
+| F1 | P1 | Browser CI reproduced a note editor being detached during typing after reload. A late initial signed-out Firebase callback unconditionally closed dialogs/reset guest modules despite unchanged identity. Skip only the already-guest/no-user transition; preserve cached-private-to-guest clearing. | Positive and privacy-isolation regressions; responsive browser case retained without a timing workaround. |
 | D1 | P1 | Sticky transitions ignored failed saves and reset/replace the editor, including after the debounce timer was cleared. Track unsaved writing independently and stop New/Edit/From-note transitions until saving succeeds. | Three actual-module failure/retry regressions; each fails against baseline and passes after repair. |
+| M1 | P2 | Homepage ambient animations continued while the opaque World covered them. Reuse the existing ambient-pause lifecycle while `psychworld-open` is active. | Runtime regression verifies pause/resume without changing motion preference. |
+| K1 | P2 | Tab from the World exit reached the covered homepage skip link; Shift+Tab was trapped on the exit. Preserve/restore background inert state and use native iframe focus order. | Reproduced in the published UI; actual bridge inert-state test; browser reverse-Tab assertion. |
 | D2 | P2 | Late bibliography import/DOI responses could open a preview after an account reset; DOI could also interrupt a different screen. Bind requests to source workspace/generation and the originating lookup surface. | Account reset, navigation-away and successful current-owner regressions. |
 
 No aesthetic CSS, fonts, themes, spacing, Settings icon, academic content or feature inventory changed. No files removed or consolidated.
@@ -49,7 +53,7 @@ No changes to World materials, terrain shape, lighting, camera, motion style, ob
 ## Verification at branch preparation
 
 - Baseline: 199 unit tests passed.
-- After repairs: 230 unit tests passed, zero failed/skipped. Suite includes persistence, nested ink-array serialization, size safeguards, account isolation, Drive, academic content, imports, notes, recall and local automation using isolated stand-ins/mocks.
+- After repairs: 236 unit tests passed, zero failed/skipped. Suite includes persistence, nested ink-array serialization, size safeguards, account isolation, Drive, academic content, imports, notes, recall and local automation using isolated stand-ins/mocks.
 - All 99 baseline tracked JavaScript/test files passed `node --check`; new scripts checked separately, including the reproducible opt-in landscape benchmark. `git diff --check` passes.
 - Public concept validator passes for 14 entries, against a stated target of 365; this validates structure/URLs, not scientific claims.
 - New regression cases were run against a separate full baseline copy and exposed the old navigation, missing cache assets, queue, extraction and lifecycle behavior. Existing Home-alias behavior is not counted as a baseline bug merely because the test stand-in represents relative cache URLs differently.
@@ -76,7 +80,7 @@ No changes to World materials, terrain shape, lighting, camera, motion style, ob
 
 ## Data safety and limitations
 
-Firestore JSON-string format, legacy decode compatibility and the 750,000-byte safeguard are unchanged. Real user notes, ink, imports, saved concepts, preferences, Drive files and Google grants were not used for destructive tests. No backend deployment/billing enabled.
+Firestore JSON-string format, legacy decode compatibility and the 750,000-byte safeguard are unchanged. Authentication change is limited to suppressing a redundant initial guest-to-guest reset; actual account changes still flush editors and reset account state. Real user notes, ink, imports, saved concepts, preferences, Drive files and Google grants were not used for destructive tests. No backend deployment/billing enabled.
 
 Pending work: remaining source files per inventory, full CSS specificity/visual pass, comprehensive reader/import/reference/ink/session interactions, authenticated flows, old-service-worker upgrade/slow-network/cross-tab cases, second browser engine, real stylus, GPU memory/FPS, source-textbook editorial verification. Psychopathology hierarchy is preserved; source textbook was not reopened for line-by-line content validation in this pass. Do not label any of these verified based on unit tests alone.
 
