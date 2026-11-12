@@ -3,7 +3,7 @@
 const main=document.getElementById('main');
 if(!main)return;
 let active=null,previousFocus=null;
-const allowed=new Set(['notes','materials','garden','flashcards','dictionary','focus','planner','tools','ink']);
+const allowed=new Set(['notes','materials','garden','recall','dictionary','focus','planner','tools','ink']);
 function attachLaunch(){
  const host=main.querySelector('.garden-entry');
  if(!host||host.querySelector('#psychWorldLaunch'))return;
