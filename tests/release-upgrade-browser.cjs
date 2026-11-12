@@ -96,7 +96,16 @@ async function verifyHome(page,expectedGarden,allowLegacy=false){
   assert.equal(unexpectedNavigations,0,'a worker update reloaded an open study tab');
   assert.equal(await gardenSrc(secondTab),olderGarden,'a live old tab must not be rewritten underneath its data');
   assert.ok((await tab.evaluate(()=>caches.keys())).some(k=>k.endsWith('-v85')),'new v85 cache missing');
-  assert.ok(!(await tab.evaluate(()=>caches.keys())).some(k=>k.endsWith('-v83')),'obsolete v83 cache not retired');
+  // controllerchange can precede the end of all active old-client requests.
+  // Observe eventual retirement and include cache names if it does not settle.
+  const cacheNames=await tab.waitForFunction(async()=>{
+   const keys=await caches.keys();
+   return keys.some(k=>k.endsWith('-v83'))?false:keys;
+  },null,{timeout:5000}).then(handle=>handle.jsonValue()).catch(async()=>{
+   const keys=await tab.evaluate(()=>caches.keys());
+   throw Error('Obsolete v83 cache not retired after activation: '+JSON.stringify(keys));
+  });
+  results.cacheAfterActivation=cacheNames;
   await secondTab.reload({waitUntil:'domcontentloaded'});
   results.secondTabUpgrade=await verifyHome(secondTab,newerGarden);
   await tab.reload({waitUntil:'domcontentloaded'});
