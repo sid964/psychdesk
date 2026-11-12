@@ -85,6 +85,27 @@ export function createLandscape(THREE,scene,destinations,{coarse=false,reduced=f
   scene.add(new THREE.Mesh(geo,new THREE.MeshLambertMaterial({color:band?0x839b9a:0x6e8c84,side:THREE.DoubleSide})));
  }
  // Winding natural paths. Ground-level ribbon follows the sculpted relief.
+ // Fine gravel and stones soften the formerly flat ribbons without remote assets.
+ const pathCanvas=document.createElement('canvas');pathCanvas.width=pathCanvas.height=128;
+ const pathContext=pathCanvas.getContext('2d');
+ if(pathContext){
+  const image=pathContext.createImageData(128,128);
+  for(let y=0;y<128;y++)for(let x=0;x<128;x++){
+   const i=(y*128+x)*4,v=(rand(x*43.7+y*19.3)-.5)*53;
+   const pebble=rand(Math.floor(x/4)*3.1+Math.floor(y/3)*37)>.86?20:0;
+   image.data[i]=clamp(222+v+pebble,135,255);
+   image.data[i+1]=clamp(214+v+pebble,135,255);
+   image.data[i+2]=clamp(197+v+pebble,125,255);
+   image.data[i+3]=255;
+  }
+  pathContext.putImageData(image,0,0);
+  const pathTex=new THREE.CanvasTexture(pathCanvas);
+  pathTex.colorSpace=THREE.SRGBColorSpace;
+  pathTex.wrapS=pathTex.wrapT=THREE.RepeatWrapping;
+  pathTex.anisotropy=coarse?1:4;
+  mats.sandy.map=pathTex;
+  if(!coarse){mats.sandy.bumpMap=pathTex;mats.sandy.bumpScale=.03;}
+ }
  const routes=destinations.map((d,i)=>{
   const sideways=i%2?-2.2:2.2,dist=Math.hypot(d.x,d.z),nx=-d.z/dist,nz=d.x/dist;
   return new THREE.CatmullRomCurve3([
@@ -105,7 +126,7 @@ export function createLandscape(THREE,scene,destinations,{coarse=false,reduced=f
   return best;
  }
  for(const [n,route] of routes.entries()){
-  const vertices=[],colors=[],index=[],sampleCount=72;
+  const vertices=[],colors=[],uvs=[],index=[],sampleCount=72;
   for(let i=0;i<=sampleCount;i++){
    const t=i/sampleCount,p=route.getPoint(t),tangent=route.getTangent(t).normalize();
    const normal=new THREE.Vector3(-tangent.z,0,tangent.x);
@@ -113,6 +134,7 @@ export function createLandscape(THREE,scene,destinations,{coarse=false,reduced=f
    for(let side=-1;side<=1;side+=2){
     const x=p.x+normal.x*side*width,z=p.z+normal.z*side*width;
     vertices.push(x,height(x,z)+.047,z);
+     uvs.push(side===-1?0:1,t*18);
     const v=.73+rand(i*71+n*12+side)*.2;
     colors.push(.65*v+.10,.58*v+.13,.47*v+.17);
    }
@@ -121,6 +143,7 @@ export function createLandscape(THREE,scene,destinations,{coarse=false,reduced=f
   const geometry=new THREE.BufferGeometry();
   geometry.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));
   geometry.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));
+   geometry.setAttribute('uv',new THREE.Float32BufferAttribute(uvs,2));
   geometry.setIndex(index);geometry.computeVertexNormals();
   const mesh=new THREE.Mesh(geometry,mats.sandy);mesh.receiveShadow=true;scene.add(mesh);
  }
