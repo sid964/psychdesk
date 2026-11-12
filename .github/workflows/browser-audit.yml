@@ -52,6 +52,9 @@ jobs:
       - name: Verify world navigation and saved concepts
         if: matrix.browser == 'chromium'
         run: node tests/world-browser.cjs
+      - name: Test psychopathology graph interactions
+        if: matrix.browser == 'chromium'
+        run: node tests/psychopathology-browser.cjs
       - name: Audit local desktop and mobile experience
         run: node tests/browser-audit.cjs ${{ matrix.browser == 'firefox' && '--firefox' || '' }}
       - name: Observe live GitHub Pages without modifying user data
