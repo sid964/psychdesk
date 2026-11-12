@@ -20,7 +20,7 @@ const account=()=>{try{return String(core.getStorageKey()||'psychdesk-v1')}catch
 const progressKey=()=> 'psychdesk-psychopathology-course-v1:'+account();
 function loadProgress(){
  const key=progressKey();if(key===accountKey)return;
- accountKey=key;progress={completed:[],last:''};
+ accountKey=key;progress={completed:[],last:''};selected='t-definition';
  try{const data=JSON.parse(localStorage.getItem(key)||'{}');if(Array.isArray(data.completed))progress.completed=data.completed.filter(x=>typeof x==='string');if(typeof data.last==='string'&&nodeById.has(data.last))progress.last=data.last;}catch{}
  if(progress.last)selected=progress.last;
 }
@@ -117,7 +117,7 @@ function draw(){
 }
 function select(id){
  if(!nodeById.has(id))return;
- selected=id;progress.last=id;saveProgress();
+ selected=id;if(nodeById.get(id).type==='topic'){progress.last=id;saveProgress();}
  if(chapter!=='all'){const n=nodeById.get(id);if(n.type==='course'||(n.chapter&&String(n.chapter)!==chapter))chapter='all';}
  if(root){const box=root.querySelector('#psyGraphChapter');if(box)box.value=chapter;detail();draw();}
 }
