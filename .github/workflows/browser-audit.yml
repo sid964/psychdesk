@@ -44,6 +44,11 @@ jobs:
           for n in $(seq 1 30); do curl -fsS http://127.0.0.1:8765/index.html >/dev/null && break; sleep 1; done
       - name: Verify psychology world contracts
         run: node --test tests/world-contract.test.cjs
+      - name: Verify psychopathology course and graph JavaScript
+        run: |
+          node --check psychopathology-course-data.js
+          node --check psychopathology-graph.js
+          node --test tests/psychopathology-course.test.cjs
       - name: Verify world navigation and saved concepts
         if: matrix.browser == 'chromium'
         run: node tests/world-browser.cjs
