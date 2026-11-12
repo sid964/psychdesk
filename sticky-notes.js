@@ -4,7 +4,7 @@ const core=window.PsychDeskCore;if(!core)return;
 const esc=core.esc, LIMIT=4500, LINE_WIDTH=65, LINES_PER_CARD=5;
 const palette=[['butter','#F8E8B5'],['rose','#F4DADD'],['sky','#DDE9FA'],['lilac','#E8DDF5'],['cream','#F1E5CD']];
 const paperColor=id=>palette.find(p=>p[0]===id)?.[1]||palette[0][1];
-let groupId='',heading='',raw='',subjectId='',paper='butter',filter='all',autosave=null;
+let groupId='',heading='',raw='',subjectId='',paper='butter',filter='all',autosave=null,unsaved=false;
 const $=query=>document.querySelector(query);
 const all=()=>Array.isArray(core.getData().stickies)?core.getData().stickies:[];
 const bucket=id=>all().filter(n=>(n.groupId||n.id)===id).sort((a,b)=>(a.part||0)-(b.part||0));
@@ -93,18 +93,20 @@ function save(){
   setStatus('Could not save. Your writing is still here; free up storage and retry.');
   return false;
  }
+ unsaved=false;
  redraw();
  const composerTitle=$('#stickyComposerTitle');if(composerTitle)composerTitle.textContent='Editing a sticky';
  setStatus('✓ Saved on device · Account sync follows the top status');
  return true;
 }
 function schedule(){
+ unsaved=true;
  clearTimeout(autosave);
  preview();setStatus(raw.trim()?'Shaping your handwritten notes…':'Type a thought to get started.');
  if(raw.trim())autosave=setTimeout(save,950);
 }
 function newDraft(){
- clearTimeout(autosave);autosave=null;groupId='';heading='';raw='';paper='butter';subjectId='';
+ clearTimeout(autosave);autosave=null;unsaved=false;groupId='';heading='';raw='';paper='butter';subjectId='';
  const t=$('#stickyText'),h=$('#stickyTitle'),s=$('#stickySubject');
  if(t)t.value='';if(h)h.value='';if(s)s.value='';
  const chosen=$('input[name="stickyPaper"][value="butter"]');if(chosen)chosen.checked=true;
@@ -112,7 +114,7 @@ function newDraft(){
  setStatus('Auto-save begins when you type.');preview();
 }
 function edit(id){
- if(autosave&&raw.trim())save();
+ if(unsaved&&raw.trim()&&!save())return;
  const pieces=bucket(id);if(!pieces.length)return;
  const first=pieces[0];groupId=id;
  heading=String(first.title||'').replace(/\s+·\s+\d+$/,'');
@@ -158,7 +160,7 @@ function render(){
 }
 function fromNote(note){
  if(!note)return;
- if(autosave&&raw.trim())save();
+ if(unsaved&&raw.trim()&&!save())return;
  heading=String(note.title||'').slice(0,70);
  raw=String(note.body||'').slice(0,LIMIT);
  subjectId=note.subjectId||'';paper='cream';groupId='';
@@ -181,7 +183,7 @@ document.addEventListener('click',e=>{
  const button=e.target.closest('[data-sticky]');if(!button)return;
  e.preventDefault();const id=button.dataset.id;
  switch(button.dataset.sticky){
- case 'new':if(autosave&&raw.trim())save();newDraft();$('#stickyText')?.focus();break;
+ case 'new':if(unsaved&&raw.trim()&&!save())break;newDraft();$('#stickyText')?.focus();break;
  case 'save':save();break;
  case 'notes':if(autosave&&raw.trim())save();core.setTab('notes');break;
  case 'edit':edit(id);break;
@@ -195,7 +197,7 @@ document.addEventListener('pointerdown',e=>{
 },true);
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'&&autosave&&raw.trim())save();});
 window.addEventListener('pagehide',()=>{if(autosave&&raw.trim())save();});
-function resetDraft(){clearTimeout(autosave);autosave=null;groupId='';raw='';heading='';subjectId='';paper='butter';}
+function resetDraft(){clearTimeout(autosave);autosave=null;unsaved=false;groupId='';raw='';heading='';subjectId='';paper='butter';}
 window.addEventListener('psychdesk:session-reset',resetDraft);
 window.addEventListener('psychdesk:data-replaced',()=>{if(groupId&&!bucket(groupId).length)resetDraft();});
 window.PsychDeskStickies={render,fromNote,generate,save,edit};

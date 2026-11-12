@@ -49,6 +49,11 @@ const path=require('node:path');
   await page.goto('http://127.0.0.1:8765/#pd-dictionary',{waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>document.querySelector('#main h1')?.textContent?.includes('Dictionary'),{timeout:12000});
   console.log('Direct study deep-link restores Dictionary');
+  // Scene initialization above is real WebGL. The remaining checks exercise
+  // the supported graphics-unavailable navigation path, avoiding six redundant
+  // software-GPU scene rebuilds in a lightweight CI smoke run.
+  await page.route('**/world/world.js?*',route=>route.abort());
+
   // Every World destination retains the World as its actual predecessor.
   for(const destination of ['notes','materials','garden','dictionary','focus']){
    await page.evaluate(()=>window.PsychDeskWorldNavigation.openWorld());

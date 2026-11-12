@@ -51,10 +51,10 @@ jobs:
             curl -fsS http://127.0.0.1:8765/index.html >/dev/null && break
             sleep 1
           done
-      - name: World Back/Forward navigation smoke
-        run: node tests/world-navigation-browser.cjs
       - name: Responsive study persistence and offline routing smoke
         run: node tests/repair-browser.cjs
+      - name: World Back/Forward navigation smoke
+        run: node tests/world-navigation-browser.cjs
       - name: Psychopathology graph interaction smoke
         run: node tests/psychopathology-browser.cjs
       - name: Full visual audit (manually requested only)

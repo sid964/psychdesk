@@ -28,7 +28,7 @@ Baseline: `41934d734aeecf5a30de808e4e57105146b1398d`. 163 tracked files enumerat
 | `autopilot/studio.css` | Purpose/reference inventory only; semantic review pending |
 | `autopilot/studio.js` | Source/config reviewed |
 | `autopilot/worker.js` | Source/config reviewed |
-| `cloud.js` | Purpose/reference inventory only; semantic review pending |
+| `cloud.js` | Source/config reviewed |
 | `design-accessibility.js` | Source/config reviewed |
 | `design-system.css` | Purpose/reference inventory only; semantic review pending |
 | `docs/psychopathology-source-audit.md` | Purpose/reference inventory only; semantic review pending |
@@ -49,17 +49,17 @@ Baseline: `41934d734aeecf5a30de808e4e57105146b1398d`. 163 tracked files enumerat
 | `icons/icon-512.png` | Binary asset; existence/references checked where precached |
 | `index.html` | Source/config reviewed |
 | `ink-notes.css` | Purpose/reference inventory only; semantic review pending |
-| `ink-notes.js` | Relevant portions reviewed; remaining logic unaudited |
+| `ink-notes.js` | Source/config reviewed |
 | `library.css` | Purpose/reference inventory only; semantic review pending |
 | `lidar-scan.css` | Purpose/reference inventory only; semantic review pending |
 | `lidar-scan.js` | Purpose/reference inventory only; semantic review pending |
 | `manifest.webmanifest` | Source/config reviewed |
-| `materials.js` | Purpose/reference inventory only; semantic review pending |
+| `materials.js` | Source/config reviewed |
 | `motion-lively.css` | Source/config reviewed |
 | `motion-runtime.js` | Source/config reviewed |
 | `motion.css` | Purpose/reference inventory only; semantic review pending |
 | `motion.js` | Source/config reviewed |
-| `note-history.js` | Purpose/reference inventory only; semantic review pending |
+| `note-history.js` | Source/config reviewed |
 | `pdf-reader.css` | Purpose/reference inventory only; semantic review pending |
 | `pdf-reader.js` | Source/config reviewed |
 | `phase-release.css` | Purpose/reference inventory only; semantic review pending |
@@ -68,17 +68,17 @@ Baseline: `41934d734aeecf5a30de808e4e57105146b1398d`. 163 tracked files enumerat
 | `phase4-garden.css` | Purpose/reference inventory only; semantic review pending |
 | `phase4-garden.js` | Purpose/reference inventory only; semantic review pending |
 | `phase5-chapters.css` | Purpose/reference inventory only; semantic review pending |
-| `phase5-chapters.js` | Purpose/reference inventory only; semantic review pending |
+| `phase5-chapters.js` | Source/config reviewed |
 | `phase6-next-step.css` | Purpose/reference inventory only; semantic review pending |
 | `phase6-next-step.js` | Purpose/reference inventory only; semantic review pending |
 | `phase7-weak-concepts.css` | Purpose/reference inventory only; semantic review pending |
-| `phase7-weak-concepts.js` | Purpose/reference inventory only; semantic review pending |
+| `phase7-weak-concepts.js` | Source/config reviewed |
 | `phase8-reflection.css` | Purpose/reference inventory only; semantic review pending |
-| `phase8-reflection.js` | Purpose/reference inventory only; semantic review pending |
+| `phase8-reflection.js` | Source/config reviewed |
 | `planner-refine.css` | Purpose/reference inventory only; semantic review pending |
 | `preparation.css` | Purpose/reference inventory only; semantic review pending |
 | `psychology-academic.js` | Purpose/reference inventory only; semantic review pending |
-| `psychology-connections.js` | Purpose/reference inventory only; semantic review pending |
+| `psychology-connections.js` | Source/config reviewed |
 | `psychology-data.js` | Purpose/reference inventory only; semantic review pending |
 | `psychology-expanded-data.js` | Purpose/reference inventory only; semantic review pending |
 | `psychology-imports.css` | Purpose/reference inventory only; semantic review pending |
@@ -93,20 +93,20 @@ Baseline: `41934d734aeecf5a30de808e4e57105146b1398d`. 163 tracked files enumerat
 | `quick-note.css` | Purpose/reference inventory only; semantic review pending |
 | `quick-note.js` | Source/config reviewed |
 | `reader-studio.css` | Purpose/reference inventory only; semantic review pending |
-| `reference-manager.js` | Purpose/reference inventory only; semantic review pending |
+| `reference-manager.js` | Source/config reviewed |
 | `setup-status.css` | Purpose/reference inventory only; semantic review pending |
 | `setup-status.js` | Purpose/reference inventory only; semantic review pending |
 | `sticky-notes.css` | Purpose/reference inventory only; semantic review pending |
-| `sticky-notes.js` | Purpose/reference inventory only; semantic review pending |
+| `sticky-notes.js` | Source/config reviewed |
 | `studio-v4.css` | Purpose/reference inventory only; semantic review pending |
 | `study-boards.css` | Purpose/reference inventory only; semantic review pending |
-| `study-boards.js` | Purpose/reference inventory only; semantic review pending |
+| `study-boards.js` | Source/config reviewed |
 | `study-calm.css` | Purpose/reference inventory only; semantic review pending |
 | `study-connections.css` | Purpose/reference inventory only; semantic review pending |
 | `study-extras.css` | Purpose/reference inventory only; semantic review pending |
 | `study-extras.js` | Purpose/reference inventory only; semantic review pending |
 | `study-session.js` | Source/config reviewed |
-| `study-studio.js` | Purpose/reference inventory only; semantic review pending |
+| `study-studio.js` | Source/config reviewed |
 | `style.css` | Purpose/reference inventory only; semantic review pending |
 | `sw.js` | Source/config reviewed |
 | `syllabus-data.js` | Purpose/reference inventory only; semantic review pending |
@@ -185,4 +185,4 @@ Every local `src`/`href` in both HTML entrypoints is now checked against existin
 
 ## Pending review
 
-Files marked inventory-only remain pending, including much of note/Drive implementation, reference imports, academic module semantics, ink input lifecycle, phase modules, CSS cascade and older browser scripts. Existing tests were executed, but their entire logic has not been reviewed.
+Files marked inventory-only remain pending, including academic module semantics, remaining phase modules, CSS cascade and older browser scripts. Note/Drive, references, ink and sticky modules have since received a second source pass; real account/hardware behavior is still unverified. Existing tests were executed, but their entire logic has not been reviewed.
