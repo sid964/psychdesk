@@ -34,7 +34,7 @@ test('all local entrypoint assets exist and are precached, including World fallb
 
 test('repaired entrypoint scripts do not reuse their obsolete HTTP-cache URLs',()=>{
  const html=fs.readFileSync('index.html','utf8');
- const previous={'psychopathology-graph.js':'psy-2','autopilot/garden.js':'neutral-desk-4','sticky-notes.js':'copy-sober-1','setup-status.js':'calm-20261102-1','tour.js':'copy-sober-1','firebase-sync.js':'calm-20261102-1','motion-runtime.js':'human-motion-1','reference-manager.js':'calm-20261102-1','autopilot/studio.js':'desk-startup-20261110','world/world-bridge.js':'natural-2'};
+ const previous={'psychopathology-graph.js':'psy-2','autopilot/garden.js':'neutral-desk-4','sticky-notes.js':'copy-sober-1','setup-status.js':'calm-20261102-1','tour.js':'copy-sober-1','firebase-sync.js':'calm-20261102-1','motion-runtime.js':'human-motion-1','reference-manager.js':'calm-20261102-1','autopilot/studio.js':'desk-startup-20261110','world/world-bridge.js':'natural-2','study-studio.js':'copy-sober-1'};
  for(const [file,version] of Object.entries(previous)){
   const url=Array.from(html.matchAll(/<script[^>]+src="([^"]+)"/g),match=>match[1]).find(url=>url.startsWith(file+'?'));
   assert.ok(url,'missing script '+file);assert.notEqual(url,file+'?v='+version,'stale URL for '+file);
