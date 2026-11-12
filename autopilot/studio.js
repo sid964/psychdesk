@@ -179,7 +179,7 @@ async function recoverJobs(){
 function analyze(source){
  return new Promise((resolve,reject)=>{
   try{
-   if(!worker)worker=new Worker('./autopilot/worker.js?v=phase2-1');
+   if(!worker)worker=new Worker('./autopilot/worker.js?v=repair-20261112');
    const jobId=Math.random().toString(36).slice(2),timer=setTimeout(()=>{worker?.terminate();worker=null;reject(Error('Worker timeout'))},10000);
    const onMessage=e=>{if(e.data?.jobId!==jobId)return;clearTimeout(timer);worker.removeEventListener('message',onMessage);if(e.data.error)reject(Error(e.data.error));else resolve(e.data.result)};
    worker.addEventListener('message',onMessage);worker.postMessage({jobId,source});
@@ -191,18 +191,22 @@ async function run(){
  try{
   const all=await operate('jobs','all'),now=Date.now(),current=scope();
   for(const job of all.filter(x=>x.scope===current&&['pending','retry'].includes(x.state)&&(!x.retryAt||x.retryAt<=now)).sort((a,b)=>a.at.localeCompare(b.at)).slice(0,12)){
-   if(scope()!==current)break;
+   if(scope()!==current||mode()==='calm')break;
    const n=(info().notes||[]).find(v=>v.id===job.sourceId);
    if(!n||rev(n)!==job.revision){job.state='stale';await operate('jobs','put',job);continue;}
    job.state='working';await operate('jobs','put',job);
    try{
     const result=await analyze({id:n.id,title:n.title,text:n.body,revision:job.revision,subjects:info().subjects.map(s=>({id:s.id,name:s.name}))});
     if(scope()!==current)break;
+    // A worker result belongs to the exact source revision it analyzed.
+    // Editing or deleting a note while the worker runs invalidates it.
+    const latest=info().notes.find(v=>v.id===job.sourceId);
+    if(!latest||rev(latest)!==job.revision){job.state='stale';await operate('jobs','put',job);continue;}
     await operate('artifacts','put',{key:job.key,scope:current,sourceId:n.id,revision:job.revision,result,createdAt:new Date().toISOString()});
     job.state='complete';await operate('jobs','put',job);
     if(mode()==='autopilot'&&result.suggestion.confidence>=.95&&!n.subjectId){
      const exists=info().subjects.find(s=>s.id===result.suggestion.subjectId);
-     if(exists&&core.commitChange(d=>{const v=d.notes.find(x=>x.id===n.id);if(v&&!v.subjectId)v.subjectId=exists.id})){
+     if(exists&&core.commitChange(d=>{const v=d.notes.find(x=>x.id===n.id);if(v&&!v.subjectId&&rev(v)===job.revision)v.subjectId=exists.id})){
       await operate('activity','put',{key:current+':organize:'+job.key,scope:current,at:new Date().toISOString(),title:'Organized '+(n.title||'Untitled note'),undo:{noteId:n.id,oldSubjectId:'',newSubjectId:exists.id}});
      }
     }

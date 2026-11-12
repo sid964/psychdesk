@@ -4,6 +4,9 @@ on:
     paths:
       - 'index.html'
       - 'app.js'
+      - 'sw.js'
+      - 'autopilot/**'
+      - 'tests/repair-browser.cjs'
       - 'world/**'
       - 'psychopathology-*'
       - 'tests/world-*.cjs'
@@ -14,6 +17,9 @@ on:
     paths:
       - 'index.html'
       - 'app.js'
+      - 'sw.js'
+      - 'autopilot/**'
+      - 'tests/repair-browser.cjs'
       - 'world/**'
       - 'psychopathology-*'
       - 'tests/world-*.cjs'
@@ -47,6 +53,8 @@ jobs:
           done
       - name: World Back/Forward navigation smoke
         run: node tests/world-navigation-browser.cjs
+      - name: Responsive study persistence and offline routing smoke
+        run: node tests/repair-browser.cjs
       - name: Psychopathology graph interaction smoke
         run: node tests/psychopathology-browser.cjs
       - name: Full visual audit (manually requested only)

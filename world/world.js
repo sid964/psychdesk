@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { createLandscape } from './landscape.js';
+import { createLandscape } from './landscape.js?v=repair-20261112';
 import { createPlaces } from './places.js';
 import { createLife } from './life.js';
 
@@ -221,8 +221,13 @@ if(renderer){
  document.addEventListener('visibilitychange',visibility);
  visibility();
  if(status)status.textContent='Living landscape · '+(night?'evening':'daylight')+' · '+(reduced?'reduced motion':'gentle motion');
- window.addEventListener('pagehide',()=>{
-  renderer.setAnimationLoop(null);ro.disconnect();controls.dispose();
+ window.addEventListener('pageshow',visibility);
+ window.addEventListener('pagehide',event=>{
+  renderer.setAnimationLoop(null);
+  // Back/Forward cache keeps this document alive. Dispose only on final exit;
+  // otherwise a restored page holds a dead renderer and disconnected controls.
+  if(event.persisted)return;
+  ro.disconnect();controls.dispose();
   const geometries=new Set(),materials=new Set(),textures=new Set();
   scene.traverse(node=>{
    if(node.geometry)geometries.add(node.geometry);
@@ -233,6 +238,6 @@ if(renderer){
    for(const key of ['map','normalMap','roughnessMap','emissiveMap'])if(m[key])textures.add(m[key]);
    m.dispose();
   });
-  textures.forEach(t=>t.dispose());renderer.dispose();
- },{once:true});
+  textures.forEach(t=>t.dispose());sun.shadow.dispose();renderer.dispose();
+ });
 }

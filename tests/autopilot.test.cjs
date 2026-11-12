@@ -48,3 +48,13 @@ test('Does not suggest a subject if keywords are insufficient or tied',()=>{
  assert.equal(r.suggestion.subjectId,'');
  assert.equal(r.suggestion.confidence,0);
 });
+
+test('keeps legitimate terms containing an or beginning with the',()=>{
+ const r=analyze('Operant conditioning: Learning through the consequences of behavior.\nTheory of mind: Understanding that others have different mental states.\nAnxiety: Apprehension about a possible future threat.\nNote: This sentence is only a generic label.');
+ assert.deepEqual(Array.from(r.terms),['Operant conditioning','Theory of mind','Anxiety']);
+});
+test('can suggest the only supplied subject when multiple keywords support it',()=>{
+ const r=analyze('Working memory and attention are aspects of cognition.',[{id:'custom-cognition',name:'Memory and Attention'}]);
+ assert.equal(r.suggestion.subjectId,'custom-cognition');
+ assert.ok(r.suggestion.confidence>=.65);
+});

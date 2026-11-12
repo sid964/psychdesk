@@ -8,7 +8,7 @@ const KEY='psychdeskViewV1';
 let active=null,previousFocus=null,tab='today',restoring=false;
 function validView(view){
  if(!view||typeof view!=='object')return null;
- if(view.kind==='world')return {kind:'world',from:allowed.has(view.from)?view.from:'today'};
+ if(view.kind==='world')return {kind:'world',from:allowed.has(view.from)?view.from:'today',returnToPrevious:view.returnToPrevious===true};
  if(view.kind==='garden')return {kind:'garden',from:'today'};
  if(view.kind==='tab'&&allowed.has(view.tab)&&view.tab!=='garden')return {kind:'tab',tab:view.tab};
  return null;
@@ -57,8 +57,14 @@ function destroyWorld(){
 }
 function requestClose(){
  if(!active)return;
- if(history.state?.[KEY]?.kind==='world')history.back();
- else{destroyWorld();if(tab!=='today')window.PsychDeskCore?.setTab?.('today');}
+ const view=validView(history.state?.[KEY]);
+ if(view?.kind==='world'&&view.returnToPrevious)history.back();
+ else{
+  // A direct World URL has no known in-app predecessor. Close in place,
+  // rather than sending the visitor back to an unrelated external page.
+  const destination={kind:'tab',tab:view?.from||'today'};
+  replace(destination);restore(destination);
+ }
 }
 function escape(event){
  if(event.key==='Escape'){event.preventDefault();requestClose();}
@@ -69,7 +75,7 @@ function escape(event){
 }
 function openWorld(fromHistory=false){
  if(active)return;
- if(!fromHistory)push({kind:'world',from:tab});
+ if(!fromHistory)push({kind:'world',from:tab,returnToPrevious:true});
  previousFocus=document.activeElement;
  const layer=document.createElement('section');
  layer.id='psychWorldOverlay';layer.setAttribute('role','dialog');
@@ -99,11 +105,8 @@ function receive(event){
  if(data.type==='psychworld:close'){requestClose();return;}
  if(data.type!=='psychworld:visit'||!allowed.has(data.tab)||data.tab==='today')return;
  const destination=data.tab;
- const origin=validView(history.state?.[KEY]);
  destroyWorld();
- // A study room should go BACK to PsychDesk's desk, not to the browser's
- // start page. Replace the temporary World entry with its home section.
- if(origin?.kind==='world')replace({kind:'tab',tab:origin.from});
+ // Keep the World entry: Back restores it and Forward restores the room.
  if(destination==='garden'){
   push({kind:'garden',from:'today'});
   openGarden();

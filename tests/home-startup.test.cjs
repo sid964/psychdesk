@@ -23,7 +23,7 @@ test('homepage uses natural copy and retains the interactive garden',()=>{
 });
 test('navigation checks the network, with fallback restricted to new cache',()=>{
  const sw=read('sw.js');
- assert.match(sw,/neutral-desk-v81/);
+ assert.match(sw,/neutral-desk-v82/);
  assert.match(sw,/request\.mode==='navigate'/);
  assert.match(sw,/fetch\(request,\{cache:'no-store'\}\)/);
  assert.match(sw,/new Request\(path,\{cache:'reload'\}\)/);
