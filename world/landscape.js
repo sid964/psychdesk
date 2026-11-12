@@ -23,7 +23,7 @@ export function createLandscape(THREE,scene,destinations,{coarse=false,reduced=f
   grass:new THREE.MeshStandardMaterial({color:0x5f815c,roughness:1,side:THREE.DoubleSide}),
   stone:new THREE.MeshStandardMaterial({color:0x9b9990,roughness:1}),
   sandy:new THREE.MeshStandardMaterial({vertexColors:true,roughness:1}),
-  water:new THREE.MeshPhysicalMaterial({color:night?0x4c7a8e:0x7ba9a2,roughness:.24,metalness:.05,transparent:true,opacity:.91,depthWrite:false,clearcoat:.28,clearcoatRoughness:.16})
+  water:new THREE.MeshPhysicalMaterial({color:night?0x416c81:0x5b9998,roughness:.13,metalness:.05,transparent:true,opacity:.91,depthWrite:false,clearcoat:.28,clearcoatRoughness:.16})
  };
  // The world continues into a hazy valley, rather than sitting on a floating cylinder.
  const worldSize=148,segments=coarse?104:172;
@@ -31,9 +31,9 @@ export function createLandscape(THREE,scene,destinations,{coarse=false,reduced=f
  grid.rotateX(-Math.PI/2);
  const positions=grid.attributes.position;
  const vertexColors=new Float32Array(positions.count*3);
- const low=new THREE.Color(night?0x596c58:0x8b9b74);
- const high=new THREE.Color(night?0x426355:0x55775b);
- const sunlit=new THREE.Color(night?0x657a61:0x9cb18b);
+ const low=new THREE.Color(night?0x4c6752:0x7b9670);
+ const high=new THREE.Color(night?0x385d50:0x456f55);
+ const sunlit=new THREE.Color(night?0x57755b:0x91a980);
  const color=new THREE.Color();
  for(let i=0;i<positions.count;i++){
   const x=positions.getX(i),z=positions.getZ(i),h=height(x,z);
@@ -43,12 +43,29 @@ export function createLandscape(THREE,scene,destinations,{coarse=false,reduced=f
   vertexColors[i*3]=color.r;vertexColors[i*3+1]=color.g;vertexColors[i*3+2]=color.b;
  }
  grid.setAttribute('color',new THREE.BufferAttribute(vertexColors,3));grid.computeVertexNormals();
- const ground=new THREE.Mesh(grid,new THREE.MeshStandardMaterial({vertexColors:true,roughness:1}));
+ const groundTextureCanvas=document.createElement('canvas');
+ groundTextureCanvas.width=groundTextureCanvas.height=256;
+ const gctx=groundTextureCanvas.getContext('2d');
+ let groundTexture=null;
+ if(gctx){
+  gctx.fillStyle='#f0f0ea';gctx.fillRect(0,0,256,256);
+  for(let i=0;i<17000;i++){
+   const x=rand(i*13+17)*256,y=rand(i*21+11)*256;
+   gctx.fillStyle=i%5===0?'#536c5340':i%3?'#66715d19':'#ffffff38';
+   gctx.fillRect(x,y,1+(i%4),1+(i%3));
+  }
+  groundTexture=new THREE.CanvasTexture(groundTextureCanvas);
+  groundTexture.colorSpace=THREE.SRGBColorSpace;
+  groundTexture.wrapS=groundTexture.wrapT=THREE.RepeatWrapping;
+  groundTexture.repeat.set(26,26);
+  groundTexture.anisotropy=coarse?1:4;
+ }
+ const ground=new THREE.Mesh(grid,new THREE.MeshStandardMaterial({map:groundTexture,vertexColors:true,roughness:1}));
  ground.receiveShadow=!coarse;
  scene.add(ground);
  // Gentle horizon ridge, rendered as soft atmospheric silhouettes.
  for(let band=0;band<2;band++){
-  const count=128,verts=[],indices=[];
+  const count=256,verts=[],indices=[];
   const radius=80+band*35;
   for(let i=0;i<=count;i++){
    const a=i/count*Math.PI*2,rr=radius+7*Math.sin(a*4.1+band)+4*Math.sin(a*9.7);
@@ -60,7 +77,7 @@ export function createLandscape(THREE,scene,destinations,{coarse=false,reduced=f
   const geo=new THREE.BufferGeometry();
   geo.setAttribute('position',new THREE.Float32BufferAttribute(verts,3));
   geo.setIndex(indices);geo.computeVertexNormals();
-  scene.add(new THREE.Mesh(geo,new THREE.MeshLambertMaterial({color:band?0x839b9a:0x6e8c84,side:THREE.DoubleSide})));
+  scene.add(new THREE.Mesh(geo,new THREE.MeshLambertMaterial({color:band?0x7c9593:0x627f78,side:THREE.DoubleSide})));
  }
  // Winding natural paths. Ground-level ribbon follows the sculpted relief.
  const routes=destinations.map((d,i)=>{
@@ -114,7 +131,7 @@ export function createLandscape(THREE,scene,destinations,{coarse=false,reduced=f
   }
   const normal=new THREE.CanvasTexture(rippleCanvas);
   normal.wrapS=normal.wrapT=THREE.RepeatWrapping;normal.repeat.set(4,3);normal.anisotropy=coarse?1:4;
-  mats.water.normalMap=normal;mats.water.normalScale.set(.14,.14);mats.water.needsUpdate=true;
+  mats.water.normalMap=normal;mats.water.normalScale.set(.28,.28);mats.water.needsUpdate=true;
  }
  const waterEdge=new THREE.Mesh(
   new THREE.RingGeometry(1,1.035,96),new THREE.MeshBasicMaterial({color:0xc4c4a3,transparent:true,opacity:.34,side:THREE.DoubleSide}));
@@ -266,7 +283,7 @@ export function createLandscape(THREE,scene,destinations,{coarse=false,reduced=f
  const grassMats=[new THREE.MeshLambertMaterial({color:0x9fae79,side:THREE.DoubleSide}),
   new THREE.MeshLambertMaterial({color:0x77956e,side:THREE.DoubleSide}),
   new THREE.MeshLambertMaterial({color:0xb0b38a,side:THREE.DoubleSide})];
- const grassCounts=grassMats.map(()=>0),maxGrass=coarse?1200:4200;
+ const grassCounts=grassMats.map(()=>0),maxGrass=coarse?1900:8800;
  const patches=grassMats.map(m=>new THREE.InstancedMesh(bladeGeo,m,Math.ceil(maxGrass/3)+80));
  for(let i=0;i<maxGrass*3&&grassCounts.reduce((a,b)=>a+b,0)<maxGrass;i++){
   const x=(rand(i*13+42)-.5)*110,z=(rand(i*17+9)-.5)*110;
@@ -309,6 +326,48 @@ export function createLandscape(THREE,scene,destinations,{coarse=false,reduced=f
   dummy.updateMatrix();rocks.setMatrixAt(i,dummy.matrix);
  }
  rocks.instanceMatrix.needsUpdate=true;rocks.castShadow=!coarse;scene.add(rocks);
+ // Riverbank rocks and reeds soften the oval outline of the small pond.
+ const bankMat=new THREE.MeshStandardMaterial({color:0x858d7e,roughness:1});
+ const bankGeo=new THREE.DodecahedronGeometry(1,1);
+ const bankCount=coarse?80:190;
+ const bankRocks=new THREE.InstancedMesh(bankGeo,bankMat,bankCount);
+ for(let i=0;i<bankCount;i++){
+  const a=i*2.39996323+rand(i)*.18,dr=.99+rand(i*11+9)*.19;
+  const x=pond.x+Math.cos(a)*pond.rx*dr,z=pond.z+Math.sin(a)*pond.rz*dr;
+  const size=.12+rand(i*13)*.31,y=height(x,z);
+  dummy.position.set(x,y+size*.22,z);
+  dummy.scale.set(size*1.18,size*.45,size);
+  dummy.rotation.set(rand(i*13)*.25,rand(i*3)*6.28,0);
+  dummy.updateMatrix();bankRocks.setMatrixAt(i,dummy.matrix);
+ }
+ bankRocks.instanceMatrix.needsUpdate=true;scene.add(bankRocks);
+ const reedGeo=new THREE.CylinderGeometry(.017,.034,1,5);
+ const reedMat=new THREE.MeshLambertMaterial({color:0x79916e});
+ const reedCount=coarse?130:340;
+ const reeds=new THREE.InstancedMesh(reedGeo,reedMat,reedCount);
+ for(let i=0;i<reedCount;i++){
+  const angle=i*2.399963+rand(i*31)*.2;
+  const stretch=.96+rand(i*13)*.21;
+  const x=pond.x+Math.cos(angle)*pond.rx*stretch,z=pond.z+Math.sin(angle)*pond.rz*stretch;
+  const h=.28+rand(i*7)*1.05,y=height(x,z);
+  dummy.position.set(x,y+h*.5,z);dummy.scale.set(1,h,1);
+  dummy.rotation.set((rand(i*5)-.5)*.16,0,(rand(i*11)-.5)*.18);
+  dummy.updateMatrix();reeds.setMatrixAt(i,dummy.matrix);
+ }
+ reeds.instanceMatrix.needsUpdate=true;scene.add(reeds);
+ // Small reflective strokes make calm moving water legible at a distance.
+ const glintGeom=new THREE.PlaneGeometry(1,1);
+ const glintMat=new THREE.MeshBasicMaterial({color:0xe8e9db,transparent:true,opacity:.15,depthWrite:false,side:THREE.DoubleSide});
+ const glintCount=coarse?65:175,glints=new THREE.InstancedMesh(glintGeom,glintMat,glintCount);
+ for(let i=0;i<glintCount;i++){
+  const a=rand(i*11)*Math.PI*2,r=Math.sqrt(rand(i*13))*.93;
+  const x=pond.x+Math.cos(a)*r*pond.rx,z=pond.z+Math.sin(a)*r*pond.rz;
+  dummy.position.set(x,-.295,z);
+  dummy.rotation.set(-Math.PI/2,0,rand(i*7)*6.28);
+  dummy.scale.set(.18+rand(i*3)*.65,.018+rand(i*5)*.038,1);dummy.updateMatrix();
+  glints.setMatrixAt(i,dummy.matrix);
+ }
+ glints.instanceMatrix.needsUpdate=true;glints.renderOrder=2;scene.add(glints);
  // Varying haze makes distant landscape read as depth rather than flat stage.
  const clouds=[];
  const cloudCanvas=document.createElement('canvas');cloudCanvas.width=cloudCanvas.height=128;
