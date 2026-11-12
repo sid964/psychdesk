@@ -149,6 +149,8 @@ if(renderer){
   tip(d.name,placeStories[id],id);
   if(tourButton){tourButton.textContent='Next place';tourButton.title='Next: '+destinations[(index+1)%destinations.length].name;}
   if(status)status.textContent='Living landscape · viewing '+d.name;
+  // Remember the chosen destination even if the study room is opened mid-flight.
+  try{sessionStorage.setItem('psychworld-view-v1',JSON.stringify({camera:endPosition.toArray(),target:endTarget.toArray()}));}catch{}
   return true;
  }
  function resetView(){
@@ -159,6 +161,7 @@ if(renderer){
   if(detail)detail.hidden=true;
   if(tourButton){tourButton.textContent='Explore places';tourButton.title='Approach '+destinations[0].name;}
   if(status)status.textContent='Living landscape · overview';
+  try{sessionStorage.setItem('psychworld-view-v1',JSON.stringify({camera:camera.position.toArray(),target:controls.target.toArray()}));}catch{}
  }
  labels.forEach(({button,d})=>button.addEventListener('click',()=>focusPlace(d.id)));
  tourButton?.addEventListener('click',()=>focusPlace(destinations[(tourIndex+1)%destinations.length].id));
