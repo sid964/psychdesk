@@ -53,7 +53,7 @@ function html(){
  loadProgress();
  const ready=topics.filter(t=>t.kind==='lesson').length,done=progress.completed.filter(id=>topics.some(t=>t.id===id&&t.kind==='lesson')).length;
  return '<section class="psycourse" id="psyCourse">'+
- '<header class="psycourse-heading"><div><div class="eyebrow">PSYCHDESK · TEXTBOOK COURSE</div><h1>Psychopathology</h1><p>Learn in layers. Explore concepts as a connected knowledge graph.</p></div><div class="psycourse-count"><strong>16</strong><span>chapters</span></div></header>'+
+ '<nav class="psycourse-breadcrumb" aria-label="Psychology subject navigation"><button type="button" data-tab="psychology">← Overall psychology learning</button><span aria-hidden="true">/</span><span>Psychopathology</span></nav><header class="psycourse-heading"><div><div class="eyebrow">OVERALL PSYCHOLOGY · TEXTBOOK SUBJECT</div><h1>Psychopathology</h1><p>Learn in layers. Explore concepts as a connected knowledge graph.</p></div><div class="psycourse-count"><strong>16</strong><span>chapters</span></div></header>'+
  '<div class="psycourse-progress" role="status">'+done+' of '+ready+' introductory lessons completed on this device <span aria-hidden="true">·</span> '+source.edition+'</div>'+
  '<div class="psycourse-layout"><div class="psycourse-map">'+
  '<div class="psycourse-tools"><label class="psycourse-search"><span class="sr-only">Search course concepts</span><input id="psyGraphSearch" type="search" value="'+safe(search)+'" placeholder="Find a concept…" autocomplete="off"></label>'+
@@ -62,7 +62,7 @@ function html(){
  '<div class="psycourse-stage"><svg id="psyGraph" viewBox="0 0 '+W+' '+H+'" aria-label="Interactive concept graph. Drag to pan, scroll to zoom, select nodes to open lessons." role="group"></svg><div class="psycourse-zoom"><button type="button" data-psy-action="zoomIn" aria-label="Zoom in">+</button><button type="button" data-psy-action="zoomOut" aria-label="Zoom out">−</button><button type="button" data-psy-action="fit" aria-label="Reset graph view">Fit</button></div></div>'+
  '<div id="psyGraphResults" class="psycourse-results"></div><p class="psycourse-help">Drag empty space to pan · Scroll or use +/- to zoom · Drag a node to move it · Select a node to read</p></div>'+
  '<aside class="psycourse-detail" id="psyGraphDetail" aria-live="polite"></aside></div>'+
- '<section class="psycourse-outline"><h2>Textbook chapters</h2><div class="psycourse-chapter-list">'+chapters.map(c=>'<button type="button" data-psy-node="'+c.id+'"><span>'+String(c.number).padStart(2,'0')+'</span>'+safe(c.title)+'</button>').join('')+'</div></section>'+
+ '<section class="psycourse-outline"><h2>Textbook chapters</h2><div class="psycourse-chapter-list">'+chapters.map(c=>'<button type="button" data-psy-node="'+c.id+'"><span>'+String(c.number).padStart(2,'0')+'</span><span class="psycourse-chapter-title">'+safe(c.title)+'</span><small>p. '+c.startPage+'</small></button>').join('')+'</div></section>'+
  '<p class="psycourse-disclaimer">Academic source: Barlow, Durand & Hofmann, ninth edition (2023). Chapter 1 contains the first authored lessons; other chapters are mapped for future verified content. Lessons are original paraphrases, not a replacement copy of the textbook. Course progress currently stays on this device.</p></section>';
 }
 function textBlock(value){return '<p>'+safe(value)+'</p>';}
@@ -74,13 +74,13 @@ function detail(){
  if(n.type==='course'){
   body+='<p>Explore all 16 textbook chapters. Open a chapter or a connected concept to find its introductory lesson.</p><p>Only the verified Chapter 1 lessons are available so far.</p>';
  }else if(n.type==='chapter'){
-  body+='<p>Chapter '+n.chapter+' of 16 from '+safe(source.book)+'.</p>';
+  body+='<p>Chapter '+n.chapter+' of 16 from '+safe(source.book)+'. Starts on page '+n.startPage+'.</p>';
   if(n.chapter===1)body+='<p>Six introductory lessons are available. Select a connected concept to begin.</p>';
   else body+='<p class="psycourse-coming">This chapter is mapped from the table of contents. Detailed lessons have not yet been authored and checked against the textbook.</p>';
  }else if(t){
   body+='<div class="psycourse-level"><h3>01 · Understand simply</h3>'+textBlock(t.simple)+'</div>';
   if(t.advanced&&t.advanced.length)body+='<details class="psycourse-level psycourse-advanced"><summary>02 · Master’s-level explanation</summary>'+t.advanced.map(textBlock).join('')+'</details>';
-  if(t.example)body+='<details class="psycourse-level"><summary>03 · Clinical case from the textbook</summary>'+textBlock(t.example)+'</details>';
+  if(t.example)body+='<details class="psycourse-level"><summary>03 · Clinical case from the textbook</summary>'+textBlock(t.example)+(t.examplePage?'<p class="psycourse-ref">Case source: Chapter '+t.chapter+', pages '+safe(t.examplePage)+'.</p>':'')+'</details>';
   if(t.question)body+='<div class="psycourse-level psycourse-quiz"><h3>04 · Check understanding</h3><p>'+safe(t.question)+'</p>'+t.choices.map((choice,i)=>'<button type="button" data-psy-answer="'+i+'">'+safe(choice)+'</button>').join('')+'<p id="psyQuizFeedback" role="status"></p></div>';
   body+='<p class="psycourse-ref">Source: Chapter '+t.chapter+', pages '+safe(t.page)+'.</p>';
   if(t.kind==='lesson')body+='<div class="psycourse-detail-actions"><button type="button" data-psy-action="complete">'+(completed?'✓ Completed · Undo':'Mark lesson complete')+'</button>'+ (t.question?'<button type="button" data-psy-action="flashcard">Save question as flashcard</button>':'')+'</div>';
