@@ -43,7 +43,29 @@ export function createLandscape(THREE,scene,destinations,{coarse=false,reduced=f
   vertexColors[i*3]=color.r;vertexColors[i*3+1]=color.g;vertexColors[i*3+2]=color.b;
  }
  grid.setAttribute('color',new THREE.BufferAttribute(vertexColors,3));grid.computeVertexNormals();
- const ground=new THREE.Mesh(grid,new THREE.MeshStandardMaterial({vertexColors:true,roughness:1}));
+ // Procedural fine-grained soil and meadow texture improves material response
+ // without downloading assets or introducing paid services.
+ const groundMaterial=new THREE.MeshStandardMaterial({vertexColors:true,roughness:1});
+ const terrainCanvas=document.createElement('canvas');terrainCanvas.width=terrainCanvas.height=256;
+ const terrainContext=terrainCanvas.getContext('2d');
+ if(terrainContext){
+  const image=terrainContext.createImageData(256,256);
+  for(let y=0;y<256;y++)for(let x=0;x<256;x++){
+   const i=(y*256+x)*4;
+   const dapple=Math.sin(x*.16+Math.sin(y*.11))*5+Math.cos(y*.21-x*.13)*5;
+   const grain=(rand(x*17.3+y*91.7)-.5)*29;
+   const v=Math.round(clamp(222+dapple+grain,172,249));
+   image.data[i]=v+3;image.data[i+1]=v+2;image.data[i+2]=v-7;image.data[i+3]=255;
+  }
+  terrainContext.putImageData(image,0,0);
+  const surface=new THREE.CanvasTexture(terrainCanvas);
+  surface.colorSpace=THREE.SRGBColorSpace;
+  surface.wrapS=surface.wrapT=THREE.RepeatWrapping;
+  surface.repeat.set(25,25);surface.anisotropy=coarse?1:4;
+  groundMaterial.map=surface;
+  if(!coarse){groundMaterial.bumpMap=surface;groundMaterial.bumpScale=.045;}
+ }
+ const ground=new THREE.Mesh(grid,groundMaterial);
  ground.receiveShadow=!coarse;
  scene.add(ground);
  // Gentle horizon ridge, rendered as soft atmospheric silhouettes.
