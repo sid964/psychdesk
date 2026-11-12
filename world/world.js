@@ -188,7 +188,8 @@ if(renderer){
   'Cognitive dissonance':'When beliefs and actions conflict, people may feel tension and try to reduce the inconsistency.'
  };
  let pointerDown=null;
- canvas.addEventListener('pointerdown',e=>{pointerDown={x:e.clientX,y:e.clientY};});
+ canvas.addEventListener('pointerdown',e=>{cameraFlight=null;pointerDown={x:e.clientX,y:e.clientY};});
+ canvas.addEventListener('wheel',()=>{cameraFlight=null;},{passive:true});
  let lastHover=0;
  canvas.addEventListener('pointermove',e=>{
   if(e.pointerType==='touch'||e.pointerType==='pen'&&e.buttons)return;
@@ -200,13 +201,17 @@ if(renderer){
  canvas.addEventListener('pointerup',e=>{
   if(!pointerDown||Math.hypot(e.clientX-pointerDown.x,e.clientY-pointerDown.y)>7){pointerDown=null;return;}
   pointerDown=null;const selected=pick(e);if(!selected)return;
-  if(selected.kind==='place')visit(selected.value);
+  if(selected.kind==='place')focusPlace(selected.value);
   if(selected.kind==='concept')tip(selected.value,conceptInfo[selected.value]||'Visit the psychology dictionary to discover more.','dictionary');
   if(selected.kind==='person')tip('A living world',selected.value+'. Take a moment to explore, then open a study location.');
  });
  const keyState=new Set();
  window.addEventListener('keydown',e=>{
-  if(e.altKey||e.ctrlKey||e.metaKey||['INPUT','TEXTAREA','BUTTON'].includes(document.activeElement?.tagName))return;
+  if(e.altKey||e.ctrlKey||e.metaKey||['INPUT','TEXTAREA','BUTTON','SELECT'].includes(document.activeElement?.tagName))return;
+  const number=Number(e.key);
+  if(e.key.length===1&&number>=1&&number<=destinations.length){
+   e.preventDefault();focusPlace(destinations[number-1].id);return;
+  }
   keyState.add(e.key.toLowerCase());
  });
  window.addEventListener('keyup',e=>keyState.delete(e.key.toLowerCase()));
@@ -221,9 +226,7 @@ if(renderer){
  qualityButton?.addEventListener('click',()=>{
   tier=tier==='high'?'medium':tier==='medium'?'low':'high';applyQuality();
  });
- resetButton.addEventListener('click',()=>{
-  camera.position.set(34,24,40);controls.target.set(0,1,0);controls.update();
- });
+ resetButton.addEventListener('click',resetView);
  try{
   const saved=JSON.parse(sessionStorage.getItem('psychworld-view-v1')||'null');
   if(saved?.camera?.length===3&&saved?.target?.length===3&&
@@ -251,11 +254,20 @@ if(renderer){
   if(keyState.has('a')||keyState.has('arrowleft'))shift.sub(right);
   if(keyState.has('d')||keyState.has('arrowright'))shift.add(right);
   if(shift.lengthSq()){
+   cameraFlight=null;
    shift.normalize().multiplyScalar(delta*9);
    const next=controls.target.clone().add(shift);
    if(Math.hypot(next.x,next.z)<48){
     controls.target.add(shift);camera.position.add(shift);
    }
+  }
+  if(cameraFlight){
+   cameraFlight.progress=Math.min(1,cameraFlight.progress+delta*1.35);
+   const p=cameraFlight.progress;
+   const eased=p*p*(3-2*p);
+   camera.position.lerpVectors(cameraFlight.startCamera,cameraFlight.endPosition,eased);
+   controls.target.lerpVectors(cameraFlight.startTarget,cameraFlight.endTarget,eased);
+   if(p===1)cameraFlight=null;
   }
   controls.update();
   if(!reduced){landscape.animate(elapsed,delta);life.animate(elapsed,delta);}
