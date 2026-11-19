@@ -379,7 +379,7 @@ function useStorageKey(key){
  const accountSwitch=storageKey!==key;
  if(accountSwitch)saveTimer();
  storageKey=key;
- if(accountSwitch){timer=loadTimer();subjectFilter='all';}
+ if(accountSwitch){timer=loadTimer();subjectFilter='all';recallSubjectFilter='all';selectedReviewId=null;focusTopicId='';}
  let raw;
  try{
   raw=localStorage.getItem(key);
@@ -399,6 +399,13 @@ function useStorageKey(key){
   // Crucial: never overwrite an unreadable account record with blank starter data.
   data=initial();data.version=2;data.notes=[];data.materials=[];data.stickies=[];data.inkNotes=[];
   markCorrupt(key,raw,e);render();
+ }
+ // A fresh account timer can be created before that account's subjects load.
+ // Never retain a selected subject that belongs only to the previous account.
+ // The empty subject is an intentional General study selection.
+ if(timer.subjectId&&!data.subjects.some(s=>s.id===timer.subjectId)){
+  timer.subjectId=data.subjects[0]?.id||'';
+  if(tab==='focus')render();
  }
  // Account initialization does not reset a running or completed focus session.
  saveTimer();

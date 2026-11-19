@@ -83,3 +83,24 @@ test('dictionary CSV records preserve quoted newlines and escaped quotes',()=>{
  const e=environment();vm.runInContext(source('psychology-imports.js').replace('window.PsychDeskDictionaryPacks=', 'window.__csv={splitRecords,parseCsvRow};window.PsychDeskDictionaryPacks='),e.context);const {splitRecords,parseCsvRow}=e.window.__csv;
  const input='term,definition\r\n"Memory","A line\nwith ""quotes"" and, commas"\r\n';const split=splitRecords(input,true,true);assert.equal(split.records.length,2);assert.equal(parseCsvRow(split.records[1])[1],'A line\nwith "quotes" and, commas');assert.throws(()=>splitRecords('"unfinished',true,true),/unclosed/);
 });
+
+test('fresh account timer never inherits a subject from the previous account',()=>{
+ const e=environment();
+ e.core.getData().subjects=[{id:'private-subject',name:'Previous account subject'}];
+ e.core.save();
+ e.core.useStorageKey('psychdesk-user-new');
+ const current=e.core.getData().subjects[0].id;
+ assert.notEqual(current,'private-subject');
+ assert.equal(e.api.getTimer().subjectId,current);
+ assert.equal(JSON.parse(e.storage.get('psychdesk-timer-v2:psychdesk-user-new')).subjectId,current);
+});
+test('account switch clears a selected focus topic even if another account reuses its ID',()=>{
+ const e=environment();
+ e.core.commitChange(d=>d.tasks.push({id:'shared-id',title:'Previous account task',subjectId:'cog',minutes:25,done:false}));
+ assert.equal(e.core.openStudyTopic('shared-id'),true);
+ assert.match(e.document.querySelector('#main').innerHTML,/CURRENT TOPIC/);
+ e.core.useStorageKey('psychdesk-user-new');
+ e.core.commitChange(d=>d.tasks.push({id:'shared-id',title:'New account task',subjectId:'cog',minutes:25,done:false}));
+ e.core.render();
+ assert.doesNotMatch(e.document.querySelector('#main').innerHTML,/CURRENT TOPIC/);
+});
