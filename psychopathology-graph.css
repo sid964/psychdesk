@@ -108,3 +108,62 @@
 .psycourse-reader-nav span{font-size:11px;color:var(--psy-muted)}
 .psycourse-outline{padding-top:9px;border-bottom:1px solid var(--psy-border);padding-bottom:8px}
 @media(max-width:620px){.psycourse-lesson-list{grid-template-columns:1fr}.psycourse-map>summary small,.psycourse-outline>summary small{display:none}.psycourse-detail{padding-top:19px}}
+
+/* Phase 3: one chapter-first reader and a secondary concept graph. */
+.psycourse{max-width:1160px}
+.psycourse-heading p{max-width:56ch;font-size:14px;line-height:1.6}
+.psycourse-progress{margin:4px 0 15px}
+.psycourse-startbar{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:15px 18px;margin:0 0 22px;border:1px solid var(--psy-border);border-radius:14px;background:var(--psy-accent-faint)}
+.psycourse-startbar>div{display:grid;gap:6px;min-width:0}
+.psycourse-startbar strong{font-size:14px;font-weight:750}
+.psycourse-startbar span{font-size:12px;line-height:1.6;color:var(--psy-muted)}
+.psycourse-continue{border:1px solid var(--psy-accent);background:var(--psy-surface);color:var(--ink);border-radius:11px;min-height:44px;min-width:178px;padding:10px 15px;font:inherit;font-size:12px;font-weight:750;cursor:pointer;text-align:center}
+.psycourse-continue:hover{background:var(--psy-accent-faint)}
+.psycourse-study-layout{display:grid;grid-template-columns:minmax(250px,320px) minmax(0,1fr);align-items:start;gap:clamp(18px,3.5vw,46px)}
+.psycourse-chapter-index{min-width:0}
+.psycourse-quickstart{padding:0}
+.psycourse-quickstart h2{font-size:22px}
+.psycourse-quickstart p{line-height:1.5}
+.psycourse-lesson-list{grid-template-columns:1fr;gap:5px;margin-top:11px}
+.psycourse-lesson-item{border:0;border-bottom:1px solid var(--psy-border);border-radius:0;min-height:46px;padding:9px 8px}
+.psycourse-lesson-item strong{font-size:12px}
+.psycourse-lesson-item small{white-space:nowrap}
+.psycourse-outline{padding:13px 0 5px;margin-top:14px;border-top:1px solid var(--psy-border)}
+.psycourse-outline>summary{font-size:13px;min-height:46px;display:flex}
+.psycourse-outline>summary small{margin-left:auto}
+.psycourse-chapter-list{display:grid;grid-template-columns:1fr;gap:0;max-height:295px;overflow-y:auto;overscroll-behavior:contain;padding-right:4px}
+.psycourse-chapter-list button{min-height:44px;padding:10px 6px;gap:9px}
+.psycourse-chapter-list span{min-width:20px}
+.psycourse-chapter-list button small{white-space:nowrap}
+.psycourse-detail{padding:4px 0 18px!important;border-top:0!important;margin:0;scroll-margin-top:22px;min-height:270px}
+.psycourse-detail h2{font-size:clamp(26px,3vw,34px)}
+.psycourse-detail p{font-size:15px;line-height:1.78}
+.psycourse-level{padding-top:19px}
+.psycourse-map{margin:25px 0 0;border-top:1px solid var(--psy-border);border-bottom:1px solid var(--psy-border)}
+.psycourse-map>summary{min-height:56px}
+.psycourse-continue:focus-visible,.psycourse-lesson-item:focus-visible,.psycourse-chapter-list button:focus-visible{outline:2px solid var(--psy-accent);outline-offset:2px}
+html[data-theme="dark"] .psycourse-startbar{background:#111015}
+html[data-theme="dark"] .psycourse-continue{background:#191722}
+html[data-theme="light"] .psycourse-startbar{background:#f3efe9}
+@media(max-width:860px){
+ .psycourse-study-layout{grid-template-columns:minmax(0,1fr);gap:12px}
+ .psycourse-chapter-index{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start}
+ .psycourse-outline{margin-top:0;padding-top:0;border-top:0}
+ .psycourse-chapter-list{max-height:305px}
+ .psycourse-detail{padding-top:16px!important;border-top:1px solid var(--psy-border)!important}
+}
+@media(max-width:600px){
+ .psycourse-heading{gap:8px;align-items:flex-start}
+ .psycourse-count{display:block;text-align:right}
+ .psycourse-count strong{font-size:30px}
+ .psycourse-startbar{flex-direction:column;align-items:stretch;margin-bottom:16px;padding:14px}
+ .psycourse-continue{width:100%}
+ .psycourse-chapter-index{grid-template-columns:1fr;gap:10px}
+ .psycourse-quickstart h2{font-size:21px}
+ .psycourse-outline{border-top:1px solid var(--psy-border);margin-top:6px;padding-top:6px}
+ .psycourse-chapter-list{max-height:212px}
+ .psycourse-detail{scroll-margin-top:14px}
+ .psycourse-detail p{font-size:14px}
+ .psycourse-map>summary{gap:8px}
+}
+@media(prefers-reduced-motion:reduce){.psycourse-startbar *{transition:none}}
