@@ -26,7 +26,9 @@ const coarse=matchMedia('(pointer: coarse)').matches;
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const lowMemory=Number(navigator.deviceMemory||8)<4;
 let quality=coarse||lowMemory?'medium':'high';
-const night=new Date().getHours()>=19||new Date().getHours()<6;
+const localTime=new Date(),localHour=localTime.getHours()+localTime.getMinutes()/60;
+const night=localHour>=19||localHour<6;
+const goldenHour=!night&&(localHour<9||localHour>=16);
 const tip=(title,body,destination)=>{
  if(window.PsychDeskWorldUI?.showDetail)window.PsychDeskWorldUI.showDetail(title,body,destination);
 };
@@ -54,15 +56,15 @@ if(renderer){
   if(/swiftshader|llvmpipe|softpipe|software rasterizer/i.test(driver))quality='low';
  }catch{}
  const scene=new THREE.Scene();
- const horizon=night?0x71858d:0xc3d2cc;
+ const horizon=night?0x71858d:goldenHour?0xcabfb1:0xc3d2cc;
  scene.background=new THREE.Color(horizon);
- scene.fog=new THREE.FogExp2(horizon,night?.012:.0097);
+ scene.fog=new THREE.FogExp2(horizon,night?.012:goldenHour?.0117:.0097);
  const camera=new THREE.PerspectiveCamera(49,1,.12,240);
  camera.position.set(34,24,40);
  camera.lookAt(0,1.5,0);
  renderer.outputColorSpace=THREE.SRGBColorSpace;
  renderer.toneMapping=THREE.ACESFilmicToneMapping;
- renderer.toneMappingExposure=night?1.1:1.06;
+ renderer.toneMappingExposure=night?1.1:goldenHour?1.02:1.06;
  const pixelRatio={high:1.75,medium:1.25,low:.9};
  let tier=quality;
  function applyQuality(){
@@ -70,6 +72,7 @@ if(renderer){
   renderer.shadowMap.enabled=tier==='high';
   if(sun) sun.castShadow=tier==='high';
   if(qualityButton)qualityButton.textContent='Quality: '+tier[0].toUpperCase()+tier.slice(1);
+  if(status)status.textContent='Living landscape · '+(night?'evening':goldenHour?'golden hour':'daylight')+' · '+tier+' graphics · '+(reduced?'reduced motion':'gentle motion');
   const width=host.clientWidth,height=host.clientHeight;
   if(width&&height)renderer.setSize(width,height,false);
  }
@@ -86,9 +89,9 @@ if(renderer){
  const sky=new THREE.Mesh(new THREE.SphereGeometry(195,40,24),
   new THREE.ShaderMaterial({
    uniforms:{
-    upper:{value:new THREE.Color(night?0x1d3449:0x82a9b5)},
-    lower:{value:new THREE.Color(night?0x899397:0xe2e0cb)},
-    sunColor:{value:new THREE.Color(night?0xc1bdba:0xffddb1)},
+    upper:{value:new THREE.Color(night?0x1d3449:goldenHour?0x9aaeb0:0x82a9b5)},
+    lower:{value:new THREE.Color(night?0x899397:goldenHour?0xe7d2b4:0xe2e0cb)},
+    sunColor:{value:new THREE.Color(night?0xc1bdba:goldenHour?0xffc58e:0xffddb1)},
     sunDirection:{value:new THREE.Vector3(-.4,.44,-.55).normalize()}
    },
    vertexShader:'varying vec3 vDir; void main(){vDir=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}',
@@ -97,9 +100,9 @@ if(renderer){
   })
  );
  scene.add(sky);
- const skyLight=new THREE.HemisphereLight(night?0x93a8c8:0xf8f1df,night?0x3b5043:0x4d6651,night?1.25:1.65);
+ const skyLight=new THREE.HemisphereLight(night?0x93a8c8:goldenHour?0xffebd1:0xf8f1df,night?0x3b5043:0x4d6651,night?1.25:goldenHour?1.43:1.65);
  scene.add(skyLight);
- const sun=new THREE.DirectionalLight(night?0xc8c8bc:0xffe2b7,night?1.2:2.5);
+ const sun=new THREE.DirectionalLight(night?0xc8c8bc:goldenHour?0xffca96:0xffe2b7,night?1.2:goldenHour?2.15:2.5);
  sun.position.set(-28,48,22);
  sun.castShadow=tier==='high';
  sun.shadow.mapSize.set(1536,1536);
@@ -258,8 +261,8 @@ if(renderer){
  const forward=new THREE.Vector3(),right=new THREE.Vector3(),shift=new THREE.Vector3(),projected=new THREE.Vector3();
  let last=performance.now(),lastPaint=0,elapsed=0;
  function animate(now){
-  const frameInterval=tier==='high'?1000/45:tier==='medium'?1000/30:1000/22;
-  if(now-lastPaint<frameInterval)return;
+  const frameInterval=tier==='high'?1000/60:tier==='medium'?1000/36:1000/24;
+  if(now-lastPaint+.75<frameInterval)return;
   lastPaint=now;
   const delta=Math.min((now-last)/1000,.05);last=now;
   elapsed+=delta;
@@ -304,7 +307,7 @@ if(renderer){
  }
  document.addEventListener('visibilitychange',visibility);
  visibility();
- if(status)status.textContent='Living landscape · '+(night?'evening':'daylight')+' · '+tier+' graphics · '+(reduced?'reduced motion':'gentle motion');
+ // applyQuality updates the accessibility status whenever graphics settings change.
  window.addEventListener('pageshow',visibility);
  window.addEventListener('pagehide',event=>{
   renderer.setAnimationLoop(null);
