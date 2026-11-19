@@ -35,7 +35,7 @@ Baseline: `main` commit `f7190f03f83007344c3bfce4fe19bd4ed9e82ba9`. This is an i
 - [ ] Verify Phase 2 Node tests and Chromium smoke including old-to-new offline upgrade.
 - [ ] Review and merge the stacked Phase 2 PR only after Phase 1 has been accepted.
 
-## Phase 3 — learning (in implementation)
+## Phase 3 — learning (merged and deployed via PR #80)
 
 - [x] Keep Psychopathology within Overall Psychology, rather than adding a primary navigation destination.
 - [x] Put the Chapter 1 authored lesson list and a scrollable 16-chapter index beside the reader.
@@ -47,9 +47,18 @@ Baseline: `main` commit `f7190f03f83007344c3bfce4fe19bd4ed9e82ba9`. This is an i
 - [ ] CI and browser layout verified, PR reviewed and merged into main.
 - [ ] GitHub Pages and live-release verification green for the Phase 3 merge.
 
-## Phase 4 — tool consolidation
+## Phase 4 — tool consolidation (implementation branch)
 
-Group Notes/Ink/Sticky/Voice capture, Library/Reader/References, and Mind Maps/Study Board in the interface. Avoid migrating or deleting their existing storage formats. Remove redundant Study Flow recommendations.
+- [x] Add a shared Notes workspace selector for Typed, Handwriting, Sticky and Voice notes, preserving their existing storage and routes.
+- [x] Add a Library workspace selector for Books & files, PDF Reader and References.
+- [x] Add a Visual Thinking selector for Mind Maps, Study Board and Connected Learning.
+- [x] Show everyday tools first in Explore, with the entire specialty tool inventory reachable inside a collapsed `Browse individual tools` section.
+- [x] Keep unrelated records and features intact; no destructive migration, no new Firebase/Drive dependencies.
+- [x] Add browser checks for responsive tool navigation, access to every specialty tool, and unchanged data.
+- [ ] Verify Node tests and full Chromium smoke including past-release caching, World navigation and Psychopathology.
+- [ ] Merge the Phase 4 PR, then verify GitHub Pages deployment and exact live-release hashes.
+
+Phase 1, 2 and 3 have all been merged and their production deployments verified.
 
 ## Phase 5 — interactive 3D world
 
