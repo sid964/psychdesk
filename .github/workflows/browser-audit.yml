@@ -14,6 +14,7 @@ on:
       - 'tests/release-upgrade-browser.cjs'
       - 'tests/phase2-browser.cjs'
       - 'tests/phase4-browser.cjs'
+      - 'tests/phase6-browser.cjs'
       - 'study-clarity.css'
       - 'world/**'
       - 'psychopathology-*'
@@ -35,6 +36,7 @@ on:
       - 'tests/release-upgrade-browser.cjs'
       - 'tests/phase2-browser.cjs'
       - 'tests/phase4-browser.cjs'
+      - 'tests/phase6-browser.cjs'
       - 'study-clarity.css'
       - 'world/**'
       - 'psychopathology-*'
@@ -73,6 +75,8 @@ jobs:
         run: node tests/phase2-browser.cjs
       - name: Phase 4 consolidated workspace navigation smoke
         run: node tests/phase4-browser.cjs
+      - name: Phase 6 responsive accessibility and paint baseline
+        run: node tests/phase6-browser.cjs
       - name: Prepare the preceding published release (read-only archive)
         run: |
           git fetch --no-tags --depth=1 origin 1fe8a2df41097d3b541e487d99bb4bd7e714e9cc

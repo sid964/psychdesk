@@ -60,7 +60,7 @@ Baseline: `main` commit `f7190f03f83007344c3bfce4fe19bd4ed9e82ba9`. This is an i
 
 Phase 1, 2 and 3 have all been merged and their production deployments verified.
 
-## Phase 5 — interactive 3D world (first incremental implementation)
+## Phase 5 — interactive 3D world (first incremental implementation; merged and deployed via PR #82)
 
 - [x] Keep the existing explorable landscape, interactive study destinations and lazy-loaded World renderer.
 - [x] Add more natural early/late daylight colors and softer sky/ambient lighting without remote assets.
@@ -69,15 +69,27 @@ Phase 1, 2 and 3 have all been merged and their production deployments verified.
 - [x] Make a graphics-tier change announce updated quality in the accessible World status.
 - [x] Bump dynamic World module and offline cache version to avoid stale renderer files.
 - [x] Add unit regression for time-of-day lighting, animation, accessibility and zero extra fetches.
-- [ ] Verify Node unit suite, Chromium World navigation and cross-release offline upgrades.
-- [ ] Review, merge and verify the published Phase 5 release on GitHub Pages.
+- [x] Verify Node unit suite, Chromium World navigation and cross-release offline upgrades.
+- [x] Review, merge and verify the published Phase 5 release on GitHub Pages.
 - [ ] Validate visual fidelity and frame pacing on actual supported Android/Zenbook hardware before claiming a performance improvement.
 
 This is the first small realism pass; additional visual refinements require screenshot and real GPU review.
 
-## Phase 6 — release verification
+## Phase 6 — release verification (implementation branch)
 
-Run responsive, keyboard, navigation, Firebase, Drive, local-save failure, backup recovery, service worker and old-cache upgrade checks. Compare actual performance before and after changes.
+- [x] Add a commit-hash verifier for the published app shell, service worker, study navigation stylesheet, homepage, Psychopathology reader and 3D World assets.
+- [x] Make the live release workflow run whenever these critical source files change, rather than only when the main HTML/app/service worker changes.
+- [x] Add Node tests that reject stale content or missing files, and require a full matching commit hash.
+- [x] Add isolated Chromium audit of 20 study views at 320, 390, 768 and 1440 px for route correctness, keyboard access, mobile overflow, runtime errors, and no unintended record edits.
+- [x] Record the browser's first-contentful-paint and DOM-content-loaded measurements as diagnostic baseline data; CI GPU results are not claimed as physical-device performance.
+- [x] Advance the offline cache to v93, retaining the existing data format and safe upgrade path.
+- [ ] Complete the full Node and Chromium regression checks and review any failures.
+- [ ] Merge Phase 6 to main and confirm GitHub Pages deployment and multi-asset hash verification.
+- [ ] On actual Android and Zenbook devices, review the interface, Google account + Drive reconnection, and real WebGL frame pacing. Browser CI cannot substitute for these checks.
+
+### Release integrity safeguards
+Nothing here migrates, deletes, or copies saved user notes, ink, files, planner items, recall progress or session records.
+Real Firebase and Drive login workflows remain manual acceptance checks because CI uses isolated guest/mocked service contexts.
 
 ## Baseline
 
