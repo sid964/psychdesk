@@ -88,11 +88,16 @@ export function createLife(THREE,scene,routes,height,{coarse=false,reduced=false
   }
   for(const p of people){
    const cyc=(t*p.speed+p.shift)%2,s=cyc<=1?cyc:2-cyc,dir=cyc<=1?1:-1;
-   const u=.10+s*.78,pos=p.route.getPoint(u),tan=p.route.getTangent(u);
-   p.person.position.set(pos.x,height(pos.x,pos.z)+Math.abs(Math.sin(t*7.2+p.phase))*.023,pos.z);
-   p.person.rotation.y=Math.atan2(tan.x*dir,tan.z*dir);
-   const gait=Math.sin(t*7+p.phase);
-   p.body.rotation.z=Math.sin(t*3.5+p.phase)*.018;
+   // Ease naturally into the ends of each path instead of reversing at full speed.
+   const eased=.5-.5*Math.cos(Math.PI*s),travel=Math.sin(Math.PI*s);
+   const u=.10+eased*.78,pos=p.route.getPoint(u),tan=p.route.getTangent(u);
+   p.person.position.set(pos.x,height(pos.x,pos.z)+Math.abs(Math.sin(t*7.2+p.phase))*.015*travel,pos.z);
+   const heading=Math.atan2(tan.x*dir,tan.z*dir);
+   const turn=Math.atan2(Math.sin(heading-p.person.rotation.y),Math.cos(heading-p.person.rotation.y));
+   p.person.rotation.y+=turn*(1-Math.exp(-dt*6));
+   const gait=Math.sin(t*7+p.phase)*travel;
+   p.body.position.y=.9+Math.sin(t*1.45+p.phase)*.006;
+   p.body.rotation.z=Math.sin(t*3.5+p.phase)*.018*travel;
    p.legs.forEach(({leg,side})=>leg.rotation.x=gait*side*.38);
    p.arms.forEach(({arm,side})=>arm.rotation.x=-gait*side*.38);
   }

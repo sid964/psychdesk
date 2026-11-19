@@ -44,8 +44,21 @@ test('World tour fallback, navigation and release cache stay accessible',()=>{
  const sw=read('sw.js');
  assert.match(html,/worldTour'\)\.disabled=true/);
  assert.match(world,/if\(tourButton\)tourButton\.disabled=true/);
- assert.match(sw,/psychdesk-study-course-first-v91/);
+ assert.match(sw,/psychdesk-study-course-first-v92/);
  for(const destination of ['notes','materials','garden','recall','dictionary','focus']){
   assert.ok(html.includes('data-visit="'+destination+'"'),destination);
  }
+});
+
+test('Phase 5 keeps high-quality movement smoother with a gentler daylight atmosphere',()=>{
+ const world=read('world/world.js'),life=read('world/life.js'),html=read('world/index.html');
+ assert.match(world,/const goldenHour=/,'time-of-day light is grounded in the local hour');
+ assert.match(world,/goldenHour\?0xffca96:/,'warm directional light is only used in daylight');
+ assert.match(world,/frameInterval=tier==='high'\?1000\/60/,'high quality caps at 60 FPS');
+ assert.match(world,/if\(now-lastPaint\+\.75<frameInterval\)return/,'frame pacing tolerates minor refresh jitter');
+ assert.match(world,/if\(status\)status\.textContent='Living landscape/,'quality changes update accessible status');
+ assert.match(life,/const eased=\.5-\.5\*Math\.cos\(Math\.PI\*s\)/,'walkers ease into path ends');
+ assert.match(life,/turn\*\(1-Math\.exp\(-dt\*6\)\)/,'walkers turn gradually');
+ assert.match(html,/world\.js\?v=phase5-natural-1/,'new renderer URL prevents stale module loads');
+ assert.doesNotMatch(world,/fetch\(/,'rendering uses no extra network data');
 });

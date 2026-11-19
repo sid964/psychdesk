@@ -47,7 +47,7 @@ Baseline: `main` commit `f7190f03f83007344c3bfce4fe19bd4ed9e82ba9`. This is an i
 - [ ] CI and browser layout verified, PR reviewed and merged into main.
 - [ ] GitHub Pages and live-release verification green for the Phase 3 merge.
 
-## Phase 4 — tool consolidation (implementation branch)
+## Phase 4 — tool consolidation (merged and deployed via PR #81)
 
 - [x] Add a shared Notes workspace selector for Typed, Handwriting, Sticky and Voice notes, preserving their existing storage and routes.
 - [x] Add a Library workspace selector for Books & files, PDF Reader and References.
@@ -60,9 +60,20 @@ Baseline: `main` commit `f7190f03f83007344c3bfce4fe19bd4ed9e82ba9`. This is an i
 
 Phase 1, 2 and 3 have all been merged and their production deployments verified.
 
-## Phase 5 — interactive 3D world
+## Phase 5 — interactive 3D world (first incremental implementation)
 
-Improve naturalness, interaction, navigation and quality scaling. Preserve the existing world and lazy-load graphics only when used. Respect reduced-motion and run real device GPU checks.
+- [x] Keep the existing explorable landscape, interactive study destinations and lazy-loaded World renderer.
+- [x] Add more natural early/late daylight colors and softer sky/ambient lighting without remote assets.
+- [x] Ease resident walks at path ends, gradually interpolate turns and reduce robotic gait snapping.
+- [x] Raise high-tier animation cap to 60 FPS with refresh-jitter tolerance; retain lower tiers and automatic software-GPU fallback.
+- [x] Make a graphics-tier change announce updated quality in the accessible World status.
+- [x] Bump dynamic World module and offline cache version to avoid stale renderer files.
+- [x] Add unit regression for time-of-day lighting, animation, accessibility and zero extra fetches.
+- [ ] Verify Node unit suite, Chromium World navigation and cross-release offline upgrades.
+- [ ] Review, merge and verify the published Phase 5 release on GitHub Pages.
+- [ ] Validate visual fidelity and frame pacing on actual supported Android/Zenbook hardware before claiming a performance improvement.
+
+This is the first small realism pass; additional visual refinements require screenshot and real GPU review.
 
 ## Phase 6 — release verification
 
