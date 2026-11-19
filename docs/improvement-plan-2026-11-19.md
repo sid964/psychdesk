@@ -24,9 +24,16 @@ Baseline: `main` commit `f7190f03f83007344c3bfce4fe19bd4ed9e82ba9`. This is an i
 - [ ] Manually verify real signed-in switching, Drive restoration, refresh, and offline use.
 - [ ] Merge the reviewed PR, then begin Phase 2.
 
-## Phase 2 — homepage and navigation
+## Phase 2 — homepage and navigation (review branch)
 
-Remove repeated homepage shortcuts and conflicting next-study prompts; one clear Continue action, quick note and focus. Make main navigation simple and consistent on desktop and mobile. Preserve advanced tools through secondary entrypoints and accessibility.
+- [x] Five primary destinations: Home, Learn, Notes, Library and Focus, consistent on desktop and mobile.
+- [x] Keep Planner, Flashcards, Study Flow, Ink and university preparation reachable through a secondary desktop menu or the Explore hub.
+- [x] Remove duplicated home study paths, next-step card and repeated tools drawer.
+- [x] Preserve saved reading/note resume, quick note, Focus, living Memory Garden and 3D World entry.
+- [x] Group recent notes, curated discoveries, garden status and memory postcard under one optional disclosure.
+- [x] Add responsive browser tests for primary navigation, child-tab highlighting, tool access and unchanged study records.
+- [ ] Verify Phase 2 Node tests and Chromium smoke including old-to-new offline upgrade.
+- [ ] Review and merge the stacked Phase 2 PR only after Phase 1 has been accepted.
 
 ## Phase 3 — learning
 

@@ -76,7 +76,7 @@ async function main(){
         heroHeight:Math.round(hero?.getBoundingClientRect().height||0),
         firstCardTop:Math.round(firstCard?.getBoundingClientRect().top||0),
         primaryVisible:!!first&&first.width>0&&first.top>=0&&first.bottom<innerHeight,
-        storiesBeforeSuggestion:!!stories&&!!next&&Boolean(stories.compareDocumentPosition(next)&Node.DOCUMENT_POSITION_FOLLOWING),
+        optionalContentGrouped:!!stories&&!!document.querySelector('#main .home-archive')&&!next,
         brandVisible:!!brandText&&getComputedStyle(brandText).display!=='none',
         brandClear:!!b&&!!q&&b.right<=q.left+3,
         accountAccessible:!!account?.getAttribute('aria-label')?.includes('Google account')
@@ -84,7 +84,7 @@ async function main(){
     });
     await page.screenshot({path:path.join(dest,'overview-'+vp.width+'.png'),fullPage:true,animations:'disabled'});
     const record={origin,viewport:vp.width,overview,homeDesign,errors};
-    if(!homeDesign.gardenVisible||!homeDesign.memoryStatusVisible||!homeDesign.storiesBeforeSuggestion||!homeDesign.accountAccessible)fatal=true;
+    if(!homeDesign.gardenVisible||!homeDesign.memoryStatusVisible||!homeDesign.optionalContentGrouped||!homeDesign.accountAccessible)fatal=true;
     if(vp.width<=390&&!homeDesign.primaryVisible)fatal=true;
     // The study card should start near the first mobile screen, not below a
     // 500px decorative hero. Log measured sizes on every viewport.
@@ -103,6 +103,7 @@ async function main(){
        // A saved psychology idea must visibly become personal garden content.
        // This runs against a fresh, isolated LOCAL browser profile only.
        await page.locator('[data-tab="today"]:visible').first().click();
+       await page.locator('.home-archive > summary').click();
        await page.waitForSelector('#studio-discovery .studio-save',{timeout:10000});
        await page.locator('#studio-discovery .studio-save').click();
        const gardenMemory=await page.evaluate(()=>({
