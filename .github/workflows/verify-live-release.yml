@@ -6,6 +6,13 @@ on:
       - 'index.html'
       - 'app.js'
       - 'sw.js'
+      - 'study-clarity.css'
+      - 'autopilot/studio.js'
+      - 'psychopathology-graph.js'
+      - 'psychopathology-graph.css'
+      - 'world/**'
+      - 'scripts/verify-live-release.cjs'
+      - '.github/workflows/verify-live-release.yml'
   workflow_dispatch:
 permissions:
   contents: read
@@ -14,33 +21,12 @@ concurrency:
   cancel-in-progress: true
 jobs:
   verify-pages:
-    runs-on: ubuntu-latest
-    timeout-minutes: 7
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
-      - name: Confirm GitHub Pages serves the actual commit
-        shell: bash
-        run: |
-          set -euo pipefail
-          SITE='https://sid964.github.io/psychdesk'
-          expected_html=$(sha256sum index.html | cut -d' ' -f1)
-          expected_app=$(sha256sum app.js | cut -d' ' -f1)
-          expected_sw=$(sha256sum sw.js | cut -d' ' -f1)
-          for attempt in $(seq 1 30); do
-            curl -fsSL --max-time 15 -H 'Cache-Control: no-cache' "$SITE/index.html?release=$GITHUB_SHA&n=$attempt" -o /tmp/psychdesk-live-index || true
-            curl -fsSL --max-time 15 -H 'Cache-Control: no-cache' "$SITE/app.js?release=$GITHUB_SHA&n=$attempt" -o /tmp/psychdesk-live-app || true
-            curl -fsSL --max-time 15 -H 'Cache-Control: no-cache' "$SITE/sw.js?release=$GITHUB_SHA&n=$attempt" -o /tmp/psychdesk-live-sw || true
-            if [[ -s /tmp/psychdesk-live-index && -s /tmp/psychdesk-live-app && -s /tmp/psychdesk-live-sw ]]; then
-              live_html=$(sha256sum /tmp/psychdesk-live-index | cut -d' ' -f1)
-              live_app=$(sha256sum /tmp/psychdesk-live-app | cut -d' ' -f1)
-              live_sw=$(sha256sum /tmp/psychdesk-live-sw | cut -d' ' -f1)
-              if [[ "$live_html" == "$expected_html" && "$live_app" == "$expected_app" && "$live_sw" == "$expected_sw" ]]; then
-                echo "LIVE_RELEASE_VERIFIED: GitHub Pages matches commit $GITHUB_SHA"
-                exit 0
-              fi
-            fi
-            echo "Attempt $attempt: awaiting matching Pages files for $GITHUB_SHA"
-            sleep 6
-          done
-          echo "::error::Pages did not serve index.html, app.js and sw.js from this commit"
-          exit 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Confirm critical study and World assets match this commit on Pages
+        run: node scripts/verify-live-release.cjs
