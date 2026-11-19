@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { createLandscape } from './landscape.js?v=immersive-20261112';
 import { createPlaces } from './places.js';
-import { createLife } from './life.js';
+import { createLife } from './life.js?v=phase5-natural-1';
 
 // An atmospheric landscape, not a low-poly island: organic terrain, architecture,
 // resident walkers and wildlife. All actual study records stay in PsychDesk.
