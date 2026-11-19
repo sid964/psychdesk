@@ -11,7 +11,7 @@ Baseline: `main` commit `f7190f03f83007344c3bfce4fe19bd4ed9e82ba9`. This is an i
 - Do not clear browser storage or force Firestore migration as a cache workaround.
 - Browser mocks do not prove real Google OAuth, Drive uploads, actual GPU frame rates or live offline behavior.
 
-## Phase 1 — safety and reliability (in progress)
+## Phase 1 — safety and reliability (merged and deployed via PR #78)
 
 - [x] Capture current main SHA, existing checks and the open World-polish PR.
 - [x] Review startup, history, backup recovery, session resume and account-scoped timers.
@@ -24,7 +24,7 @@ Baseline: `main` commit `f7190f03f83007344c3bfce4fe19bd4ed9e82ba9`. This is an i
 - [ ] Manually verify real signed-in switching, Drive restoration, refresh, and offline use.
 - [ ] Merge the reviewed PR, then begin Phase 2.
 
-## Phase 2 — homepage and navigation (review branch)
+## Phase 2 — homepage and navigation (merged and deployed via PR #79)
 
 - [x] Five primary destinations: Home, Learn, Notes, Library and Focus, consistent on desktop and mobile.
 - [x] Keep Planner, Flashcards, Study Flow, Ink and university preparation reachable through a secondary desktop menu or the Explore hub.
@@ -35,9 +35,17 @@ Baseline: `main` commit `f7190f03f83007344c3bfce4fe19bd4ed9e82ba9`. This is an i
 - [ ] Verify Phase 2 Node tests and Chromium smoke including old-to-new offline upgrade.
 - [ ] Review and merge the stacked Phase 2 PR only after Phase 1 has been accepted.
 
-## Phase 3 — learning
+## Phase 3 — learning (in implementation)
 
-Place Psychopathology within Overall Psychology and make its actual lessons and chapter progress primary. Keep the concept graph optional; distinguish finished lessons from chapter outlines.
+- [x] Keep Psychopathology within Overall Psychology, rather than adding a primary navigation destination.
+- [x] Put the Chapter 1 authored lesson list and a scrollable 16-chapter index beside the reader.
+- [x] Add Continue action based on existing local account-specific completion and last-read state.
+- [x] Mark Chapters 2–16 honestly as outlines, without inventing unverified lesson content.
+- [x] Keep the interactive graph optional and below the textbook reader.
+- [x] Preserve source references, previous/next lesson actions, question feedback, flashcards and existing progress.
+- [x] Extend browser regression to cover chapter navigation and the Continue action.
+- [ ] CI and browser layout verified, PR reviewed and merged into main.
+- [ ] GitHub Pages and live-release verification green for the Phase 3 merge.
 
 ## Phase 4 — tool consolidation
 
