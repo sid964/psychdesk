@@ -68,3 +68,31 @@ html[data-theme="light"] .garden-home .garden-heading h1 em{color:#655c89!import
  .bottom-nav>.nav-item>.nav-ico{font-size:19px!important}
 }
 @media(prefers-reduced-motion:reduce){.rail-more>summary::after,.garden-home .home-archive>summary>span:last-child{transition:none}}
+
+
+/* Phase 4 — grouped entrypoints, not combined data or new record formats. */
+.study-workspace-nav{display:flex;flex-direction:column;gap:12px;margin:0 0 24px;padding:14px 0;border-bottom:1px solid var(--line);color:var(--ink)}
+.study-workspace-intro{display:flex;align-items:baseline;flex-wrap:wrap;gap:7px 14px;min-width:0}
+.study-workspace-intro strong{font-size:14px;font-weight:750}
+.study-workspace-intro span{font-size:12px;line-height:1.55;color:var(--muted)}
+.study-workspace-tabs{display:flex;flex-wrap:wrap;gap:5px;max-width:100%;align-items:center}
+.study-workspace-tab{border:1px solid transparent;border-radius:9px;background:transparent;color:var(--muted);padding:10px 13px;font:inherit;font-size:12px;font-weight:650;min-height:44px;cursor:pointer;white-space:nowrap}
+.study-workspace-tab:hover{color:var(--ink);background:var(--paper)}
+.study-workspace-tab.is-current,.study-workspace-tab[aria-current="page"]{color:var(--ink);background:var(--paper);border-color:var(--line)}
+.study-workspace-tab:focus-visible,.study-tools-more>summary:focus-visible{outline:2px solid var(--ui-accent,#888)!important;outline-offset:3px}
+.study-tools-more{border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:5px 0 24px}
+.study-tools-more>summary{display:flex;align-items:center;flex-wrap:wrap;gap:6px 14px;cursor:pointer;min-height:55px;padding:12px 2px;list-style:none;font-size:14px;font-weight:650;color:var(--ink)}
+.study-tools-more>summary::-webkit-details-marker{display:none}
+.study-tools-more>summary::after{content:"⌄";margin-left:auto;color:var(--muted)}
+.study-tools-more[open]>summary::after{content:"⌃"}
+.study-tools-more>summary span{font-size:11px;line-height:1.5;font-weight:400;color:var(--muted)}
+.study-tools-more-content{padding:8px 0 0}
+.study-tools-more-content>.tool-group{margin-bottom:26px}
+@media(max-width:570px){
+ .study-workspace-nav{gap:10px;margin-bottom:19px;padding:11px 0}
+ .study-workspace-intro{display:grid;gap:2px}
+ .study-workspace-tabs{flex-wrap:nowrap;overflow-x:auto;overscroll-behavior-x:contain;padding-bottom:3px;scrollbar-width:thin}
+ .study-workspace-tab{flex:0 0 auto;padding-inline:11px}
+ .study-tools-more>summary{align-items:flex-start}
+}
+@media(prefers-reduced-motion:reduce){.study-workspace-tab{transition:none}}
