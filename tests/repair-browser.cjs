@@ -59,6 +59,7 @@ const fs=require('node:fs'),path=require('node:path');
    assert.equal(await page.locator('#main').count(),0,'offline World must not contain the app shell');
    await page.locator('.world-places [data-visit="notes"]').click();
    await page.waitForFunction(()=>location.hash==='#pd-notes'&&!!window.PsychDeskCore);
+   await page.waitForFunction(()=>/note/i.test(document.querySelector('#main')?.textContent||''),null,{timeout:12000});
    assert.match(await page.locator('#main').textContent(),/note/i);
    await context.setOffline(false);await page.reload({waitUntil:'domcontentloaded'});
    await page.waitForFunction(()=>!!window.PsychDeskCore);
