@@ -91,15 +91,14 @@ function renderHome(){
  '<div class="garden-art-wrap">'+scene+'</div>'+
 
  '</section>'+
- '<nav class="studio-study-paths" aria-label="Study destinations"><button type="button" data-tab="psychology"><strong>Psychology subjects</strong><small>Courses and lessons</small></button><button type="button" data-tab="materials"><strong>Reading library</strong><small>Books and documents</small></button><button type="button" data-tab="recall"><strong>Flashcards</strong><small>Remember and revise</small></button></nav>'+
+ '<nav class="home-shortcuts" aria-label="Quick study tools"><button type="button" data-tab="recall">Flashcards <span aria-hidden="true">↗</span></button><button type="button" data-tab="tools">All study tools <span aria-hidden="true">↗</span></button></nav>'+
+ '<details class="home-archive"><summary><span>Recent notes and discoveries</span><span aria-hidden="true">⌄</span></summary>'+
  '<div class="garden-path-marker studio-garden-context"><span aria-hidden="true"></span>'+gardenStatusMarkup()+'<span aria-hidden="true"></span></div>'+
  '<section class="desk-shelf" aria-label="Recent notes and psychology ideas"><div class="desk-shelf-heading"><span class="studio-kicker">RECENTLY ON THE DESK</span><button type="button" class="garden-text-btn" data-tab="materials">Open library ↗</button></div><div class="garden-stories">'+
- '<section class="garden-notebook" aria-label="Latest note or workspace"><div class="garden-book-icon" aria-hidden="true"><span>✧</span></div>'+notebookCard+'</section>'+ 
+ '<section class="garden-notebook" aria-label="Latest note or workspace"><div class="garden-book-icon" aria-hidden="true"><span>✧</span></div>'+notebookCard+'</section>'+
  '<section class="studio-discovery garden-seed" id="studio-discovery" aria-label="A daily psychology concept">'+discoveryMarkup()+'</section></div></section>'+
  '<div id="studioMemoryPostcard" class="studio-memory-postcard-slot">'+postcard()+'</div>'+
- (window.PsychDeskPhase6?.homeCard?.()||'')+
-
- '<details class="studio-quiet-tools garden-tool-drawer"><summary>Other tools <span aria-hidden="true">⌄</span></summary><div><button type="button" data-tab="notes">Notebooks</button><button type="button" data-tab="ink">Ink notes</button><button type="button" data-tab="materials">Library</button><button type="button" data-tab="dictionary">Psychology dictionary</button><button type="button" data-tab="recall">Flashcards</button><button type="button" data-tab="connections">Study Flow</button><button type="button" data-auto="inbox">Organize notes</button><button type="button" data-auto="import">Import a document</button><button type="button" data-auto="letter">Weekly letter</button><button type="button" data-tab="tools">All tools</button></div></details>'+
+ '</details>'+
  '</div>';
 }
 

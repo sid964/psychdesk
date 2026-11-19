@@ -34,3 +34,37 @@ html[data-theme="light"] .garden-home .garden-heading h1 em{color:#655c89!import
 .garden-home .studio-study-paths button:last-child{border-right:0}
 .garden-home .studio-study-paths button:hover{background:var(--paper)}
 @media(max-width:720px){.garden-home .studio-study-paths{grid-template-columns:repeat(3,minmax(0,1fr));gap:0}.garden-home .studio-study-paths button{min-height:49px;padding:8px}.garden-home .studio-study-paths button strong{font-size:11px;line-height:1.35}.garden-home .studio-study-paths button small{display:none}}
+
+/* Phase 2: five primary routes; optional tools and discoveries stay accessible. */
+@media(min-width:900px){
+ .desktop-rail .rail-nav>.rail-link[data-tab="psychology"],
+ .desktop-rail .rail-nav>.rail-link[data-tab="focus"]{display:flex!important}
+ .desktop-rail .rail-more{display:block;margin-top:18px;padding-top:12px;border-top:1px solid var(--line)}
+}
+.rail-more>summary{list-style:none;cursor:pointer;border-radius:10px;padding:13px;color:var(--muted);font-size:13px;font-weight:650;min-height:44px}
+.rail-more>summary::-webkit-details-marker{display:none}
+.rail-more>summary::after{content:"⌄";float:right;transition:transform .18s ease}
+.rail-more[open]>summary::after{transform:rotate(180deg)}
+.rail-more>summary:hover{color:var(--ink);background:var(--paper)}
+.rail-more-items{display:flex;flex-direction:column;gap:3px;margin-top:4px}
+.rail-more-items>.rail-link{display:flex!important;min-height:44px;width:100%;align-items:center;text-align:left;border:0;border-radius:10px;padding:10px 13px;font:inherit;font-size:13px;gap:12px;cursor:pointer;color:var(--muted);background:transparent}
+.rail-more-items>.rail-link:hover,.rail-more-items>.rail-link.active{color:var(--ink);background:var(--paper)}
+.rail-more>summary:focus-visible,.home-archive>summary:focus-visible,.home-shortcuts button:focus-visible{outline:3px solid var(--ui-accent,#888)!important;outline-offset:3px}
+.garden-home .home-shortcuts{display:flex;gap:16px;align-items:center;flex-wrap:wrap;padding:13px 2px;margin:2px 0 0}
+.garden-home .home-shortcuts button{display:inline-flex;align-items:center;gap:8px;border:0;background:transparent;color:var(--ink);font:inherit;font-size:13px;min-height:44px;padding:9px 0;cursor:pointer;text-align:left}
+.garden-home .home-shortcuts button:hover{text-decoration:underline;text-underline-offset:4px}
+.garden-home .home-archive{border-top:1px solid var(--line);margin:10px 0 0;padding:0 0 14px}
+.garden-home .home-archive>summary{cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:18px;min-height:50px;padding:12px 2px;list-style:none;font-size:14px;font-weight:650;color:var(--muted)}
+.garden-home .home-archive>summary::-webkit-details-marker{display:none}
+.garden-home .home-archive>summary>span:last-child{font-size:17px;transition:transform .18s ease}
+.garden-home .home-archive[open]>summary>span:last-child{transform:rotate(180deg)}
+.garden-home .home-archive[open]>.studio-garden-context{margin-top:4px!important}
+.garden-home .home-archive .desk-shelf{padding-top:12px!important}
+.bottom-nav>.nav-item{flex:1 1 0;min-width:0}
+@media(max-width:570px){
+ .garden-home .home-shortcuts{gap:20px}
+ .garden-home .home-archive>summary{font-size:13px}
+ .bottom-nav>.nav-item{font-size:10px!important}
+ .bottom-nav>.nav-item>.nav-ico{font-size:19px!important}
+}
+@media(prefers-reduced-motion:reduce){.rail-more>summary::after,.garden-home .home-archive>summary>span:last-child{transition:none}}
