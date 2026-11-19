@@ -67,10 +67,9 @@ fs.mkdirSync(screenshots,{recursive:true});
   assert.equal(await page.locator('#psyGraph > g').getAttribute('transform'),'translate(0 0) scale(1)');
   await page.locator('[data-tab="notes"]:visible').first().click();
   await page.waitForFunction(()=>!document.querySelector('#psyCourse'));
-  // Mobile access via Explore without exposing sideways page overflow.
+  // Mobile Learn navigation opens the subject without the old Explore detour.
   await page.setViewportSize({width:390,height:844});
-  await page.locator('[data-tab="tools"]:visible').first().click();
-  await page.locator('.study-tool-launcher[data-tab="psychology"]').click();
+  await page.locator('.bottom-nav > [data-tab="psychology"]').click();
   await page.locator('.psychology-subject-card[data-tab="psychopathology"]').click();
   await page.locator('#psyGraphPanel > summary').click();await page.waitForSelector('#psyGraph .psycourse-node');
   const mobileOverflow=await page.evaluate(()=>document.documentElement.scrollWidth-innerWidth);

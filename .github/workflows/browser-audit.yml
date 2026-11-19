@@ -12,6 +12,8 @@ on:
       - 'autopilot/**'
       - 'tests/repair-browser.cjs'
       - 'tests/release-upgrade-browser.cjs'
+      - 'tests/phase2-browser.cjs'
+      - 'study-clarity.css'
       - 'world/**'
       - 'psychopathology-*'
       - 'tests/world-*.cjs'
@@ -30,6 +32,8 @@ on:
       - 'autopilot/**'
       - 'tests/repair-browser.cjs'
       - 'tests/release-upgrade-browser.cjs'
+      - 'tests/phase2-browser.cjs'
+      - 'study-clarity.css'
       - 'world/**'
       - 'psychopathology-*'
       - 'tests/world-*.cjs'
@@ -63,6 +67,8 @@ jobs:
           done
       - name: Responsive study persistence and offline routing smoke
         run: node tests/repair-browser.cjs
+      - name: Phase 2 homepage and navigation smoke
+        run: node tests/phase2-browser.cjs
       - name: Prepare the preceding published release (read-only archive)
         run: |
           git fetch --no-tags --depth=1 origin 1fe8a2df41097d3b541e487d99bb4bd7e714e9cc

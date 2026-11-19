@@ -34,7 +34,7 @@ test('accessible tab announcement does not replace route and settings handlers',
   const script = read('design-accessibility.js');
   assert.match(html, /id="settingsBtn"/);
   assert.match(html, /id="main"/);
-  assert.equal((html.match(/class="nav-item(?: active)?"/g) || []).length, 4);
+  assert.equal((html.match(/class="nav-item(?: active)?"/g) || []).length, 5);
   assert.match(script, /MutationObserver/);
   assert.match(script, /setAttribute\('aria-current', 'page'\)/);
   assert.match(script, /removeAttribute\('aria-current'\)/);
@@ -42,33 +42,38 @@ test('accessible tab announcement does not replace route and settings handlers',
 
 test('new assets are cached with a changed version', () => {
   const sw = read('sw.js');
-  assert.match(sw, /psychdesk-study-course-first-v88/);
+  assert.match(sw, /psychdesk-study-course-first-v89/);
   assert.match(sw, /'\.\/design-system\.css'/);
   assert.match(sw, /'\.\/design-accessibility\.js'/);
 });
 
-test('homepage now puts notebook and concept before the optional next step', () => {
-  const home = read('autopilot/studio.js');
-  const garden = home.indexOf('class="garden-path-marker studio-garden-context"');
-  const stories = home.indexOf('class="garden-stories"');
-  const next = home.indexOf('(window.PsychDeskPhase6?.homeCard?.()||');
-  const tools = home.indexOf('class="studio-quiet-tools garden-tool-drawer"');
-  assert.ok(garden > -1 && stories > garden && next > stories && tools > next);
-  assert.match(home, /Start <em>studying\.<\/em>/);
-  assert.doesNotMatch(home, /class="garden-scene-footer"/);
-  assert.match(home, /saved in the garden/);
+test('homepage protects the living world but hides optional material until requested',()=>{
+ const home=read('autopilot/studio.js');
+ const archive=home.indexOf('class="home-archive"'),stories=home.indexOf('class="garden-stories"');
+ assert.ok(archive>-1&&stories>archive);
+ assert.match(home,/class="home-shortcuts"/);
+ assert.match(home,/class="garden-path-marker studio-garden-context"/);
+ assert.match(home,/Start <em>studying\.<\/em>/);
+ assert.doesNotMatch(home,/PsychDeskPhase6\?\.homeCard\?/);
+ assert.doesNotMatch(home,/class="garden-tool-drawer"/);
+ assert.doesNotMatch(home,/class="studio-study-paths"/);
+ assert.match(home,/saved in the garden/);
 });
 
-test('desktop navigation is ordered around everyday study and remains complete', () => {
-  const html = read('index.html');
-  const source = html.split('<nav class="rail-nav"')[1].split('</nav>')[0];
-  const routes = ['today', 'notes', 'materials', 'planner', 'focus', 'tools'];
-  const indexes = routes.map(route => source.indexOf('data-tab="' + route + '"'));
-  assert.ok(indexes.every(x => x >= 0));
-  assert.deepEqual(indexes, indexes.slice().sort((a, b) => a - b));
-  for (const route of ['ink','connections','university','psychology']) {
-    assert.match(source, new RegExp('data-tab="' + route + '"'));
-  }
+test('desktop and mobile share five primary routes, with advanced tools still reachable',()=>{
+ const html=read('index.html');
+ const desktop=html.split('<nav class="rail-nav"')[1].split('</nav>')[0];
+ const mobile=html.split('<nav class="bottom-nav"')[1].split('</nav>')[0];
+ const routes=['today','psychology','notes','materials','focus'];
+ const top=desktop.split('<details class="rail-more">')[0];
+ for(const markup of [top,mobile]){
+  const indexes=routes.map(route=>markup.indexOf('data-tab="'+route+'"'));
+  assert.ok(indexes.every(index=>index>=0));
+  assert.deepEqual(indexes,indexes.slice().sort((a,b)=>a-b));
+ }
+ for(const route of ['tools','planner','recall','connections','ink','university'])assert.ok(desktop.includes('data-tab="'+route+'"'));
+ assert.match(desktop,/<summary>More tools<\/summary>/);
+ assert.doesNotMatch(html,/class="rail-quote"/);
 });
 
 test('mobile header retains brand and five operable controls', () => {
@@ -96,7 +101,7 @@ test('mobile landing compacts the first screen without removing the living garde
   assert.match(home, /studio-garden-context/);
   assert.match(session, /'Open library'/);
   assert.match(html, /design-system\.css\?v=personal-desk-1/);
-  assert.match(html, /autopilot\/studio\.js\?v=clarity-1/);
+  assert.match(html, /autopilot\/studio\.js\?v=phase2-home-1/);
   assert.match(html, /study-session\.js\?v=desk-startup-20261110/);
 });
 
