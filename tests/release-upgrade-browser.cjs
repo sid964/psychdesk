@@ -58,6 +58,8 @@ async function verifyHome(page,expectedGarden,allowLegacy=false){
  assert.ok(fs.existsSync(path.join(previous,'sw.js')),'preceding release archive is required');
  const olderHTML=fs.readFileSync(path.join(previous,'index.html'),'utf8');
  const newerHTML=fs.readFileSync(path.join(current,'index.html'),'utf8');
+ const activeCache=/const CACHE='([^']+)'/.exec(fs.readFileSync(path.join(current,'sw.js'),'utf8'))?.[1];
+ assert.ok(activeCache,'current release service-worker cache key missing');
  const olderGarden=olderHTML.match(/autopilot\/garden\.js\?v=[^"]+/)?.[0];
  const newerGarden=newerHTML.match(/autopilot\/garden\.js\?v=[^"]+/)?.[0];
  assert.ok(olderGarden&&newerGarden&&olderGarden!==newerGarden,'test requires two distinct real releases');
@@ -95,7 +97,7 @@ async function verifyHome(page,expectedGarden,allowLegacy=false){
   });
   assert.equal(unexpectedNavigations,0,'a worker update reloaded an open study tab');
   assert.equal(await gardenSrc(secondTab),olderGarden,'a live old tab must not be rewritten underneath its data');
-  assert.ok((await tab.evaluate(()=>caches.keys())).some(k=>k.endsWith('-v87')),'new v87 cache missing');
+  assert.ok((await tab.evaluate(()=>caches.keys())).includes(activeCache),'new release cache missing: '+activeCache);
   // Check the actual cache storage, not the truthiness of a polling handle.
   let cacheNames=await tab.evaluate(()=>caches.keys());
   for(let attempt=0;cacheNames.some(k=>k.endsWith('-v83'))&&attempt<15;attempt++){
@@ -103,7 +105,7 @@ async function verifyHome(page,expectedGarden,allowLegacy=false){
    cacheNames=await tab.evaluate(()=>caches.keys());
   }
   assert.ok(!cacheNames.some(k=>k.endsWith('-v83')),
-   'Obsolete v83 cache remains after v85 activation: '+JSON.stringify(cacheNames));
+   'Obsolete v83 cache remains after '+activeCache+' activation: '+JSON.stringify(cacheNames));
   results.cacheAfterActivation=cacheNames;
   await secondTab.reload({waitUntil:'domcontentloaded'});
   results.secondTabUpgrade=await verifyHome(secondTab,newerGarden);
