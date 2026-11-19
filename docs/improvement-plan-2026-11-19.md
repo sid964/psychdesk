@@ -19,6 +19,7 @@ Baseline: `main` commit `f7190f03f83007344c3bfce4fe19bd4ed9e82ba9`. This is an i
 - [x] Clear transient focus and recall selections on account switch.
 - [x] Add regression tests for both data-isolation scenarios.
 - [x] Bump the app-script URL and service-worker release key.
+- [x] Pin Chromium smoke to Ubuntu 24.04: Playwright 1.56.1 fails to install on GitHub's Ubuntu 26.04 runner.
 - [ ] Verify complete Node test suite and Chromium browser smoke on this PR.
 - [ ] Manually verify real signed-in switching, Drive restoration, refresh, and offline use.
 - [ ] Merge the reviewed PR, then begin Phase 2.
