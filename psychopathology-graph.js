@@ -49,22 +49,36 @@ function visible(){
  return nodes.filter(n=>ids.has(n.id));
 }
 function activeEdges(ids){return edges.filter(e=>ids.has(e.from)&&ids.has(e.to));}
+function lessonStats(){
+ const lessons=topics.filter(t=>t.kind==='lesson');
+ const done=lessons.filter(t=>progress.completed.includes(t.id)).length;
+ const current=lessons.find(t=>'t-'+t.id===progress.last);
+ const next=(!current||progress.completed.includes(current.id)?lessons.find(t=>!progress.completed.includes(t.id)):current)||lessons[0];
+ return {lessons,done,next};
+}
 function html(){
  loadProgress();
- const ready=topics.filter(t=>t.kind==='lesson').length,done=progress.completed.filter(id=>topics.some(t=>t.id===id&&t.kind==='lesson')).length;
+ const {lessons,done,next}=lessonStats(),ready=lessons.length;
  return '<section class="psycourse" id="psyCourse">'+
- '<nav class="psycourse-breadcrumb" aria-label="Psychology subject navigation"><button type="button" data-tab="psychology">← Overall psychology learning</button><span aria-hidden="true">/</span><span>Psychopathology</span></nav><header class="psycourse-heading"><div><div class="eyebrow">OVERALL PSYCHOLOGY · TEXTBOOK SUBJECT</div><h1>Psychopathology</h1><p>Choose a lesson, read, check understanding, and continue.</p></div><div class="psycourse-count"><strong>16</strong><span>chapters</span></div></header>'+
+ '<nav class="psycourse-breadcrumb" aria-label="Psychology subject navigation"><button type="button" data-tab="psychology">← Overall psychology learning</button><span aria-hidden="true">/</span><span>Psychopathology</span></nav>'+
+ '<header class="psycourse-heading"><div><div class="eyebrow">OVERALL PSYCHOLOGY · TEXTBOOK SUBJECT</div><h1>Psychopathology</h1><p>Read the lessons, practice recalling them, and follow the textbook chapter outline.</p></div><div class="psycourse-count"><strong>16</strong><span>chapters</span></div></header>'+
  '<div class="psycourse-progress" role="status">'+done+' of '+ready+' introductory lessons completed on this device <span aria-hidden="true">·</span> '+source.edition+'</div>'+
- '<section class="psycourse-quickstart" aria-label="Chapter 1 lessons"><div class="psycourse-quickstart-intro"><span class="eyebrow">START HERE</span><h2>Chapter 1 · Historical context</h2><p>Six introductory lessons are ready to study.</p></div><div class="psycourse-lesson-list">'+topics.filter(t=>t.kind==='lesson').map((t,i)=>'<button type="button" class="psycourse-lesson-item" data-psy-node="t-'+t.id+'"><span>'+String(i+1).padStart(2,'0')+'</span><strong>'+safe(t.title)+'</strong><small>'+ (progress.completed.includes(t.id)?'✓ Done':'Read')+'</small></button>').join('')+'</div></section>'+
- '<div class="psycourse-layout"><details class="psycourse-map" id="psyGraphPanel"><summary>Explore concept connections <small>Optional visual map</small></summary>'+
+ '<div class="psycourse-startbar"><div><strong>Chapter 1 is ready to study.</strong><span>Six original lessons available · Chapters 2–16 are outlines, not complete lessons.</span></div><button type="button" class="psycourse-continue" data-psy-node="t-'+next.id+'">'+(done===ready?'Review Chapter 1 →':done?'Continue next lesson →':'Start first lesson →')+'</button></div>'+
+ '<div class="psycourse-study-layout">'+
+ '<aside class="psycourse-chapter-index" aria-label="Textbook chapters and lessons">'+
+ '<section class="psycourse-quickstart" aria-label="Chapter 1 lessons"><div class="psycourse-quickstart-intro"><span class="eyebrow">AVAILABLE NOW</span><h2>Chapter 1 · Historical context</h2><p>Choose a lesson to read.</p></div><div class="psycourse-lesson-list">'+lessons.map((t,i)=>'<button type="button" class="psycourse-lesson-item" data-psy-node="t-'+t.id+'"><span>'+String(i+1).padStart(2,'0')+'</span><strong>'+safe(t.title)+'</strong><small>'+(progress.completed.includes(t.id)?'✓ Done':'Read')+'</small></button>').join('')+'</div></section>'+
+ '<details class="psycourse-outline" open><summary>All 16 textbook chapters <small>1 with lessons · 15 outlines</small></summary><div class="psycourse-chapter-list">'+chapters.map(c=>'<button type="button" data-psy-node="'+c.id+'"><span>'+String(c.number).padStart(2,'0')+'</span><span class="psycourse-chapter-title">'+safe(c.title)+'</span><small>'+(c.number===1?'6 lessons':'Outline')+'</small></button>').join('')+'</div></details>'+
+ '</aside>'+
+ '<article class="psycourse-detail" id="psyGraphDetail" aria-live="polite" aria-label="Selected lesson"></article>'+
+ '</div>'+
+ '<details class="psycourse-map" id="psyGraphPanel"><summary>Explore concept connections <small>Optional visual map, not needed to read lessons</small></summary>'+
  '<div class="psycourse-tools"><label class="psycourse-search"><span class="sr-only">Search course concepts</span><input id="psyGraphSearch" type="search" value="'+safe(search)+'" placeholder="Find a concept…" autocomplete="off"></label>'+
  '<select id="psyGraphChapter" aria-label="Filter by chapter"><option value="all">All 16 chapters</option>'+chapters.map(c=>'<option value="'+c.number+'"'+(chapter===String(c.number)?' selected':'')+'>Chapter '+c.number+'</option>').join('')+'</select>'+
  '<button type="button" id="psyGraphMode" aria-pressed="'+(mode==='local'?'true':'false')+'" title="Show selected topic and immediate neighbors">'+(mode==='local'?'Global graph':'Local graph')+'</button></div>'+
  '<div class="psycourse-stage"><svg id="psyGraph" viewBox="0 0 '+W+' '+H+'" aria-label="Interactive concept graph. Drag to pan, scroll to zoom, select nodes to open lessons." role="group"></svg><div class="psycourse-zoom"><button type="button" data-psy-action="zoomIn" aria-label="Zoom in">+</button><button type="button" data-psy-action="zoomOut" aria-label="Zoom out">−</button><button type="button" data-psy-action="fit" aria-label="Reset graph view">Fit</button></div></div>'+
- '<div id="psyGraphResults" class="psycourse-results"></div><p class="psycourse-help">Drag empty space to pan · Scroll or use +/- to zoom · Drag a node to move it · Select a node to read</p></div>'+
- '</details><article class="psycourse-detail" id="psyGraphDetail" aria-live="polite" aria-label="Selected lesson"></article></div>'+
- '<details class="psycourse-outline"><summary>All 16 textbook chapters <small>Chapter 1 lessons available; other chapters are outlines</small></summary><div class="psycourse-chapter-list">'+chapters.map(c=>'<button type="button" data-psy-node="'+c.id+'"><span>'+String(c.number).padStart(2,'0')+'</span><span class="psycourse-chapter-title">'+safe(c.title)+'</span><small>p. '+c.startPage+'</small></button>').join('')+'</div></details>'+
- '<p class="psycourse-disclaimer">Academic source: Barlow, Durand & Hofmann, ninth edition (2023). Chapter 1 contains the first authored lessons; other chapters are mapped for future verified content. Lessons are original paraphrases, not a replacement copy of the textbook. Course progress currently stays on this device.</p></section>';
+ '<div id="psyGraphResults" class="psycourse-results"></div><p class="psycourse-help">Drag empty space to pan · Scroll or use +/- to zoom · Drag a node to move it · Select a node to read</p>'+
+ '</details>'+
+ '<p class="psycourse-disclaimer">Academic source: Barlow, Durand & Hofmann, ninth edition (2023). Chapter 1 has the first authored lessons; Chapters 2–16 are outlines for future verified content. Explanations are original paraphrases, not a redistributed textbook. Course progress currently stays on this device.</p></section>';
 }
 function textBlock(value){return '<p>'+safe(value)+'</p>';}
 function detail(){
@@ -77,7 +91,7 @@ function detail(){
  }else if(n.type==='chapter'){
   body+='<p>Chapter '+n.chapter+' of 16 from '+safe(source.book)+'. Starts on page '+n.startPage+'.</p>';
   if(n.chapter===1)body+='<p>Six introductory lessons are available. Select a connected concept to begin.</p>';
-  else body+='<p class="psycourse-coming">This chapter is mapped from the table of contents. Detailed lessons have not yet been authored and checked against the textbook.</p>';
+  else body+='<p class="psycourse-coming"><strong>Chapter outline only.</strong> This chapter is mapped from the table of contents. Detailed lessons have not yet been authored and checked against the textbook.</p>';
  }else if(t){
   body+='<div class="psycourse-level"><h3>01 · Understand simply</h3>'+textBlock(t.simple)+'</div>';
   if(t.advanced&&t.advanced.length)body+='<details class="psycourse-level psycourse-advanced"><summary>02 · Master’s-level explanation</summary>'+t.advanced.map(textBlock).join('')+'</details>';
@@ -124,7 +138,9 @@ function select(id){
  if(!nodeById.has(id))return;
  selected=id;if(nodeById.get(id).type==='topic'){progress.last=id;saveProgress();}if(mode==='local'){const p=position(nodeById.get(id));transform={x:W/2-p.x,y:H/2-p.y,z:1};}
  if(chapter!=='all'){const n=nodeById.get(id);if(n.type==='course'||(n.chapter&&String(n.chapter)!==chapter))chapter='all';}
- if(root){const box=root.querySelector('#psyGraphChapter');if(box)box.value=chapter;detail();draw();}
+ if(root){const box=root.querySelector('#psyGraphChapter');if(box)box.value=chapter;detail();draw();
+  if(window.matchMedia?.('(max-width:720px)').matches)root.querySelector('#psyGraphDetail')?.scrollIntoView?.({block:'start',behavior:'instant'});
+ }
 }
 function tick(){
  raf=0;if(!svg||!svg.isConnected)return;
@@ -179,7 +195,10 @@ function action(which){
  if(which==='complete'){
   const t=topics.find(x=>'t-'+x.id===selected);if(!t||t.kind!=='lesson')return;
   progress.completed=progress.completed.includes(t.id)?progress.completed.filter(x=>x!==t.id):progress.completed.concat(t.id);
-  if(saveProgress()){const target=root.querySelector('.psycourse-progress');if(target)target.textContent=progress.completed.filter(id=>topics.some(t=>t.id===id&&t.kind==='lesson')).length+' of '+topics.filter(t=>t.kind==='lesson').length+' introductory lessons completed on this device · '+source.edition;const list=root.querySelector('.psycourse-lesson-list');if(list)list.querySelectorAll('[data-psy-node]').forEach(button=>{const id=button.dataset.psyNode.slice(2);const label=button.querySelector('small');if(label)label.textContent=progress.completed.includes(id)?'✓ Done':'Read';});detail();}
+  if(saveProgress()){const target=root.querySelector('.psycourse-progress');if(target)target.textContent=progress.completed.filter(id=>topics.some(t=>t.id===id&&t.kind==='lesson')).length+' of '+topics.filter(t=>t.kind==='lesson').length+' introductory lessons completed on this device · '+source.edition;const list=root.querySelector('.psycourse-lesson-list');if(list)list.querySelectorAll('[data-psy-node]').forEach(button=>{const id=button.dataset.psyNode.slice(2);const label=button.querySelector('small');if(label)label.textContent=progress.completed.includes(id)?'✓ Done':'Read';});
+  const state=lessonStats(),continueButton=root.querySelector('.psycourse-continue');
+  if(continueButton){continueButton.dataset.psyNode='t-'+state.next.id;continueButton.textContent=state.done===state.lessons.length?'Review Chapter 1 →':'Continue next lesson →';}
+  detail();}
  }
 }
 function onPointerDown(e){
