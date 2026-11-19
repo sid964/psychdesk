@@ -42,7 +42,7 @@ test('accessible tab announcement does not replace route and settings handlers',
 
 test('new assets are cached with a changed version', () => {
   const sw = read('sw.js');
-  assert.match(sw, /psychdesk-study-course-first-v90/);
+  assert.match(sw, /psychdesk-study-course-first-v91/);
   assert.match(sw, /'\.\/design-system\.css'/);
   assert.match(sw, /'\.\/design-accessibility\.js'/);
 });
