@@ -134,6 +134,9 @@ html[data-theme="dark"] .bk-shelf.bk-reference-library{
 .bk-reference-library .bk-book-detail{color:#28291f}
 .bk-reference-library .bk-book-detail p{color:#6e6b60}
 .bk-reference-library .bk-book-detail span{color:#67655b}
+.bk-reference-library .bk-ref-view-book{margin-top:5px;align-self:start;border:1px solid #cbd4c5;border-radius:6px;
+ background:#f8f6ed;color:#38533e;font-size:12px;padding:8px 11px;min-height:38px}
+.bk-reference-library .bk-ref-view-book:hover{background:#e5eadb}
 .bk-ref-achievements{margin-top:54px;padding:22px 0;border-top:1px solid #d9d2c2;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
 .bk-reference-library .bk-hero-stats{display:flex;gap:clamp(16px,3vw,38px);margin:0}
 .bk-reference-library .bk-hero-stats>div{display:grid;gap:4px}
