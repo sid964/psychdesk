@@ -31,6 +31,10 @@ async function verify(browser,width){
   await page.locator('.bk-cover[data-book-id="sample-cognition"]').click();
   await page.getByRole('heading',{name:'Part 1',exact:true}).waitFor();
   await page.getByRole('button',{name:'Next',exact:true}).click();
+  await page.getByRole('button',{name:'Mark chapter as read',exact:true}).click();
+  await page.getByText('Chapter 1 of 1 · Read').waitFor();
+  await page.getByRole('button',{name:'Undo chapter completion',exact:true}).click();
+  await page.getByText('Chapter 1 of 1 · In progress').waitFor();
   await page.getByRole('button',{name:'Bookmark',exact:true}).click();
   await page.locator('.bk-bar').getByRole('button',{name:'Books',exact:true}).click();
   await page.locator('.bk-cover[data-book-id="sample-methods"]').click();
