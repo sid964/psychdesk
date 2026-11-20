@@ -10,6 +10,7 @@ on:
       - 'pdf-reader.js'
       - 'pdf-reader.css'
       - 'reader-studio.css'
+      - 'firebase-sync.js'
       - 'app.js'
       - 'sw.js'
       - 'study-clarity.css'

@@ -110,6 +110,10 @@ test('chapter status begins in progress on visit and counts only explicit comple
  assert.match(app.markup(),/Chapter 1 of 1 · Read/);
  assert.match(app.markup(),/Undo chapter completion/);
  assert.deepEqual(Array.from(app.data().bookReading[0].completedChapters),['chapter-one']);
+ app.click('shelf');
+ assert.match(app.markup(),/First chapter/);
+ assert.match(app.markup(),/Saved on this device/);
+ app.api.open('sample-memory');
  app.click('chapterComplete');
  assert.match(app.markup(),/Chapter 1 of 1 · In progress/);
  assert.equal(app.data().bookReading[0].completedChapters.length,0);

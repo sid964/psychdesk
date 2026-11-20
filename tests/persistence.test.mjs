@@ -184,18 +184,31 @@ test('new study-suite data survives save, reload, and imported account snapshots
  d.boardItems.push({id:'board-1',kind:'note',text:'Consolidation',x:10,y:10});
  d.mindMaps.push({id:'map-1',title:'Memory',nodes:[],edges:[]});
  d.pdfHighlights.push({id:'highlight-1',materialId:'book-1',page:2,text:'Working memory',rects:[]});
+ d.bookReading=[{bookId:'psychopathology-9e',completedChapters:['chapter-01'],visitedParts:['ch01-0']}];
+ d.pdfReading=[{materialId:'book-1',page:17,visitedAt:'2026-11-20T00:00:00.000Z'}];
  env.core.save();
  const reopened=environment(env.storage);
  assert.equal(reopened.core.getData().research.length,1);
  assert.equal(reopened.core.getData().boardItems[0].text,'Consolidation');
  assert.equal(reopened.core.getData().mindMaps[0].title,'Memory');
  assert.equal(reopened.core.getData().pdfHighlights[0].page,2);
+ assert.equal(reopened.core.getData().bookReading[0].completedChapters[0],'chapter-01');
+ assert.equal(reopened.core.getData().pdfReading[0].page,17);
  const copied=JSON.parse(JSON.stringify(reopened.core.getData()));
  const fresh=environment();
  fresh.core.replaceData(copied);
  assert.equal(fresh.core.getData().research[0].doi,'10.1234/example');
  assert.equal(fresh.core.getData().mindMaps.length,1);
  assert.equal(fresh.core.getData().pdfHighlights.length,1);
+ assert.equal(fresh.core.getData().bookReading[0].visitedParts[0],'ch01-0');
+ assert.equal(fresh.core.getData().pdfReading[0].materialId,'book-1');
+});
+test('invalid PDF reading progress is rejected without changing existing saved state',()=>{
+ const env=environment();
+ const data=JSON.parse(JSON.stringify(env.core.getData()));
+ data.pdfReading=[{materialId:'drive-file',page:-4}];
+ assert.throws(()=>env.core.replaceData(data),/Invalid PDF reading positions/);
+ assert.equal(env.core.getData().pdfReading.length,0);
 });
 test('invalid new study data arrays are rejected rather than silently discarded',()=>{
  const env=environment();

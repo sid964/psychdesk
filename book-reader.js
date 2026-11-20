@@ -136,6 +136,10 @@
   (!query||[book.title,book.subject,book.author,book.edition].some(value=>value.toLowerCase().includes(query))));
  const allChapters=catalog.reduce((sum,book)=>sum+book.chapters.length,0);
  const readChapters=catalog.reduce((sum,book)=>sum+progressFor(book).done,0);
+ const finishedBooks=catalog.filter(book=>progressFor(book).done===book.chapters.length).length;
+ const milestones=[['First chapter',readChapters>=1],['Five chapters',readChapters>=5],['Ten chapters',readChapters>=10],['Twenty-five chapters',readChapters>=25],['Book completed',finishedBooks>=1]].filter(([,earned])=>earned).map(([name])=>name);
+ const cloudStatus=window.PsychDeskFirebase?.getConnectionStatus?.();
+ const syncLabel=cloudStatus?.synced?'Saved to your Google account':cloudStatus?.signedIn?'Saved locally · Google sync pending':'Saved on this device · sign in to sync';
  const spotlight=latest||catalog[0];
  return `<section class="bk-shelf" aria-label="Indexed psychology books">
   <header class="bk-hero"><div class="bk-hero-main">
@@ -145,6 +149,11 @@
     <div><strong>${catalog.length}</strong><span>Indexed ${catalog.length===1?'book':'books'}</span></div>
     <div><strong>${readChapters}</strong><span>Chapters read</span></div>
     <div><strong>${allChapters-readChapters}</strong><span>Remaining</span></div>
+   </div>
+   <div class="bk-milestones" aria-label="Personal reading achievements">
+    <p class="bk-kicker">Reading achievements</p>
+    ${milestones.length?'<div class="bk-earned">'+milestones.map(name=>'<span>✦ '+esc(name)+'</span>').join('')+'</div>':'<p class="bk-unearned">Complete your first chapter to earn a reading milestone.</p>'}
+    <small>${esc(syncLabel)}</small>
    </div>
   </div><div class="bk-continue">
    <p class="bk-kicker">${latest?'Continue reading':'Start reading'}</p>

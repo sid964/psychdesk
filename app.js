@@ -9,7 +9,7 @@ const initial=()=>({version:1,subjects:[
  {id:'bio',name:'Biological Psychology',color:colors[1]},
  {id:'dev',name:'Developmental Psychology',color:colors[2]},
  {id:'soc',name:'Social Psychology',color:colors[3]},
- {id:'res',name:'Research Methods',color:colors[4]}],tasks:[],cards:[],sessions:[],reviews:[],stickies:[],inkNotes:[],research:[],boardItems:[],mindMaps:[],pdfHighlights:[],dictionaryEntries:[],dictionaryBookmarks:[],timelineEvents:[],timelineBookmarks:[],timelineAnnotations:[],preferences:{dailyGoal:60}});
+ {id:'res',name:'Research Methods',color:colors[4]}],tasks:[],cards:[],sessions:[],reviews:[],stickies:[],inkNotes:[],research:[],boardItems:[],mindMaps:[],pdfHighlights:[],pdfReading:[],dictionaryEntries:[],dictionaryBookmarks:[],timelineEvents:[],timelineBookmarks:[],timelineAnnotations:[],preferences:{dailyGoal:60}});
 let blockedKey='',blockedRaw='',blockedReason='',recoveryDownloaded=false;
 function markCorrupt(key,raw,reason){
  blockedKey=key;blockedRaw=String(raw||'');blockedReason=String(reason?.message||reason||'Cannot read study data').slice(0,170);
@@ -25,7 +25,12 @@ function validateSnapshot(value){
    !mark||!['id','sectionId','blockId','quote'].every(key=>typeof mark[key]==='string')||mark.quote.length>1200||
    !Number.isInteger(mark.start)||!Number.isInteger(mark.end)||mark.start<0||mark.end<=mark.start)))
  )))throw Error('Invalid book reading records. Your original data is unchanged.');
- const collections=['subjects','tasks','cards','sessions','notes','reviews','materials','stickies','inkNotes','research','boardItems','mindMaps','pdfHighlights','dictionaryEntries','timelineEvents','timelineAnnotations'];
+ const pdfRecords=value?.pdfReading;
+  if (pdfRecords!=null&&(!Array.isArray(pdfRecords)||pdfRecords.length>2000||pdfRecords.some(row=>
+   !row||typeof row.materialId!=='string'||!row.materialId||!Number.isInteger(row.page)||row.page<1||row.page>100000||
+   (row.visitedAt!=null&&typeof row.visitedAt!=='string'))))
+   throw Error('Invalid PDF reading positions. Your original study data is unchanged.');
+  const collections=['subjects','tasks','cards','sessions','notes','reviews','materials','stickies','inkNotes','research','boardItems','mindMaps','pdfHighlights','pdfReading','dictionaryEntries','timelineEvents','timelineAnnotations'];
  if(!value||![1,2].includes(value.version)||!['subjects','tasks','cards','sessions'].every(key=>Array.isArray(value[key])))throw Error('Invalid PsychDesk snapshot');
  for(const key of collections){
   const rows=value[key];if(rows==null)continue;
@@ -61,7 +66,7 @@ function normalizePreferences(raw={}){
  if(raw?.subjectPackVersion===1)prefs.subjectPackVersion=1;
  return prefs;
 }
-data.materials=Array.isArray(data.materials)?data.materials:[];data.stickies=Array.isArray(data.stickies)?data.stickies:[];data.inkNotes=Array.isArray(data.inkNotes)?data.inkNotes:[];for(const key of ['inkNotes','research','boardItems','mindMaps','pdfHighlights','dictionaryEntries','dictionaryBookmarks','timelineEvents','timelineBookmarks','timelineAnnotations'])data[key]=Array.isArray(data[key])?data[key]:[];data.sessions ||= [];data.reviews ||= [];data.notes ||= [];data.preferences=normalizePreferences(data.preferences);data.version=2;
+data.materials=Array.isArray(data.materials)?data.materials:[];data.stickies=Array.isArray(data.stickies)?data.stickies:[];data.inkNotes=Array.isArray(data.inkNotes)?data.inkNotes:[];for(const key of ['inkNotes','research','boardItems','mindMaps','pdfHighlights','pdfReading','dictionaryEntries','dictionaryBookmarks','timelineEvents','timelineBookmarks','timelineAnnotations'])data[key]=Array.isArray(data[key])?data[key]:[];data.sessions ||= [];data.reviews ||= [];data.notes ||= [];data.preferences=normalizePreferences(data.preferences);data.version=2;
 let tab='today',taskFilter='upcoming',subjectFilter='all',recallSubjectFilter='all',focusTopicId='',flip=false,selectedReviewId=null;
 const timerKey=()=> 'psychdesk-timer-v2:'+storageKey;
 const freshTimer=()=>({duration:25,remaining:25*60,endsAt:0,running:false,subjectId:data.subjects[0]?.id||'',startedTotal:25*60});
@@ -402,7 +407,7 @@ function replaceData(imported){
  validateSnapshot(imported);
  if(!imported||![1,2].includes(imported.version)||!['subjects','tasks','cards','sessions'].every(k=>Array.isArray(imported[k]))||
  (imported.notes&&!Array.isArray(imported.notes))|| (imported.stickies&&!Array.isArray(imported.stickies))|| ['inkNotes','research','boardItems','mindMaps','pdfHighlights','dictionaryEntries','dictionaryBookmarks','timelineEvents','timelineBookmarks','timelineAnnotations'].some(key=>imported[key]&&!Array.isArray(imported[key]))|| (imported.reviews&&!Array.isArray(imported.reviews))) throw Error('Invalid PsychDesk snapshot');
- const previous=data;data={...imported,materials:Array.isArray(imported.materials)?imported.materials:[],stickies:Array.isArray(imported.stickies)?imported.stickies:[],inkNotes:Array.isArray(imported.inkNotes)?imported.inkNotes:[],research:Array.isArray(imported.research)?imported.research:[],boardItems:Array.isArray(imported.boardItems)?imported.boardItems:[],mindMaps:Array.isArray(imported.mindMaps)?imported.mindMaps:[],pdfHighlights:Array.isArray(imported.pdfHighlights)?imported.pdfHighlights:[],dictionaryEntries:Array.isArray(imported.dictionaryEntries)?imported.dictionaryEntries:[],dictionaryBookmarks:Array.isArray(imported.dictionaryBookmarks)?imported.dictionaryBookmarks:[],timelineEvents:Array.isArray(imported.timelineEvents)?imported.timelineEvents:[],timelineBookmarks:Array.isArray(imported.timelineBookmarks)?imported.timelineBookmarks:[],timelineAnnotations:Array.isArray(imported.timelineAnnotations)?imported.timelineAnnotations:[],version:2,notes:imported.notes||[],reviews:imported.reviews||[],preferences:normalizePreferences(imported.preferences)};
+ const previous=data;data={...imported,materials:Array.isArray(imported.materials)?imported.materials:[],stickies:Array.isArray(imported.stickies)?imported.stickies:[],inkNotes:Array.isArray(imported.inkNotes)?imported.inkNotes:[],research:Array.isArray(imported.research)?imported.research:[],boardItems:Array.isArray(imported.boardItems)?imported.boardItems:[],mindMaps:Array.isArray(imported.mindMaps)?imported.mindMaps:[],pdfHighlights:Array.isArray(imported.pdfHighlights)?imported.pdfHighlights:[],pdfReading:Array.isArray(imported.pdfReading)?imported.pdfReading:[],dictionaryEntries:Array.isArray(imported.dictionaryEntries)?imported.dictionaryEntries:[],dictionaryBookmarks:Array.isArray(imported.dictionaryBookmarks)?imported.dictionaryBookmarks:[],timelineEvents:Array.isArray(imported.timelineEvents)?imported.timelineEvents:[],timelineBookmarks:Array.isArray(imported.timelineBookmarks)?imported.timelineBookmarks:[],timelineAnnotations:Array.isArray(imported.timelineAnnotations)?imported.timelineAnnotations:[],version:2,notes:imported.notes||[],reviews:imported.reviews||[],preferences:normalizePreferences(imported.preferences)};
  delete data.exportedAt;
  if(!save(true)){data=previous;throw Error('Could not safely save the replacement. Your original study data is unchanged.');}
  window.dispatchEvent(new Event('psychdesk:data-replaced'));render();
