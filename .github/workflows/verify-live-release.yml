@@ -4,6 +4,9 @@ on:
     branches: [main]
     paths:
       - 'index.html'
+      - 'book-catalog.js'
+      - 'book-reader.js'
+      - 'book-reader.css'
       - 'app.js'
       - 'sw.js'
       - 'study-clarity.css'
