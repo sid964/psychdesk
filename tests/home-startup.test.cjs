@@ -24,7 +24,7 @@ test('homepage uses natural copy and retains the interactive garden',()=>{
 });
 test('navigation checks the network, with fallback restricted to new cache',()=>{
  const sw=read('sw.js');
- assert.match(sw,/psychdesk-books-foundation-v94/);
+ assert.match(sw,/psychdesk-library-phase7-v95/);
  assert.match(sw,/request\.mode==='navigate'/);
  assert.match(sw,/fetch\(request,\{cache:'no-store'\}\)/);
  assert.match(sw,/new Request\(path,\{cache:'reload'\}\)/);
