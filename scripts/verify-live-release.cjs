@@ -10,6 +10,7 @@ const crypto=require('node:crypto');
 
 const CRITICAL_FILES=Object.freeze([
  'index.html','app.js','sw.js','study-clarity.css','autopilot/studio.js',
+ 'book-catalog.js','book-reader.js','book-reader.css',
  'psychopathology-graph.js','psychopathology-graph.css',
  'world/index.html','world/world.js','world/world.css','world/life.js'
 ]);

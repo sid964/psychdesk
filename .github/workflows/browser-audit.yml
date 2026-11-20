@@ -3,6 +3,10 @@ on:
   pull_request:
     paths:
       - 'index.html'
+      - 'book-catalog.js'
+      - 'book-reader.js'
+      - 'book-reader.css'
+      - 'tests/book-reader-browser.cjs'
       - 'app.js'
       - 'sw.js'
       - 'firebase-sync.js'
