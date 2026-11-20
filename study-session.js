@@ -55,6 +55,7 @@ function noteOpened(noteId){
 function recordTab(tab){
  if(!safeTab(tab))return;
  if(tab==='reader')return; // Only a successfully selected Drive-library item is resumable.
+ if(tab==='books'&&!window.PsychDeskBooks?.latestBook())return;
  if(tab==='notes'){
   const previous=readRaw();
   if(previous?.tab==='notes')return;

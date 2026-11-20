@@ -66,7 +66,7 @@
 .bk-selection[hidden]{display:none}
 .bk-selection button:hover{background:var(--bk-soft)}
 .bk-results h3{margin:14px 0 4px}
-.bk-results button{display:block;text-align:left;background:var(--panel,#f1f3ee);color:var(--txt,#2d382f);margin:5px 0}
+.bk-results button{display:block;text-align:left;border-color:currentColor;margin:5px 0}
 .bk-results article{padding:10px 0;border-bottom:1px solid currentColor}
 .bk-source-link{display:inline-block;margin:8px 0;text-decoration:underline}
 @media(max-width:600px){
