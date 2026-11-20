@@ -88,7 +88,8 @@ test('the shipped companion has 16 indexed chapters and clearly separated short 
  assert.equal(parts.length,76);
  assert.equal(parts.filter(part=>part.kind==='detailed').length,8);
  assert.equal(parts.filter(part=>part.kind==='guide').length,68);
- assert.match(app.api.render(),/Psychopathology/);
+ assert.match(app.api.render(),/My library/);
+ assert.match(app.api.render(),/16 chapters read|16<\/strong>|16<\/span>|16 remaining/);
  app.api.open('psychopathology-9e');
  assert.match(app.markup(),/Psychopathology studies psychological disorders/);
  const html=load('index.html'),worker=load('sw.js');
