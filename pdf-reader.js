@@ -24,8 +24,28 @@ function releaseDocument(){activeRender?.cancel?.();activeRender=null;const old=
 const allHighlights=()=>Array.isArray(getData().pdfHighlights)?getData().pdfHighlights:[];
 const materialKey=()=>material?.id||(localFile?'local:'+localFile.name+':'+localFile.size+':'+(localFile.lastModified||0):'unselected');
 const bookmarkKey=()=> 'psychdesk-reader-page:'+core.getStorageKey()+':'+materialKey();
-function readPageBookmark(total){try{const n=Number(localStorage.getItem(bookmarkKey()));return Number.isInteger(n)&&n>=1&&n<=total?n:1}catch{return 1}}
-function savePageBookmark(){if(!pdf||materialKey()==='unselected')return;try{localStorage.setItem(bookmarkKey(),String(page))}catch{}}
+function readPageBookmark(total){
+ // Only Drive material IDs are included in the Firestore study snapshot.
+ const synced=material&&(getData().pdfReading||[]).find(row=>row.materialId===material.id)?.page;
+ if(Number.isInteger(synced)&&synced>=1&&synced<=total)return synced;
+ try{const n=Number(localStorage.getItem(bookmarkKey()));return Number.isInteger(n)&&n>=1&&n<=total?n:1}
+ catch{return 1}
+}
+function savePageBookmark(){
+ if(!pdf||materialKey()==='unselected')return;
+ try{localStorage.setItem(bookmarkKey(),String(page))}catch{}
+ // Local one-off files never expose their names or content in a cloud snapshot.
+ if(!material?.id)return;
+ const current=(getData().pdfReading||[]).find(row=>row.materialId===material.id);
+ if(current?.page===page)return;
+ core.commitChange(data=>{
+  data.pdfReading ||= [];
+  const index=data.pdfReading.findIndex(row=>row.materialId===material.id);
+  const value={materialId:material.id,page,visitedAt:new Date().toISOString()};
+  if(index<0)data.pdfReading.push(value);
+  else data.pdfReading[index]=value;
+ });
+}
 
 const owned=()=>allHighlights().filter(x=>x.materialId===materialKey());
 const allowLink=u=>{try{const a=new URL(u);return /^https?:$/.test(a.protocol)?a.href:''}catch{return''}};
