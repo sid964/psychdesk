@@ -407,7 +407,6 @@
   flushPosition();
   focus = false;
   current = {};
-  if (/^#books(?:\/|$)/.test(location.hash)) history.pushState(null,'',location.pathname+location.search);
  });
  window.PsychDeskBooks = {render,afterRender,sourceLink,open,latestBook,validateCatalog};
  if (/^#books(?:\/|$)/.test(location.hash)) readRoute();
