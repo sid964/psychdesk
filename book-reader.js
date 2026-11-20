@@ -52,7 +52,7 @@
   };
  }
  const route = (book, section, block) => '#books' + (book ? '/' + book.id + '/' + section.id + (block ? '/' + block : '') : '');
- let current = {}, shelfSubject = '', shelfQuery = '', focus = false;
+ let current = {}, shelfSubject = '', shelfQuery = '', shelfBookId = '', focus = false;
  let pending = null, saveTimer, restoreFrame, renderedOwner;
 
  function patch(book, changes) {
@@ -83,6 +83,7 @@
   if (root !== 'books') return false;
   const book = lookup(bookId);
   const section = book?.sections.find(item => item.id === sectionId);
+  if(book&&!section)shelfBookId=book.id;
   current = section ? {book, section, blockId:section.blocks.some(item => item.id === blockId) ? blockId : ''} : {};
   if (section) {
    const saved = record(book);
@@ -129,67 +130,63 @@
   return {done,remaining:book.chapters.length-done,total:book.chapters.length,percent:Math.round(done/book.chapters.length*100)};
  }
  function shelf(){
- const latest=latestBook();
- const subjects=[...new Set(catalog.map(book=>book.subject))].sort();
- const query=shelfQuery.trim().toLowerCase();
- const visible=catalog.filter(book=>(!shelfSubject||book.subject===shelfSubject)&&
-  (!query||[book.title,book.subject,book.author,book.edition].some(value=>value.toLowerCase().includes(query))));
- const allChapters=catalog.reduce((sum,book)=>sum+book.chapters.length,0);
- const readChapters=catalog.reduce((sum,book)=>sum+progressFor(book).done,0);
- const finishedBooks=catalog.filter(book=>progressFor(book).done===book.chapters.length).length;
- const milestones=[['First chapter',readChapters>=1],['Five chapters',readChapters>=5],['Ten chapters',readChapters>=10],['Twenty-five chapters',readChapters>=25],['Book completed',finishedBooks>=1]].filter(([,earned])=>earned).map(([name])=>name);
- const cloudStatus=window.PsychDeskFirebase?.getConnectionStatus?.();
- const syncLabel=cloudStatus?.synced?'Saved to your Google account':cloudStatus?.signedIn?'Saved locally · Google sync pending':'Saved on this device · sign in to sync';
- const spotlight=latest||catalog[0];
- return `<section class="bk-shelf" aria-label="Indexed psychology books">
-  <header class="bk-hero"><div class="bk-hero-main">
-   <p class="bk-kicker">PsychDesk · Reading room</p><h1>My library</h1>
-   <p>A quiet place for your indexed psychology books. Read at your own pace, save passages and continue where you left off.</p>
-   <div class="bk-hero-stats" aria-label="Your library reading achievements">
-    <div><strong>${catalog.length}</strong><span>Indexed ${catalog.length===1?'book':'books'}</span></div>
-    <div><strong>${readChapters}</strong><span>Chapters read</span></div>
-    <div><strong>${allChapters-readChapters}</strong><span>Remaining</span></div>
-   </div>
-   <div class="bk-milestones" aria-label="Personal reading achievements">
-    <p class="bk-kicker">Reading achievements</p>
-    ${milestones.length?'<div class="bk-earned">'+milestones.map(name=>'<span>✦ '+esc(name)+'</span>').join('')+'</div>':'<p class="bk-unearned">Complete your first chapter to earn a reading milestone.</p>'}
-    <small>${esc(syncLabel)}</small>
-   </div>
-  </div><div class="bk-continue">
-   <p class="bk-kicker">${latest?'Continue reading':'Start reading'}</p>
-   ${spotlight?`<strong>${esc(spotlight.title)}</strong>
-    <span>${progressFor(spotlight).done} of ${spotlight.chapters.length} chapters read</span>
-    ${button('open',latest?'Resume book':'Open first book','class="bk-primary" data-book-id="'+spotlight.id+'"')}`:
-    '<span>Books will appear when their verified companion content is added.</span>'}
-  </div></header>
-  <nav class="bk-library-actions" aria-label="Other library spaces">
-   <button type="button" data-tab="files">Drive files <span aria-hidden="true">↗</span></button>
-   <button type="button" data-tab="reader">PDF reader <span aria-hidden="true">↗</span></button>
-   <button type="button" data-tab="research">References <span aria-hidden="true">↗</span></button>
-  </nav>
-  ${catalogError?'<p class="bk-empty" role="alert">The indexed book catalog could not be opened.</p>':''}
-  <div class="bk-collection-top"><div><p class="bk-kicker">YOUR BOOKSHELF</p><h2>Indexed books</h2>
-  <p>Only indexed study companions appear here. Your own uploaded PDFs stay in Drive files.</p></div></div>
-  ${catalog.length?`<div class="bk-filter"><label for="bk-search">Search books</label>
-   <input id="bk-search" type="search" value="${esc(shelfQuery)}" placeholder="Find a psychology book" autocomplete="off">
-   <label for="bk-subject">Browse by subject</label>
-   <select id="bk-subject"><option value="">All subjects</option>${subjects.map(subject=>'<option value="'+esc(subject)+'"'+(shelfSubject===subject?' selected':'')+'>'+esc(subject)+'</option>').join('')}</select>
-   </div><div class="bk-grid">${visible.map((book,i)=>{
-    const progress=progressFor(book);
-    const guides=book.sections.filter(section=>section.kind==='guide').length;
-    const detailed=book.sections.filter(section=>section.kind==='detailed').length;
-    return `<article class="bk-book-card">
-     <button type="button" class="bk-cover" data-book-action="open" data-book-id="${book.id}" aria-label="Open ${esc(book.title)}">
-      <small>${esc(book.subject)}</small><strong>${esc(book.title)}</strong><span>${esc(book.edition)}</span>
-     </button>
-     <div class="bk-book-detail"><h3>${esc(book.title)}</h3><p>${esc(book.author)}</p>
-     <span class="bk-chapter-metric">${progress.done} of ${progress.total} chapters read · ${progress.remaining} remaining</span>
-     <div class="bk-chapter-track" role="progressbar" aria-label="${esc(book.title)} chapters read" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${progress.percent}"><span style="width:${progress.percent}%"></span></div>
-     ${guides?`<small class="bk-source-disclosure">${detailed} detailed parts · ${guides} brief guides (not full chapters)</small>`:''}</div>
-    </article>`;
-   }).join('')}</div>${!visible.length?'<p class="bk-empty">No indexed books match your search.</p>':''}`:
-   !catalogError?'<div class="bk-empty"><h2>No indexed books yet</h2><p>The next books will be added after their chapters are checked. Uploaded PDF files remain available separately.</p></div>':''}
-  </section>`;
+ const latest=latestBook(),featured=lookup(shelfBookId)||latest||catalog[0];
+ const subjects=[...new Set(catalog.map(b=>b.subject))].sort(),query=shelfQuery.trim().toLowerCase();
+ const visible=catalog.filter(b=>(!shelfSubject||b.subject===shelfSubject)&&(!query||[b.title,b.subject,b.author,b.edition].some(t=>t.toLowerCase().includes(query))));
+ const doneAll=catalog.reduce((a,b)=>a+progressFor(b).done,0),remainingAll=catalog.reduce((a,b)=>a+progressFor(b).remaining,0);
+ const earned=[['First chapter',doneAll>=1],['Five chapters',doneAll>=5],['Ten chapters',doneAll>=10],['Book completed',catalog.some(b=>progressFor(b).remaining===0)]].filter(x=>x[1]).map(x=>x[0]);
+ const status=window.PsychDeskFirebase?.getConnectionStatus?.();
+ const sync=status?.synced?'Saved to your Google account':status?.signedIn?'Saved locally · Google sync pending':'Saved on this device · sign in to sync';
+ const book=featured,progress=book?progressFor(book):null;
+ const chapters=book?book.chapters.map((ch,i)=>{
+  const readParts=ch.sections.filter(p=>(record(book).completed||[]).includes(p.id)).length;
+  const first=ch.sections[0],page=ch.sections.find(p=>Number.isInteger(p.page))?.page;
+  const detailed=ch.sections.some(p=>p.kind==='detailed'),isRead=chapterStatus(book,ch)==='Read';
+  return `<button type="button" class="bk-ref-chapter" data-book-action="openPart" data-book-id="${esc(book.id)}" data-part-id="${esc(first.id)}" data-palette="${i<4?1:i<8?2:i<11?3:i<15?4:5}" aria-label="Read chapter ${i+1}: ${esc(ch.title)}">
+   <span class="bk-ref-number">${String(i+1).padStart(2,'0')}</span><strong>${esc(ch.title)}</strong>
+   <small>${page?'Book p. '+page+' · ':''}${detailed?'Full Chapter 1 notes':'Original chapter guide'}<span>${readParts}/${ch.sections.length} parts reviewed${isRead?' · Chapter read':''}</span></small>
+  </button>`;
+ }).join(''):'';
+ const icon=(kind)=>kind==='menu'?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>':
+  kind==='home'?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 11 9-8 9 8v10h-7v-7h-4v7H3z"/></svg>':
+  '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h10l4 4v14H5zM15 3v5h4M8 13h8M8 17h8"/></svg>';
+ return `<section class="bk-shelf bk-reference-library" aria-label="Indexed psychology library">
+  <header class="bk-ref-topbar">
+   <div class="bk-ref-top-start"><button type="button" class="bk-ref-icon" data-book-action="bookMenu" aria-label="Browse books and chapters">${icon('menu')}</button>
+    <button type="button" class="bk-ref-icon" data-tab="today" aria-label="Home">${icon('home')}</button>
+    <span class="bk-ref-logo">P.</span><span class="bk-ref-brand">PsychDesk Reader</span></div>
+   <div class="bk-ref-top-brand"><strong>${esc(book?.subject||'Psychology')}</strong><small>Your reading library</small></div>
+   <div class="bk-ref-top-end"><button type="button" class="bk-ref-icon" data-tab="files" aria-label="Drive files">${icon('doc')}</button>
+    <button type="button" class="bk-ref-icon" data-tab="reader" aria-label="PDF reader">${icon('doc')}</button>
+    <button type="button" class="bk-ref-icon bk-ref-aa" data-book-action="readingAppearance" aria-label="Reading appearance">Aa</button></div>
+  </header>
+  <div class="bk-ref-body">
+   <div class="bk-ref-heading"><div><p class="bk-ref-overline">PsychDesk reading room · Your textbooks</p><h1>Reading library</h1></div>
+    <p>A quiet, source-based companion to your study books. Not a copied textbook, with reading progress and private notes linked to your account.</p></div>
+   ${catalogError?'<p class="bk-empty" role="alert">The indexed book catalog could not be opened.</p>':''}
+   ${book?`<section class="bk-ref-feature" aria-label="Current book">
+    <div class="bk-ref-cover" aria-hidden="true"><small>PsychDesk · Psychology</small><strong>${esc(book.subject)}</strong><span>Reading companion · ${esc(book.edition)}</span></div>
+    <div class="bk-ref-feature-content"><p class="bk-ref-overline">${latest?.id===book.id?'Your current book':'Your selected book'}</p><h2>${esc(book.subject)}</h2>
+     <p class="bk-ref-description">${esc(book.author)}. ${esc(book.description||'A calmer way to study with focused reading, a chapter index and your own notes.')}</p>
+     <div class="bk-ref-tags"><span>${book.chapters.length} chapters indexed</span><span>${book.id==='psychopathology-9e'?'695 textbook headings':book.sections.length+' reading parts'}</span><span>${book.sections.filter(p=>p.kind==='detailed').length} detailed reading parts</span></div>
+     <div class="bk-ref-feature-actions"><button type="button" class="bk-ref-primary" data-book-action="open" data-book-id="${esc(book.id)}">Continue reading</button>
+     <button type="button" class="bk-ref-secondary" data-book-action="viewChapters">View chapters</button></div>
+     <div class="bk-ref-progress"><strong>${progress.percent}% through the book</strong><span> · ${progress.done} read · ${progress.remaining} remaining</span></div>
+     <div class="bk-ref-progress-track" role="progressbar" aria-label="Chapter progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${progress.percent}"><span style="width:${progress.percent}%"></span></div>
+    </div></section>`:'<p class="bk-empty">Your verified study books will appear here.</p>'}
+   ${book?`<section class="bk-ref-chapters" id="bk-chapters" aria-labelledby="bk-chapters-heading"><div class="bk-ref-section-heading">
+    <h2 id="bk-chapters-heading">Chapters in this book</h2><p>${book.id==='psychopathology-9e'?'Chapter 1: detailed draft · Others: source-based guides':'Detailed notes and source-based guides'}</p>
+    </div><div class="bk-ref-chapter-grid">${chapters}</div></section>`:''}
+   ${catalog.length>1?`<section class="bk-ref-book-list" id="bk-book-list" aria-labelledby="bk-books-title"><div class="bk-ref-section-heading"><h2 id="bk-books-title">Your books</h2><p>Choose a book to view its chapters</p></div>
+    <div class="bk-filter"><label for="bk-search">Search books</label><input type="search" id="bk-search" value="${esc(shelfQuery)}" placeholder="Find a psychology book">
+     <label for="bk-subject">Browse by subject</label><select id="bk-subject"><option value="">All subjects</option>${subjects.map(v=>'<option value="'+esc(v)+'"'+(shelfSubject===v?' selected':'')+'>'+esc(v)+'</option>').join('')}</select></div>
+    <div class="bk-grid">${visible.map(b=>{const p=progressFor(b);return `<article class="bk-book-card"><button type="button" class="bk-cover" data-book-action="open" data-book-id="${esc(b.id)}" aria-label="Read ${esc(b.title)}"><small>${esc(b.subject)}</small><strong>${esc(b.title)}</strong><span>${esc(b.edition)}</span></button><div class="bk-book-detail"><h3>${esc(b.title)}</h3><p>${esc(b.author)}</p><span class="bk-chapter-metric">${p.done} of ${p.total} chapters read · ${p.remaining} remaining</span><div class="bk-chapter-track" role="progressbar" aria-label="${esc(b.title)} chapters read" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${p.percent}"><span style="width:${p.percent}%"></span></div><button type="button" class="bk-ref-view-book" data-book-action="selectBook" data-book-id="${esc(b.id)}">View chapters</button></div></article>`}).join('')}</div>
+    ${visible.length?'':'<p class="bk-empty">No indexed books match your search.</p>'}</section>`:''}
+   <section class="bk-ref-achievements" aria-label="Your reading achievements"><div class="bk-hero-stats"><div><strong>${catalog.length}</strong><span>Books</span></div><div><strong>${doneAll}</strong><span>Chapters read</span></div><div><strong>${remainingAll}</strong><span>Remaining</span></div></div>
+    <div class="bk-milestones"><p class="bk-ref-overline">Your reading achievements</p>${earned.length?'<div class="bk-earned">'+earned.map(x=>'<span>✦ '+esc(x)+'</span>').join('')+'</div>':'<p class="bk-unearned">Finish your first chapter to earn a milestone.</p>'}
+    <small>${esc(sync)}</small></div></section>
+   <nav class="bk-ref-links" aria-label="Other library spaces"><button type="button" data-tab="files">Drive files</button><button type="button" data-tab="reader">PDF reader</button><button type="button" data-tab="research">References</button></nav>
+  </div></section>`;
 }
  function renderBlock(block, highlights) {
   const tag = {paragraph:'p', heading:'h2', quote:'blockquote'}[block.type];
@@ -433,6 +430,11 @@
   }
   const action = control.dataset.bookAction;
   if (action === 'open') return open(control.dataset.bookId);
+  if (action === 'openPart') {const book=lookup(control.dataset.bookId),part=book?.sections.find(p=>p.id===control.dataset.partId);if(book&&part)navigate(book,part);return;}
+  if (action === 'selectBook') {if(lookup(control.dataset.bookId)){shelfBookId=control.dataset.bookId;history.pushState(null,'','#books/'+shelfBookId);readRoute();document.querySelector('.bk-reference-library')?.scrollIntoView({block:'start'});}return;}
+  if (action === 'viewChapters') {document.querySelector('#bk-chapters')?.scrollIntoView({block:'start',behavior:'smooth'});return;}
+  if (action === 'bookMenu') {document.querySelector(catalog.length>1?'#bk-book-list':'#bk-chapters')?.scrollIntoView({block:'start',behavior:'smooth'});return;}
+  if (action === 'readingAppearance') {const book=lookup(shelfBookId)||latestBook()||catalog[0];if(book){open(book.id);appearance(book);}return;}
   if (action === 'shelf') return navigate();
   const {book,section} = current;
   if (!section) return;

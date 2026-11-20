@@ -34,7 +34,7 @@ const base=process.env.PSYCHDESK_TEST_URL||'http://127.0.0.1:8765';
    await page.getByRole('heading',{name:'Book reader.'}).waitFor();
    assert.ok(await page.locator('#localReaderFile').count(),'local file picker remains accessible');
    await page.evaluate(()=>window.PsychDeskCore.setTab('materials'));
-   await page.getByRole('heading',{name:'My library'}).waitFor();
+   await page.getByRole('heading',{name:'Reading library'}).waitFor();
    await page.locator('#main [data-tab="files"]').first().click();
    await page.getByRole('heading',{name:'Drive files.'}).waitFor();
    assert.equal(await page.evaluate(()=>JSON.stringify(window.PsychDeskCore.getData())),before,'reader and Drive navigation must not mutate study data');

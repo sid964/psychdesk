@@ -6,6 +6,8 @@ on:
       - 'book-catalog.js'
       - 'book-reader.js'
       - 'book-reader.css'
+      - 'book-reference.css'
+      - 'tests/library-reference-browser.cjs'
       - 'pdf-reader.js'
       - 'pdf-reader.css'
       - 'reader-studio.css'
@@ -86,6 +88,8 @@ jobs:
         run: node tests/phase4-browser.cjs
       - name: Multi-book reader navigation and persistence
         run: node tests/book-reader-browser.cjs
+      - name: Library reference design and chapter grid smoke
+        run: node tests/library-reference-browser.cjs
       - name: Phase 10 Kindle-style PDF reading smoke
         run: node tests/pdf-reader-browser.cjs
       - name: Phase 11 reading achievements and local account isolation smoke

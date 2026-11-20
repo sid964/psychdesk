@@ -19,7 +19,7 @@ const mockFetch=({staleFirst=false,staleAlways=false,missing=null}={})=>{
  };
 };
 test('release verifier covers the actual shipped app, course and World assets',()=>{
- for(const file of ['index.html','app.js','sw.js','study-clarity.css','autopilot/studio.js','book-catalog.js','book-reader.js','book-reader.css','pdf-reader.js','pdf-reader.css','reader-studio.css','firebase-sync.js','psychopathology-graph.js','psychopathology-graph.css','world/world.js','world/world.css','world/index.html','world/life.js'])
+ for(const file of ['index.html','app.js','sw.js','study-clarity.css','autopilot/studio.js','book-catalog.js','book-reader.js','book-reader.css','book-reference.css','pdf-reader.js','pdf-reader.css','reader-studio.css','firebase-sync.js','psychopathology-graph.js','psychopathology-graph.css','world/world.js','world/world.css','world/index.html','world/life.js'])
   assert.ok(CRITICAL_FILES.includes(file),'critical release file '+file);
  assert.equal(new Set(CRITICAL_FILES).size,CRITICAL_FILES.length,'no duplicate downloads');
 });
