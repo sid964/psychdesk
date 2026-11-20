@@ -78,9 +78,19 @@ function harness({fixture=true,hash=''}={}) {
  };
 }
 
-test('the production shelf is empty and the feature ships with the app cache',()=>{
+test('the shipped companion has 16 indexed chapters and clearly separated short guides',()=>{
  const app=harness({fixture:false});
- assert.match(app.api.render(),/No books on this shelf yet/);
+ const books=app.window.PsychDeskBookCatalog;
+ assert.equal(books.length,1);
+ assert.equal(books[0].id,'psychopathology-9e');
+ assert.equal(books[0].chapters.length,16);
+ const parts=books[0].chapters.flatMap(chapter=>chapter.sections);
+ assert.equal(parts.length,76);
+ assert.equal(parts.filter(part=>part.kind==='detailed').length,8);
+ assert.equal(parts.filter(part=>part.kind==='guide').length,68);
+ assert.match(app.api.render(),/Psychopathology/);
+ app.api.open('psychopathology-9e');
+ assert.match(app.markup(),/Psychopathology studies psychological disorders/);
  const html=load('index.html'),worker=load('sw.js');
  for(const name of ['book-catalog.js','book-reader.js','book-reader.css']){
   assert.ok(html.includes(name));
