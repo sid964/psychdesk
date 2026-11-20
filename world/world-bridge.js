@@ -3,8 +3,9 @@
 (()=>{'use strict';
 const main=document.getElementById('main');
 if(!main)return;
-const allowed=new Set(['today','notes','materials','garden','recall','dictionary','focus','planner','tools','ink','reader','research','timeline','connections','stickies','university','psychology','psychopathology','search','voice','board','mindmap','insights']);
+const allowed=new Set(['today','notes','materials','books','garden','recall','dictionary','focus','planner','tools','ink','reader','research','timeline','connections','stickies','university','psychology','psychopathology','search','voice','board','mindmap','insights']);
 const KEY='psychdeskViewV1';
+const isBookRoute=()=>/^#books(?:\/|$)/.test(location.hash);
 let active=null,previousFocus=null,tab='today',restoring=false,background=[];
 function validView(view){
  if(!view||typeof view!=='object')return null;
@@ -14,6 +15,7 @@ function validView(view){
  return null;
 }
 function routeFromHash(){
+ if(isBookRoute())return {kind:'tab',tab:'books'};
  const match=/^#pd-(world|garden|[a-z]+)$/.exec(location.hash);
  if(!match)return null;
  if(match[1]==='world')return {kind:'world',from:'today'};
@@ -22,7 +24,9 @@ function routeFromHash(){
 }
 function urlFor(view){
  const next=new URL(location.href);
- next.hash='#pd-'+(view.kind==='tab'?view.tab:view.kind);
+ if(view.kind==='tab'&&view.tab==='books'){
+  if(!isBookRoute())next.hash='#books';
+ }else next.hash='#pd-'+(view.kind==='tab'?view.tab:view.kind);
  return next.pathname+next.search+next.hash;
 }
 function replace(view){
@@ -30,6 +34,9 @@ function replace(view){
 }
 function push(view){
  if(restoring)return;
+ // The reader has already created the entry for a specific book or section.
+ // Adopt that entry rather than adding a duplicate to the Back stack.
+ if(view.kind==='tab'&&view.tab==='books'&&isBookRoute()){replace(view);return;}
  const current=validView(history.state?.[KEY]);
  if(current&&current.kind===view.kind&&(view.kind==='tab'?current.tab===view.tab:view.kind==='world'?current.from===view.from:true))return;
  try{history.pushState({...history.state,[KEY]:view},'',urlFor(view));}
@@ -136,10 +143,10 @@ function restore(view){
   }
  }finally{restoring=false;}
 }
-const initial=validView(history.state?.[KEY])||routeFromHash()||{kind:'tab',tab:'today'};
+const initial=(isBookRoute()?routeFromHash():validView(history.state?.[KEY])||routeFromHash())||{kind:'tab',tab:'today'};
 if(!validView(history.state?.[KEY]))replace(initial);
 window.addEventListener('popstate',event=>{
- const routed=validView(event.state?.[KEY])||routeFromHash();
+ const routed=isBookRoute()?routeFromHash():validView(event.state?.[KEY])||routeFromHash();
  if(!routed&&location.hash){
   // Native in-page anchors (skip link and Tools section jumps) are not app
   // routes. Preserve their fragment and current view instead of rendering Home.
