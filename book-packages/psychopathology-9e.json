@@ -1,0 +1,1669 @@
+{
+  "id": "psychopathology-9e",
+  "title": "Psychopathology: An Integrative Approach to Mental Disorders",
+  "subject": "Psychopathology",
+  "author": "David H. Barlow · V. Mark Durand · Stefan G. Hofmann",
+  "edition": "9th edition · 2023",
+  "description": "Companion reading notes based on the ninth-edition index. Chapter 1 includes detailed parts; later chapters are short study guides, not full textbook chapters.",
+  "chapters": [
+    {
+      "id": "chapter-01",
+      "title": "Psychopathology in Historical Context",
+      "sections": [
+        {
+          "id": "ch01-0",
+          "title": "Before you begin",
+          "page": 3,
+          "kind": "detailed",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "Psychopathology studies psychological disorders: how they are described, how they develop, how they affect people, and how they may be treated. The subject asks difficult questions. When does an understandable human reaction become a disorder? Why did people once blame spirits for unusual behavior? What can we learn from biological explanations without ignoring learning, emotions, or society?"
+            },
+            {
+              "id": "block-02",
+              "type": "paragraph",
+              "text": "In this chapter, we follow the changing answers to those questions. You will notice that the history of psychopathology is not a simple story in which an old, incorrect idea is replaced by a completely correct one. Some early approaches encouraged kinder care; others inflicted serious harm. Even scientific theories have sometimes become too narrow. The lesson is to think carefully about evidence and about the person living with the problem."
+            },
+            {
+              "id": "block-03",
+              "type": "paragraph",
+              "text": "Reading pathway: Six units, followed by a comparison page and recall questions. Read one unit at a time. Every question can be answered from the chapter, but some ask you to reason beyond memorized definitions."
+            },
+            {
+              "id": "block-04",
+              "type": "paragraph",
+              "text": "By the end, you should be able to: (1) evaluate the components and limitations of a psychological-disorder definition; (2) distinguish description, causation and treatment research; (3) compare supernatural, biological and psychological historical traditions; (4) explain how psychoanalytic, humanistic and learning approaches differ; and (5) use an integrative lens when considering a clinical problem. These outcomes correspond to the textbook's five learning objectives (book p. 3)."
+            }
+          ]
+        },
+        {
+          "id": "ch01-1",
+          "title": "When does a human experience become a psychological disorder?",
+          "page": 3,
+          "kind": "detailed",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "Source: textbook pp. 3–5 · Reading priority: Essential"
+            },
+            {
+              "id": "block-02",
+              "type": "heading",
+              "text": "The textbook’s opening example"
+            },
+            {
+              "id": "block-03",
+              "type": "paragraph",
+              "text": "The chapter introduces Janelle’s blood–injection–injury phobia, which disrupted her life through repeated fainting episodes. Her clinical description helps explain why the definition of a psychological disorder must consider more than whether a reaction is unusual. The three considerations discussed below are taken from the authors’ framework."
+            },
+            {
+              "id": "block-04",
+              "type": "heading",
+              "text": "1. Psychological dysfunction"
+            },
+            {
+              "id": "block-05",
+              "type": "paragraph",
+              "text": "A dysfunction involves a problem in cognitive, emotional or behavioral functioning. Cognition concerns processes such as attention, perception and interpretation. Emotion concerns responses such as fear or sadness. Behavior concerns actions, including avoidance. A strong reaction does not automatically indicate dysfunction: fear may be useful when there is a genuine threat. The question is whether a process is operating in a way that is seriously mismatched to the situation or difficult to regulate."
+            },
+            {
+              "id": "block-06",
+              "type": "paragraph",
+              "text": "The textbook's case of Janelle, a school student who repeatedly fainted around blood-related cues, helps illustrate why severity and context matter. Many people feel uncomfortable when they see blood. Janelle's reactions were more severe and interfered with daily life. Her example introduces a blood–injection–injury phobia; it is not a template for diagnosing someone from a single sign."
+            },
+            {
+              "id": "block-07",
+              "type": "heading",
+              "text": "2. Distress or impairment"
+            },
+            {
+              "id": "block-08",
+              "type": "paragraph",
+              "text": "Distress means significant suffering. Impairment means difficulty participating in important parts of life, such as studying, working, forming relationships or caring for oneself. They are related but not identical. A person may experience intense grief after a death without having a disorder; distress can be an understandable response to loss. Conversely, during a manic episode a person may report feeling unusually well while their judgment, finances or relationships are severely affected. The absence of acknowledged distress therefore does not settle the question."
+            },
+            {
+              "id": "block-09",
+              "type": "heading",
+              "text": "3. An atypical or culturally unexpected response"
+            },
+            {
+              "id": "block-10",
+              "type": "paragraph",
+              "text": "Behavior must be interpreted in its social and cultural setting. Something rare or unusual is not necessarily harmful, and a practice that differs from one's own habits is not proof of illness. The textbook stresses that cultural expectations help determine whether a response is unexpected, but social rule-breaking alone is insufficient. Good assessment asks what the behavior means in that person's context and whether it involves dysfunction, harm or impairment."
+            },
+            {
+              "id": "block-11",
+              "type": "heading",
+              "text": "Why the boundaries remain difficult"
+            },
+            {
+              "id": "block-12",
+              "type": "paragraph",
+              "text": "The authors discuss harmful dysfunction, an influential attempt to join a problem in normal functioning with negative consequences. They also introduce the idea of a prototype: instead of thinking that every person with a diagnosis looks identical, clinicians compare a presentation with a recognizable pattern of features, while considering how many criteria are met. Symptoms can vary by severity and exist on a continuum. Chapter 3 will return to the limitations of classification."
+            },
+            {
+              "id": "block-13",
+              "type": "paragraph",
+              "text": "At a Master's level, the key point is that a diagnosis is a reasoned clinical judgment based on multiple kinds of evidence. A checklist, an unusual belief, a symptom seen on social media or a single laboratory result cannot replace a careful assessment. The chapter discusses diagnostic classification in the framework used by this edition."
+            }
+          ]
+        },
+        {
+          "id": "ch01-2",
+          "title": "How psychopathology becomes a science",
+          "page": 6,
+          "kind": "detailed",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "Source: textbook pp. 6–8 · Reading priority: Essential"
+            },
+            {
+              "id": "block-02",
+              "type": "paragraph",
+              "text": "The scientific study of psychopathology is not limited to attaching labels to symptoms. It tries to describe experiences accurately, understand how they develop, and test ways of reducing suffering. The textbook separates this work into three connected lines of inquiry."
+            },
+            {
+              "id": "block-03",
+              "type": "heading",
+              "text": "1. Description: What exactly is happening?"
+            },
+            {
+              "id": "block-04",
+              "type": "paragraph",
+              "text": "A clinical description records the particular pattern of thoughts, emotions and behaviors a person experiences. It can also describe when the pattern first appeared, how it changes over time and the difficulties it creates. This is more informative than a vague statement such as “the person has anxiety.”"
+            },
+            {
+              "id": "block-05",
+              "type": "paragraph",
+              "text": "Several terms help make a clinical description precise:"
+            },
+            {
+              "id": "block-06",
+              "type": "paragraph",
+              "text": "Presenting problem: The concern that leads a person to seek or be referred for help."
+            },
+            {
+              "id": "block-07",
+              "type": "paragraph",
+              "text": "Prevalence: How many people in a defined population have a disorder during a specified time or period."
+            },
+            {
+              "id": "block-08",
+              "type": "paragraph",
+              "text": "Incidence: How many new cases arise in a population during a specified period."
+            },
+            {
+              "id": "block-09",
+              "type": "paragraph",
+              "text": "Onset: When the problem begins, sometimes described as sudden or gradual."
+            },
+            {
+              "id": "block-10",
+              "type": "paragraph",
+              "text": "Course: How the symptoms change over time—for example, whether difficulties persist, recur or vary."
+            },
+            {
+              "id": "block-11",
+              "type": "paragraph",
+              "text": "Prognosis: The expected future pattern or outcome, expressed with appropriate uncertainty."
+            },
+            {
+              "id": "block-12",
+              "type": "paragraph",
+              "text": "Prevalence is a count or proportion of existing cases, while incidence concerns newly occurring cases. Mixing them up can distort an argument about how common a condition is."
+            },
+            {
+              "id": "block-13",
+              "type": "heading",
+              "text": "2. Causation: Why might this be happening?"
+            },
+            {
+              "id": "block-14",
+              "type": "paragraph",
+              "text": "Etiology is the study of origins and contributing causes. A clinical description tells us what we can observe; it does not, by itself, explain why that pattern developed. The authors use different parts of the textbook to investigate how several contributing factors can interact. Research must distinguish genuine causal influences from factors that merely occur alongside symptoms."
+            },
+            {
+              "id": "block-15",
+              "type": "paragraph",
+              "text": "The authors emphasize developmental psychopathology: experiences unfold across life, not just childhood. Age, developmental stage and changing environments influence how a problem appears."
+            },
+            {
+              "id": "block-16",
+              "type": "heading",
+              "text": "3. Treatment and outcomes: What helps, and how do we know?"
+            },
+            {
+              "id": "block-17",
+              "type": "paragraph",
+              "text": "Treatment research tests whether interventions improve outcomes. This requires more than a story about one person's improvement. We need clear outcome measures, comparison where appropriate, attention to adverse effects and evidence that results are repeatable."
+            },
+            {
+              "id": "block-18",
+              "type": "paragraph",
+              "text": "A crucial reasoning trap is to assume that if a treatment works, it must have corrected the original cause. Headache relief after pain medication does not prove that the headache began because the person lacked that medication. Likewise, improvement following a psychological or biological treatment gives clues, but treatment response does not by itself establish a disorder's cause."
+            },
+            {
+              "id": "block-19",
+              "type": "heading",
+              "text": "The scientist–practitioner mindset"
+            },
+            {
+              "id": "block-20",
+              "type": "paragraph",
+              "text": "The textbook presents the scientist–practitioner as someone who uses research to guide care, evaluates whether an approach works and helps produce better evidence when possible. Research and clinical responsibility inform each other. This guards against relying only on intuition, fashion or a persuasive story."
+            }
+          ]
+        },
+        {
+          "id": "ch01-3",
+          "title": "The supernatural tradition: how explanations shaped care",
+          "page": 8,
+          "kind": "detailed",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "Source: textbook pp. 8–11 · Reading priority: Historical foundation"
+            },
+            {
+              "id": "block-02",
+              "type": "paragraph",
+              "text": "Long before modern clinical science, communities tried to explain actions and experiences they could not easily understand. Some attributed them to spirits, possession, divine forces, astrology or other external powers. The supernatural tradition matters because explanations influence how people are treated. A person viewed as ill might receive care; a person viewed as wicked or possessed might face punishment."
+            },
+            {
+              "id": "block-03",
+              "type": "heading",
+              "text": "More than one belief existed at a time"
+            },
+            {
+              "id": "block-04",
+              "type": "paragraph",
+              "text": "It would be misleading to say that everyone in medieval Europe understood psychological disturbance in exactly the same way. The textbook describes competing ideas. Some explanations involved demons or witches, but other observations connected emotional difficulties with stress, physical illness and living circumstances. People sometimes provided rest, support and community care. The historical picture is mixed."
+            },
+            {
+              "id": "block-05",
+              "type": "paragraph",
+              "text": "The textbook also discusses the changing condition of King Charles VI of France, whose disturbances attracted very different explanations and interventions. The important learning point is not to retrospectively diagnose a historical figure with certainty. It is to notice how uncertain theories can lead to radically different treatment choices."
+            },
+            {
+              "id": "block-06",
+              "type": "heading",
+              "text": "Responses to possession"
+            },
+            {
+              "id": "block-07",
+              "type": "paragraph",
+              "text": "Some interventions sought to drive out an imagined external force. They could include religious practices, but they also included frightening or painful procedures. Certain historical accounts suggested temporary improvement after such methods. Temporary improvement, however, does not demonstrate that the original explanation was correct, and coercion can create severe harm."
+            },
+            {
+              "id": "block-08",
+              "type": "paragraph",
+              "text": "This is one of the chapter's early ethical lessons: the wish to help is not enough. We must examine the reasoning behind an intervention, its effects and the person's rights."
+            },
+            {
+              "id": "block-09",
+              "type": "heading",
+              "text": "Group experiences and attribution"
+            },
+            {
+              "id": "block-10",
+              "type": "paragraph",
+              "text": "The authors discuss events historically described as mass hysteria—episodes where many people in a community develop unusual symptoms or behavior in a shared social context. This is a historical term and should not be casually used to dismiss real distress or make a modern clinical diagnosis. Group expectations, fear and social influence are possible aspects to investigate, while physical or environmental causes must also be considered rather than ruled out by assumption."
+            },
+            {
+              "id": "block-11",
+              "type": "heading",
+              "text": "The moon, the stars and alternative natural explanations"
+            },
+            {
+              "id": "block-12",
+              "type": "paragraph",
+              "text": "Astrological explanations sometimes served as alternatives to accusations of witchcraft or possession. They were an attempt to locate a cause in nature, though not evidence that the proposed celestial influence was scientifically established. This shows why replacing a frightening explanation with a more appealing one is not the same as demonstrating that the new explanation is accurate."
+            }
+          ]
+        },
+        {
+          "id": "ch01-4",
+          "title": "The biological tradition: a necessary but incomplete perspective",
+          "page": 12,
+          "kind": "detailed",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "Source: textbook pp. 12–15 · Reading priority: Essential"
+            },
+            {
+              "id": "block-02",
+              "type": "paragraph",
+              "text": "Biological explanations ask whether physical processes contribute to psychological disturbance. This approach has helped replace blame with medical investigation, identify some treatable conditions and develop interventions. Yet biological theories can also become narrow if they assume every difficulty has one isolated bodily cause."
+            },
+            {
+              "id": "block-03",
+              "type": "heading",
+              "text": "Hippocrates, Galen and early natural explanations"
+            },
+            {
+              "id": "block-04",
+              "type": "paragraph",
+              "text": "In ancient Greek and Roman medicine, Hippocrates and later Galen linked psychological experiences with bodily processes. Their theories of bodily humors are not scientifically accepted explanations of modern mental disorders. Historically, however, their contribution was important: they looked for natural, bodily influences rather than treating every disturbance as supernatural punishment."
+            },
+            {
+              "id": "block-05",
+              "type": "paragraph",
+              "text": "This illustrates a distinction useful throughout psychology: an explanation can be historically influential without being scientifically correct."
+            },
+            {
+              "id": "block-06",
+              "type": "heading",
+              "text": "Disease, classification and the nineteenth century"
+            },
+            {
+              "id": "block-07",
+              "type": "paragraph",
+              "text": "The recognition that syphilis could affect the nervous system and produce serious psychiatric symptoms provided concrete support for the possibility of an identifiable biological condition underlying some mental disturbances. It did not establish that all disorders are caused by infection or brain disease."
+            },
+            {
+              "id": "block-08",
+              "type": "paragraph",
+              "text": "The textbook also highlights Emil Kraepelin's contribution to careful classification. Attention to age of onset, symptom patterns and course encouraged more systematic distinctions among conditions. A label becomes useful when it organizes observations and supports prediction or research—not simply because it sounds medical."
+            },
+            {
+              "id": "block-09",
+              "type": "heading",
+              "text": "Treatment: advances, mistakes and ethical costs"
+            },
+            {
+              "id": "block-10",
+              "type": "paragraph",
+              "text": "Biological interventions expanded dramatically during the twentieth century. The chapter describes harmful early practices, including insulin shock therapy, and the historical development of convulsive treatments, psychosurgery and psychiatric medication. These developments must be discussed critically. Some procedures were dangerous, inadequately tested or associated with serious long-term harm."
+            },
+            {
+              "id": "block-11",
+              "type": "paragraph",
+              "text": "The chapter describes how convulsive treatments developed historically and notes later changes in their use. It does not make their early experimental history a justification for any treatment decision. The broader lesson is to assess treatments by evidence, risks and patient protections, not by the reputation of a theory."
+            },
+            {
+              "id": "block-12",
+              "type": "paragraph",
+              "text": "The introduction of medications for severe psychiatric symptoms was a major historical development. Drug effects can be clinically useful while offering only partial evidence about the original processes that produce a disorder."
+            },
+            {
+              "id": "block-13",
+              "type": "heading",
+              "text": "The limitation of a single-cause explanation"
+            },
+            {
+              "id": "block-14",
+              "type": "paragraph",
+              "text": "Biological factors matter enormously. But why symptoms emerge in one setting rather than another, why they change with stress or support, and why people respond differently to treatment often requires psychological and social information as well. We will develop that interaction in Unit 06."
+            }
+          ]
+        },
+        {
+          "id": "ch01-5",
+          "title": "The psychological tradition: care, meaning and learning",
+          "page": 15,
+          "kind": "detailed",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "Source: textbook pp. 15–25 · Reading priority: Essential"
+            },
+            {
+              "id": "block-02",
+              "type": "paragraph",
+              "text": "The psychological tradition shifts attention toward emotional experience, learning, relationships and the environment. In the textbook, it develops through several movements that disagree with one another. Understanding their differences matters more than memorizing a list of names."
+            },
+            {
+              "id": "block-03",
+              "type": "heading",
+              "text": "Humane care and moral therapy"
+            },
+            {
+              "id": "block-04",
+              "type": "paragraph",
+              "text": "In the late eighteenth and early nineteenth centuries, reformers such as Philippe Pinel and William Tuke argued for more humane treatment in institutions. Moral therapy did not primarily mean giving lectures about right and wrong. It emphasized a respectful setting, ordinary routines, supportive relationships and opportunities to function as people rather than as prisoners."
+            },
+            {
+              "id": "block-05",
+              "type": "paragraph",
+              "text": "The textbook also describes Dorothea Dix, whose advocacy exposed terrible institutional conditions and expanded access to care. A bitter complication followed: when institutions became overcrowded and understaffed, the individual attention on which moral therapy depended became harder to provide. This is an early systems-level lesson. Good intentions and a sound general principle can fail when resources, staffing and policy do not support implementation."
+            },
+            {
+              "id": "block-06",
+              "type": "heading",
+              "text": "Psychoanalytic thought: the influence of the unconscious"
+            },
+            {
+              "id": "block-07",
+              "type": "paragraph",
+              "text": "Sigmund Freud, working in the tradition emerging from Josef Breuer and others, proposed that experiences and conflicts outside awareness could affect emotion and behavior. Psychoanalytic theory describes interacting aspects of the personality—id, ego and superego—and mechanisms people may use to keep distressing thoughts out of awareness."
+            },
+            {
+              "id": "block-08",
+              "type": "paragraph",
+              "text": "For example, denial involves refusing to acknowledge a difficult reality; projection involves attributing an unacceptable feeling to another person; displacement redirects emotion toward a less threatening target. These ideas provided a vocabulary for reflecting on how people cope, though their meanings and supporting evidence vary."
+            },
+            {
+              "id": "block-09",
+              "type": "paragraph",
+              "text": "Psychoanalytic treatments historically used techniques such as free association, dream interpretation and exploration of the therapeutic relationship. The case associated with Anna O. illustrates the influence of early therapeutic accounts. However, case histories and theoretical interpretations cannot by themselves establish general causal laws. Several specific Freudian claims have been criticized for being difficult to test or lacking sufficient evidence. We should distinguish the enduring influence of the tradition from the accuracy of every part of the original theory."
+            },
+            {
+              "id": "block-10",
+              "type": "heading",
+              "text": "Humanistic psychology: personhood and the therapeutic relationship"
+            },
+            {
+              "id": "block-11",
+              "type": "paragraph",
+              "text": "Humanistic theorists emphasized human possibilities, personal meaning and growth. Abraham Maslow is associated with human needs and self-actualization; Carl Rogers developed a person-centered therapeutic approach emphasizing empathic understanding, genuineness and unconditional positive regard."
+            },
+            {
+              "id": "block-12",
+              "type": "paragraph",
+              "text": "The humanistic tradition challenged overly pessimistic or mechanical pictures of human behavior and helped draw attention to the relationship between therapist and client. Its concepts also face scientific questions: how do we measure growth, and which elements help which people under which circumstances? Valuing a person's perspective and evaluating outcomes are complementary responsibilities."
+            },
+            {
+              "id": "block-13",
+              "type": "heading",
+              "text": "Learning theories: explain patterns through experience"
+            },
+            {
+              "id": "block-14",
+              "type": "paragraph",
+              "text": "Learning-based approaches ask how responses become associated with events and how consequences influence behavior."
+            },
+            {
+              "id": "block-15",
+              "type": "paragraph",
+              "text": "Classical conditioning is learning through association. Pavlov's research showed how a previously neutral stimulus can begin to elicit a response after repeated pairing. In psychopathology, cues that accompanied a frightening event might later trigger fear even when the original threat is absent. Related processes include stimulus generalization, when similar cues also produce a learned response."
+            },
+            {
+              "id": "block-16",
+              "type": "paragraph",
+              "text": "John B. Watson argued that observable behavior could be studied systematically. Early demonstrations associated fear with learned cues; they were also ethically problematic. The chapter highlights Mary Cover Jones's historical work with fears and the development of behavior-based interventions. Joseph Wolpe later developed systematic desensitization, which combined structured exposure with methods intended to reduce anxiety."
+            },
+            {
+              "id": "block-17",
+              "type": "paragraph",
+              "text": "Operant conditioning concerns how consequences change the likelihood of behavior. Edward Thorndike's law of effect influenced B. F. Skinner, who studied reinforcement and shaping. When avoiding a feared situation brings immediate relief, that relief can reinforce avoidance, even if avoidance limits learning and confidence in the long term. That last sentence is a modern application of learning principles rather than a diagnostic conclusion about any particular person."
+            },
+            {
+              "id": "block-18",
+              "type": "paragraph",
+              "text": "It is important not to confuse negative reinforcement with punishment. Negative reinforcement strengthens behavior when something aversive is removed. Punishment aims to decrease behavior. A consequence is defined by what it does to behavior, not merely whether it feels unpleasant."
+            },
+            {
+              "id": "block-19",
+              "type": "heading",
+              "text": "Comparing approaches without caricature"
+            },
+            {
+              "id": "block-20",
+              "type": "paragraph",
+              "text": "Psychoanalytic approaches historically emphasized unconscious meanings and internal conflict. Humanistic approaches emphasized subjective experience and personal growth. Behavioral approaches emphasized learning histories and observable change. Each asked different questions and favored different methods. The contemporary task is to examine specific hypotheses and evidence instead of treating one historical school as a complete explanation of every disorder."
+            }
+          ]
+        },
+        {
+          "id": "ch01-6",
+          "title": "The scientific and integrative approach",
+          "page": 25,
+          "kind": "detailed",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "Source: textbook pp. 25–26 · Reading priority: Essential"
+            },
+            {
+              "id": "block-02",
+              "type": "paragraph",
+              "text": "The chapter ends with the argument that psychopathology is better understood through multiple interacting influences than through a search for a single universal cause. Biological functioning, emotions, cognition, learning, relationships, social conditions and life-span development influence one another."
+            },
+            {
+              "id": "block-03",
+              "type": "paragraph",
+              "text": "This is not a claim that every factor contributes equally in every case. It means we should ask precise questions about which processes matter, how they interact and what evidence supports those links."
+            },
+            {
+              "id": "block-04",
+              "type": "heading",
+              "text": "How the authors bring the approaches together"
+            },
+            {
+              "id": "block-05",
+              "type": "paragraph",
+              "text": "The final section calls for a multidimensional framework that takes biological functioning, emotional processes, cognitive and behavioral learning, social influences and life-span development into account. The fuller example of how these factors can interact is developed in Chapter 2 through the continued discussion of Janelle’s phobia."
+            },
+            {
+              "id": "block-06",
+              "type": "paragraph",
+              "text": "A single mechanism is not presented as a universal explanation. Instead, the textbook encourages the scientific examination of which influences are relevant and how they relate to one another."
+            },
+            {
+              "id": "block-07",
+              "type": "heading",
+              "text": "Interaction, not a pile of labels"
+            },
+            {
+              "id": "block-08",
+              "type": "paragraph",
+              "text": "An integrative explanation becomes more useful when it proposes testable relationships. The model gains value by making its possible relationships specific and open to investigation. The authors emphasize that evidence should determine which suggested influences are relevant."
+            },
+            {
+              "id": "block-09",
+              "type": "paragraph",
+              "text": "The authors connect this movement with developments in neuroscience and research methods. They also discuss the Research Domain Criteria (RDoC) initiative as an effort to investigate underlying dimensions and processes. RDoC is a research framework and should not be mistaken for a replacement clinical diagnostic manual in routine assessment."
+            },
+            {
+              "id": "block-10",
+              "type": "heading",
+              "text": "Scientific humility is a clinical strength"
+            },
+            {
+              "id": "block-11",
+              "type": "paragraph",
+              "text": "An old theory can be compelling and still be wrong. A modern biological discovery can be important without explaining a person's entire experience. An effective intervention can have benefits while its mechanism remains uncertain. Integrative thinking combines curiosity with restraint: weigh competing explanations, examine cultural and developmental context, and avoid claiming more certainty than the evidence supports."
+            }
+          ]
+        },
+        {
+          "id": "ch01-7",
+          "title": "Review the chapter",
+          "page": 26,
+          "kind": "detailed",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "heading",
+              "text": "The three historical traditions at a glance"
+            },
+            {
+              "id": "block-02",
+              "type": "heading",
+              "text": "A short timeline to remember"
+            },
+            {
+              "id": "block-03",
+              "type": "paragraph",
+              "text": "Ancient medicine: Hippocrates and Galen favor explanations grounded in the body, although their physiological theories were limited. Medieval and early modern periods: Supernatural explanations coexist with natural observations, community responses and emerging critiques. Late 1700s–1800s: Moral therapy and humane institutional reform become influential; classification and biological psychiatry also develop. Late 1800s–1900s: Psychoanalytic theory gains prominence; humanistic and behavioral approaches later grow in influence. Late 1900s onward: Improved research methods and multidimensional explanations increasingly connect biological, psychological and social processes."
+            },
+            {
+              "id": "block-04",
+              "type": "heading",
+              "text": "Terms worth knowing"
+            },
+            {
+              "id": "block-05",
+              "type": "paragraph",
+              "text": "Psychopathology: Scientific study of psychological disorders. Dysfunction: A disturbance in cognitive, emotional or behavioral functioning. Distress: Significant subjective suffering. Impairment: Difficulty functioning in important areas of life. Prototype: A recognizable pattern of features used to understand or classify a disorder. Clinical description: Structured account of an individual's presenting pattern and history. Prevalence / incidence: Existing cases in a defined population / new cases in a specified period. Etiology: Study of origins and contributing causes. Course / prognosis: Pattern of change over time / expected future outcome. Moral therapy: Historical reform movement emphasizing respectful, humane institutional care. Classical conditioning: Learning through associations among events. Operant conditioning: Learning through consequences of behavior. Scientist–practitioner: Clinician or researcher who connects evidence, evaluation and practice. Integrative approach: Model that investigates interacting influences rather than relying on a single explanatory level."
+            },
+            {
+              "id": "block-06",
+              "type": "heading",
+              "text": "Check your understanding"
+            },
+            {
+              "id": "block-07",
+              "type": "paragraph",
+              "text": "Why is it inaccurate to classify all rare behavior as a disorder?"
+            },
+            {
+              "id": "block-08",
+              "type": "paragraph",
+              "text": "Explain one situation in which distress does not imply a disorder and one in which severe problems may occur without acknowledged distress."
+            },
+            {
+              "id": "block-09",
+              "type": "paragraph",
+              "text": "How is prevalence different from incidence as described in the chapter?"
+            },
+            {
+              "id": "block-10",
+              "type": "paragraph",
+              "text": "Why might a treatment's success fail to reveal the original cause of a disorder?"
+            },
+            {
+              "id": "block-11",
+              "type": "paragraph",
+              "text": "How did supernatural explanations sometimes affect treatment and stigma?"
+            },
+            {
+              "id": "block-12",
+              "type": "paragraph",
+              "text": "What is the historical significance of Hippocrates and of Kraepelin? Name one limitation of each approach."
+            },
+            {
+              "id": "block-13",
+              "type": "paragraph",
+              "text": "Why could moral therapy decline even when reformers wanted better care?"
+            },
+            {
+              "id": "block-14",
+              "type": "paragraph",
+              "text": "Compare psychoanalytic, humanistic and behavioral approaches in a few sentences."
+            },
+            {
+              "id": "block-15",
+              "type": "paragraph",
+              "text": "In what sense can avoiding a feared situation be negatively reinforcing?"
+            },
+            {
+              "id": "block-16",
+              "type": "paragraph",
+              "text": "What makes an integrative explanation scientifically useful rather than merely broad?"
+            },
+            {
+              "id": "block-17",
+              "type": "heading",
+              "text": "Suggested answers — open after attempting the questions"
+            },
+            {
+              "id": "block-18",
+              "type": "paragraph",
+              "text": "Rarity says little about dysfunction, harm, impairment or cultural context."
+            },
+            {
+              "id": "block-19",
+              "type": "paragraph",
+              "text": "Grief can be painful yet understandable; a person in a manic state may report little suffering while experiencing serious impairment."
+            },
+            {
+              "id": "block-20",
+              "type": "paragraph",
+              "text": "Prevalence describes people living with the condition in a defined population and period; incidence counts new cases arising during that period."
+            },
+            {
+              "id": "block-21",
+              "type": "paragraph",
+              "text": "An intervention can influence a process involved in maintaining symptoms without correcting the original cause."
+            },
+            {
+              "id": "block-22",
+              "type": "paragraph",
+              "text": "They could encourage blame or punishment rather than assessment and support; the historical record also includes more compassionate responses."
+            },
+            {
+              "id": "block-23",
+              "type": "paragraph",
+              "text": "Hippocrates helped promote natural explanations but relied on mistaken physiology; Kraepelin advanced classification but did not provide a complete causal theory."
+            },
+            {
+              "id": "block-24",
+              "type": "paragraph",
+              "text": "Overcrowding, staffing problems and institutional changes undermined individual care."
+            },
+            {
+              "id": "block-25",
+              "type": "paragraph",
+              "text": "Psychoanalytic traditions emphasized unconscious conflict, humanistic approaches meaning and personal growth, and behaviorists learning and observable behavior."
+            },
+            {
+              "id": "block-26",
+              "type": "paragraph",
+              "text": "Avoidance can be strengthened because escaping a feared situation immediately reduces unpleasant anxiety; the longer-term effect may be to maintain fear."
+            },
+            {
+              "id": "block-27",
+              "type": "paragraph",
+              "text": "It proposes relationships that can be observed or tested and allows evidence to modify or reject proposed mechanisms."
+            },
+            {
+              "id": "block-28",
+              "type": "heading",
+              "text": "Master's-level reflection"
+            },
+            {
+              "id": "block-29",
+              "type": "paragraph",
+              "text": "Textbook-based reflection: “The history of psychopathology shows why no single explanatory model is enough.” Compare two historical traditions with the integrative approach, discuss how evidence and ethics shape treatment, and explain one risk of using an overly broad biopsychosocial formulation."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chapter-02",
+      "title": "An Integrative Approach to Psychopathology",
+      "sections": [
+        {
+          "id": "ch02-01",
+          "title": "From single causes to interaction",
+          "page": 30,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "The chapter rejects the idea that psychological problems can generally be explained by only one cause. The textbook returns to Janelle’s blood–injection–injury phobia to show how biological sensitivity, learned responses, feelings, circumstances and development can work together. Each influence becomes clearer when it is considered alongside the others."
+            }
+          ]
+        },
+        {
+          "id": "ch02-02",
+          "title": "Genes and environment",
+          "page": 30,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "Genetic contributions are considered as vulnerabilities, not simple destinies. The authors discuss gene–environment interaction, the diathesis–stress model, gene–environment correlation and epigenetic processes. The teaching point is to distinguish inherited contribution from a complete explanation of a person’s symptoms."
+            }
+          ]
+        },
+        {
+          "id": "ch02-03",
+          "title": "Nervous system and neurotransmitters",
+          "page": 30,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "The chapter introduces the central and peripheral nervous systems, the structure of the brain, and neurotransmitter systems including serotonin, GABA, glutamate, norepinephrine and dopamine. It also explores how psychosocial experiences relate to brain function and development, including discussion of the brain–gut connection."
+            }
+          ]
+        },
+        {
+          "id": "ch02-04",
+          "title": "Learning, thought and emotion",
+          "page": 30,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "Conditioning, learned helplessness, social learning, prepared learning and cognitive processes are presented as possible contributions to psychological disorders. Fear and other emotions have bodily, cognitive and behavioral components, so emotional responses are not separate from biology or learning."
+            }
+          ]
+        },
+        {
+          "id": "ch02-05",
+          "title": "Culture, relationships and development",
+          "page": 30,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "The final sections turn to gender, culture, social relationships, the incidence of disorders internationally, and changes over the life span. A multidimensional account considers both what a person brings to a situation and the context in which the problem appears."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chapter-03",
+      "title": "Clinical Assessment and Diagnosis",
+      "sections": [
+        {
+          "id": "ch03-01",
+          "title": "Why assessment comes before a label",
+          "page": 72,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "Clinical assessment is the systematic gathering and evaluation of psychological, biological and social information. The book distinguishes assessment from diagnosis and emphasizes reliability, validity and standardization when deciding whether a finding deserves trust."
+            }
+          ]
+        },
+        {
+          "id": "ch03-02",
+          "title": "Interviews and observation",
+          "page": 72,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "Clinical interviews, the mental-status examination, physical examinations, direct observation and self-monitoring each provide a different kind of information. The chapter also discusses structured or semistructured interviews and the ABC framework for behavioral observations."
+            }
+          ]
+        },
+        {
+          "id": "ch03-03",
+          "title": "Tests and physical measures",
+          "page": 72,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "The authors describe projective methods, personality inventories, intelligence and neuropsychological testing, neuroimaging, and psychophysiological measures. These are not interchangeable: their usefulness depends on the question being asked and the quality of the method."
+            }
+          ]
+        },
+        {
+          "id": "ch03-04",
+          "title": "Classification and diagnosis",
+          "page": 72,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "Diagnosis is explored through categorical, dimensional and prototypical approaches. The historical development of DSM classifications, classification reliability and validity, cultural concerns and criticism of diagnostic systems form an important part of the reading."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chapter-04",
+      "title": "Research Methods",
+      "sections": [
+        {
+          "id": "ch04-01",
+          "title": "Start with a testable question",
+          "page": 102,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "Research on psychopathology begins with a clear question and hypothesis. The chapter explains independent and dependent variables, research designs, threats to internal and external validity, and the difference between statistical and clinical significance."
+            }
+          ]
+        },
+        {
+          "id": "ch04-02",
+          "title": "Different methods answer different questions",
+          "page": 102,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "Case studies describe individuals closely but cannot establish general causal relationships on their own. Correlational studies examine how characteristics vary together. Controlled experiments can test causal predictions under appropriate conditions. The differences among these methods matter more than their names."
+            }
+          ]
+        },
+        {
+          "id": "ch04-03",
+          "title": "Single-case and treatment designs",
+          "page": 102,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "Single-case experimental methods follow individuals repeatedly and may use withdrawal or multiple-baseline arrangements. They can be informative about behavior change, but design and measurement remain central to interpretation."
+            }
+          ]
+        },
+        {
+          "id": "ch04-04",
+          "title": "Genetics, development, culture and ethics",
+          "page": 102,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "Family, twin, adoption and linkage studies contribute to questions about genetics. Longitudinal and cross-sectional studies illuminate development. Cross-cultural work, replication, prevention research and the rights of research participants shape trustworthy interpretation."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chapter-05",
+      "title": "Anxiety, Trauma- and Stressor-Related, and Obsessive-Compulsive and Related Disorders",
+      "sections": [
+        {
+          "id": "ch05-01",
+          "title": "Anxiety, fear and panic",
+          "page": 124,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "The chapter separates future-oriented anxiety from fear in response to an immediate threat and from the alarm reaction involved in panic. It introduces vulnerabilities, maintaining processes, comorbidity and the possibility that similar symptoms occur across diagnoses."
+            }
+          ]
+        },
+        {
+          "id": "ch05-02",
+          "title": "Anxiety disorders",
+          "page": 124,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "Generalized anxiety disorder, panic disorder with or without agoraphobia, specific phobias and social anxiety disorder are presented through clinical descriptions, findings on frequency and causes, and evidence about treatments."
+            }
+          ]
+        },
+        {
+          "id": "ch05-03",
+          "title": "Trauma and stress",
+          "page": 124,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "The authors examine posttraumatic stress disorder and prolonged grief disorder in the context of trauma- and stressor-related conditions. The chapter asks how experiences, interpretation, memory and social environment contribute to different patterns after stressful events."
+            }
+          ]
+        },
+        {
+          "id": "ch05-04",
+          "title": "Obsessive-compulsive and related conditions",
+          "page": 124,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "Obsessions, compulsions, body dysmorphic disorder and other obsessive-compulsive and related conditions are covered. The book treats their features, possible explanations and interventions as connected topics, not as interchangeable diagnoses."
+            }
+          ]
+        },
+        {
+          "id": "ch05-05",
+          "title": "How to read the evidence",
+          "page": 124,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "Use the disorder-by-disorder sections to compare defining characteristics, prevalence or developmental patterns, interacting causes and treatment findings. Avoid assuming that a treatment works because of one simple causal mechanism."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chapter-06",
+      "title": "Somatic Symptom and Related Disorders and Dissociative Disorders",
+      "sections": [
+        {
+          "id": "ch06-01",
+          "title": "Physical symptoms and psychological experience",
+          "page": 180,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "The opening sections concern somatic symptom disorder, illness anxiety disorder and psychological influences on medical conditions. The focus is on the experience and interpretation of physical symptoms and on the consequences of persistent concern or impairment."
+            }
+          ]
+        },
+        {
+          "id": "ch06-02",
+          "title": "Functional neurological and related presentations",
+          "page": 180,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "Conversion disorder, also termed functional neurological symptom disorder in the chapter, is considered with attention to clinical features and potential explanatory processes. The text also distinguishes factitious presentations and malingering rather than treating them as the same phenomenon."
+            }
+          ]
+        },
+        {
+          "id": "ch06-03",
+          "title": "Dissociation",
+          "page": 180,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "Depersonalization–derealization disorder, dissociative amnesia and dissociative identity disorder are discussed through their features, debated explanations and treatment considerations. The book includes a critical discussion of suggestibility, memory and the possibility of false memories."
+            }
+          ]
+        },
+        {
+          "id": "ch06-04",
+          "title": "Assessment and caution",
+          "page": 180,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "Across these conditions, the chapter’s organization points readers toward careful clinical evaluation, differential considerations, and balanced interpretation rather than assuming that symptoms reveal a single psychological or biological cause."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chapter-07",
+      "title": "Mood Disorders and Suicide",
+      "sections": [
+        {
+          "id": "ch07-01",
+          "title": "Defining mood conditions",
+          "page": 210,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "The chapter introduces depressed mood, mania, depressive disorders and bipolar disorders. It separates episodic patterns, duration and associated changes in functioning, then discusses how depressive and bipolar presentations differ."
+            }
+          ]
+        },
+        {
+          "id": "ch07-02",
+          "title": "Distribution and development",
+          "page": 210,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "The reading examines prevalence, age, developmental periods, cultural context and the association between mood and creativity. The same label may describe diverse clinical courses, so the course of a disorder is part of understanding it."
+            }
+          ]
+        },
+        {
+          "id": "ch07-03",
+          "title": "An integrative explanation",
+          "page": 210,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "Biological dimensions, psychological interpretations, social relationships and stress are considered together. The chapter presents an integrative account rather than endorsing one universal cause of mood disorders."
+            }
+          ]
+        },
+        {
+          "id": "ch07-04",
+          "title": "Treatment and relapse",
+          "page": 210,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "Medication, electroconvulsive therapy, transcranial magnetic stimulation, psychological interventions, combined approaches and prevention of relapse are included. Distinguish findings about treatment benefit from claims about why a disorder originally developed."
+            }
+          ]
+        },
+        {
+          "id": "ch07-05",
+          "title": "Suicide as a separate essential subject",
+          "page": 210,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "The book gives suicide its own section, including frequency, risk factors, links with psychological disorders, stressful life events and treatment. It should be studied carefully as a topic of assessment and prevention, without inferring risk from a single factor."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chapter-08",
+      "title": "Eating and Sleep–Wake Disorders",
+      "sections": [
+        {
+          "id": "ch08-01",
+          "title": "Eating disorders",
+          "page": 266,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "Bulimia nervosa, anorexia nervosa and binge-eating disorder are considered separately, with attention to clinical descriptions, consequences, associated difficulties and variation across settings and developmental periods."
+            }
+          ]
+        },
+        {
+          "id": "ch08-02",
+          "title": "Interacting causes and care",
+          "page": 266,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "The book examines social, biological and psychological influences as well as an integrative model. It covers psychological and drug treatments, prevention and differences in the treatment approaches used for particular eating disorders."
+            }
+          ]
+        },
+        {
+          "id": "ch08-03",
+          "title": "Obesity and disordered eating",
+          "page": 266,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "Obesity receives a separate section addressing patterns of eating, potential causes and approaches to treatment. It is important to read this as a distinct discussion rather than assuming that weight alone establishes an eating disorder."
+            }
+          ]
+        },
+        {
+          "id": "ch08-04",
+          "title": "Sleep–wake disorders",
+          "page": 266,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "The chapter addresses insomnia, hypersomnolence, narcolepsy, breathing-related sleep disturbances and circadian rhythm sleep problems, along with parasomnias. These are organized by clinical patterns and forms of disturbance, not merely by how long someone sleeps."
+            }
+          ]
+        },
+        {
+          "id": "ch08-05",
+          "title": "Treatment and prevention",
+          "page": 266,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "Medical, environmental and psychological treatments, along with prevention of sleep difficulties, form the final part of the reading. The chapter draws a distinction between evaluating a problem and deciding what intervention has evidence behind it."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chapter-09",
+      "title": "Physical Disorders and Health Psychology",
+      "sections": [
+        {
+          "id": "ch09-01",
+          "title": "Stress and the body",
+          "page": 318,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "The chapter explains health-related behavior, stress, the physiology of the stress response and links between emotional states and physical processes. It gives particular attention to stress and immune functioning."
+            }
+          ]
+        },
+        {
+          "id": "ch09-02",
+          "title": "Psychosocial influences on illness",
+          "page": 318,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "The text reviews psychological and social factors associated with physical conditions, including AIDS, cancer and cardiovascular problems. Its orientation is toward interaction: psychological processes may affect health without implying that a physical illness is imaginary."
+            }
+          ]
+        },
+        {
+          "id": "ch09-03",
+          "title": "Pain and chronic fatigue",
+          "page": 318,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "Chronic pain and chronic fatigue syndrome have dedicated sections. The pain discussion includes biological and psychosocial mechanisms, the subjective experience of pain and methods of pain control."
+            }
+          ]
+        },
+        {
+          "id": "ch09-04",
+          "title": "Health psychology interventions",
+          "page": 318,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "Biofeedback, relaxation, meditation and wider stress- or pain-reduction approaches appear in the treatment sections, along with coping and behavior change. The authors connect mental and physical health without claiming that every influence has the same importance."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chapter-10",
+      "title": "Sexual Dysfunctions, Paraphilic Disorders, and Gender Dysphoria",
+      "sections": [
+        {
+          "id": "ch10-01",
+          "title": "Understanding sexual behavior",
+          "page": 356,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "The book begins by examining ideas about “normal” sexuality, gender differences, cultural differences and the development of sexual orientation. These form the background for studying problems that involve distress or impairment."
+            }
+          ]
+        },
+        {
+          "id": "ch10-02",
+          "title": "Sexual dysfunctions and assessment",
+          "page": 356,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "Sexual desire, arousal, orgasm and pain difficulties are presented as distinct clinical concerns. The chapter covers interviews, medical examination and psychophysiological methods used in assessment."
+            }
+          ]
+        },
+        {
+          "id": "ch10-03",
+          "title": "Contributing factors and treatment",
+          "page": 356,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "Biological, psychological and sociocultural explanations are explored alongside medical and psychosocial approaches to treatment. The book emphasizes the interaction of physical and psychological processes."
+            }
+          ]
+        },
+        {
+          "id": "ch10-04",
+          "title": "Paraphilic disorders",
+          "page": 356,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "The chapter distinguishes different paraphilic disorders and discusses descriptions, assessment and treatment. These sections require careful attention to the book’s clinical definitions, including their discussion of distress, harm and nonconsent."
+            }
+          ]
+        },
+        {
+          "id": "ch10-05",
+          "title": "Gender dysphoria",
+          "page": 356,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "The chapter separately addresses gender dysphoria, including how it is defined in the book, the questions examined about causes, and approaches to support or treatment discussed in the source. Treat the book’s diagnostic framing as the edition’s material, not as an automatically updated clinical standard."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chapter-11",
+      "title": "Substance-Related, Addictive, and Impulse-Control Disorders",
+      "sections": [
+        {
+          "id": "ch11-01",
+          "title": "Levels of substance involvement",
+          "page": 400,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "The chapter distinguishes substance use from patterns identified as problematic or disordered. It introduces classification issues and then considers major drug categories through their physical and psychological effects."
+            }
+          ]
+        },
+        {
+          "id": "ch11-02",
+          "title": "Types of substances",
+          "page": 400,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "Depressants, alcohol, sedatives, stimulants, tobacco, caffeine, opioids, cannabis, hallucinogens, inhalants and other substances are included. Each substance category has its own characteristics, so a single simple description of “addiction” is insufficient."
+            }
+          ]
+        },
+        {
+          "id": "ch11-03",
+          "title": "Why use becomes difficult to change",
+          "page": 400,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "The textbook brings biological, psychological, cognitive, social and cultural dimensions together in an integrative account of substance-related disorders. Learning processes, consequences and context matter alongside pharmacological effects."
+            }
+          ]
+        },
+        {
+          "id": "ch11-04",
+          "title": "Treatment and wider conditions",
+          "page": 400,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "The treatment sections consider biological and psychological interventions and relapse. The chapter also includes addictive behaviors and impulse-control disorders, so not every condition discussed involves ingesting a substance."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chapter-12",
+      "title": "Personality Disorders",
+      "sections": [
+        {
+          "id": "ch12-01",
+          "title": "How personality disorders are understood",
+          "page": 444,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "The opening considers long-standing patterns of experience and behavior, and the debate between categorical and dimensional classification. Statistics, development, comorbidity and gender differences are part of the background."
+            }
+          ]
+        },
+        {
+          "id": "ch12-02",
+          "title": "Cluster A",
+          "page": 444,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "Paranoid, schizoid and schizotypal personality disorders are grouped in Cluster A. The book examines their clinical presentations and proposed causes or treatments without treating them as identical."
+            }
+          ]
+        },
+        {
+          "id": "ch12-03",
+          "title": "Cluster B",
+          "page": 444,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "Antisocial, borderline, histrionic and narcissistic personality disorders are described in Cluster B. The chapter covers behavior patterns, explanations and treatments; dialectical behavior therapy appears in its discussion of borderline personality disorder."
+            }
+          ]
+        },
+        {
+          "id": "ch12-04",
+          "title": "Cluster C",
+          "page": 444,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "Avoidant, dependent and obsessive-compulsive personality disorders are considered in Cluster C. The chapter looks at differences among conditions whose patterns may involve anxiety, dependency or rigidity."
+            }
+          ]
+        },
+        {
+          "id": "ch12-05",
+          "title": "Careful comparisons",
+          "page": 444,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "Cluster names are memory aids, not replacements for considering an individual’s specific difficulties, developmental history, comorbidity and diagnostic criteria."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chapter-13",
+      "title": "Schizophrenia Spectrum and Other Psychotic Disorders",
+      "sections": [
+        {
+          "id": "ch13-01",
+          "title": "What schizophrenia-spectrum means",
+          "page": 480,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "The chapter traces historical descriptions and considers schizophrenia as a spectrum of cognitive, emotional and behavioral disturbances. It distinguishes positive, negative and disorganized symptom groupings."
+            }
+          ]
+        },
+        {
+          "id": "ch13-02",
+          "title": "Symptom groups and related diagnoses",
+          "page": 480,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "Delusions, hallucinations, reduced emotional or motivational expression, and disorganized speech or behavior are not all the same symptom. Schizophreniform, schizoaffective, delusional and brief psychotic disorders receive separate treatment in the chapter."
+            }
+          ]
+        },
+        {
+          "id": "ch13-03",
+          "title": "Frequency, development and causal questions",
+          "page": 480,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "The book reviews genetic, biological, neurodevelopmental, social and psychological influences, as well as onset, course, cultural context and differences in outcomes. The causes discussion is integrative rather than singular."
+            }
+          ]
+        },
+        {
+          "id": "ch13-04",
+          "title": "Treatments and longer-term support",
+          "page": 480,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "Antipsychotic medications and psychosocial interventions are examined in relation to symptoms, functioning and prognosis. The chapter treats treatment and recovery as broader questions than the mere presence of unusual perceptions or beliefs."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chapter-14",
+      "title": "Neurodevelopmental Disorders",
+      "sections": [
+        {
+          "id": "ch14-01",
+          "title": "A developmental perspective",
+          "page": 516,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "The chapter asks what is typical at different developmental stages and how a difficulty can influence later learning. A neurodevelopmental condition must be understood in relation to developing abilities and the environments in which those abilities are used."
+            }
+          ]
+        },
+        {
+          "id": "ch14-02",
+          "title": "ADHD",
+          "page": 516,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "Attention-deficit/hyperactivity disorder is discussed through its clinical characteristics, frequency, contributing factors and treatments. The treatment sections include both biological and psychosocial approaches."
+            }
+          ]
+        },
+        {
+          "id": "ch14-03",
+          "title": "Specific learning and communication",
+          "page": 516,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "The textbook considers specific learning disorder and difficulties involving language, communication or other developmental skills. Each needs a description tied to the actual domain of difficulty."
+            }
+          ]
+        },
+        {
+          "id": "ch14-04",
+          "title": "Autism spectrum disorder",
+          "page": 516,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "The chapter addresses differences in social communication and interaction, restricted or repetitive behaviors and interests, contributing biological and psychosocial dimensions, and interventions. Its discussion of care covers several kinds of support."
+            }
+          ]
+        },
+        {
+          "id": "ch14-05",
+          "title": "Other developmental conditions",
+          "page": 516,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "Intellectual disability and additional neurodevelopmental disorders appear in the wider chapter. The central task is to link descriptions, developmental course, relevant support needs and evidence about interventions."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chapter-15",
+      "title": "Neurocognitive Disorders",
+      "sections": [
+        {
+          "id": "ch15-01",
+          "title": "Delirium is not the same as progressive decline",
+          "page": 548,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "The book separates delirium, an acute disturbance of attention or awareness that can accompany medical conditions or other stressors, from major and mild neurocognitive disorders. The difference in course is central."
+            }
+          ]
+        },
+        {
+          "id": "ch15-02",
+          "title": "Major and mild neurocognitive disorders",
+          "page": 548,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "The text discusses patterns of cognitive change affecting domains such as memory, attention, language and executive skills. Clinical descriptions and impact on everyday functioning help distinguish presentations."
+            }
+          ]
+        },
+        {
+          "id": "ch15-03",
+          "title": "Causes and types",
+          "page": 548,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "Alzheimer’s disease, vascular causes and several other medical or neurological processes are considered. The chapter shows why a similar cognitive symptom can arise from different underlying conditions."
+            }
+          ]
+        },
+        {
+          "id": "ch15-04",
+          "title": "Treatment, support and prevention",
+          "page": 548,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "Treatment may focus on causes where possible, helping with symptoms, maintaining functioning and supporting families or caregivers. The chapter also examines prevention and factors associated with cognitive health."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chapter-16",
+      "title": "Mental Health Services: Legal and Ethical Issues",
+      "sections": [
+        {
+          "id": "ch16-01",
+          "title": "Mental health law in context",
+          "page": 574,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "The final chapter introduces changing public and legal attitudes toward people with psychological disorders. It treats the law as an area in which liberty, protection, responsibility and care can come into tension."
+            }
+          ]
+        },
+        {
+          "id": "ch16-02",
+          "title": "Civil commitment",
+          "page": 574,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "Criteria and procedures for involuntary care, the definition of mental illness, perceived dangerousness, deinstitutionalization and relevant court decisions are reviewed. These are the legal issues addressed in the textbook’s own jurisdictional framing."
+            }
+          ]
+        },
+        {
+          "id": "ch16-03",
+          "title": "Criminal responsibility and competence",
+          "page": 574,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "The chapter examines the insanity defense, criminal commitment, competence to stand trial, expert testimony and the duty to warn. These are different legal questions, even though they involve mental health evidence."
+            }
+          ]
+        },
+        {
+          "id": "ch16-04",
+          "title": "Rights and ethical practice",
+          "page": 574,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "Patients’ rights to treatment, refusal of treatment and protection when participating in research are discussed alongside evidence-based practice and clinical practice guidelines."
+            }
+          ]
+        },
+        {
+          "id": "ch16-05",
+          "title": "Mental health services",
+          "page": 574,
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "The concluding material concerns systems of service delivery, access and professional responsibilities. Treat its law and service descriptions as the book’s 2023 discussion rather than universal or current law in every country."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
