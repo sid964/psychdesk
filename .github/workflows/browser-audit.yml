@@ -6,6 +6,10 @@ on:
       - 'book-catalog.js'
       - 'book-reader.js'
       - 'book-reader.css'
+      - 'pdf-reader.js'
+      - 'pdf-reader.css'
+      - 'reader-studio.css'
+      - 'tests/pdf-reader-browser.cjs'
       - 'tests/book-reader-browser.cjs'
       - 'app.js'
       - 'sw.js'
@@ -81,6 +85,8 @@ jobs:
         run: node tests/phase4-browser.cjs
       - name: Multi-book reader navigation and persistence
         run: node tests/book-reader-browser.cjs
+      - name: Phase 10 Kindle-style PDF reading smoke
+        run: node tests/pdf-reader-browser.cjs
       - name: Phase 6 responsive accessibility and paint baseline
         run: node tests/phase6-browser.cjs
       - name: Prepare the preceding published release (read-only archive)
