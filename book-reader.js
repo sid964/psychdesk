@@ -83,6 +83,7 @@
   if (root !== 'books') return false;
   const book = lookup(bookId);
   const section = book?.sections.find(item => item.id === sectionId);
+  if(book&&!section)shelfBookId=book.id;
   current = section ? {book, section, blockId:section.blocks.some(item => item.id === blockId) ? blockId : ''} : {};
   if (section) {
    const saved = record(book);
@@ -141,7 +142,7 @@
   const readParts=ch.sections.filter(p=>(record(book).completed||[]).includes(p.id)).length;
   const first=ch.sections[0],page=ch.sections.find(p=>Number.isInteger(p.page))?.page;
   const detailed=ch.sections.some(p=>p.kind==='detailed'),isRead=chapterStatus(book,ch)==='Read';
-  return `<button type="button" class="bk-ref-chapter" data-book-action="openPart" data-book-id="${esc(book.id)}" data-part-id="${esc(first.id)}" data-palette="${Math.min(4,Math.floor(i/4))+1}" aria-label="Read chapter ${i+1}: ${esc(ch.title)}">
+  return `<button type="button" class="bk-ref-chapter" data-book-action="openPart" data-book-id="${esc(book.id)}" data-part-id="${esc(first.id)}" data-palette="${i<4?1:i<8?2:i<11?3:i<15?4:5}" aria-label="Read chapter ${i+1}: ${esc(ch.title)}">
    <span class="bk-ref-number">${String(i+1).padStart(2,'0')}</span><strong>${esc(ch.title)}</strong>
    <small>${page?'Book p. '+page+' · ':''}${detailed?'Full Chapter 1 notes':'Original chapter guide'}<span>${readParts}/${ch.sections.length} parts reviewed${isRead?' · Chapter read':''}</span></small>
   </button>`;
@@ -430,7 +431,7 @@
   const action = control.dataset.bookAction;
   if (action === 'open') return open(control.dataset.bookId);
   if (action === 'openPart') {const book=lookup(control.dataset.bookId),part=book?.sections.find(p=>p.id===control.dataset.partId);if(book&&part)navigate(book,part);return;}
-  if (action === 'selectBook') {if(lookup(control.dataset.bookId)){shelfBookId=control.dataset.bookId;core.render();document.querySelector('.bk-reference-library')?.scrollIntoView({block:'start'});}return;}
+  if (action === 'selectBook') {if(lookup(control.dataset.bookId)){shelfBookId=control.dataset.bookId;history.pushState(null,'','#books/'+shelfBookId);readRoute();document.querySelector('.bk-reference-library')?.scrollIntoView({block:'start'});}return;}
   if (action === 'viewChapters') {document.querySelector('#bk-chapters')?.scrollIntoView({block:'start',behavior:'smooth'});return;}
   if (action === 'bookMenu') {document.querySelector(catalog.length>1?'#bk-book-list':'#bk-chapters')?.scrollIntoView({block:'start',behavior:'smooth'});return;}
   if (action === 'readingAppearance') {const book=lookup(shelfBookId)||latestBook()||catalog[0];if(book){open(book.id);appearance(book);}return;}
