@@ -155,3 +155,146 @@ html[data-theme="dark"] .bk-chapter-track>span{background:#d7c1a2}
 .bk-page-end button[data-book-action="chapterComplete"]{background:var(--bk-soft);border-color:var(--bk-rule)}
 .bk-page-end button[data-book-action="chapterComplete"][aria-pressed="true"]{border-color:var(--bk-accent)}
 .bk-results h3 small{font:500 .73rem/1.5 system-ui,sans-serif;color:var(--bk-muted)}
+
+
+/* Library design correction — quiet monochrome system, November 2026.
+   The bookshelf follows PsychDesk. Unsaved book themes follow the app;
+   explicit white, dark and warm-paper preferences remain intact. */
+.bk-shelf{
+ --bk-paper:#ffffff;--bk-ink:#191919;--bk-muted:#666666;--bk-accent:#222222;
+ --bk-rule:#dedede;--bk-soft:#f3f3f3;--bk-desk:#ffffff;--bk-highlight:#dedede;
+ color:var(--bk-ink);
+ font-family:Manrope,system-ui,sans-serif
+}
+html[data-theme="dark"] .bk-shelf{
+ --bk-paper:#080808;--bk-ink:#f0f0f0;--bk-muted:#a6a6a6;--bk-accent:#eeeeee;
+ --bk-rule:#282828;--bk-soft:#151515;--bk-desk:#000000;--bk-highlight:#424242;
+ color:var(--bk-ink)
+}
+.bk-shelf .bk-hero{
+ min-height:0;grid-template-columns:minmax(0,1.45fr) minmax(230px,.75fr);
+ gap:clamp(20px,3vw,34px);padding:clamp(22px,3vw,36px);
+ background:var(--bk-paper);border:1px solid var(--bk-rule);border-radius:12px;
+ box-shadow:none
+}
+html[data-theme="dark"] .bk-shelf .bk-hero{background:#080808;border-color:#262626}
+.bk-shelf .bk-kicker{color:var(--bk-muted);font:700 .67rem/1.6 Manrope,system-ui,sans-serif;letter-spacing:.11em}
+.bk-shelf .bk-hero h1{font:600 clamp(2.1rem,3.4vw,3rem)/1.13 Manrope,system-ui,sans-serif;letter-spacing:-.06em;
+ color:var(--bk-ink);margin:3px 0 9px}
+.bk-shelf .bk-hero-main>p:not(.bk-kicker){font-size:.88rem;line-height:1.65;color:var(--bk-muted);margin:0;max-width:46ch}
+.bk-shelf .bk-hero-stats{gap:clamp(20px,3vw,40px);margin-top:23px}
+.bk-shelf .bk-hero-stats strong{font:600 clamp(1.4rem,2.3vw,1.95rem)/1.16 Manrope,system-ui,sans-serif;letter-spacing:-.05em}
+.bk-shelf .bk-hero-stats span{font-size:.74rem;letter-spacing:0;color:var(--bk-muted)}
+.bk-shelf .bk-continue{min-height:0;background:transparent;border:0;border-left:1px solid var(--bk-rule);
+ padding:8px 8px 8px clamp(18px,3vw,32px);border-radius:0;align-content:center;gap:10px}
+html[data-theme="dark"] .bk-shelf .bk-continue{background:transparent;border-color:#292929}
+.bk-shelf .bk-continue>strong{font:500 clamp(1.08rem,1.8vw,1.4rem)/1.38 Georgia,serif;color:var(--bk-ink)}
+.bk-shelf .bk-continue>span{color:var(--bk-muted);font-size:.78rem}
+.bk-shelf .bk-primary{background:var(--bk-ink);border:1px solid var(--bk-ink);
+ color:var(--bk-paper);border-radius:7px;font-weight:650;margin-top:1px}
+html[data-theme="dark"] .bk-shelf .bk-primary{background:#ededed;border-color:#ededed;color:#0a0a0a}
+.bk-shelf .bk-library-actions{margin:14px 0 26px;gap:8px}
+.bk-shelf .bk-library-actions button{background:transparent;border:1px solid var(--bk-rule);
+ color:var(--bk-ink);border-radius:7px;font-size:.79rem;min-height:40px;padding:9px 13px}
+html[data-theme="dark"] .bk-shelf .bk-library-actions button{background:#050505;border-color:#292929;color:#eeeeee}
+html[data-theme="dark"] .bk-shelf .bk-library-actions button:hover{background:#161616}
+.bk-shelf .bk-library-actions button:hover{background:var(--bk-soft)}
+.bk-shelf .bk-collection-top h2{font:600 clamp(1.42rem,2.4vw,1.9rem)/1.18 Manrope,system-ui,sans-serif;
+ letter-spacing:-.045em;color:var(--bk-ink)}
+.bk-shelf .bk-collection-top p:not(.bk-kicker){color:var(--bk-muted);font-size:.8rem}
+.bk-shelf .bk-filter{margin:16px 0 22px}
+.bk-shelf .bk-filter label{color:var(--bk-muted)}
+.bk-shelf .bk-filter :is(input,select){color:var(--bk-ink);background:var(--bk-paper);
+ border:1px solid var(--bk-rule);border-radius:7px}
+.bk-shelf .bk-grid{grid-template-columns:repeat(auto-fill,minmax(min(100%,186px),1fr));gap:20px}
+.bk-shelf .bk-book-card{gap:10px}
+.bk-shelf .bk-cover,.bk-shelf .bk-cover:nth-child(3n+2),.bk-shelf .bk-cover:nth-child(3n+3){
+ min-height:0;padding:20px;border:1px solid #414141;border-left:4px solid #525252;
+ border-radius:3px 7px 7px 3px;background:#1d1d1d;color:#f6f6f6;box-shadow:none
+}
+.bk-shelf .bk-cover:nth-child(3n+2){background:#2a2a2a}
+.bk-shelf .bk-cover:nth-child(3n+3){background:#333333}
+.bk-shelf .bk-cover:hover{box-shadow:0 6px 16px #0002;transform:translateY(-2px)}
+.bk-shelf .bk-cover strong{font:500 clamp(1.16rem,1.9vw,1.42rem)/1.22 Georgia,serif;color:#f6f6f6;letter-spacing:-.01em}
+.bk-shelf .bk-cover :is(small,span){color:#dadada;font-size:.7rem;line-height:1.45}
+.bk-shelf .bk-book-detail h3{color:var(--bk-ink);font-size:.91rem}
+.bk-shelf .bk-book-detail p,.bk-shelf .bk-source-disclosure{color:var(--bk-muted)}
+.bk-shelf .bk-chapter-track{height:4px;background:var(--bk-soft)}
+.bk-shelf .bk-chapter-track>span{background:var(--bk-ink)}
+html[data-theme="dark"] .bk-shelf .bk-chapter-track>span{background:#eeeeee}
+
+/* Reader: true black alongside the app, or a white page in light mode.
+   The third, warm-paper tone is opt-in and never forced onto an AMOLED UI. */
+.bk-reader[data-bk-theme="dark"],html[data-theme="dark"] .bk-reader[data-bk-theme="auto"]{
+ --bk-paper:#000000;--bk-ink:#efefef;--bk-muted:#a8a8a8;--bk-accent:#eeeeee;
+ --bk-rule:#282828;--bk-soft:#151515;--bk-desk:#000000;--bk-highlight:#474747;
+ color-scheme:dark
+}
+.bk-reader[data-bk-theme="white"],html[data-theme="light"] .bk-reader[data-bk-theme="auto"]{
+ --bk-paper:#ffffff;--bk-ink:#1b1b1b;--bk-muted:#666666;--bk-accent:#232323;
+ --bk-rule:#dedede;--bk-soft:#f4f4f4;--bk-desk:#ffffff;--bk-highlight:#d7d7d7;
+ color-scheme:light
+}
+.bk-reader[data-bk-theme="sepia"]{
+ --bk-paper:#faf7f0;--bk-ink:#282622;--bk-muted:#625f59;--bk-accent:#4c4943;
+ --bk-rule:#ded9cf;--bk-soft:#f0ece3;--bk-desk:#f5f1e9;--bk-highlight:#e2d49f;
+ color-scheme:light
+}
+.bk-reader{max-width:1080px;margin-bottom:28px;border-radius:10px;box-shadow:none}
+.bk-reader .bk-bar{padding:7px clamp(9px,1.9vw,22px);gap:3px;
+ background:var(--bk-paper);border-color:var(--bk-rule);color:var(--bk-ink)}
+.bk-reader .bk-bar button{font:550 .79rem/1.3 Manrope,system-ui,sans-serif;color:var(--bk-ink);border-radius:6px}
+.bk-reader .bk-bar button:hover,.bk-reader .bk-bar button[aria-pressed="true"]{
+ background:var(--bk-soft);border-color:var(--bk-rule)}
+.bk-reader .bk-page{width:min(calc(100% - 28px),calc(var(--bk-width) + 92px));
+ padding:clamp(20px,3.2vw,46px);margin:clamp(12px,2.5vw,25px) auto;
+ background:var(--bk-paper);color:var(--bk-ink);border:1px solid var(--bk-rule);
+ box-shadow:none;border-radius:8px}
+.bk-reader .bk-page header{padding-bottom:18px;margin-bottom:23px;border-color:var(--bk-rule)}
+.bk-reader .bk-page .bk-kicker{color:var(--bk-muted);font:650 .68rem/1.55 Manrope,system-ui,sans-serif;
+ letter-spacing:.075em;text-transform:uppercase}
+.bk-reader .bk-page h1{font:600 clamp(1.9rem,3vw,2.6rem)/1.18 Manrope,system-ui,sans-serif;
+ color:var(--bk-ink);letter-spacing:-.055em;margin:9px 0 10px}
+.bk-reader .bk-page-ref,.bk-reader .bk-chapter-status{color:var(--bk-muted);font-size:.78rem}
+.bk-reader .bk-chapter-status span:first-child{color:var(--bk-ink);font-weight:600}
+.bk-reader .bk-text{font:var(--bk-size)/var(--bk-leading) Georgia,"Times New Roman",serif;
+ color:var(--bk-ink);letter-spacing:.004em}
+.bk-reader .bk-text :is(p,blockquote){margin:0 0 1.24em}
+.bk-reader .bk-text h2{font:600 1.2em/1.3 Georgia,serif;letter-spacing:0;color:var(--bk-ink)}
+.bk-reader .bk-text mark{color:var(--bk-ink);background:var(--bk-highlight)}
+.bk-reader .bk-study{margin-top:26px;padding-top:16px;border-color:var(--bk-rule)}
+.bk-reader .bk-study p{color:var(--bk-muted);font-size:.77rem;margin:0 0 10px}
+.bk-reader :is(.bk-study,.bk-page-end) button{
+ min-height:40px;border:1px solid var(--bk-rule);background:transparent;color:var(--bk-ink);
+ border-radius:6px;font:550 .77rem/1.35 Manrope,system-ui,sans-serif;margin:0
+}
+.bk-reader .bk-study button:hover,.bk-reader .bk-page-end button:hover{background:var(--bk-soft)}
+.bk-reader .bk-study{display:flex;flex-wrap:wrap;gap:7px}
+.bk-reader .bk-study p{flex-basis:100%}
+.bk-reader .bk-page-end{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}
+.bk-reader .bk-page-end button[data-book-action="chapterComplete"]{
+ background:var(--bk-ink);border-color:var(--bk-ink);color:var(--bk-paper)}
+.bk-reader .bk-page-end button[data-book-action="chapterComplete"][aria-pressed="true"]{
+ background:var(--bk-soft);color:var(--bk-ink);border-color:var(--bk-rule)}
+.bk-reader .bk-bottom{min-height:55px;justify-content:space-between}
+.bk-reader .bk-bottom button[data-book-action="jump"]{
+ background:transparent;color:var(--bk-muted);border-color:transparent;font-size:.75rem}
+.bk-reader .bk-selection{background:var(--bk-paper);border-color:var(--bk-rule)}
+.bk-reader :is(button,a):focus-visible,.bk-shelf :is(button,select,input):focus-visible{
+ outline:2px solid var(--bk-accent);outline-offset:3px}
+@media(max-width:700px){
+ .bk-shelf .bk-hero{grid-template-columns:1fr}
+ .bk-shelf .bk-continue{border-left:0;border-top:1px solid var(--bk-rule);padding:16px 0 0}
+ .bk-reader .bk-page{width:100%;border-left:0;border-right:0;border-radius:0;margin:0;padding:25px clamp(17px,5vw,30px)}
+ .bk-reader .bk-bar{flex-wrap:wrap}
+}
+@media(max-width:450px){
+ .bk-shelf .bk-hero{padding:19px}
+ .bk-shelf .bk-hero-stats{margin-top:16px}
+ .bk-shelf .bk-library-actions{margin-bottom:22px}
+ .bk-reader .bk-page h1{font-size:1.9rem}
+}
+@media(prefers-reduced-motion:reduce){
+ .bk-shelf .bk-cover{transition:none!important}
+ .bk-shelf .bk-cover:hover{transform:none!important}
+}
