@@ -2,7 +2,7 @@
 (()=>{'use strict';
 const core=window.PsychDeskCore;
 if(!core)return;
-const allowed=new Set(['reader','notes','ink','recall','focus','planner','materials','research','dictionary','timeline','board','mindmap','connections','university','psychology']);
+const allowed=new Set(['books','reader','notes','ink','recall','focus','planner','materials','research','dictionary','timeline','board','mindmap','connections','university','psychology']);
 const key=()=> 'psychdesk-session-v1:'+core.getStorageKey();
 const validId=value=>typeof value==='string'&&value.length>0&&value.length<=180;
 const safeTab=tab=>allowed.has(tab)?tab:null;
@@ -16,6 +16,10 @@ function readRaw(){
 function getResume(){
  const saved=readRaw();
  if(!saved)return null;
+ if(saved.tab==='books'){
+  const book=window.PsychDeskBooks?.latestBook();
+  return book?{tab:'books',bookId:book.id,title:book.title}:null;
+ }
  if(saved.tab==='reader'){
   const item=(core.getData().materials||[]).find(m=>m.id===saved.materialId&&['pdf','markdown'].includes(m.kind));
   if(!item)return null;
@@ -60,6 +64,7 @@ function recordTab(tab){
 function resume(){
  const previous=getResume();
  if(!previous){core.toast('Your previous study material is no longer available here.');return;}
+ if(previous.tab==='books'){window.PsychDeskBooks?.open(previous.bookId);return;}
  if(previous.tab==='reader'){
   const reader=window.PsychDeskReader;
   if(reader?.open)reader.open(previous.materialId,previous.page);
@@ -78,13 +83,13 @@ function resume(){
 }
 function homeButton(){
  const previous=getResume();if(!previous)return '';
- const short=previous.tab==='reader'?'Continue reading':previous.tab==='materials'?'Open library':previous.tab==='notes'?'Continue your note':previous.tab==='focus'?'Return to focus':'Continue studying';
+ const short=['books','reader'].includes(previous.tab)?'Continue reading':previous.tab==='materials'?'Open library':previous.tab==='notes'?'Continue your note':previous.tab==='focus'?'Return to focus':'Continue studying';
  const detail=previous.tab==='reader'?'Page '+previous.page+' · '+previous.title:previous.title;
  return '<button class="garden-main-btn" type="button" data-session="resume" aria-label="'+esc(short+' — '+detail)+'">'+esc(short)+' <span aria-hidden="true">↗</span></button>';
 }
 function homeDetail(){
  const previous=getResume();if(!previous)return '';
- const kind=previous.tab==='reader'?'LAST BOOK':previous.tab==='notes'?'LATEST NOTE':'LAST OPENED';
+ const kind=['books','reader'].includes(previous.tab)?'LAST BOOK':previous.tab==='notes'?'LATEST NOTE':'LAST OPENED';
  const description=previous.tab==='reader'?'Page '+previous.page+' · Open where you stopped.':'Continue without finding your place again.';
  return '<div class="garden-notebook-copy"><span class="studio-kicker">'+kind+'</span><h3>'+esc(previous.title)+'</h3><p>'+esc(description)+'</p></div>'+
  '<div class="garden-book-actions"><span>Saved on this device</span><button type="button" class="garden-text-btn" data-session="resume">Continue ↗</button></div>';

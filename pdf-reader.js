@@ -143,13 +143,13 @@ async function processBlob(blob,kind,version){
  selected={text:'',rects:[],page};savePageBookmark();window.PsychDeskSession?.readerPage(page);
  fileText='';loading=false;core.render();
 }
-async function openLocal(file){
+async function openLocal(file,startPage=0){
  if(!file)return;
  const ext=file.name.toLowerCase();
  if(!/\.(pdf|md|markdown)$/.test(ext)){core.toast('Choose a PDF or Markdown file.');return;}
  if(file.size>80*1024*1024){core.toast('The in-browser reader supports files up to 80 MB.');return;}
  generation++;const version=generation;releaseDocument();
- material=null;localFile=file;pdf=null;fileText='';readerError='';page=1;loading=true;requestedPage=0;mobileMode='read';selected={text:'',rects:[],page:1};
+ material=null;localFile=file;pdf=null;fileText='';readerError='';page=1;loading=true;requestedPage=Number.isSafeInteger(startPage)&&startPage>0?startPage:0;mobileMode='read';selected={text:'',rects:[],page:1};
  core.setTab('reader');
  try{await processBlob(file,/\.pdf$/.test(ext)?'pdf':'markdown',version);}
  catch(e){if(version===generation){readerError=String(e.message||e);loading=false;core.render();}}
