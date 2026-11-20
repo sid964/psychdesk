@@ -155,3 +155,13 @@ html[data-theme="dark"] .bk-chapter-track>span{background:#d7c1a2}
 .bk-page-end button[data-book-action="chapterComplete"]{background:var(--bk-soft);border-color:var(--bk-rule)}
 .bk-page-end button[data-book-action="chapterComplete"][aria-pressed="true"]{border-color:var(--bk-accent)}
 .bk-results h3 small{font:500 .73rem/1.5 system-ui,sans-serif;color:var(--bk-muted)}
+
+/* Phase 11: earned milestones, not decorative unearned badges. */
+.bk-milestones{margin-top:20px;padding-top:14px;border-top:1px solid var(--bk-rule)}
+.bk-milestones .bk-kicker{margin-bottom:7px}
+.bk-earned{display:flex;flex-wrap:wrap;gap:7px}
+.bk-earned span{display:inline-block;padding:6px 10px;border:1px solid var(--bk-rule);border-radius:20px;
+ background:var(--bk-paper);font-size:.76rem;color:var(--bk-ink)}
+.bk-milestones .bk-unearned{font-size:.83rem;line-height:1.5;color:var(--bk-muted);margin:5px 0 9px}
+.bk-milestones>small{display:block;margin-top:9px;font-size:.72rem;color:var(--bk-muted)}
+html[data-theme="dark"] .bk-earned span{background:#0b0b0b;color:#eee4d8;border-color:#433b32}
