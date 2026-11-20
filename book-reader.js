@@ -41,11 +41,11 @@
  const records = () => core.getData().bookReading || [];
  const record = book => records().find(row => row.bookId === book.id) || {};
  const savedSection = book => book.sections.find(section => section.id === record(book).sectionId) || book.sections[0];
- const defaults = {theme:'sepia', size:19, leading:1.8, width:660};
+ const defaults = {theme:'auto', size:19, leading:1.75, width:660};
  function preferences(book) {
   const saved = record(book).preferences || {};
   return {
-   theme:['sepia','white','dark'].includes(saved.theme)?saved.theme:defaults.theme,
+   theme:['auto','sepia','white','dark'].includes(saved.theme)?saved.theme:defaults.theme,
    size:Number.isInteger(saved.size)&&saved.size>=15&&saved.size<=27?saved.size:defaults.size,
    leading:Number.isFinite(saved.leading)&&saved.leading>=1.5&&saved.leading<=2.2?saved.leading:defaults.leading,
    width:[560,660,780].includes(saved.width)?saved.width:defaults.width
@@ -140,7 +140,7 @@
  return `<section class="bk-shelf" aria-label="Indexed psychology books">
   <header class="bk-hero"><div class="bk-hero-main">
    <p class="bk-kicker">PsychDesk · Reading room</p><h1>My library</h1>
-   <p>A quiet place for your indexed psychology books. Read at your own pace, save passages and continue where you left off.</p>
+   <p>Your books, chapters and reading progress — all in one place.</p>
    <div class="bk-hero-stats" aria-label="Your library reading achievements">
     <div><strong>${catalog.length}</strong><span>Indexed ${catalog.length===1?'book':'books'}</span></div>
     <div><strong>${readChapters}</strong><span>Chapters read</span></div>
@@ -306,7 +306,7 @@
  function appearance(book) {
   const prefs = preferences(book);
   core.openModal('Reading appearance', `<form id="bk-appearance">
-   <div class="field"><label>Page tone</label><select name="theme">${[['sepia','Warm paper'],['white','White'],['dark','Dark']].map(([value,label]) =>
+   <div class="field"><label>Page tone</label><select name="theme">${[['auto','Match PsychDesk'],['dark','AMOLED black'],['white','White'],['sepia','Warm paper']].map(([value,label]) =>
     '<option value="'+value+'"'+(prefs.theme===value?' selected':'')+'>'+label+'</option>').join('')}</select></div>
    <div class="field"><label>Font size</label><input name="size" type="range" min="15" max="27" value="${prefs.size}"></div>
    <div class="field"><label>Line spacing</label><input name="leading" type="range" min="1.5" max="2.2" step=".1" value="${prefs.leading}"></div>

@@ -7,7 +7,7 @@ const CDN='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/';
 let libPromise=null,pdf=null,material=null,localFile=null,page=1,scale=1.1,generation=0,loading=false;
 let selected={text:'',rects:[],page:1},readerError='',fileText='',searchQuery='',searchHits=[],lastSearchIndex=-1;
 let renderSequence=0,searchSequence=0,activeRender=null,requestedPage=0,mobileMode='read',tone='paper';
-const toneNames={paper:'Warm paper',sepia:'Sepia',dark:'AMOLED black'};
+const toneNames={paper:'White',sepia:'Warm paper',dark:'AMOLED black'};
 const toneKey=()=> 'psychdesk-pdf-tone:'+core.getStorageKey()+':'+materialKey();
 function restoreTone(){
  try{const value=localStorage.getItem(toneKey());tone=toneNames[value]?value:(document.documentElement?.dataset?.theme==='dark'?'dark':'paper');}

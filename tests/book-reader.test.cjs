@@ -103,6 +103,7 @@ test('chapter status begins in progress on visit and counts only explicit comple
  const app=harness();
  app.api.open('sample-memory');
  assert.match(app.markup(),/Chapter 1 of 1 · In progress/);
+ assert.match(app.markup(),/data-bk-theme="auto"/,'new books should match the active PsychDesk theme');
  assert.match(app.markup(),/Mark chapter as read/);
  assert.match(app.markup(),/Mark this part read/);
  assert.deepEqual(Array.from(app.data().bookReading[0].visitedParts),['part-1']);
