@@ -99,6 +99,22 @@ test('the shipped companion has 16 indexed chapters and clearly separated short 
  }
 });
 
+test('chapter status begins in progress on visit and counts only explicit completion',()=>{
+ const app=harness();
+ app.api.open('sample-memory');
+ assert.match(app.markup(),/Chapter 1 of 1 · In progress/);
+ assert.match(app.markup(),/Mark chapter as read/);
+ assert.match(app.markup(),/Mark this part read/);
+ assert.deepEqual(Array.from(app.data().bookReading[0].visitedParts),['part-1']);
+ app.click('chapterComplete');
+ assert.match(app.markup(),/Chapter 1 of 1 · Read/);
+ assert.match(app.markup(),/Undo chapter completion/);
+ assert.deepEqual(Array.from(app.data().bookReading[0].completedChapters),['first']);
+ app.click('chapterComplete');
+ assert.match(app.markup(),/Chapter 1 of 1 · In progress/);
+ assert.equal(app.data().bookReading[0].completedChapters.length,0);
+});
+
 test('different subjects and editions use one reader with separate progress and bookmarks',()=>{
  const app=harness();
  assert.match(app.api.render(),/Cognitive Psychology/);
