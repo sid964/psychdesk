@@ -114,3 +114,83 @@ html[data-theme="dark"] .reader-book-shell[data-reader-tone="paper"]{--pdf-paper
  .reader-book-shell .reader-toolbar button{font-size:.75rem;padding-inline:8px}
  .reader-book-shell .reader-toolbar span{white-space:normal}
 }
+
+
+/* November 2026: PDF chrome follows the Library's monochrome design.
+   The original PDF canvas is deliberately left white and unmodified. */
+.reader-file-shelf,.reader-book-shell{
+ --pdf-paper:#ffffff;--pdf-back:#f8f8f8;--pdf-ink:#191919;--pdf-muted:#696969;
+ --pdf-line:#dedede;--pdf-button:#f5f5f5;--pdf-highlight:#888888;
+ color:var(--pdf-ink);font-family:Manrope,system-ui,sans-serif
+}
+html[data-theme="dark"] .reader-file-shelf{
+ --pdf-paper:#080808;--pdf-back:#000000;--pdf-ink:#efefef;--pdf-muted:#a3a3a3;
+ --pdf-line:#292929;--pdf-button:#141414;--pdf-highlight:#a0a0a0
+}
+.reader-file-shelf .reader-file-hero,.reader-book-shell .reader-hero{
+ min-height:0;padding:clamp(19px,3vw,32px);border-radius:10px;
+ border-color:var(--pdf-line);background:var(--pdf-paper);box-shadow:none
+}
+html[data-theme="dark"] .reader-file-shelf .reader-file-hero{
+ background:#080808;border-color:#282828
+}
+.reader-file-shelf .reader-file-hero h1,.reader-book-shell .reader-hero h1{
+ font:600 clamp(1.8rem,3vw,2.7rem)/1.2 Manrope,system-ui,sans-serif;
+ letter-spacing:-.055em;color:var(--pdf-ink)
+}
+.reader-file-shelf .reader-file-hero p,.reader-book-shell .reader-hero p{
+ color:var(--pdf-muted);font-size:.83rem;max-width:55ch
+}
+.reader-file-shelf .reader-shelf>button{
+ min-height:145px;border-radius:5px;border:1px solid #383838;
+ border-left:4px solid #565656;background:#1b1b1b;color:#f5f5f5;
+ box-shadow:none
+}
+.reader-file-shelf .reader-shelf>button>strong{font:500 1.12rem/1.33 Georgia,serif;color:#f3f3f3}
+.reader-file-shelf .reader-shelf>button>span{color:#d3d3d3}
+.reader-file-shelf .reader-shelf>button>small{color:#cecece}
+.reader-file-shelf .reader-local-label{background:var(--pdf-paper);
+ border-color:var(--pdf-line);color:var(--pdf-ink)}
+.reader-book-shell[data-reader-tone="dark"]{
+ --pdf-paper:#000000;--pdf-back:#000000;--pdf-ink:#efefef;--pdf-muted:#ababab;
+ --pdf-line:#282828;--pdf-button:#121212;--pdf-highlight:#999999;color-scheme:dark
+}
+.reader-book-shell[data-reader-tone="paper"]{
+ --pdf-paper:#ffffff;--pdf-back:#f7f7f7;--pdf-ink:#202020;--pdf-muted:#676767;
+ --pdf-line:#dcdcdc;--pdf-button:#f5f5f5;--pdf-highlight:#9a9a9a;color-scheme:light
+}
+html[data-theme="dark"] .reader-book-shell[data-reader-tone="paper"]{
+ --pdf-paper:#ffffff;--pdf-back:#f7f7f7;--pdf-ink:#202020;--pdf-muted:#676767;
+ --pdf-line:#dcdcdc;--pdf-button:#f5f5f5;--pdf-highlight:#9a9a9a
+}
+.reader-book-shell[data-reader-tone="sepia"]{
+ --pdf-paper:#faf7f0;--pdf-back:#f5f1e9;--pdf-ink:#282622;--pdf-muted:#625f59;
+ --pdf-line:#ded9cf;--pdf-button:#f0ece3;--pdf-highlight:#b4a895;color-scheme:light
+}
+.reader-book-shell{border-color:var(--pdf-line);border-radius:10px;padding:clamp(6px,1.4vw,14px)}
+.reader-book-shell .reader-hero{padding:clamp(16px,2.6vw,24px);
+ margin-bottom:10px;border-radius:8px}
+.reader-book-shell .reader-hero h1{
+ font:600 clamp(1.45rem,2.7vw,2.05rem)/1.25 Manrope,system-ui,sans-serif;
+ letter-spacing:-.042em
+}
+.reader-book-shell .reader-toolbar{
+ border-color:var(--pdf-line);background:var(--pdf-paper);border-radius:7px;padding:8px;gap:6px
+}
+.reader-book-shell .reader-toolbar button,.reader-book-shell .reader-toolbar input{
+ background:transparent;color:var(--pdf-ink);border:1px solid var(--pdf-line);
+ border-radius:6px;font:550 .76rem/1.3 Manrope,system-ui,sans-serif
+}
+.reader-book-shell .reader-toolbar button:hover{background:var(--pdf-button)}
+.reader-book-shell .reader-page-area,.reader-book-shell .reader-sidebar{
+ background:var(--pdf-paper);color:var(--pdf-ink);border-color:var(--pdf-line);border-radius:7px
+}
+.reader-book-shell .reader-canvas-scroll{background:var(--pdf-back);border-color:var(--pdf-line)}
+.reader-book-shell .reader-page-surface{background:#ffffff;color:#000000}
+.reader-book-shell .reader-notebook-panel,.reader-book-shell .reader-related,
+.reader-book-shell .reader-highlight-card{background:var(--pdf-button);border-color:var(--pdf-line)}
+.reader-book-shell .reader-markdown{
+ font:clamp(16px,1.5vw,19px)/1.75 Georgia,serif;
+ background:var(--pdf-paper);color:var(--pdf-ink);border-color:var(--pdf-line);
+ border-radius:7px
+}
