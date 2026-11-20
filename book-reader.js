@@ -52,7 +52,7 @@
   };
  }
  const route = (book, section, block) => '#books' + (book ? '/' + book.id + '/' + section.id + (block ? '/' + block : '') : '');
- let current = {}, shelfSubject = '', focus = false;
+ let current = {}, shelfSubject = '', shelfQuery = '', focus = false;
  let pending = null, saveTimer, restoreFrame, renderedOwner;
 
  function patch(book, changes) {
@@ -116,23 +116,67 @@
  function button(action, label, attrs = '') {
   return '<button type="button" data-book-action="' + action + '" ' + attrs + '>' + esc(label) + '</button>';
  }
- function shelf() {
-  const latest = latestBook();
-  const subjects = [...new Set(catalog.map(book => book.subject))].sort();
-  const visible = catalog.filter(book => !shelfSubject || book.subject === shelfSubject);
-  return `<section class="bk-shelf">
-   <header class="bk-hero"><div><p class="bk-kicker">PsychDesk Library</p><h1>Books</h1>
-   <p>Read, mark passages, and pick up where you left off.</p>
-   ${latest ? button('open','Continue reading · '+latest.title,'class="bk-primary" data-book-id="'+latest.id+'"') : ''}</div></header>
-   ${catalogError ? '<p class="bk-empty" role="alert">The book catalog could not be opened.</p>' : ''}
-   ${catalog.length ? `<div class="bk-filter"><label for="bk-subject">Browse by subject</label>
-    <select id="bk-subject"><option value="">All subjects</option>${subjects.map(subject =>
-     '<option value="'+esc(subject)+'"'+(shelfSubject===subject?' selected':'')+'>'+esc(subject)+'</option>').join('')}</select></div>
-    <div class="bk-grid">${visible.map(book => `<button type="button" class="bk-cover" data-book-action="open" data-book-id="${book.id}">
-    <small>${esc(book.subject)}</small><strong>${esc(book.title)}</strong><span>${esc(book.author)} · ${esc(book.edition)}</span></button>`).join('')}</div>`
-    : !catalogError ? '<div class="bk-empty"><h2>No books on this shelf yet</h2><p>Books will appear here as they are added. You can still open your own files in the PDF reader.</p><button type="button" class="secondary" data-tab="reader">Open PDF reader</button></div>' : ''}
-   </section>`;
- }
+ function progressFor(book){
+ const saved=record(book);
+ const completed=new Set(saved.completed||[]);
+ const completedChapters=new Set(saved.completedChapters||[]);
+ const done=book.chapters.filter(chapter=>completedChapters.has(chapter.id) || chapter.sections.every(section=>completed.has(section.id))).length;
+ return {done,remaining:book.chapters.length-done,total:book.chapters.length,percent:Math.round(done/book.chapters.length*100)};
+}
+ function shelf(){
+ const latest=latestBook();
+ const subjects=[...new Set(catalog.map(book=>book.subject))].sort();
+ const query=shelfQuery.trim().toLowerCase();
+ const visible=catalog.filter(book=>(!shelfSubject||book.subject===shelfSubject)&&
+  (!query||[book.title,book.subject,book.author,book.edition].some(value=>value.toLowerCase().includes(query))));
+ const allChapters=catalog.reduce((sum,book)=>sum+book.chapters.length,0);
+ const readChapters=catalog.reduce((sum,book)=>sum+progressFor(book).done,0);
+ const spotlight=latest||catalog[0];
+ return `<section class="bk-shelf" aria-label="Indexed psychology books">
+  <header class="bk-hero"><div class="bk-hero-main">
+   <p class="bk-kicker">PsychDesk · Reading room</p><h1>My library</h1>
+   <p>A quiet place for your indexed psychology books. Read at your own pace, save passages and continue where you left off.</p>
+   <div class="bk-hero-stats" aria-label="Your library reading achievements">
+    <div><strong>${catalog.length}</strong><span>Indexed ${catalog.length===1?'book':'books'}</span></div>
+    <div><strong>${readChapters}</strong><span>Chapters read</span></div>
+    <div><strong>${allChapters-readChapters}</strong><span>Remaining</span></div>
+   </div>
+  </div><div class="bk-continue">
+   <p class="bk-kicker">${latest?'Continue reading':'Start reading'}</p>
+   ${spotlight?`<strong>${esc(spotlight.title)}</strong>
+    <span>${progressFor(spotlight).done} of ${spotlight.chapters.length} chapters read</span>
+    ${button('open',latest?'Resume book':'Open first book','class="bk-primary" data-book-id="'+spotlight.id+'"')}`:
+    '<span>Books will appear when their verified companion content is added.</span>'}
+  </div></header>
+  <nav class="bk-library-actions" aria-label="Other library spaces">
+   <button type="button" data-tab="files">Drive files <span aria-hidden="true">↗</span></button>
+   <button type="button" data-tab="reader">PDF reader <span aria-hidden="true">↗</span></button>
+   <button type="button" data-tab="research">References <span aria-hidden="true">↗</span></button>
+  </nav>
+  ${catalogError?'<p class="bk-empty" role="alert">The indexed book catalog could not be opened.</p>':''}
+  <div class="bk-collection-top"><div><p class="bk-kicker">YOUR BOOKSHELF</p><h2>Indexed books</h2>
+  <p>Only indexed study companions appear here. Your own uploaded PDFs stay in Drive files.</p></div></div>
+  ${catalog.length?`<div class="bk-filter"><label for="bk-search">Search books</label>
+   <input id="bk-search" type="search" value="${esc(shelfQuery)}" placeholder="Find a psychology book" autocomplete="off">
+   <label for="bk-subject">Browse by subject</label>
+   <select id="bk-subject"><option value="">All subjects</option>${subjects.map(subject=>'<option value="'+esc(subject)+'"'+(shelfSubject===subject?' selected':'')+'>'+esc(subject)+'</option>').join('')}</select>
+   </div><div class="bk-grid">${visible.map((book,i)=>{
+    const progress=progressFor(book);
+    const guides=book.sections.filter(section=>section.kind==='guide').length;
+    const detailed=book.sections.filter(section=>section.kind==='detailed').length;
+    return `<article class="bk-book-card">
+     <button type="button" class="bk-cover" data-book-action="open" data-book-id="${book.id}" aria-label="Open ${esc(book.title)}">
+      <small>${esc(book.subject)}</small><strong>${esc(book.title)}</strong><span>${esc(book.edition)}</span>
+     </button>
+     <div class="bk-book-detail"><h3>${esc(book.title)}</h3><p>${esc(book.author)}</p>
+     <span class="bk-chapter-metric">${progress.done} of ${progress.total} chapters read · ${progress.remaining} remaining</span>
+     <div class="bk-chapter-track" role="progressbar" aria-label="${esc(book.title)} chapters read" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${progress.percent}"><span style="width:${progress.percent}%"></span></div>
+     ${guides?`<small class="bk-source-disclosure">${detailed} detailed parts · ${guides} brief guides (not full chapters)</small>`:''}</div>
+    </article>`;
+   }).join('')}</div>${!visible.length?'<p class="bk-empty">No indexed books match your search.</p>':''}`:
+   !catalogError?'<div class="bk-empty"><h2>No indexed books yet</h2><p>The next books will be added after their chapters are checked. Uploaded PDF files remain available separately.</p></div>':''}
+  </section>`;
+}
  function renderBlock(block, highlights) {
   const tag = {paragraph:'p', heading:'h2', quote:'blockquote'}[block.type];
   const ranges = highlights.filter(mark => mark.blockId === block.id && block.text.slice(mark.start, mark.end) === mark.quote)
@@ -344,6 +388,14 @@
  });
  document.addEventListener('pointerdown', event => {
   if (event.target.closest('.bk-text')) passage = null;
+ });
+ document.addEventListener('input', event => {
+  if (event.target.id !== 'bk-search') return;
+  shelfQuery = event.target.value;
+  const cursor = event.target.selectionStart;
+  core.render();
+  const input = document.querySelector('#bk-search');
+  if (input) {input.focus();if (Number.isInteger(cursor)) input.setSelectionRange(cursor,cursor);}
  });
  document.addEventListener('change', event => {
   if (event.target.id !== 'bk-subject') return;

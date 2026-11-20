@@ -7,7 +7,7 @@ const fs=require('node:fs');
 const path=require('node:path');
 const {chromium}=require('playwright');
 
-const routes=['today','psychology','university','psychopathology','notes','ink','stickies','voice','materials','reader','research','recall','focus','planner','board','mindmap','connections','dictionary','timeline','tools'];
+const routes=['today','psychology','university','psychopathology','notes','ink','stickies','voice','materials','files','reader','research','recall','focus','planner','board','mindmap','connections','dictionary','timeline','tools'];
 const out=path.join(process.cwd(),'browser-audit-artifacts','phase6');
 fs.mkdirSync(out,{recursive:true});
 (async()=>{
