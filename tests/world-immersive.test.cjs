@@ -44,7 +44,7 @@ test('World tour fallback, navigation and release cache stay accessible',()=>{
  const sw=read('sw.js');
  assert.match(html,/worldTour'\)\.disabled=true/);
  assert.match(world,/if\(tourButton\)tourButton\.disabled=true/);
- assert.match(sw,/psychdesk-library-phase9-v97/);
+ assert.match(sw,/psychdesk-library-phase10-v98/);
  for(const destination of ['notes','materials','garden','recall','dictionary','focus']){
   assert.ok(html.includes('data-visit="'+destination+'"'),destination);
  }
