@@ -20,7 +20,7 @@ function validateSnapshot(value){
  if(bookRecords!=null&&(!Array.isArray(bookRecords)||bookRecords.some(row=>
   !row||typeof row.bookId!=='string'||(row.visitedAt!=null&&typeof row.visitedAt!=='string')||
   (row.sectionId!=null&&typeof row.sectionId!=='string')||(row.blockId!=null&&typeof row.blockId!=='string')||
-  ['bookmarks','completed'].some(key=>row[key]!=null&&(!Array.isArray(row[key])||row[key].some(id=>typeof id!=='string')))||
+  ['bookmarks','completed','completedChapters','visitedParts'].some(key=>row[key]!=null&&(!Array.isArray(row[key])||row[key].some(id=>typeof id!=='string')))||
   (row.highlights!=null&&(!Array.isArray(row.highlights)||row.highlights.length>250||row.highlights.some(mark=>
    !mark||!['id','sectionId','blockId','quote'].every(key=>typeof mark[key]==='string')||mark.quote.length>1200||
    !Number.isInteger(mark.start)||!Number.isInteger(mark.end)||mark.start<0||mark.end<=mark.start)))
