@@ -120,6 +120,7 @@ html[data-theme="dark"] .bk-shelf.bk-reference-library{
 .bk-ref-chapter[data-palette="2"] .bk-ref-number{color:#7e5c4a}
 .bk-ref-chapter[data-palette="3"] .bk-ref-number{color:#4d696b}
 .bk-ref-chapter[data-palette="4"] .bk-ref-number{color:#745968}
+.bk-ref-chapter[data-palette="5"] .bk-ref-number{color:#826c49}
 .bk-ref-chapter strong{font:600 16px/1.34 Georgia,serif;letter-spacing:.002em;overflow-wrap:anywhere}
 .bk-ref-chapter small{display:block;margin-top:auto;font:11px/1.5 system-ui,sans-serif;color:#696b5d}
 .bk-ref-chapter small span{display:block;margin-top:3px}
