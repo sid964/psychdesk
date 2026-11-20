@@ -11,6 +11,8 @@ jobs:
         with:
           node-version: 24
       - run: node --test tests/*.test.mjs tests/*.test.cjs functions/tests/*.test.cjs
+      - name: Verify reviewed book packages and generated catalog
+        run: node scripts/build-book-catalog.cjs --check
       - name: Check all application JavaScript
         run: |
           for file in *.js autopilot/*.js functions/*.js functions/lib/*.js tests/*.cjs scripts/*.cjs; do node --check "$file"; done
