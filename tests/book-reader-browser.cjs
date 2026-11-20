@@ -21,6 +21,10 @@ async function verify(browser,width){
  try{
   await page.goto(base+'/index.html#books');
   await page.getByRole('heading',{name:'My library',exact:true}).waitFor();
+  assert.equal(await page.locator('.bk-hero-stats').count(),1);
+  await page.getByRole('searchbox',{name:'Search books'}).fill('not-on-shelf');
+  assert.equal(await page.locator('.bk-cover').count(),0);
+  await page.getByRole('searchbox',{name:'Search books'}).fill('');
   await page.getByRole('combobox',{name:'Browse by subject'}).selectOption('Research Methods');
   assert.equal(await page.locator('.bk-cover').count(),1);
   await page.getByRole('combobox',{name:'Browse by subject'}).selectOption('');
