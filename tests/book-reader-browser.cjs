@@ -29,6 +29,7 @@ async function verify(browser,width){
   assert.equal(await page.locator('.bk-cover').count(),1);
   await page.getByRole('combobox',{name:'Browse by subject'}).selectOption('');
   await page.locator('.bk-cover[data-book-id="sample-cognition"]').click();
+  console.log('BOOK_SWITCH_DEBUG',await page.evaluate(()=>({layout:document.querySelector('#main')?.dataset.studyLayout,hash:location.hash,feature:!!document.querySelector('.bk-ref-feature'),reader:!!document.querySelector('.bk-reader'),title:document.querySelector('#main h1')?.textContent,notice:document.querySelector('#main')?.textContent?.slice(0,230)})));
   await page.locator('.bk-ref-feature').getByRole('button',{name:'Continue reading'}).click();
   await page.locator('.bk-ref-feature').getByRole('button',{name:'Continue reading'}).click();
   await page.getByRole('heading',{name:'Part 1',exact:true}).waitFor();
