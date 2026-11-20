@@ -10,8 +10,8 @@ let renderSequence=0,searchSequence=0,activeRender=null,requestedPage=0,mobileMo
 const toneNames={paper:'Warm paper',sepia:'Sepia',dark:'AMOLED black'};
 const toneKey=()=> 'psychdesk-pdf-tone:'+core.getStorageKey()+':'+materialKey();
 function restoreTone(){
- try{const value=localStorage.getItem(toneKey());tone=toneNames[value]?value:(document.documentElement.dataset.theme==='dark'?'dark':'paper');}
- catch{tone=document.documentElement.dataset.theme==='dark'?'dark':'paper';}
+ try{const value=localStorage.getItem(toneKey());tone=toneNames[value]?value:(document.documentElement?.dataset?.theme==='dark'?'dark':'paper');}
+ catch{tone=document.documentElement?.dataset?.theme==='dark'?'dark':'paper';}
 }
 function cycleTone(){
  tone=({paper:'sepia',sepia:'dark',dark:'paper'})[tone]||'paper';
