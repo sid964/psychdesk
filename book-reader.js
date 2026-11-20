@@ -88,8 +88,10 @@
    const saved = record(book);
    const anchor = current.blockId || (saved.sectionId === section.id ? saved.blockId || '' : '');
    current.blockId = anchor;
-   if (saved.sectionId !== section.id || saved.blockId !== anchor)
-    patch(book, {sectionId:section.id, blockId:anchor, visitedAt:new Date().toISOString()});
+   const visited=saved.visitedParts||[];
+   if (saved.sectionId !== section.id || saved.blockId !== anchor || !visited.includes(section.id))
+    patch(book, {sectionId:section.id, blockId:anchor, visitedAt:new Date().toISOString(),
+     visitedParts:visited.includes(section.id)?visited:[...visited,section.id]});
   }
   core.setTab('books');
   return true;
@@ -116,13 +118,16 @@
  function button(action, label, attrs = '') {
   return '<button type="button" data-book-action="' + action + '" ' + attrs + '>' + esc(label) + '</button>';
  }
+ function chapterStatus(book,chapter) {
+  const saved=record(book),completed=new Set(saved.completed||[]);
+  if ((saved.completedChapters||[]).includes(chapter.id) || chapter.sections.every(section=>completed.has(section.id))) return 'Read';
+  if (chapter.sections.some(section=>completed.has(section.id)||(saved.visitedParts||[]).includes(section.id)||saved.sectionId===section.id)) return 'In progress';
+  return 'Not started';
+ }
  function progressFor(book){
- const saved=record(book);
- const completed=new Set(saved.completed||[]);
- const completedChapters=new Set(saved.completedChapters||[]);
- const done=book.chapters.filter(chapter=>completedChapters.has(chapter.id) || chapter.sections.every(section=>completed.has(section.id))).length;
- return {done,remaining:book.chapters.length-done,total:book.chapters.length,percent:Math.round(done/book.chapters.length*100)};
-}
+  const done=book.chapters.filter(chapter=>chapterStatus(book,chapter)==='Read').length;
+  return {done,remaining:book.chapters.length-done,total:book.chapters.length,percent:Math.round(done/book.chapters.length*100)};
+ }
  function shelf(){
  const latest=latestBook();
  const subjects=[...new Set(catalog.map(book=>book.subject))].sort();
@@ -193,6 +198,10 @@
  function reader(book, section) {
   const state = record(book), prefs = preferences(book);
   const index = book.sections.indexOf(section);
+  const chapter = book.chapters.find(ch=>ch.id===section.chapterId);
+  const chapterIndex = book.chapters.indexOf(chapter);
+  const chapterRead = (state.completedChapters||[]).includes(chapter.id);
+  const chapterLabel = chapterStatus(book,chapter);
   const marked = state.bookmarks?.includes(section.id);
   const read = state.completed?.includes(section.id);
   const marks = (state.highlights || []).filter(mark => mark.sectionId === section.id);
@@ -203,13 +212,15 @@
    ${button('annotations','Highlights')}${button('focus',focus?'Exit focus':'Focus','aria-pressed="'+focus+'"')}
    </nav>
    <article class="bk-page"><header><p class="bk-kicker">${esc(book.title)} · ${esc(section.chapterTitle)}</p>
-   <h1>${esc(section.title)}</h1>${section.page ? '<p class="bk-page-ref">Printed page '+section.page+'</p>' : ''}</header>
+   <h1>${esc(section.title)}</h1><div class="bk-chapter-status"><span>Chapter ${chapterIndex+1} of ${book.chapters.length} · ${esc(chapterLabel)}</span>
+   <span>${esc(section.kind==='guide'?'Brief study guide · not full textbook content':'Detailed companion section')}</span></div>${section.page ? '<p class="bk-page-ref">Printed page '+section.page+'</p>' : ''}</header>
    <div class="bk-text">${section.blocks.map(block => renderBlock(block,marks)).join('')}</div>
    <div class="bk-study" role="group" aria-label="Study with a selected passage">
    <p>Select text to highlight it or create a note or flashcard.</p>
    ${button('highlight','Highlight')}${button('note','Create note')}${button('card','Create flashcard')}
    ${section.page ? button('pdf','Open source PDF') : ''}</div>
-   <div class="bk-page-end">${button('complete',read?'Marked as read':'Mark as read','aria-pressed="'+Boolean(read)+'"')}</div></article>
+   <div class="bk-page-end">${button('complete',read?'Part marked as read':'Mark this part read','aria-pressed="'+Boolean(read)+'"')}
+    ${button('chapterComplete',chapterRead?'Undo chapter completion':'Mark chapter as read','aria-pressed="'+chapterRead+'"')}</div></article>
    <nav class="bk-bar bk-bottom" aria-label="Reading position">
    ${button('previous','Previous',index===0?'disabled':'')}
    ${button('jump','Part '+(index+1)+' of '+book.sections.length+' · '+Math.round((state.completed?.filter(id => book.sections.some(part => part.id===id)).length||0)/book.sections.length*100)+'% marked read','aria-haspopup="dialog"')}
@@ -266,8 +277,8 @@
    document.querySelector('#bk-results').innerHTML = book.chapters.map(chapter => {
     const hits = book.sections.filter(section => section.chapterId === chapter.id &&
      (!query || [section.title,section.chapterTitle,...section.blocks.map(b=>b.text)].some(value => value.toLowerCase().includes(query))));
-    return hits.length ? '<h3>'+esc(chapter.title)+'</h3>'+hits.map(section =>
-     button('part',(bookmarks.includes(section.id)?'★ ':'')+section.title,'data-part-id="'+section.id+'"')).join('') : '';
+    return hits.length ? '<h3>'+esc(chapter.title)+' <small>· '+esc(chapterStatus(book,chapter))+'</small></h3>'+hits.map(section =>
+     button('part',(bookmarks.includes(section.id)?'★ ':'')+section.title+(section.kind==='guide'?' · Brief guide':''),'data-part-id="'+section.id+'"')).join('') : '';
    }).join('') || '<p>No results in this book.</p>';
   };
   input.addEventListener('input',draw);
@@ -423,6 +434,7 @@
    case 'annotations': annotations(book); break;
    case 'bookmark': toggle(book,'bookmarks',section.id); break;
    case 'complete': toggle(book,'completed',section.id); break;
+   case 'chapterComplete': toggle(book,'completedChapters',section.chapterId); break;
    case 'focus': focus = !focus; refreshSection(); document.querySelector('[data-book-action="focus"]')?.focus(); break;
    case 'pdf': openPdf(book,section); break;
    case 'remove':
