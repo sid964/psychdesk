@@ -6,6 +6,7 @@ on:
       - 'book-catalog.js'
       - 'book-reader.js'
       - 'book-reader.css'
+      - 'book-reference.css'
       - 'pdf-reader.js'
       - 'pdf-reader.css'
       - 'reader-studio.css'
