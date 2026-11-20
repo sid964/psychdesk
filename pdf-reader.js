@@ -6,7 +6,20 @@ const h=core.esc,$=s=>document.querySelector(s),getData=()=>core.getData();
 const CDN='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/';
 let libPromise=null,pdf=null,material=null,localFile=null,page=1,scale=1.1,generation=0,loading=false;
 let selected={text:'',rects:[],page:1},readerError='',fileText='',searchQuery='',searchHits=[],lastSearchIndex=-1;
-let renderSequence=0,searchSequence=0,activeRender=null,requestedPage=0,mobileMode='read';
+let renderSequence=0,searchSequence=0,activeRender=null,requestedPage=0,mobileMode='read',tone='paper';
+const toneNames={paper:'Warm paper',sepia:'Sepia',dark:'AMOLED black'};
+const toneKey=()=> 'psychdesk-pdf-tone:'+core.getStorageKey()+':'+materialKey();
+function restoreTone(){
+ try{const value=localStorage.getItem(toneKey());tone=toneNames[value]?value:(document.documentElement.dataset.theme==='dark'?'dark':'paper');}
+ catch{tone=document.documentElement.dataset.theme==='dark'?'dark':'paper';}
+}
+function cycleTone(){
+ tone=({paper:'sepia',sepia:'dark',dark:'paper'})[tone]||'paper';
+ try{localStorage.setItem(toneKey(),tone);}catch{}
+ const shell=$('.reader-book-shell'),button=$('[data-reader="appearance"]');
+ if(shell)shell.dataset.readerTone=tone;
+ if(button)button.textContent='Appearance · '+toneNames[tone];
+}
 function releaseDocument(){activeRender?.cancel?.();activeRender=null;const old=pdf;pdf=null;old?.destroy?.()?.catch?.(()=>{});}
 const allHighlights=()=>Array.isArray(getData().pdfHighlights)?getData().pdfHighlights:[];
 const materialKey=()=>material?.id||(localFile?'local:'+localFile.name+':'+localFile.size+':'+(localFile.lastModified||0):'unselected');
@@ -82,11 +95,11 @@ function saveReaderNote(){
 
 function shelf(){
  const items=(getData().materials||[]).filter(m=>m.kind==='pdf'||m.kind==='markdown');
- return '<section class="hero"><div class="eyebrow">READ · MARK · REMEMBER</div><h1>Book reader.</h1><p>Read your books in PsychDesk and turn selected text into lasting study notes.</p></section>'+ (readerError?'<div class="reader-error" role="alert">'+h(readerError)+' <button data-reader="driveSettings">Check Drive connection</button>'+(material?.url&&allowLink(material.url)?' <a href="'+h(allowLink(material.url))+'" target="_blank" rel="noopener noreferrer">Open in Google Drive ↗</a>':'')+'</div>':'')+
+ return '<section class="reader-file-shelf"><header class="reader-file-hero"><p class="bk-kicker">PsychDesk · Your reading room</p><h1>Book reader.</h1><p>Read PDF and Markdown originals from your own Drive, or choose a file from this device. The PDF page layout is preserved.</p></header>'+ (readerError?'<div class="reader-error" role="alert">'+h(readerError)+' <button data-reader="driveSettings">Check Drive connection</button>'+(material?.url&&allowLink(material.url)?' <a href="'+h(allowLink(material.url))+'" target="_blank" rel="noopener noreferrer">Open in Google Drive ↗</a>':'')+'</div>':'')+
  '<div class="study-panel"><div class="study-panel-heading"><h2>Choose your material</h2><span>PDF or Markdown</span></div>'+
- '<p>Books in your library are stored in your own Google Drive. Reconnect Drive if you are asked to. You can also open a local PDF for this session.</p>'+
+ '<p>The original files stay in your Google Drive; this reader does not publish or index the PDF text. Reconnect Drive if asked, or open a local file.</p>'+
  '<label class="reader-local-label">Open a PDF from this device <input id="localReaderFile" type="file" accept=".pdf,.md,.markdown,application/pdf,text/markdown"></label>'+
- '<div class="reader-shelf">'+(items.length?items.map(m=>'<button type="button" data-reader="openBook" data-id="'+h(m.id)+'"><span>▤</span><strong>'+h(m.title||m.fileName)+'</strong><small>'+h(m.kind.toUpperCase())+'</small></button>').join(''):'<div class="study-empty">No PDFs on this shelf yet. Add one through your Subject Library.</div>')+'</div></div>';
+ '<div class="reader-shelf">'+(items.length?items.map(m=>'<button type="button" data-reader="openBook" data-id="'+h(m.id)+'"><span>▤</span><strong>'+h(m.title||m.fileName)+'</strong><small>'+h(m.kind.toUpperCase())+'</small></button>').join(''):'<div class="study-empty">No PDFs here yet. Upload a document from Drive files.</div>')+'</div></div></section>';
 }
 function annotationCard(x){
  return '<article class="reader-highlight-card"><span>PAGE '+h(x.page)+' · '+h(new Date(x.createdAt).toLocaleDateString())+'</span><blockquote>'+h(x.text)+'</blockquote>'+
@@ -96,23 +109,23 @@ function annotationCard(x){
 function readerHTML(){
  if(!pdf&&!fileText)return shelf();
  const count=pdf?.numPages||1;
- return '<section class="hero reader-hero"><div class="eyebrow">YOUR READING ROOM</div><h1>'+h(bookTitle())+'</h1><p>Select text to highlight, save an excerpt or create study material.</p></section>'+
- '<div class="reader-toolbar"><button data-reader="back">← Bookshelf</button><button data-reader="prev">←</button><span>Page <input type="number" id="readerPage" min="1" max="'+count+'" value="'+page+'"> / '+count+'</span><button data-reader="next">→</button>'+
+ return '<section class="reader-book-shell" data-reader-tone="'+tone+'"><header class="reader-hero"><div class="eyebrow">YOUR PRIVATE READING ROOM</div><h1>'+h(bookTitle())+'</h1><p>Read at your pace. Original PDF typography and page layout remain unchanged.</p></header>'+
+ '<div class="reader-toolbar"><button data-reader="back">← PDF files</button><button data-reader="prev">←</button><span>Page <input type="number" id="readerPage" aria-label="PDF page number" min="1" max="'+count+'" value="'+page+'"> / '+count+'</span><button data-reader="next">→</button>'+
  '<button data-reader="zoomOut">−</button><span>'+Math.round(scale*100)+'%</span><button data-reader="zoomIn">+</button>'+
- '<button data-reader="search">Find in book</button><button data-reader="prepareChapter" class="reader-prep-action">Prepare chapter</button></div>'+
+ '<button data-reader="appearance" aria-label="Change reading appearance">Appearance · '+toneNames[tone]+'</button><button data-reader="search">Find in book</button><button data-reader="prepareChapter" class="reader-prep-action">Prepare chapter</button></div>'+
  '<div class="reader-mobile-switch" role="group" aria-label="Reader view"><button type="button" data-reader="viewRead" aria-pressed="'+(mobileMode==='read')+'">Reading</button><button type="button" data-reader="viewNotes" aria-pressed="'+(mobileMode==='notes')+'">My notes</button></div>'+ '<div class="reader-layout'+(mobileMode==='notes'?' reader-notes-mode':'')+'"><section class="reader-page-area"><div id="readerRenderStatus" role="status">'+(loading?'Loading page…':readerError?h(readerError):'')+'</div>'+
  (fileText?'<div id="readerMarkdown" class="reader-markdown" tabindex="0">'+h(fileText)+'</div>':'<div class="reader-canvas-scroll"><div id="readerPageSurface" class="reader-page-surface"><canvas id="readerCanvas"></canvas><div class="reader-text-layer" id="readerTextLayer"></div><div class="reader-mark-layer" id="readerMarkLayer"></div></div></div>')+
  '</section><aside class="reader-sidebar"><section class="reader-notebook-panel" aria-label="Notes for this book"><h3>My notes <span class="reader-linked-count" id="readerLinkedCount">'+linkedNotes().length+'</span></h3><p>Keep your thoughts beside the text. Each saved note links to this book and page.</p><label for="readerNoteDraft" class="reader-linked-count">Add a reading note</label><textarea id="readerNoteDraft" maxlength="2500" placeholder="What does this passage mean to you?">'+h(readDraft())+'</textarea><div class="reader-note-save"><button type="button" data-reader="saveReaderNote">Save to Notebook</button></div><div class="reader-notes-list" id="readerLinkedNotes">'+linkedNotesHTML()+'</div></section>'+relatedNotesPanel()+'<div class="study-panel-heading"><h2>Reading tools</h2><span id="readerSelectedCount">Select words on the page</span></div>'+
  '<div class="reader-selection" id="readerSelectedText">Highlight a definition, explanation or interesting passage.</div>'+
  '<div class="reader-side-actions"><button data-reader="mark" class="primary">Highlight selection</button><button data-reader="sticky">Make sticky</button><button data-reader="card">Create flashcards</button><button data-reader="note">Save as notebook note</button></div>'+
  '<div class="reader-highlight-list"><h3>Saved highlights <span id="readerHighlightCount">'+owned().length+'</span></h3><div id="readerHighlights">'+owned().slice().reverse().map(annotationCard).join('')+'</div></div>'+
- '<p class="study-legal">Highlights are stored with your study data; full PDF bytes stay in Drive or your selected local file. Scanned PDFs need selectable text/OCR for text extraction.</p></aside></div>';
+ '<p class="study-legal">Highlights are stored with your study data; full PDF bytes stay in Drive or your selected local file. Scanned PDFs need selectable text/OCR for text extraction.</p></aside></div></section>';
 }
 async function openMaterial(id,resumePage=0){
  const target=(getData().materials||[]).find(m=>m.id===id);
  if(!target||!['pdf','markdown'].includes(target.kind)){core.toast('Choose a PDF or Markdown book.');return;}
  generation++;const version=generation;releaseDocument();
- material=target;localFile=null;pdf=null;fileText='';readerError='';selected={text:'',rects:[],page:1};page=1;scale=1.1;loading=true;mobileMode='read';
+ material=target;localFile=null;restoreTone();pdf=null;fileText='';readerError='';selected={text:'',rects:[],page:1};page=1;scale=1.1;loading=true;mobileMode='read';
  requestedPage=Number.isInteger(resumePage)&&resumePage>0?resumePage:0;
  window.PsychDeskSession?.readerOpened(target.id,requestedPage||1);
  core.setTab('reader');
@@ -149,7 +162,7 @@ async function openLocal(file,startPage=0){
  if(!/\.(pdf|md|markdown)$/.test(ext)){core.toast('Choose a PDF or Markdown file.');return;}
  if(file.size>80*1024*1024){core.toast('The in-browser reader supports files up to 80 MB.');return;}
  generation++;const version=generation;releaseDocument();
- material=null;localFile=file;pdf=null;fileText='';readerError='';page=1;loading=true;requestedPage=Number.isSafeInteger(startPage)&&startPage>0?startPage:0;mobileMode='read';selected={text:'',rects:[],page:1};
+ material=null;localFile=file;restoreTone();pdf=null;fileText='';readerError='';page=1;loading=true;requestedPage=Number.isSafeInteger(startPage)&&startPage>0?startPage:0;mobileMode='read';selected={text:'',rects:[],page:1};
  core.setTab('reader');
  try{await processBlob(file,/\.pdf$/.test(ext)?'pdf':'markdown',version);}
  catch(e){if(version===generation){readerError=String(e.message||e);loading=false;core.render();}}
@@ -318,7 +331,7 @@ async function findAll(){
  if(searchHits.length){lastSearchIndex=0;await navigate(searchHits[0]);}
  }catch(error){if(version===generation&&sequence===searchSequence)core.toast('Could not search this PDF: '+String(error.message||error));}
 }
-function resetReader(){generation++;releaseDocument();material=null;localFile=null;fileText='';loading=false;readerError='';searchQuery='';searchHits=[];requestedPage=0;mobileMode='read';selected={text:'',rects:[],page:1};}
+function resetReader(){generation++;releaseDocument();material=null;localFile=null;fileText='';loading=false;readerError='';searchQuery='';searchHits=[];requestedPage=0;mobileMode='read';tone='paper';selected={text:'',rects:[],page:1};}
 function back(){resetReader();core.setTab('reader');}
 document.addEventListener('change',e=>{
  if(e.target.id==='localReaderFile'){openLocal(e.target.files?.[0]);}
@@ -345,6 +358,7 @@ document.addEventListener('click',e=>{
  case 'openRelated':{const n=(getData().notes||[]).find(x=>x.id===b.dataset.id);if(n)window.PsychDeskCloud?.noteEditor?.(n);break;}
  case 'driveSettings':cloud?.openSettings?.();break;
  case 'back':back();break;
+  case 'appearance':cycleTone();break;
  case 'prev':navigate(page-1);break;
  case 'next':navigate(page+1);break;
  case 'zoomOut':zoom(-.2);break;
