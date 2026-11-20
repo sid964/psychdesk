@@ -1,0 +1,28 @@
+{
+  "id": "replace-with-permanent-book-id",
+  "title": "Replace with verified book title",
+  "subject": "Replace with psychology subject",
+  "author": "Replace with verified authors",
+  "edition": "Replace with edition and publication year",
+  "description": "Describe the original study companion and whether its reading sections are detailed or short summaries.",
+  "chapters": [
+    {
+      "id": "chapter-01",
+      "title": "Replace with verified chapter heading",
+      "sections": [
+        {
+          "id": "ch01-overview",
+          "title": "Replace with verified reading part title",
+          "kind": "guide",
+          "blocks": [
+            {
+              "id": "block-01",
+              "type": "paragraph",
+              "text": "Replace this with your own original study notes, not the full copyrighted source text."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
