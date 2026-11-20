@@ -13,7 +13,7 @@ const assert=require('node:assert/strict');
    const initial=await page.evaluate(()=>JSON.stringify(PsychDeskCore.getData()));
    for(const [start,expected,navName] of [
     ['notes',['notes','ink','stickies','voice'],'Notes workspace navigation'],
-    ['materials',['materials','reader','research'],'Library workspace navigation'],
+    ['materials',['materials','books','reader','research'],'Library workspace navigation'],
     ['mindmap',['mindmap','board','connections'],'Visual thinking workspace navigation']
    ]){
     await page.evaluate(tab=>PsychDeskCore.setTab(tab),start);
