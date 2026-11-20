@@ -14,4 +14,7 @@ test('PDF reader adds local and account-scoped visual tone without changing orig
  assert.match(style,/\.reader-book-shell\[data-reader-tone="dark"\]/);
  assert.match(style,/\.reader-book-shell\s+\.reader-page-surface\{background:white;color:black\}/);
  assert.match(reader,/core\.setTab\('reader'\)/);
+ assert.match(reader,/data\.pdfReading/);
+ assert.match(reader,/materialId:material\.id/);
+ assert.match(reader,/if\(!material\?\.id\)return/);
 });
