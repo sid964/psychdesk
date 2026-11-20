@@ -20,7 +20,7 @@ async function verify(browser,width){
  }));
  try{
   await page.goto(base+'/index.html#books');
-  await page.getByRole('heading',{name:'My library',exact:true}).waitFor();
+  await page.getByRole('heading',{name:'Reading library',exact:true}).waitFor();
   assert.equal(await page.locator('.bk-hero-stats').count(),1);
   await page.getByRole('searchbox',{name:'Search books'}).fill('not-on-shelf');
   assert.equal(await page.locator('.bk-cover').count(),0);
@@ -29,6 +29,8 @@ async function verify(browser,width){
   assert.equal(await page.locator('.bk-cover').count(),1);
   await page.getByRole('combobox',{name:'Browse by subject'}).selectOption('');
   await page.locator('.bk-cover[data-book-id="sample-cognition"]').click();
+  await page.locator('.bk-ref-feature').getByRole('button',{name:'Continue reading'}).click();
+  await page.locator('.bk-ref-feature').getByRole('button',{name:'Continue reading'}).click();
   await page.getByRole('heading',{name:'Part 1',exact:true}).waitFor();
   await page.getByRole('button',{name:'Next',exact:true}).click();
   await page.getByRole('button',{name:'Mark chapter as read',exact:true}).click();
@@ -38,6 +40,7 @@ async function verify(browser,width){
   await page.getByRole('button',{name:'Bookmark',exact:true}).click();
   await page.locator('.bk-bar').getByRole('button',{name:'Books',exact:true}).click();
   await page.locator('.bk-cover[data-book-id="sample-methods"]').click();
+  await page.locator('.bk-ref-feature').getByRole('button',{name:'Continue reading'}).click();
   await page.getByRole('button',{name:'Bookmark',exact:true}).waitFor();
   await page.locator('.bk-bar').getByRole('button',{name:'Books',exact:true}).click();
   await page.locator('.bk-cover[data-book-id="sample-cognition"]').click();
