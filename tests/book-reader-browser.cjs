@@ -29,9 +29,9 @@ async function verify(browser,width){
   assert.equal(await page.locator('.bk-cover').count(),1);
   await page.getByRole('combobox',{name:'Browse by subject'}).selectOption('');
   await page.locator('.bk-cover[data-book-id="sample-cognition"]').click();
-  console.log('BOOK_SWITCH_DEBUG',await page.evaluate(()=>({layout:document.querySelector('#main')?.dataset.studyLayout,hash:location.hash,feature:!!document.querySelector('.bk-ref-feature'),reader:!!document.querySelector('.bk-reader'),title:document.querySelector('#main h1')?.textContent,notice:document.querySelector('#main')?.textContent?.slice(0,230)})));
-  await page.locator('.bk-ref-feature').getByRole('button',{name:'Continue reading'}).click();
-  await page.locator('.bk-ref-feature').getByRole('button',{name:'Continue reading'}).click();
+  console.log('BOOK_SWITCH_DEBUG',await page.locator('.bk-ref-feature').evaluate(el=>({html:el.outerHTML.slice(0,3300),buttons:[...el.querySelectorAll('button')].map(b=>({text:b.textContent,aria:b.getAttribute('aria-label'),hidden:b.hidden,display:getComputedStyle(b).display,visibility:getComputedStyle(b).visibility,parentAria:b.parentElement?.getAttribute('aria-hidden')}))})));
+  await page.locator('.bk-ref-feature [data-book-action="open"]').click();
+  await page.locator('.bk-ref-feature [data-book-action="open"]').click();
   await page.getByRole('heading',{name:'Part 1',exact:true}).waitFor();
   await page.getByRole('button',{name:'Next',exact:true}).click();
   await page.getByRole('button',{name:'Mark chapter as read',exact:true}).click();
@@ -41,7 +41,7 @@ async function verify(browser,width){
   await page.getByRole('button',{name:'Bookmark',exact:true}).click();
   await page.locator('.bk-bar').getByRole('button',{name:'Books',exact:true}).click();
   await page.locator('.bk-cover[data-book-id="sample-methods"]').click();
-  await page.locator('.bk-ref-feature').getByRole('button',{name:'Continue reading'}).click();
+  await page.locator('.bk-ref-feature [data-book-action="open"]').click();
   await page.getByRole('button',{name:'Bookmark',exact:true}).waitFor();
   await page.locator('.bk-bar').getByRole('button',{name:'Books',exact:true}).click();
   await page.locator('.bk-cover[data-book-id="sample-cognition"]').click();
