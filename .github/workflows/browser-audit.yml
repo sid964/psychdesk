@@ -85,8 +85,8 @@ jobs:
           done
       - name: Desktop bookshelf, dictionary, Focus and native PDF smoke
         run: node tests/desktop-bookshelf-browser.cjs
-      - name: Existing annotated PDF renderer smoke
-        run: node tests/pdf-reader-browser.cjs
+      - name: Legacy PDF highlighting and note data compatibility
+        run: node --test tests/pdf-reader-tone.test.cjs tests/reader-note.test.cjs
       - name: Attach screenshots for review
         if: always()
         uses: actions/upload-artifact@v4
