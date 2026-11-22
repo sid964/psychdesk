@@ -1,0 +1,19 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light dark"><title>Biological Psychology · PsychDesk</title></head><body style="margin:0;background:#faf8f3;color:#2c2924;font:16px system-ui,sans-serif"><main id="loadStatus" style="max-width:36rem;padding:12vh 24px;margin:auto" role="status"><h1 style="font:normal 32px Georgia,serif">Biological Psychology</h1><p>Opening your PsychDesk study companion…</p></main><script>
+(async()=>{
+  try {
+    const count=22;
+    const urls=Array.from({length:count},(_,i)=>'./biological-psychology-assets/part-'+String(i).padStart(2,'0')+'.txt');
+    const chunks=await Promise.all(urls.map(async url=>{
+       const response=await fetch(url,{cache:'default'});
+       if(!response.ok)throw new Error('Cannot load '+url+' (HTTP '+response.status+')');
+       return response.text();
+    }));
+    const html=chunks.join('');
+    if(!html.startsWith('<!doctype html>')||!html.includes('const psychdeskBookData = '))throw new Error('Incomplete study file');
+    document.open();document.write(html);document.close();
+  } catch(e){
+    document.querySelector('#loadStatus').innerHTML='<h1>Could not open this book</h1><p>Check your connection and reload the page. The downloadable standalone HTML will also work offline.</p><pre style="white-space:pre-wrap"></pre>';
+    document.querySelector('#loadStatus pre').textContent=String(e);
+  }
+})();
+</script></body></html>

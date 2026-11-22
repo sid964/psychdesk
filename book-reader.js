@@ -163,6 +163,15 @@
   <div class="bk-ref-body">
    <div class="bk-ref-heading"><div><p class="bk-ref-overline">PsychDesk reading room · Your textbooks</p><h1>Reading library</h1></div>
     <p>A quiet, source-based companion to your study books. Not a copied textbook, with reading progress and private notes linked to your account.</p></div>
+   <section class="bk-bio-feature" aria-label="Biological Psychology study companion" style="display:grid;grid-template-columns:minmax(0,clamp(90px,20vw,190px)) minmax(0,1fr);gap:clamp(14px,3vw,70px);align-items:center;padding:clamp(24px,4vw,48px);border:1px solid #c9d1bc;border-radius:11px;background:linear-gradient(114deg,#e5eadb 0%,#f6eee0 82%);box-shadow:0 16px 45px #4233230d;margin:0 0 30px;min-height:310px">
+    <div class="bk-bio-cover" aria-hidden="true" style="aspect-ratio:.70;width:min(100%,190px);min-width:0;display:flex;flex-direction:column;justify-content:space-between;padding:22px 15px 22px 20px;overflow:hidden;color:#f8e9c6;background:linear-gradient(145deg,#263947,#17232c);border:1px solid #394955;border-left:8px solid #203a48;border-radius:4px 9px 9px 4px;box-shadow:9px 12px 15px #241c142d"><small style="font:600 10px/1.5 system-ui,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#f4dfbd">PsychDesk · Reading companion</small><strong style="font:400 clamp(20px,2.7vw,28px)/1.12 Georgia,serif;overflow-wrap:anywhere;letter-spacing:-.03em">Biological Psychology</strong><span style="font:11px/1.6 Georgia,serif;color:#efdfbb">James W. Kalat · 14th Edition</span></div>
+    <div class="bk-ref-feature-content"><p class="bk-ref-overline">Complete classroom notes</p><h2>Biological Psychology</h2>
+      <p class="bk-ref-description">Study all 14 chapters with 448 topic explanations, 42 modules, and 41 illustrated textbook figures. Designed for focused desktop reading with a collapsible contents panel.</p>
+      <div class="bk-ref-tags"><span>14 chapters</span><span>448 topic notes</span><span>41 illustrations</span></div>
+      <div class="bk-ref-feature-actions"><a href="./biological-psychology-14e.html" class="bk-ref-primary" style="display:inline-flex;align-items:center;text-decoration:none">Open complete study notes</a></div>
+      <p style="font-size:11px;color:#5f6059;margin-top:14px">This separate book companion saves progress, notes and highlights in this browser; Google-account sync has not yet been connected.</p>
+    </div>
+   </section>
    ${catalogError?'<p class="bk-empty" role="alert">The indexed book catalog could not be opened.</p>':''}
    ${book?`<section class="bk-ref-feature" aria-label="Current book">
     <div class="bk-ref-cover" aria-hidden="true"><small>PsychDesk · Psychology</small><strong>${esc(book.subject)}</strong><span>Reading companion · ${esc(book.edition)}</span></div>
