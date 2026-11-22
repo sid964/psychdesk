@@ -130,22 +130,20 @@
   return {done,remaining:book.chapters.length-done,total:book.chapters.length,percent:Math.round(done/book.chapters.length*100)};
  }
  function renderHome(){
- const cover='https://books.google.com/books/content?id=bCdrzwEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api';
- const files=(core.getData().materials||[]).filter(item=>['pdf','markdown'].includes(item.kind)).slice().sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||'')));
- const cards=files.map(item=>{
-  const connected=Boolean(item.driveId),isPDF=item.kind==='pdf';
-  return '<article class="desk-book-item"><button type="button" class="desk-book-cover desk-file-cover" data-'+(connected?(isPDF?'fast-pdf="open"':'library="read"'):'tab="files"')+' data-id="'+esc(item.id)+'" aria-label="Open '+esc(item.title||'study document')+'"><span class="desk-file-icon" aria-hidden="true">▤</span><strong>'+esc(item.title||item.fileName||'Untitled document')+'</strong><small>'+esc(item.kind.toUpperCase())+'</small></button><h3>'+esc(item.title||item.fileName||'Study document')+'</h3><span>Private Drive file</span></article>';
- }).join('');
- return '<section class="desktop-bookshelf" aria-label="Your study bookshelf">'+
-  '<header class="desk-bookshelf-header"><div><p class="desk-kicker">PSYCHOLOGY WORKSPACE · STUDY DESK</p><h1>My bookshelf</h1><p>Your study books, all in one place.</p></div><button type="button" class="desk-add-book" data-tab="files">+ Add a book</button></header>'+
-  '<div class="desk-bookshelf-section"><h2>Study companions</h2><div class="desk-books-grid">'+
-  '<article class="desk-book-item desk-featured-book"><a class="desk-book-cover desk-original-cover" href="./biological-psychology-14e.html" aria-label="Open Biological Psychology complete study notes"><img src="'+cover+'" alt="Original cover of Biological Psychology, 14th edition by James W. Kalat" decoding="async"></a><h3>Biological Psychology</h3><span>James W. Kalat · 14th edition</span><a class="desk-book-read" href="./biological-psychology-14e.html">Open study notes</a></article>'+
-  '</div></div>'+
-  '<div class="desk-bookshelf-section"><div class="desk-shelf-subhead"><h2>My Drive books</h2><button type="button" data-tab="files">Manage files</button></div>'+
-  (files.length?'<div class="desk-books-grid">'+cards+'</div>':'<div class="desk-shelf-empty">PDFs and study documents uploaded to Google Drive will appear here. <button type="button" data-tab="files">Open Drive files</button></div>')+
-  '</div></section>';
-}
-function shelf(){return renderHome();}
+  const cover='https://www.cengage.com/covers/imageServlet?catalog=Cengage&image_type=LRGFC&productISBN13=9780357798126';
+  return '<section class="desktop-bookshelf" aria-label="Psychology reference bookshelf">'+
+   '<header class="desk-bookshelf-header"><div><p class="desk-kicker">PSYCHOLOGY WORKSPACE · REFERENCE LIBRARY</p><h1>Bookshelf</h1><p>Psychology reference books.</p></div>'+
+   '<button type="button" class="desk-add-book" data-book-suggest="open">Suggest a book</button></header>'+
+   '<section class="desk-bookshelf-section" aria-label="Reference collection"><h2>Reference collection</h2>'+
+   '<div class="desk-books-grid"><article class="desk-book-item desk-featured-book">'+
+   '<a class="desk-book-cover desk-original-cover" href="./biological-psychology-14e.html" aria-label="Open Biological Psychology complete study notes">'+
+   '<span class="desk-cover-fallback" aria-hidden="true"><small>14th edition</small><strong>Biological Psychology</strong><small>James W. Kalat</small></span>'+
+   '<img src="'+esc(cover)+'" alt="Cengage cover: Biological Psychology, 14th edition, James W. Kalat" loading="eager" decoding="async"></a>'+
+   '<h3>Biological Psychology</h3><span>James W. Kalat · 14th edition</span>'+
+   '<a class="desk-book-read" href="./biological-psychology-14e.html">Open study notes</a></article></div>'+
+   '</section></section>';
+ }
+ function shelf(){return renderHome();}
 function renderBlock(block, highlights) {
   const tag = {paragraph:'p', heading:'h2', quote:'blockquote'}[block.type];
   const ranges = highlights.filter(mark => mark.blockId === block.id && block.text.slice(mark.start, mark.end) === mark.quote)
