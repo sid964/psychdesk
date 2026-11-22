@@ -59,7 +59,7 @@ function render(){
  const available=Boolean(objectUrl);
  const src=available?objectUrl+'#page='+page+'&view=FitH':'';
  return '<section class="fast-pdf-workspace"><header class="fast-pdf-header">'+
-  '<div><p class="desk-kicker">DESKTOP READING</p><h1>Fast PDF reader</h1><p>Uses the browser PDF engine for quick scrolling, zoom and built-in document search.</p></div>'+
+  '<div><p class="desk-kicker">DESKTOP READING</p><h1>PDF reader</h1><p>Read your PDF documents with smooth scrolling, zoom and search.</p></div>'+
   '<label class="desk-add-book">Open PDF from computer<input id="fastPdfFileInput" type="file" accept=".pdf,application/pdf" hidden></label></header>'+
   (busy?'<p class="fast-pdf-status" role="status">Loading '+h(title)+' from Google Drive…</p>':'')+
   (error?'<p class="fast-pdf-error" role="alert">'+h(error)+'</p>':'')+
