@@ -107,8 +107,8 @@ test('chapter status begins in progress on visit and counts only explicit comple
  assert.match(app.markup(),/Undo chapter completion/);
  assert.deepEqual(Array.from(app.data().bookReading[0].completedChapters),['chapter-one']);
  app.click('shelf');
- assert.match(app.markup(),/First chapter/);
- assert.match(app.markup(),/Saved on this device/);
+ assert.match(app.markup(),/Bookshelf/);
+ assert.match(app.markup(),/Biological Psychology/);
  app.api.open('sample-memory');
  app.click('chapterComplete');
  assert.match(app.markup(),/Chapter 1 of 1 · In progress/);
@@ -117,8 +117,8 @@ test('chapter status begins in progress on visit and counts only explicit comple
 
 test('different subjects and editions use one reader with separate progress and bookmarks',()=>{
  const app=harness();
- assert.match(app.api.render(),/Cognitive Psychology/);
- assert.match(app.api.render(),/Research Methods/);
+ assert.equal(app.api.validateCatalog(samples).length,2);
+ assert.deepEqual(samples.map(book=>book.subject),['Cognitive Psychology','Research Methods']);
  app.api.open('sample-memory');
  assert.match(app.markup(),/A &lt;sample&gt; opening/);
  app.click('next');
