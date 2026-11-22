@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light dark"><title>Psychopathology · PsychDesk</title></head>
+<body style="margin:0;background:#f7f5ef;color:#2b302e;font:16px/1.6 system-ui,sans-serif">
+<main id="loadStatus" style="max-width:38rem;padding:12vh 24px;margin:auto" role="status"><h1 style="font:normal 34px Georgia,serif">Psychopathology</h1><p>Opening the PsychDesk study companion…</p><p style="font-size:13px;color:#65665f">Ninth edition · 16 chapters · Original notes and diagrams. Comprehensive academic review ongoing.</p></main>
+<script>
+(async()=>{
+ try{
+  const count=23;
+  const urls=Array.from({length:count},(_,i)=>'./psychopathology-assets/part-'+String(i).padStart(2,'0')+'.txt');
+  const resources=await Promise.all([...urls,'./psychopathology-assets/extra-diagrams.js'].map(async path=>{
+   const response=await fetch(path,{cache:'default'});
+   if(!response.ok)throw new Error('Cannot load '+path+' (HTTP '+response.status+')');
+   return response.text();
+  }));
+  const html=resources.slice(0,count).join('');
+  const diagrams=resources[count];
+  const marker='const BOOK=psychdeskBookData, CHAPTERS=BOOK.chapters, PARTS=BOOK.studyParts;';
+  if(!html.startsWith('<!doctype html>')||!html.includes('const psychdeskBookData = ')||!html.includes(marker)||!diagrams.includes('const specs='))throw new Error('Incomplete or unrecognized study companion');
+  // Keep the approved reader intact; augment only book content before it initializes.
+  const enhanced=html.replace(marker,diagrams+'\n'+marker);
+  document.open();document.write(enhanced);document.close();
+ }catch(error){
+  const main=document.querySelector('#loadStatus');
+  if(!main)return;
+  main.textContent='';
+  const heading=document.createElement('h1');heading.textContent='Could not open Psychopathology';
+  const text=document.createElement('p');text.textContent='Check your connection and reload. The companion caches its content after it is opened successfully.';
+  const details=document.createElement('pre');details.style.whiteSpace='pre-wrap';details.textContent=String(error);
+  main.append(heading,text,details);
+ }
+})();
+</script></body></html>
