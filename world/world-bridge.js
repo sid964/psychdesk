@@ -16,7 +16,7 @@ function validView(view){
 }
 function routeFromHash(){
  if(isBookRoute())return {kind:'tab',tab:'books'};
- const match=/^#pd-(world|garden|[a-z]+)$/.exec(location.hash);
+ const match=/^#pd-(world|garden|[a-z-]+)$/.exec(location.hash);
  if(!match)return null;
  if(match[1]==='world')return {kind:'world',from:'today'};
  if(match[1]==='garden')return {kind:'garden',from:'today'};
