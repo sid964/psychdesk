@@ -163,6 +163,15 @@
   <div class="bk-ref-body">
    <div class="bk-ref-heading"><div><p class="bk-ref-overline">PsychDesk reading room · Your textbooks</p><h1>Reading library</h1></div>
     <p>A quiet, source-based companion to your study books. Not a copied textbook, with reading progress and private notes linked to your account.</p></div>
+   <section class="bk-ref-feature" aria-label="Biological Psychology study companion" style="margin:0 0 30px;min-height:310px">
+    <div class="bk-ref-cover" aria-hidden="true" style="background:linear-gradient(145deg,#263947,#17232c);border-color:#394955"><small>PsychDesk · Reading companion</small><strong>Biological Psychology</strong><span>James W. Kalat · 14th Edition</span></div>
+    <div class="bk-ref-feature-content"><p class="bk-ref-overline">Complete classroom notes</p><h2>Biological Psychology</h2>
+      <p class="bk-ref-description">Study all 14 chapters with 448 topic explanations, 42 modules, and 41 illustrated textbook figures. Designed for focused desktop reading with a collapsible contents panel.</p>
+      <div class="bk-ref-tags"><span>14 chapters</span><span>448 topic notes</span><span>41 illustrations</span></div>
+      <div class="bk-ref-feature-actions"><a href="./biological-psychology-14e.html" class="bk-ref-primary" style="display:inline-flex;align-items:center;text-decoration:none">Open complete study notes</a></div>
+      <p style="font-size:11px;color:#5f6059;margin-top:14px">This separate book companion saves progress, notes and highlights in this browser; Google-account sync has not yet been connected.</p>
+    </div>
+   </section>
    ${catalogError?'<p class="bk-empty" role="alert">The indexed book catalog could not be opened.</p>':''}
    ${book?`<section class="bk-ref-feature" aria-label="Current book">
     <div class="bk-ref-cover" aria-hidden="true"><small>PsychDesk · Psychology</small><strong>${esc(book.subject)}</strong><span>Reading companion · ${esc(book.edition)}</span></div>
