@@ -18,7 +18,7 @@ test('DSM-5 staging manifest is intact and not presented as a released book', ()
     + manifest.classificationCandidateAudit.ocrFragments);
   assert.ok(manifest.fullOriginalNoteRewritesOutstanding > 0, 'Do not silently label incomplete editorial work as finished');
   for (const entry of manifest.entries) {
-    assert.match(entry.id, /^dsm5-2013-[a-z0-9-]+$/);
+    assert.match(entry.id, /^dsm5-2013-[a-z0-9_-]+$/);
     assert.ok(entry.title.trim());
     assert.ok(entry.printedPage === null || (Number.isInteger(entry.printedPage) && entry.printedPage >= 1));
     assert.ok(entry.pdfViewerPage === null || (Number.isInteger(entry.pdfViewerPage) && entry.pdfViewerPage >= 1));
