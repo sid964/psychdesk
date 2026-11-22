@@ -75,3 +75,7 @@ html[data-theme="dark"] .desktop-bookshelf,html[data-theme="dark"] .desktop-tool
  .desk-books-grid{grid-template-columns:repeat(auto-fill,188px)}
 }
 @media(prefers-reduced-motion:reduce){.desk-book-cover{transition:none}.desk-book-cover:hover{transform:none}}
+
+/* Overrule the legacy 38px icon-only status button: explicit connection text must remain visible. */
+.topbar .drive-status-chip{width:auto!important;min-width:116px!important;max-width:none!important;padding:0 11px!important;display:inline-flex!important;align-items:center;justify-content:center;gap:7px}
+.topbar .drive-status-chip .drive-chip-label{font-size:11px!important;line-height:1.2!important;overflow:visible!important;visibility:visible!important}
