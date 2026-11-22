@@ -40,7 +40,7 @@ test('bookshelf renders curated reference titles without exposing private Drive 
  assert.match(html,/data-book-suggest="open"/);
  assert.doesNotMatch(html,/Add a book|My Drive books|Study companions/);
  assert.match(html,/Psychopathology/);
- assert.match(html,/psychopathology-9e\\.html/);
+ assert.ok(html.includes('psychopathology-9e.html'));
  assert.match(html,/Academic verification in progress/);
  assert.equal(JSON.stringify(data),snapshot,'render may not mutate existing private records');
 });
