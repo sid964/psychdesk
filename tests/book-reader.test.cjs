@@ -78,25 +78,21 @@ function harness({fixture=true,hash=''}={}) {
  };
 }
 
-test('the shipped companion has 16 indexed chapters and clearly separated short guides',()=>{
+test('the Bookshelf links the approved companions without reviving the old summary catalog',()=>{
  const app=harness({fixture:false});
- const books=app.window.PsychDeskBookCatalog;
- assert.equal(books.length,1);
- assert.equal(books[0].id,'psychopathology-9e');
- assert.equal(books[0].chapters.length,16);
- const parts=books[0].chapters.flatMap(chapter=>chapter.sections);
- assert.equal(parts.length,76);
- assert.equal(parts.filter(part=>part.kind==='detailed').length,8);
- assert.equal(parts.filter(part=>part.kind==='guide').length,68);
- assert.match(app.api.render(),/Reading library/);
- assert.match(app.api.render(),/16 remaining/);
- app.api.open('psychopathology-9e');
- assert.match(app.markup(),/Psychopathology studies psychological disorders/);
- const html=load('index.html'),worker=load('sw.js');
+ assert.equal(app.window.PsychDeskBookCatalog.length,0);
+ const html=app.api.render();
+ assert.match(html,/Biological Psychology/);
+ assert.match(html,/Psychopathology/);
+ assert.match(html,/\.\/psychopathology-9e\.html/);
+ assert.match(html,/Academic verification in progress/);
+ const shell=load('index.html'),worker=load('sw.js');
  for(const name of ['book-catalog.js','book-reader.js','book-reader.css']){
-  assert.ok(html.includes(name));
+  assert.ok(shell.includes(name));
   assert.ok(worker.includes("'./"+name+"'"));
  }
+ assert.ok(worker.includes("'./psychopathology-9e.html'"));
+ assert.ok(worker.includes("'./psychopathology-assets/extra-diagrams.js'"));
 });
 
 test('chapter status begins in progress on visit and counts only explicit completion',()=>{
