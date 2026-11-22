@@ -140,7 +140,13 @@
    '<span class="desk-cover-fallback" aria-hidden="true"><small>14th edition</small><strong>Biological Psychology</strong><small>James W. Kalat</small></span>'+
    '<img src="'+esc(cover)+'" alt="Cengage cover: Biological Psychology, 14th edition, James W. Kalat" loading="eager" decoding="async"></a>'+
    '<h3>Biological Psychology</h3><span>James W. Kalat · 14th edition</span>'+
-   '<a class="desk-book-read" href="./biological-psychology-14e.html">Open study notes</a></article></div>'+
+   '<a class="desk-book-read" href="./biological-psychology-14e.html">Open study notes</a></article>'+
+   '<article class="desk-book-item desk-featured-book">'+
+   '<a class="desk-book-cover desk-file-cover" href="./psychopathology-9e.html" aria-label="Open Psychopathology ninth-edition study notes">'+
+   '<small>9th edition</small><strong>Psychopathology</strong><small>Barlow · Durand · Hofmann</small></a>'+
+   '<h3>Psychopathology</h3><span>Barlow, Durand &amp; Hofmann · 9th edition</span>'+
+   '<a class="desk-book-read" href="./psychopathology-9e.html">Open study notes · 16 chapters</a>'+
+   '<span>Academic verification in progress</span></article></div>'+
    '</section></section>';
  }
  function shelf(){return renderHome();}
