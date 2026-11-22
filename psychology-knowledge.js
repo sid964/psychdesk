@@ -158,7 +158,7 @@ function eventDetail(event){
  '<div class="psy-detail-actions"><button type="button" data-psy="saveEventNote" data-id="'+h(event.id)+'">Save reflection</button>'+
  '<button type="button" data-psy="bookmarkEvent" data-id="'+h(event.id)+'">'+(isMarked('timelineBookmarks',event.id)?'✦ Bookmarked':'☆ Bookmark')+'</button>'+
  '<button type="button" data-psy="noteEvent" data-id="'+h(event.id)+'">Send to notebook</button>'+
- '<button type="button" data-psy="cardEvent" data-id="'+h(event.id)+'">Make flashcard</button>'+
+
  (event.personal?'<button type="button" data-psy="editEvent" data-id="'+h(event.id)+'">Edit</button><button type="button" data-psy="deleteEvent" data-id="'+h(event.id)+'">Delete</button>':'')+'</div></article>';
 }
 function refreshTimeline(){
