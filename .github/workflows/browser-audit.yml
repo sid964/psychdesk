@@ -8,6 +8,9 @@ on:
       - 'book-reader.css'
       - 'book-reference.css'
       - 'tests/desktop-bookshelf-browser.cjs'
+      - 'tests/first-visit-intro-browser.cjs'
+      - 'tour.js'
+      - 'tour.css'
       - 'desktop-bookshelf.css'
       - 'fast-pdf-reader.js'
       - 'bio-book-index.js'
@@ -85,6 +88,8 @@ jobs:
           done
       - name: Desktop bookshelf, dictionary, Focus and native PDF smoke
         run: node tests/desktop-bookshelf-browser.cjs
+      - name: First-visit intro and replay walkthrough
+        run: node tests/first-visit-intro-browser.cjs
       - name: Legacy PDF highlighting and note data compatibility
         run: node --test tests/pdf-reader-tone.test.cjs tests/reader-note.test.cjs
       - name: Attach screenshots for review

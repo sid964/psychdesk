@@ -9,7 +9,7 @@ const path=require('node:path');
 const crypto=require('node:crypto');
 
 const CRITICAL_FILES=Object.freeze([
- 'index.html','app.js','sw.js','desktop-bookshelf.css','fast-pdf-reader.js','bio-book-index.js','book-suggestions.js','book-suggestions.config.js','study-clarity.css','autopilot/studio.js',
+ 'index.html','app.js','sw.js','tour.js','tour.css','desktop-bookshelf.css','fast-pdf-reader.js','bio-book-index.js','book-suggestions.js','book-suggestions.config.js','study-clarity.css','autopilot/studio.js',
  'book-catalog.js','book-reader.js','book-reader.css','book-reference.css',
  'pdf-reader.js','pdf-reader.css','reader-studio.css','firebase-sync.js',
  'psychopathology-graph.js','psychopathology-graph.css',
