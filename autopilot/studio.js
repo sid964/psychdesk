@@ -52,54 +52,7 @@ function gardenStatusMarkup(){
 }
 
 function renderHome(){
- const d=info(),recent=(d.notes||[]).slice().sort((a,b)=>String(b.updatedAt||b.createdAt||'').localeCompare(String(a.updatedAt||a.createdAt||'')))[0];
- const subject=recent?(d.subjects||[]).find(v=>v.id===recent.subjectId):null;
- const excerpt=recent?String(recent.body||'').replace(/\s+/g,' ').trim().slice(0,145):'';
- const continuation=recent?
- '<div class="garden-notebook-copy"><span class="studio-kicker">LATEST NOTE</span><h3>'+h(recent.title||'Untitled note')+'</h3><p>'+h(excerpt||'Continue reading or editing this note.')+'</p></div>'+
- '<div class="garden-book-actions"><span>'+h(subject?.name||'Notebook')+'</span><button type="button" class="garden-text-btn" data-cloud="editNote" data-id="'+h(recent.id)+'">Open note ↗</button></div>':
- '<div class="garden-notebook-copy"><span class="studio-kicker">NOTES</span><h3>A fresh page.</h3><p>Write a thought, lecture note, or question.</p></div>'+
- '<div class="garden-book-actions"><span>NOTEBOOK</span><button type="button" class="garden-text-btn" data-auto="capture">New note ↗</button></div>';
- const scene=window.PsychDeskGarden?.scene(safeSaved(),discoveries)||'';
- const firstAction=window.PsychDeskSession?.homeButton?.()||(recent?'<button class="garden-main-btn" type="button" data-cloud="editNote" data-id="'+h(recent.id)+'">Continue note <span aria-hidden="true">↗</span></button>':'<button class="garden-main-btn" type="button" data-auto="capture">New note <span aria-hidden="true">↗</span></button>');
- const resume=window.PsychDeskSession?.getResume?.();
- const hasHistory=Boolean(recent||resume||safeSaved().length);
- // The homepage is a personal work surface, not a marketing banner.
- // Describe actual saved content and never claim a session or subject exists when it doesn't.
- const heading=resume?.tab==='reader'?'Back to <em>reading.</em>':
-  resume?.tab==='notes'?'Continue <em>writing.</em>':
-  resume?.tab==='materials'?'Back to <em>reading.</em>':
-  resume?.tab==='focus'?'A little <em>focus.</em>':
-  hasHistory?'Continue <em>studying.</em>':'Start <em>studying.</em>';
- const shortTitle=value=>{const title=String(value||'Untitled').trim();return title.length>48?title.slice(0,46)+'…':title;};
- const introduction=resume?.tab==='reader'
-  ?'Page '+resume.page+' in <strong>'+h(shortTitle(resume.title))+'</strong>.'
-  :resume?.tab==='notes'&&resume.noteId
-   ?'Last opened: <strong>'+h(shortTitle(resume.title))+'</strong>.'
-   :resume
-    ?'Last opened: <strong>'+h(shortTitle(resume.title))+'</strong>.'
-    :recent
-     ?'Last edited: <strong>'+h(shortTitle(recent.title||'Untitled note'))+'</strong>.'
-     :'Notes, reading and small discoveries, all in one place.';
- // A reading session is already in the hero; show the latest note below it instead of duplicating the reader card.
- const notebookCard=continuation;
- return '<div class="studio-home studio-home-v2 garden-home">'+
- '<section class="garden-landing" aria-label="Psychology study homepage">'+
- '<div class="garden-ambient" aria-hidden="true"></div>'+
- '<div class="garden-heading"><span class="studio-kicker">'+(hasHistory?'PICK UP WHERE YOU LEFT OFF':'A SPACE TO THINK')+'</span><h1>'+heading+'</h1><p>'+introduction+'</p>'+
- '<div class="garden-entry">'+firstAction+'<button class="garden-soft-btn" type="button" data-tab="focus">Focus</button></div></div>'+
- '<div class="garden-art-wrap">'+scene+'</div>'+
-
- '</section>'+
- '<nav class="home-shortcuts" aria-label="Quick study tools"><button type="button" data-tab="recall">Flashcards <span aria-hidden="true">↗</span></button><button type="button" data-tab="tools">All study tools <span aria-hidden="true">↗</span></button></nav>'+
- '<details class="home-archive"><summary><span>Recent notes and discoveries</span><span aria-hidden="true">⌄</span></summary>'+
- '<div class="garden-path-marker studio-garden-context"><span aria-hidden="true"></span>'+gardenStatusMarkup()+'<span aria-hidden="true"></span></div>'+
- '<section class="desk-shelf" aria-label="Recent notes and psychology ideas"><div class="desk-shelf-heading"><span class="studio-kicker">RECENTLY ON THE DESK</span><button type="button" class="garden-text-btn" data-tab="materials">Open library ↗</button></div><div class="garden-stories">'+
- '<section class="garden-notebook" aria-label="Latest note or workspace"><div class="garden-book-icon" aria-hidden="true"><span>✧</span></div>'+notebookCard+'</section>'+
- '<section class="studio-discovery garden-seed" id="studio-discovery" aria-label="A daily psychology concept">'+discoveryMarkup()+'</section></div></section>'+
- '<div id="studioMemoryPostcard" class="studio-memory-postcard-slot">'+postcard()+'</div>'+
- '</details>'+
- '</div>';
+ return window.PsychDeskBooks?.renderHome?.() || '<section class="desktop-bookshelf"><h1>My bookshelf</h1><p>Opening your books…</p></section>';
 }
 
 function refreshHome(){
