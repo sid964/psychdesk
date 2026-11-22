@@ -14,7 +14,7 @@ const {chromium}=require('playwright');
   await page.locator('#psychdeskTour.tour-panel-welcome').waitFor();
   assert.match(await page.locator('#tourTitle').innerText(),/A space to study psychology/);
   assert.equal(await page.locator('#tourShield').count(),1);
-  assert.equal(await page.locator('#tourProgress').inputValue(),'0');
+  assert.equal(await page.locator('#tourProgress').evaluate(el=>el.value),0);
   await page.locator('#tourNext').click();
   await page.locator('.desk-original-cover').waitFor();
   assert.match(await page.locator('#tourTitle').innerText(),/bookshelf/);
