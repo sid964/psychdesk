@@ -3,7 +3,7 @@
 (()=>{'use strict';
 const main=document.getElementById('main');
 if(!main)return;
-const allowed=new Set(['today','notes','materials','books','garden','recall','dictionary','focus','planner','tools','ink','reader','research','timeline','connections','stickies','university','psychology','psychopathology','search','voice','board','mindmap','insights']);
+const allowed=new Set(['today','materials','books','dictionary','focus','tools','reader','reader-fast','research','timeline','stickies']);
 const KEY='psychdeskViewV1';
 const isBookRoute=()=>/^#books(?:\/|$)/.test(location.hash);
 let active=null,previousFocus=null,tab='today',restoring=false,background=[];
@@ -43,15 +43,13 @@ function push(view){
  catch(error){console.warn('PsychDesk history push:',error);}
 }
 function attachLaunch(){
- const host=main.querySelector('.garden-entry');
+ if(tab!=='focus')return;
+ const host=main.querySelector('.focus-room-intro');
  if(!host||host.querySelector('#psychWorldLaunch'))return;
  const btn=document.createElement('button');
- btn.id='psychWorldLaunch';btn.type='button';
- btn.className='garden-soft-btn psychworld-launch';
- btn.textContent='Enter 3D world';
- btn.setAttribute('aria-haspopup','dialog');
- btn.addEventListener('click',()=>openWorld());
- host.append(btn);
+ btn.id='psychWorldLaunch';btn.type='button';btn.className='focus-world-launch';
+ btn.textContent='Open 3D world';btn.setAttribute('aria-haspopup','dialog');
+ btn.addEventListener('click',()=>openWorld());host.append(btn);
 }
 function destroyWorld(){
  if(!active)return;
