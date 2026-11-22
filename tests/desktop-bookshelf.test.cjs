@@ -18,7 +18,7 @@ test('desktop navigation shows only Home, Focus and More tools, preserving core 
  assert.match(html,/desktop-bookshelf\.css/);
 });
 
-test('bookshelf renders the complete Biological Psychology companion and existing private Drive books without touching saved records',()=>{
+test('bookshelf renders curated reference titles without exposing private Drive books or changing saved records',()=>{
  const data={materials:[
   {id:'pdf-1',title:'Research Methods PDF',kind:'pdf',driveId:'private-drive-1'},
   {id:'md-1',title:'My Private Notes',kind:'markdown',driveId:'private-drive-2'}
@@ -29,13 +29,16 @@ test('bookshelf renders the complete Biological Psychology companion and existin
  const document={addEventListener(){}};
  vm.runInNewContext(src('book-reader.js'),{window,document,location:{hash:''},setTimeout,clearTimeout,history:{}});
  const html=window.PsychDeskBooks.renderHome();
- assert.match(html,/My bookshelf/);
+ assert.match(html,/<h1>Bookshelf<\/h1>/);
+ assert.match(html,/Psychology reference books/);
+ assert.match(html,/Reference collection/);
  assert.match(html,/Biological Psychology/);
  assert.match(html,/biological-psychology-14e\.html/);
- assert.match(html,/books\.google\.com\/books\/content/);
- assert.match(html,/Research Methods PDF/);
- assert.match(html,/My Private Notes/);
- assert.match(html,/data-fast-pdf="open"/);
+ assert.match(html,/www\.cengage\.com\/covers\/imageServlet/);
+ assert.doesNotMatch(html,/Research Methods PDF/);
+ assert.doesNotMatch(html,/My Private Notes/);
+ assert.match(html,/data-book-suggest="open"/);
+ assert.doesNotMatch(html,/Add a book|My Drive books|Study companions/);
  assert.doesNotMatch(html,/Psychopathology/);
  assert.equal(JSON.stringify(data),snapshot,'render may not mutate existing private records');
 });
@@ -82,4 +85,29 @@ test('new browser-native PDF viewer stays separate from the annotated PDF.js rea
  assert.match(fast,/window\.PsychDeskFastPDF=/);
  assert.match(fast,/pdfReading/);
  assert.match(fast,/iframe/);
+});
+test('suggestions link to private Google Forms, require a PDF there and never fake an upload',()=>{
+ const code=src('book-suggestions.js');
+ const build=url=>{
+  let modal;
+  const window={PSYCHDESK_BOOK_SUGGESTION_FORM_URL:url,
+   PsychDeskCore:{esc:x=>String(x),openModal:(title,markup)=>{modal={title,markup};}}};
+  const document={addEventListener(){}};
+  vm.runInNewContext(code,{window,document,URL});
+  window.PsychDeskBookSuggestions.open();
+  return {modal,link:window.PsychDeskBookSuggestions.formLink()};
+ };
+ const pending=build('');
+ assert.equal(pending.link,'');
+ assert.match(pending.modal.markup,/not open yet/);
+ assert.doesNotMatch(pending.modal.markup,/Open suggestion form/);
+ const linked=build('https://docs.google.com/forms/d/e/example/viewform');
+ assert.match(linked.modal.markup,/PDF file \(required\)/);
+ assert.match(linked.modal.markup,/Open suggestion form/);
+ assert.match(linked.link,/docs\.google\.com/);
+ assert.equal(build('https://example.org/receive-pdf').link,'');
+ const app=src('app.js');
+ assert.match(app,/\['reader-fast','▤','PDF reader'/);
+ assert.doesNotMatch(app,/\['reader-fast','▤','Fast PDF reader'/);
+ assert.doesNotMatch(app,/\['reader','▤','Annotated PDF reader'/);
 });
