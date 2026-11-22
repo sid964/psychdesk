@@ -8,6 +8,18 @@ const data=()=>core.getData();
 const list=key=>Array.isArray(data()[key])?data()[key]:[];
 const validUrl=value=>{try{const v=new URL(String(value||''));return /^(https?):$/.test(v.protocol)?v.href:''}catch{return''}};
 const glossary=()=>[...corpus.definitions,...list('dictionaryEntries')];
+ const index=()=>Array.isArray(window.PsychDeskBiologicalIndex)?window.PsychDeskBiologicalIndex:[];
+ function textbookMatches(q=dictQuery){
+  const term=String(q||'').trim().toLocaleLowerCase();
+  if(term.length<2)return [];
+  return index().filter(item=>[item.term,item.chapter,item.module,item.summary].join(' ').toLocaleLowerCase().includes(term)).slice(0,18);
+ }
+ function textbookResults(){
+  const matches=textbookMatches();
+  if(!dictQuery.trim())return '';
+  return '<section class="desk-index-results" aria-label="Indexed textbook results"><h2>From your bookshelf <small>'+matches.length+' matches'+(matches.length===18?' shown':'')+'</small></h2>'+
+   (matches.length?matches.map(item=>'<a href="./biological-psychology-14e.html" class="desk-index-match" title="Open Biological Psychology study companion"><strong>'+h(item.term)+'</strong><span>'+h(item.chapter)+' · '+h(item.module)+(item.page?' · p. '+h(item.page):'')+'</span>'+(item.summary?'<p>'+h(item.summary)+'</p>':'')+'</a>').join(''):'<p class="note">No indexed book headings matched this search.</p>')+'</section>';
+ }
 const history=()=>[...corpus.timeline,...list('timelineEvents')].sort((a,b)=>a.year-b.year||a.title.localeCompare(b.title));
 const categories=['All','Learning','Cognition','Biological','Development','Social','Research','Clinical'];
 const eras=[['all','All eras'],['foundations','Foundations'],['learning','Learning'],['cognition','Cognition'],['social','Social'],['clinical','Clinical'],['research','Research'],['development','Development']];
@@ -37,7 +49,7 @@ function renderDictionary(){
  '<div class="psy-tabs" aria-label="Filter dictionary by topic">'+categories.map(cat=>'<button data-psy="category" data-value="'+h(cat)+'" class="'+(cat===dictCategory?'active':'')+'">'+h(cat)+'</button>').join('')+'</div>'+
  '<div class="psy-layout"><div><div class="psy-list-heading"><span id="psyDictionaryCount">'+entries.length+' definitions</span><button type="button" data-psy="toggleSaved" class="'+(dictSavedOnly?'selected':'')+'">✦ '+(dictSavedOnly?'Show all':'Bookmarked only')+'</button></div>'+
  '<div class="psy-entry-list" id="psyDictionaryResults">'+dictionaryResults(entries)+'</div></div>'+
- '<div class="psy-detail-slot" id="psyDefinitionDetail">'+dictionaryDetail(termById(dictSelected))+'</div></div>'+
+ '<div class="psy-detail-slot" id="psyDefinitionDetail">'+dictionaryDetail(termById(dictSelected))+textbookResults()+'</div></div>'+
  '<p class="psy-disclaimer">This is a concise study glossary, not a diagnostic resource. Definitions may simplify complex research; check original textbooks and primary sources for academic work.</p>';
 }
 function dictionaryResults(entries=findTerms()){
@@ -56,16 +68,16 @@ function dictionaryDetail(entry){
  '<div class="psy-detail-actions"><button type="button" data-psy="bookmark" data-id="'+h(entry.id)+'">'+(isMarked('dictionaryBookmarks',entry.id)?'✦ Bookmarked':'☆ Bookmark')+'</button>'+
  '<button type="button" data-psy="noteTerm" data-id="'+h(entry.id)+'">Save to notebook</button>'+
  '<button type="button" data-psy="stickyTerm" data-id="'+h(entry.id)+'">Make sticky</button>'+
- '<button type="button" data-psy="cardTerm" data-id="'+h(entry.id)+'">Make flashcard</button>'+
+
  (entry.personal?'<button type="button" data-psy="editTerm" data-id="'+h(entry.id)+'">Edit</button><button type="button" data-psy="deleteTerm" data-id="'+h(entry.id)+'">Delete</button>':'')+
- '</div>'+(window.PsychDeskConnections?.forConcept(entry)||'')+'</article>';
+ '</div></article>';
 }
 function refreshDictionary(){
  const entries=findTerms(),container=$('#psyDictionaryResults');
  if(!entries.some(x=>x.id===dictSelected))dictSelected=entries[0]?.id||'';
  if(container)container.innerHTML=dictionaryResults(entries);
  if($('#psyDictionaryCount'))$('#psyDictionaryCount').textContent=entries.length+' definitions';
- if($('#psyDefinitionDetail'))$('#psyDefinitionDetail').innerHTML=dictionaryDetail(termById(dictSelected));
+ if($('#psyDefinitionDetail'))$('#psyDefinitionDetail').innerHTML=dictionaryDetail(termById(dictSelected))+textbookResults();
 }
 function addNotebook(title,body,tag){
  const d=data();
@@ -146,7 +158,7 @@ function eventDetail(event){
  '<div class="psy-detail-actions"><button type="button" data-psy="saveEventNote" data-id="'+h(event.id)+'">Save reflection</button>'+
  '<button type="button" data-psy="bookmarkEvent" data-id="'+h(event.id)+'">'+(isMarked('timelineBookmarks',event.id)?'✦ Bookmarked':'☆ Bookmark')+'</button>'+
  '<button type="button" data-psy="noteEvent" data-id="'+h(event.id)+'">Send to notebook</button>'+
- '<button type="button" data-psy="cardEvent" data-id="'+h(event.id)+'">Make flashcard</button>'+
+
  (event.personal?'<button type="button" data-psy="editEvent" data-id="'+h(event.id)+'">Edit</button><button type="button" data-psy="deleteEvent" data-id="'+h(event.id)+'">Delete</button>':'')+'</div></article>';
 }
 function refreshTimeline(){

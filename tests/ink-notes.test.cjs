@@ -29,7 +29,7 @@ test('ink note section creates account-backed vector pages with accessible tools
  assert.ok(s.saved.length);
  const html=s.ink.render();
  for(const item of ['Ink Notes','Pen-first mode','Undo','Redo','Highlighter','Eraser','SVG','PNG','inkCanvas'])assert.match(html,new RegExp(item,'i'));
- assert.match(source('index.html'),/data-tab="ink"/);
+ assert.doesNotMatch(source('index.html'),/data-tab="ink"/); // Hidden UI; existing data remains supported.
  assert.match(source('index.html'),/ink-notes\.js/);
  assert.match(source('sw.js'),/ink-notes\.js/);
  assert.match(source('app.js'),/inkNotes/);

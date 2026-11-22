@@ -149,12 +149,13 @@ const completedToday=()=>data.tasks.filter(t=>t.completedAt===today()).length;
 const totalWeek=()=>weekDays().reduce((v,d)=>v+minutesDay(d),0);
 function streak(){let day=today(),count=0;if(minutesDay(day)===0)day=addDays(day,-1);while(minutesDay(day)>0&&count<500){count++;day=addDays(day,-1)}return count;}
 function toast(msg){let el=$('#toast');el.textContent=msg;el.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>el.classList.remove('show'),3000)}
-function setTab(t){window.PsychDeskMotion?.navigate(tab,t);tab=t;flip=false;selectedReviewId=null;if(!window.PsychDeskMotion)window.scrollTo(0,0);render();const heading=main.querySelector?.('h1');if(heading){heading.setAttribute('tabindex','-1');heading.focus({preventScroll:true});}const event=new Event('psychdesk:tab-changed');event.tab=t;window.dispatchEvent(event)}
+const retiredTabs=new Set(['psychology','notes','recall','planner','ink','voice','search','mindmap','board','connections','university','insights','psychopathology']);
+function setTab(t){if(retiredTabs.has(t))t='tools';window.PsychDeskMotion?.navigate(tab,t);tab=t;flip=false;selectedReviewId=null;if(!window.PsychDeskMotion)window.scrollTo(0,0);render();const heading=main.querySelector?.('h1');if(heading){heading.setAttribute('tabindex','-1');heading.focus({preventScroll:true});}const event=new Event('psychdesk:tab-changed');event.tab=t;window.dispatchEvent(event)}
 function navActive(b,view){
- const parent={university:'psychology',psychopathology:'psychology',planner:'psychology',recall:'psychology',dictionary:'psychology',timeline:'psychology',connections:'psychology',mindmap:'psychology',ink:'notes',stickies:'notes',voice:'notes',board:'notes',reader:'materials',books:'materials',files:'materials',research:'materials',insights:'focus'};
+ const parent={reader:'tools','reader-fast':'tools',research:'tools',dictionary:'tools',timeline:'tools',stickies:'tools',books:'today',materials:'today',files:'today'};
  return b.dataset.tab===view||((b.classList.contains('rail-link')||b.classList.contains('nav-item'))&&b.dataset.tab===parent[view]);
 }
-function render(){window.PsychDeskMotion?.beforeRender(main,tab);main.classList.remove('page-enter');const extra=window.PsychDeskExtras,boards=window.PsychDeskBoards;main.innerHTML=recoveryBanner()+workspaceNav(tab)+(tab==='notes'?window.PsychDeskCloud?.renderNotes():tab==='ink'?window.PsychDeskInk?.render():tab==='stickies'?window.PsychDeskStickies?.render():tab==='materials'?window.PsychDeskBooks?.render():tab==='files'?window.PsychDeskMaterials?.render():tab==='books'?window.PsychDeskBooks?.render():tab==='reader'?window.PsychDeskReader?.render():tab==='search'?extra?.renderSearch():tab==='research'?window.PsychDeskReferences?.render():tab==='dictionary'?window.PsychDeskKnowledge?.renderDictionary():tab==='timeline'?window.PsychDeskKnowledge?.renderTimeline():tab==='voice'?extra?.renderVoice():tab==='board'?boards?.renderBoard():tab==='mindmap'?boards?.renderMind():tab==='psychopathology'?window.PsychDeskPsychopathology?.render():tab==='connections'?window.PsychDeskPhase3?.render():tab==='university'||tab==='psychology'?renderPreparation(tab):tab==='tools'?renderTools():tab==='recall'?renderRecall()+(extra?.recallPanel()||''):tab==='focus'?renderFocus(extra?.focusPanel()||''):tab==='insights'?renderInsights()+(extra?.insightsPanel()||''):({today:renderToday,planner:renderPlanner}[tab]||renderToday)())||'<div class="empty">Loading study tools…</div>'; document.querySelectorAll('[data-tab]').forEach(b=>{b.classList.toggle('active',navActive(b,tab));if(b.classList.contains('rail-link')||b.classList.contains('nav-item'))b.setAttribute('aria-current',b.classList.contains('active')?'page':'false');});main.classList.add('page-enter');const crumb=document.querySelector('#railCurrentSection');if(crumb)crumb.textContent=({university:'University exam prep',psychology:'Psychology preparation',today:'Study desk',planner:'Subjects & topics',notes:'Knowledge base',ink:'Ink Notes',stickies:'Sticky Notes Studio',recall:'Flashcards',focus:'Deep focus',materials:'Library',files:'Drive files',insights:'Study insights',reader:'PDF reader',books:'Books',research:'Reference Manager',dictionary:'Psychology Dictionary',timeline:'History of Psychology',search:'Universal search',voice:'Voice notes',board:'Study board',mindmap:'Mind maps',psychopathology:'Psychopathology',connections:'Connected learning',tools:'Study tools'})[tab]||'Study desk';window.PsychDeskStudio?.enhance(main,tab);if(['board','mindmap'].includes(tab))requestAnimationFrame(()=>window.PsychDeskBoards?.layout());if(tab==='ink')window.PsychDeskInk?.mount();if(tab==='psychopathology')window.PsychDeskPsychopathology?.mount();window.PsychDeskMotion?.render(main,tab);window.PsychDeskReader?.afterRender?.(tab);window.PsychDeskBooks?.afterRender(tab);}
+function render(){window.PsychDeskMotion?.beforeRender(main,tab);main.classList.remove('page-enter');const extra=window.PsychDeskExtras,boards=window.PsychDeskBoards;main.innerHTML=recoveryBanner()+workspaceNav(tab)+(tab==='notes'?window.PsychDeskCloud?.renderNotes():tab==='ink'?window.PsychDeskInk?.render():tab==='stickies'?window.PsychDeskStickies?.render():tab==='materials'?window.PsychDeskBooks?.render():tab==='files'?window.PsychDeskMaterials?.render():tab==='books'?window.PsychDeskBooks?.render():tab==='reader'?window.PsychDeskReader?.render():tab==='reader-fast'?window.PsychDeskFastPDF?.render():tab==='search'?extra?.renderSearch():tab==='research'?window.PsychDeskReferences?.render():tab==='dictionary'?window.PsychDeskKnowledge?.renderDictionary():tab==='timeline'?window.PsychDeskKnowledge?.renderTimeline():tab==='voice'?extra?.renderVoice():tab==='board'?boards?.renderBoard():tab==='mindmap'?boards?.renderMind():tab==='psychopathology'?window.PsychDeskPsychopathology?.render():tab==='connections'?window.PsychDeskPhase3?.render():tab==='university'||tab==='psychology'?renderPreparation(tab):tab==='tools'?renderTools():tab==='recall'?renderRecall()+(extra?.recallPanel()||''):tab==='focus'?renderFocus(extra?.focusPanel()||''):tab==='insights'?renderInsights()+(extra?.insightsPanel()||''):({today:renderToday,planner:renderPlanner}[tab]||renderToday)())||'<div class="empty">Loading study tools…</div>'; document.querySelectorAll('[data-tab]').forEach(b=>{b.classList.toggle('active',navActive(b,tab));if(b.classList.contains('rail-link')||b.classList.contains('nav-item'))b.setAttribute('aria-current',b.classList.contains('active')?'page':'false');});main.classList.add('page-enter');const crumb=document.querySelector('#railCurrentSection');if(crumb)crumb.textContent=({university:'University exam prep',psychology:'Psychology preparation',today:'Study desk',planner:'Subjects & topics',notes:'Knowledge base',ink:'Ink Notes',stickies:'Sticky Notes Studio',recall:'Flashcards',focus:'Deep focus',materials:'Library',files:'Drive files',insights:'Study insights',reader:'Annotated PDF reader','reader-fast':'Fast PDF reader',books:'Books',research:'Reference Manager',dictionary:'Psychology Dictionary',timeline:'History of Psychology',search:'Universal search',voice:'Voice notes',board:'Study board',mindmap:'Mind maps',psychopathology:'Psychopathology',connections:'Connected learning',tools:'Study tools'})[tab]||'Study desk';window.PsychDeskStudio?.enhance(main,tab);if(['board','mindmap'].includes(tab))requestAnimationFrame(()=>window.PsychDeskBoards?.layout());if(tab==='ink')window.PsychDeskInk?.mount();if(tab==='psychopathology')window.PsychDeskPsychopathology?.mount();window.PsychDeskMotion?.render(main,tab);window.PsychDeskReader?.afterRender?.(tab);window.PsychDeskFastPDF?.afterRender?.(tab);window.PsychDeskBooks?.afterRender(tab);}
 
 function renderSyllabus(){
  const courses=window.PsychDeskSyllabus||[];
@@ -196,52 +197,21 @@ function renderPreparation(mode){
 }
 
 function workspaceNav(view){
- const groups=[
-  {label:'Notes',description:'Choose how to capture and revisit your ideas.',tabs:[['notes','Typed'],['ink','Handwriting'],['stickies','Sticky notes'],['voice','Voice']]},
-  {label:'Library',description:'Indexed books and private Drive files live in separate spaces.',tabs:[['materials','Books'],['files','Drive files'],['reader','PDF reader'],['research','References']]},
-  {label:'Visual thinking',description:'Different views of your existing concepts and connections.',tabs:[['mindmap','Mind maps'],['board','Study board'],['connections','Connected learning']]}
- ];
- const group=groups.find(g=>g.tabs.some(([route])=>route===view)||(g.label==='Library'&&view==='books'));if(!group)return '';
- return '<nav class="study-workspace-nav" aria-label="'+group.label+' workspace navigation">'+
-  '<div class="study-workspace-intro"><strong>'+group.label+'</strong><span>'+group.description+'</span></div>'+
-  '<div class="study-workspace-tabs">'+group.tabs.map(([route,name])=>
-   '<button type="button" data-tab="'+route+'" class="study-workspace-tab'+(route===(view==='books'?'materials':view)?' is-current':'')+'"'+(route===(view==='books'?'materials':view)?' aria-current="page"':'')+'>'+name+'</button>').join('')+'</div></nav>';
+ const tabs=[['materials','Books'],['files','Drive files'],['reader-fast','Fast PDF'],['reader','Annotated PDF'],['research','References']];
+ if(!tabs.some(([key])=>key===view)&&view!=='books')return '';
+ return '<nav class="study-workspace-nav" aria-label="Library resources"><div class="study-workspace-intro"><strong>Library</strong><span>Books and private study documents.</span></div><div class="study-workspace-tabs">'+
+ tabs.map(([key,label])=>'<button type="button" data-tab="'+key+'" class="study-workspace-tab'+(key===(view==='books'?'materials':view)?' is-current':'')+'"'+(key===(view==='books'?'materials':view)?' aria-current="page"':'')+'>'+label+'</button>').join('')+'</div></nav>';
 }
 function renderTools(){
  const groups=[
- ['Everyday studying','Choose one thing to start.',[
-  ['psychology','ψ','Learn','Subjects, textbook lessons and exam preparation.'],
-  ['notes','✎','Notes','Typed, handwriting, sticky and voice notes together.'],
-  ['materials','▤','Library','Books, PDFs and research references.'],
-  ['recall','◇','Flashcards','Practice recall and scheduled review.'],
-  ['focus','◷','Focus','Set a timer and study without distractions.']]],
- ['Capture and plan','Other note formats and task planning.',[
-  ['ink','✒','Handwriting','Write with your stylus, touch or mouse.'],
-  ['stickies','▧','Sticky notes','Capture short ideas and reminders.'],
-  ['voice','◉','Voice notes','Dictate and edit a transcript.'],
-  ['planner','▤','Planner','Organize subjects and study tasks.']]],
- ['Reading and sources','Read, search and cite study material.',[
-  ['reader','▤','PDF reader','Read and annotate existing documents.'],
-  ['research','▧','References','Manage sources, DOIs and citations.'],
-  ['search','⌕','Search workspace','Find notes, cards, books and references.']]],
- ['Visual thinking','Your existing visual study tools.',[
-  ['mindmap','◇','Mind maps','Connect and compare concepts.'],
-  ['board','✳','Study board','Arrange ideas visually.'],
-  ['connections','↗','Connected learning','Explore relationships, theory comparisons and review.']]],
- ['Reference and progress','Explore or reflect when needed.',[
-  ['university','▤','University exams','Syllabus, revision and answer practice.'],
-  ['dictionary','A–Z','Psychology dictionary','Look up concepts and personal terms.'],
-  ['timeline','◷','Psychology timeline','Explore history and milestones.'],
-  ['insights','▥','Progress','Review study activity and recall ratings.']]]
+  ['Everyday studying', [['materials','▤','Library','Your books and reading companion.'],['focus','◷','Focus','Quiet study timer and 3D world.']]],
+  ['Individual tools', [['stickies','▧','Sticky notes','Capture short thoughts.']]],
+  ['Reading resources', [['reader-fast','▤','Fast PDF reader','Browser-native PDF viewing for desktop.'],['reader','▤','Annotated PDF reader','Detailed reading and highlights.'],['research','▧','References','Manage citations and sources.']]],
+  ['Psychology resources', [['dictionary','A–Z','Psychology dictionary','Search definitions and indexed books.'],['timeline','◷','Psychology timeline','History and milestones.']]]
  ];
- const section=([title,description,tools])=>
-  '<section class="tool-group"><h2>'+title+'</h2><p class="note">'+description+'</p><div class="study-tools-grid">'+
-  tools.map(t=>'<button type="button" data-tab="'+t[0]+'" class="study-tool-launcher"><span aria-hidden="true">'+t[1]+'</span><strong>'+t[2]+'</strong><small>'+t[3]+'</small></button>').join('')+'</div></section>';
- return '<section class="hero"><div class="eyebrow">TOOLS WHEN YOU NEED THEM</div><h1>Study tools.</h1><p>Everyday study first. Open specialized tools only when you need them.</p></section>'+
- section(groups[0])+'<details class="study-tools-more"><summary>Browse individual tools <span>Writing, reading, visual thinking and reference</span></summary><div class="study-tools-more-content">'+groups.slice(1).map(section).join('')+'</div></details>'+
- '<details class="study-panel"><summary>Keyboard shortcuts</summary><p>Ctrl / Cmd + K · Search your workspace</p><p>Ctrl / Cmd + Alt + N · New notebook note</p><p>Alt + 1–8 · Switch core study sections</p></details>';
+ const section=([title,tools])=>'<section class="tool-group"><h2>'+title+'</h2><div class="study-tools-grid">'+tools.map(t=>'<button type="button" data-tab="'+t[0]+'" class="study-tool-launcher"><span aria-hidden="true">'+t[1]+'</span><strong>'+t[2]+'</strong><small>'+t[3]+'</small></button>').join('')+'</div></section>';
+ return '<section class="desktop-tool-home"><header class="desktop-tool-heading"><span class="bk-ref-overline">STUDY ESSENTIALS</span><h1>More tools</h1><p>A small set of resources for reading and studying.</p></header>'+section(groups[0])+'<details class="study-tools-more" open><summary>Browse individual tools</summary><div class="study-tools-more-content">'+groups.slice(1).map(section).join('')+'</div></details></section>';
 }
-
 function taskRow(t){let isOverdue=t.due&&t.due<today()&&!t.done;return `<div class="task-row"><button class="check-btn ${t.done?'done':''}" data-action="toggleTask" data-id="${esc(t.id)}" aria-label="${t.done?'Mark incomplete':'Mark complete'}">${t.done?'✓':''}</button><div class="task-main"><div class="task-name ${t.done?'completed':''}">${esc(t.title)}</div><div class="task-sub"><span class="dot" style="background:${esc(subjColor(t.subjectId))}"></span>${esc(subjName(t.subjectId))}<span>·</span>${t.due?`<span class="${isOverdue?'tag overdue':''}">${isOverdue?'Overdue · ':''}${niceDay(t.due)}</span>`:'Flexible'}<span>·</span>${t.minutes||25} min</div></div><div class="task-actions">${t.due?`<button class="mini-btn" data-action="calendar" data-id="${esc(t.id)}" title="Add to calendar">▣</button>`:''}<button class="mini-btn" data-action="editTask" data-id="${esc(t.id)}" title="Edit topic">✎</button></div></div>`}
 function renderToday(){
  if(window.PsychDeskAutopilot?.renderHome)return window.PsychDeskAutopilot.renderHome();
@@ -319,7 +289,7 @@ function renderFocus(extrasMarkup=''){
   <p class="focus-room-timer-help">Finish &amp; log records completed study time. Pausing or resetting does not create a session.</p>
  </section>
  ${window.PsychDeskPhase4?.render?.()||''}
- ${topic?`<section class="focus-room-topic"><div><span class="focus-room-field-label">CURRENT TOPIC</span><h2>${esc(topic.title)}</h2></div><button type="button" data-tab="notes">Open notes ↗</button></section>`:''}
+ ${topic?`<section class="focus-room-topic"><div><span class="focus-room-field-label">CURRENT TOPIC</span><h2>${esc(topic.title)}</h2></div><button type="button" data-tab="materials">Open bookshelf ↗</button></section>`:''}
  ${extrasMarkup?`<details class="focus-room-optional"><summary>Session options <span>Intention &amp; ambient audio</span></summary>${extrasMarkup}</details>`:''}
  <section class="focus-room-summary" aria-label="Today's logged study sessions">
  <div class="focus-room-summary-title"><div><span class="focus-room-overline">ACTIVITY</span><h2>Today</h2></div><div class="focus-room-tally"><strong>${loggedMinutes}</strong><span>MIN LOGGED</span></div></div>

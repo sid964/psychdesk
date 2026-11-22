@@ -1,0 +1,43 @@
+'use strict';
+const assert=require('node:assert/strict');
+const {chromium}=require('playwright');
+(async()=>{
+ const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+ const context=await browser.newContext({viewport:{width:1440,height:900},serviceWorkers:'block'});
+ const page=await context.newPage();
+ try{
+  await page.goto('http://127.0.0.1:8765/',{waitUntil:'domcontentloaded'});
+  await page.locator('.desktop-bookshelf').waitFor({timeout:20000});
+  assert.match(await page.locator('.desktop-bookshelf').innerText(),/Biological Psychology/);
+  assert.match(await page.locator('.desktop-bookshelf').innerText(),/My bookshelf/);
+  assert.equal(await page.locator('.desktop-rail .rail-link').count(),3);
+  assert.equal(await page.locator('button[data-tab="psychology"], button[data-tab="notes"]').count(),0);
+  assert.equal(await page.locator('#settingsBtn').count(),1);
+  assert.equal(await page.locator('#themeToggle').count(),1);
+  assert.equal(await page.locator('.drive-orbit').count(),0);
+  assert.equal(await page.locator('.garden-landing').count(),0);
+  await page.locator('.desktop-rail [data-tab="tools"]').click();
+  await page.locator('.desktop-tool-home').waitFor();
+  const tools=await page.locator('.desktop-tool-home').innerText();
+  for(const label of ['Library','Sticky notes','Fast PDF reader','Annotated PDF reader','References','Psychology dictionary','Psychology timeline'])assert.ok(tools.includes(label),'Missing '+label);
+  assert.ok(!tools.includes('University exams'));
+  assert.ok(!tools.includes('Mind maps'));
+  await page.locator('.study-tool-launcher[data-tab="dictionary"]').click();
+  await page.locator('#psyDictionaryQuery').fill('Neurons');
+  await page.waitForTimeout(100);
+  assert.match(await page.locator('#psyDefinitionDetail').innerText(),/From your bookshelf/);
+  assert.match(await page.locator('#psyDefinitionDetail').innerText(),/Neurons/);
+  await page.locator('.desktop-rail [data-tab="focus"]').click();
+  await page.locator('.focus-room-intro').waitFor();
+  await page.locator('#psychWorldLaunch').waitFor({timeout:10000});
+  await page.locator('.desktop-rail [data-tab="tools"]').click();
+  await page.locator('.study-tool-launcher[data-tab="reader-fast"]').click();
+  await page.locator('.fast-pdf-workspace').waitFor();
+  await page.locator('#fastPdfFileInput').setInputFiles({name:'sample.pdf',mimeType:'application/pdf',buffer:Buffer.from('%PDF-1.4\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n2 0 obj<</Type/Pages/Count 0/Kids[]>>endobj\ntrailer<</Root 1 0 R>>\n%%EOF')});
+  await page.locator('#fastPdfFrame').waitFor();
+  assert.match(await page.locator('#fastPdfFrame').getAttribute('src'),/^blob:/);
+  await page.locator('.desktop-rail [data-tab="today"]').click();
+  await page.locator('.desktop-bookshelf').waitFor();
+  console.log('DESKTOP_BOOKSHELF_SMOKE_OK');
+ }finally{await context.close();await browser.close();}
+})().catch(e=>{console.error(e);process.exitCode=1;});

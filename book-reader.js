@@ -129,75 +129,24 @@
   const done=book.chapters.filter(chapter=>chapterStatus(book,chapter)==='Read').length;
   return {done,remaining:book.chapters.length-done,total:book.chapters.length,percent:Math.round(done/book.chapters.length*100)};
  }
- function shelf(){
- const latest=latestBook(),featured=lookup(shelfBookId)||latest||catalog[0];
- const subjects=[...new Set(catalog.map(b=>b.subject))].sort(),query=shelfQuery.trim().toLowerCase();
- const visible=catalog.filter(b=>(!shelfSubject||b.subject===shelfSubject)&&(!query||[b.title,b.subject,b.author,b.edition].some(t=>t.toLowerCase().includes(query))));
- const doneAll=catalog.reduce((a,b)=>a+progressFor(b).done,0),remainingAll=catalog.reduce((a,b)=>a+progressFor(b).remaining,0);
- const earned=[['First chapter',doneAll>=1],['Five chapters',doneAll>=5],['Ten chapters',doneAll>=10],['Book completed',catalog.some(b=>progressFor(b).remaining===0)]].filter(x=>x[1]).map(x=>x[0]);
- const status=window.PsychDeskFirebase?.getConnectionStatus?.();
- const sync=status?.synced?'Saved to your Google account':status?.signedIn?'Saved locally · Google sync pending':'Saved on this device · sign in to sync';
- const book=featured,progress=book?progressFor(book):null;
- const chapters=book?book.chapters.map((ch,i)=>{
-  const readParts=ch.sections.filter(p=>(record(book).completed||[]).includes(p.id)).length;
-  const first=ch.sections[0],page=ch.sections.find(p=>Number.isInteger(p.page))?.page;
-  const detailed=ch.sections.some(p=>p.kind==='detailed'),isRead=chapterStatus(book,ch)==='Read';
-  return `<button type="button" class="bk-ref-chapter" data-book-action="openPart" data-book-id="${esc(book.id)}" data-part-id="${esc(first.id)}" data-palette="${i<4?1:i<8?2:i<11?3:i<15?4:5}" aria-label="Read chapter ${i+1}: ${esc(ch.title)}">
-   <span class="bk-ref-number">${String(i+1).padStart(2,'0')}</span><strong>${esc(ch.title)}</strong>
-   <small>${page?'Book p. '+page+' · ':''}${detailed?'Full Chapter 1 notes':'Original chapter guide'}<span>${readParts}/${ch.sections.length} parts reviewed${isRead?' · Chapter read':''}</span></small>
-  </button>`;
- }).join(''):'';
- const icon=(kind)=>kind==='menu'?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>':
-  kind==='home'?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 11 9-8 9 8v10h-7v-7h-4v7H3z"/></svg>':
-  '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h10l4 4v14H5zM15 3v5h4M8 13h8M8 17h8"/></svg>';
- return `<section class="bk-shelf bk-reference-library" aria-label="Indexed psychology library">
-  <header class="bk-ref-topbar">
-   <div class="bk-ref-top-start"><button type="button" class="bk-ref-icon" data-book-action="bookMenu" aria-label="Browse books and chapters">${icon('menu')}</button>
-    <button type="button" class="bk-ref-icon" data-tab="today" aria-label="Home">${icon('home')}</button>
-    <span class="bk-ref-logo">P.</span><span class="bk-ref-brand">PsychDesk Reader</span></div>
-   <div class="bk-ref-top-brand"><strong>${esc(book?.subject||'Psychology')}</strong><small>Your reading library</small></div>
-   <div class="bk-ref-top-end"><button type="button" class="bk-ref-icon" data-tab="files" aria-label="Drive files">${icon('doc')}</button>
-    <button type="button" class="bk-ref-icon" data-tab="reader" aria-label="PDF reader">${icon('doc')}</button>
-    <button type="button" class="bk-ref-icon bk-ref-aa" data-book-action="readingAppearance" aria-label="Reading appearance">Aa</button></div>
-  </header>
-  <div class="bk-ref-body">
-   <div class="bk-ref-heading"><div><p class="bk-ref-overline">PsychDesk reading room · Your textbooks</p><h1>Reading library</h1></div>
-    <p>A quiet, source-based companion to your study books. Not a copied textbook, with reading progress and private notes linked to your account.</p></div>
-   <section class="bk-bio-feature" aria-label="Biological Psychology study companion" style="display:grid;grid-template-columns:minmax(0,clamp(90px,20vw,190px)) minmax(0,1fr);gap:clamp(14px,3vw,70px);align-items:center;padding:clamp(24px,4vw,48px);border:1px solid #c9d1bc;border-radius:11px;background:linear-gradient(114deg,#e5eadb 0%,#f6eee0 82%);box-shadow:0 16px 45px #4233230d;margin:0 0 30px;min-height:310px">
-    <div class="bk-bio-cover" aria-hidden="true" style="aspect-ratio:.70;width:min(100%,190px);min-width:0;display:flex;flex-direction:column;justify-content:space-between;padding:22px 15px 22px 20px;overflow:hidden;color:#f8e9c6;background:linear-gradient(145deg,#263947,#17232c);border:1px solid #394955;border-left:8px solid #203a48;border-radius:4px 9px 9px 4px;box-shadow:9px 12px 15px #241c142d"><small style="font:600 10px/1.5 system-ui,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#f4dfbd">PsychDesk · Reading companion</small><strong style="font:400 clamp(20px,2.7vw,28px)/1.12 Georgia,serif;overflow-wrap:anywhere;letter-spacing:-.03em">Biological Psychology</strong><span style="font:11px/1.6 Georgia,serif;color:#efdfbb">James W. Kalat · 14th Edition</span></div>
-    <div class="bk-ref-feature-content"><p class="bk-ref-overline">Complete classroom notes</p><h2>Biological Psychology</h2>
-      <p class="bk-ref-description">Study all 14 chapters with 448 topic explanations, 42 modules, and 41 illustrated textbook figures. Designed for focused desktop reading with a collapsible contents panel.</p>
-      <div class="bk-ref-tags"><span>14 chapters</span><span>448 topic notes</span><span>41 illustrations</span></div>
-      <div class="bk-ref-feature-actions"><a href="./biological-psychology-14e.html" class="bk-ref-primary" style="display:inline-flex;align-items:center;text-decoration:none">Open complete study notes</a></div>
-      <p style="font-size:11px;color:#5f6059;margin-top:14px">This separate book companion saves progress, notes and highlights in this browser; Google-account sync has not yet been connected.</p>
-    </div>
-   </section>
-   ${catalogError?'<p class="bk-empty" role="alert">The indexed book catalog could not be opened.</p>':''}
-   ${book?`<section class="bk-ref-feature" aria-label="Current book">
-    <div class="bk-ref-cover" aria-hidden="true"><small>PsychDesk · Psychology</small><strong>${esc(book.subject)}</strong><span>Reading companion · ${esc(book.edition)}</span></div>
-    <div class="bk-ref-feature-content"><p class="bk-ref-overline">${latest?.id===book.id?'Your current book':'Your selected book'}</p><h2>${esc(book.subject)}</h2>
-     <p class="bk-ref-description">${esc(book.author)}. ${esc(book.description||'A calmer way to study with focused reading, a chapter index and your own notes.')}</p>
-     <div class="bk-ref-tags"><span>${book.chapters.length} chapters indexed</span><span>${book.id==='psychopathology-9e'?'695 textbook headings':book.sections.length+' reading parts'}</span><span>${book.sections.filter(p=>p.kind==='detailed').length} detailed reading parts</span></div>
-     <div class="bk-ref-feature-actions"><button type="button" class="bk-ref-primary" data-book-action="open" data-book-id="${esc(book.id)}">Continue reading</button>
-     <button type="button" class="bk-ref-secondary" data-book-action="viewChapters">View chapters</button></div>
-     <div class="bk-ref-progress"><strong>${progress.percent}% through the book</strong><span> · ${progress.done} read · ${progress.remaining} remaining</span></div>
-     <div class="bk-ref-progress-track" role="progressbar" aria-label="Chapter progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${progress.percent}"><span style="width:${progress.percent}%"></span></div>
-    </div></section>`:'<p class="bk-empty">Your verified study books will appear here.</p>'}
-   ${book?`<section class="bk-ref-chapters" id="bk-chapters" aria-labelledby="bk-chapters-heading"><div class="bk-ref-section-heading">
-    <h2 id="bk-chapters-heading">Chapters in this book</h2><p>${book.id==='psychopathology-9e'?'Chapter 1: detailed draft · Others: source-based guides':'Detailed notes and source-based guides'}</p>
-    </div><div class="bk-ref-chapter-grid">${chapters}</div></section>`:''}
-   ${catalog.length>1?`<section class="bk-ref-book-list" id="bk-book-list" aria-labelledby="bk-books-title"><div class="bk-ref-section-heading"><h2 id="bk-books-title">Your books</h2><p>Choose a book to view its chapters</p></div>
-    <div class="bk-filter"><label for="bk-search">Search books</label><input type="search" id="bk-search" value="${esc(shelfQuery)}" placeholder="Find a psychology book">
-     <label for="bk-subject">Browse by subject</label><select id="bk-subject"><option value="">All subjects</option>${subjects.map(v=>'<option value="'+esc(v)+'"'+(shelfSubject===v?' selected':'')+'>'+esc(v)+'</option>').join('')}</select></div>
-    <div class="bk-grid">${visible.map(b=>{const p=progressFor(b);return `<article class="bk-book-card"><button type="button" class="bk-cover" data-book-action="open" data-book-id="${esc(b.id)}" aria-label="Read ${esc(b.title)}"><small>${esc(b.subject)}</small><strong>${esc(b.title)}</strong><span>${esc(b.edition)}</span></button><div class="bk-book-detail"><h3>${esc(b.title)}</h3><p>${esc(b.author)}</p><span class="bk-chapter-metric">${p.done} of ${p.total} chapters read · ${p.remaining} remaining</span><div class="bk-chapter-track" role="progressbar" aria-label="${esc(b.title)} chapters read" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${p.percent}"><span style="width:${p.percent}%"></span></div><button type="button" class="bk-ref-view-book" data-book-action="selectBook" data-book-id="${esc(b.id)}">View chapters</button></div></article>`}).join('')}</div>
-    ${visible.length?'':'<p class="bk-empty">No indexed books match your search.</p>'}</section>`:''}
-   <section class="bk-ref-achievements" aria-label="Your reading achievements"><div class="bk-hero-stats"><div><strong>${catalog.length}</strong><span>Books</span></div><div><strong>${doneAll}</strong><span>Chapters read</span></div><div><strong>${remainingAll}</strong><span>Remaining</span></div></div>
-    <div class="bk-milestones"><p class="bk-ref-overline">Your reading achievements</p>${earned.length?'<div class="bk-earned">'+earned.map(x=>'<span>✦ '+esc(x)+'</span>').join('')+'</div>':'<p class="bk-unearned">Finish your first chapter to earn a milestone.</p>'}
-    <small>${esc(sync)}</small></div></section>
-   <nav class="bk-ref-links" aria-label="Other library spaces"><button type="button" data-tab="files">Drive files</button><button type="button" data-tab="reader">PDF reader</button><button type="button" data-tab="research">References</button></nav>
-  </div></section>`;
+ function renderHome(){
+ const cover='https://books.google.com/books/content?id=bCdrzwEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api';
+ const files=(core.getData().materials||[]).filter(item=>['pdf','markdown'].includes(item.kind)).slice().sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||'')));
+ const cards=files.map(item=>{
+  const connected=Boolean(item.driveId),isPDF=item.kind==='pdf';
+  return '<article class="desk-book-item"><button type="button" class="desk-book-cover desk-file-cover" data-'+(connected?(isPDF?'fast-pdf="open"':'library="read"'):'tab="files"')+' data-id="'+esc(item.id)+'" aria-label="Open '+esc(item.title||'study document')+'"><span class="desk-file-icon" aria-hidden="true">▤</span><strong>'+esc(item.title||item.fileName||'Untitled document')+'</strong><small>'+esc(item.kind.toUpperCase())+'</small></button><h3>'+esc(item.title||item.fileName||'Study document')+'</h3><span>Private Drive file</span></article>';
+ }).join('');
+ return '<section class="desktop-bookshelf" aria-label="Your study bookshelf">'+
+  '<header class="desk-bookshelf-header"><div><p class="desk-kicker">PSYCHOLOGY WORKSPACE · STUDY DESK</p><h1>My bookshelf</h1><p>Your study books, all in one place.</p></div><button type="button" class="desk-add-book" data-tab="files">+ Add a book</button></header>'+
+  '<div class="desk-bookshelf-section"><h2>Study companions</h2><div class="desk-books-grid">'+
+  '<article class="desk-book-item desk-featured-book"><a class="desk-book-cover desk-original-cover" href="./biological-psychology-14e.html" aria-label="Open Biological Psychology complete study notes"><img src="'+cover+'" alt="Original cover of Biological Psychology, 14th edition by James W. Kalat" decoding="async"></a><h3>Biological Psychology</h3><span>James W. Kalat · 14th edition</span><a class="desk-book-read" href="./biological-psychology-14e.html">Open study notes</a></article>'+
+  '</div></div>'+
+  '<div class="desk-bookshelf-section"><div class="desk-shelf-subhead"><h2>My Drive books</h2><button type="button" data-tab="files">Manage files</button></div>'+
+  (files.length?'<div class="desk-books-grid">'+cards+'</div>':'<div class="desk-shelf-empty">PDFs and study documents uploaded to Google Drive will appear here. <button type="button" data-tab="files">Open Drive files</button></div>')+
+  '</div></section>';
 }
- function renderBlock(block, highlights) {
+function shelf(){return renderHome();}
+function renderBlock(block, highlights) {
   const tag = {paragraph:'p', heading:'h2', quote:'blockquote'}[block.type];
   const ranges = highlights.filter(mark => mark.blockId === block.id && block.text.slice(mark.start, mark.end) === mark.quote)
    .sort((a, b) => a.start - b.start);
@@ -492,6 +441,6 @@
   focus = false;
   current = {};
  });
- window.PsychDeskBooks = {render,afterRender,sourceLink,open,latestBook,validateCatalog};
+ window.PsychDeskBooks = {render,renderHome,afterRender,sourceLink,open,latestBook,validateCatalog};
  if (/^#books(?:\/|$)/.test(location.hash)) readRoute();
 })();

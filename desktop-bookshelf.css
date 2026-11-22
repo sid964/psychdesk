@@ -1,0 +1,81 @@
+/* PsychDesk desktop-first bookshelf, November 2026.
+   UI-only changes: user notes, library files, and reading progress are preserved. */
+.rail-brand,.topbar .brand{display:flex;align-items:center;gap:11px;min-width:0}
+.rail-brand strong,.topbar .brand strong{font-weight:740;letter-spacing:-.045em;font-size:18px;white-space:nowrap}
+.rail-brand .brand-mark,.topbar .brand-mark{flex:none;display:grid;place-items:center;transform:none!important;line-height:1;border-radius:12px;font-family:Georgia,serif;font-size:24px;font-weight:600;width:38px;height:38px}
+.desktop-rail .rail-nav{gap:8px}
+.drive-status-chip{display:inline-flex;align-items:center;gap:8px;animation:none!important}
+.drive-status-chip *{animation:none!important;transform:none!important}
+.drive-status-dot{display:inline-block;flex:0 0 8px;width:8px;height:8px;border-radius:50%;background:#8b8e92;box-shadow:none}
+.drive-status-chip[data-state="ready"] .drive-status-dot{background:#4aa67a;box-shadow:0 0 0 3px #4aa67a1c}
+.drive-status-chip[data-state="reconnect"] .drive-status-dot{background:#d1a663}
+.drive-status-chip[data-state="connecting"] .drive-status-dot{background:#83a5dd}
+.drive-chip-label{white-space:nowrap}
+.desktop-bookshelf{width:min(100%,1320px);margin:0 auto;padding:clamp(24px,3.3vw,60px) clamp(8px,1.8vw,32px) 95px;color:var(--ink)}
+.desk-bookshelf-header{display:flex;align-items:flex-end;justify-content:space-between;gap:30px;margin:0 0 56px}
+.desk-kicker{margin:0 0 13px;color:var(--muted);font-size:11px;letter-spacing:.16em;font-weight:700;text-transform:uppercase}
+.desk-bookshelf-header h1,.desktop-tool-heading h1,.fast-pdf-header h1{font:500 clamp(39px,4vw,61px)/1.06 Georgia,'Times New Roman',serif;letter-spacing:-.045em;margin:0 0 11px}
+.desk-bookshelf-header p:not(.desk-kicker),.desktop-tool-heading p,.fast-pdf-header p:not(.desk-kicker){margin:0;color:var(--muted);font-size:14px}
+.desk-add-book{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 17px;min-height:43px;border-radius:9px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font-weight:650;white-space:nowrap;text-decoration:none;cursor:pointer;box-shadow:none}
+.desk-add-book:hover,.desk-shelf-subhead button:hover{background:var(--greenlight)}
+.desk-bookshelf-section{border-top:1px solid var(--line);padding-top:25px;margin-bottom:55px}
+.desk-bookshelf-section h2{font:500 21px/1.3 Georgia,'Times New Roman',serif;margin:0 0 21px;letter-spacing:-.02em}
+.desk-books-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(156px,188px));gap:33px 27px;align-items:start}
+.desk-book-item{min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:7px}
+.desk-book-cover{display:block;aspect-ratio:0.72;width:100%;border-radius:4px 9px 9px 4px;overflow:hidden;border:1px solid var(--line);text-align:left;box-shadow:6px 9px 18px #00000020;transition:transform .18s ease,box-shadow .18s ease;text-decoration:none;color:var(--ink);padding:0}
+.desk-book-cover:hover,.desk-book-cover:focus-visible{transform:translateY(-3px);box-shadow:7px 14px 25px #00000027}
+.desk-original-cover{background:#eeeeed}
+.desk-original-cover img{width:100%;height:100%;display:block;object-fit:contain;object-position:center}
+.desk-book-item h3{font-weight:690;font-size:14px;line-height:1.35;margin:8px 0 0;letter-spacing:-.012em;overflow-wrap:anywhere}
+.desk-book-item>span{font-size:12px;line-height:1.5;color:var(--muted)}
+.desk-book-read{font-size:12px;font-weight:700;margin-top:2px;color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+.desk-file-cover{background:linear-gradient(150deg,#343d46,#1d2630);border:1px solid #505a64;color:#f4f2ed;display:flex;flex-direction:column;justify-content:space-between;padding:15px;gap:12px;width:100%;font-size:13px}
+.desk-file-cover strong{font:500 19px/1.16 Georgia,serif;overflow-wrap:anywhere;max-height:7.2em;overflow:hidden}
+.desk-file-cover small{font-size:9px;letter-spacing:.16em;text-transform:uppercase;opacity:.78}
+.desk-file-icon{font-size:21px;opacity:.6}
+.desk-shelf-subhead{display:flex;align-items:center;justify-content:space-between;gap:20px}
+.desk-shelf-subhead button,.desk-shelf-empty button{border:0;background:none;color:var(--ink);font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.desk-shelf-empty{padding:24px;max-width:720px;border:1px dashed var(--line);background:var(--paper);border-radius:10px;color:var(--muted);line-height:1.7}
+.desktop-tool-home{max-width:1200px;margin:0 auto;padding:38px 18px 85px}
+.desktop-tool-heading{margin-bottom:35px}
+.desktop-tool-home .study-tools-more{display:block}
+.desktop-tool-home .study-tools-more>summary{font-size:13px;font-weight:670;margin:22px 0;cursor:pointer}
+.desktop-tool-home .study-tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.desktop-tool-home .tool-group{margin-bottom:30px}
+.desktop-tool-home .tool-group>h2{font:500 21px Georgia,serif;margin:0 0 16px}
+.desktop-tool-home .study-tool-launcher{min-height:120px;text-align:left}
+.focus-world-launch{display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);background:var(--paper);color:var(--ink);padding:10px 16px;border-radius:9px;margin-top:17px;font-weight:650}
+.focus-world-launch:hover{background:var(--greenlight)}
+.fast-pdf-workspace{max-width:1500px;margin:0 auto;padding:28px 14px 70px}
+.fast-pdf-header{display:flex;align-items:center;justify-content:space-between;gap:32px;margin:12px 0 28px}
+.fast-pdf-toolbar{display:flex;align-items:center;gap:15px;flex-wrap:wrap;padding:13px 17px;border:1px solid var(--line);border-bottom:0;border-radius:10px 10px 0 0;background:var(--paper)}
+.fast-pdf-toolbar strong{flex:1;min-width:180px;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fast-pdf-toolbar input{width:75px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);padding:7px}
+.fast-pdf-toolbar button,.fast-pdf-toolbar a{background:var(--bg);border:1px solid var(--line);border-radius:7px;padding:8px 12px;color:var(--ink);text-decoration:none;font-weight:600}
+#fastPdfFrame{display:block;width:100%;height:min(78vh,1100px);min-height:540px;border:1px solid var(--line);background:#363636}
+.fast-pdf-library{border:1px solid var(--line);border-radius:11px;background:var(--paper);padding:26px}
+.fast-pdf-library h2{font:500 22px Georgia,serif;margin:0 0 17px}
+.fast-pdf-files{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px}
+.fast-pdf-files button{padding:15px;text-align:left;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:9px}
+.fast-pdf-help{color:var(--muted);font-size:12px;margin-top:13px}
+.fast-pdf-status{color:var(--muted)}
+.fast-pdf-error{padding:13px 17px;border:1px solid #b96464;border-radius:8px}
+.desk-index-results{margin:24px 0;border-top:1px solid var(--line);padding-top:22px}
+.desk-index-results h2{font:500 21px Georgia,serif;margin:0 0 14px}
+.desk-index-results h2 small{font:400 12px system-ui;color:var(--muted)}
+.desk-index-match{display:block;padding:12px 0;border-bottom:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.desk-index-match strong{display:block;font-size:14px}
+.desk-index-match span{display:block;color:var(--muted);font-size:12px;margin-top:4px}
+.desk-index-match p{font-size:12px;line-height:1.5;margin:7px 0;color:var(--muted)}
+html[data-theme="dark"] .desk-file-cover{background:linear-gradient(155deg,#2c3035,#151619)}
+html[data-theme="dark"] .desk-original-cover{border-color:#333}
+html[data-theme="dark"] .desktop-bookshelf,html[data-theme="dark"] .desktop-tool-home{background:#000}
+@media(min-width:1000px){
+ .desktop-bookshelf{padding-top:45px}
+ .desk-books-grid{grid-template-columns:repeat(auto-fill,188px)}
+}
+@media(prefers-reduced-motion:reduce){.desk-book-cover{transition:none}.desk-book-cover:hover{transform:none}}
+
+/* Overrule the legacy 38px icon-only status button: explicit connection text must remain visible. */
+.topbar .drive-status-chip{width:auto!important;min-width:116px!important;max-width:none!important;padding:0 11px!important;display:inline-flex!important;align-items:center;justify-content:center;gap:7px}
+.topbar .drive-status-chip .drive-chip-label{font-size:11px!important;line-height:1.2!important;overflow:visible!important;visibility:visible!important}
