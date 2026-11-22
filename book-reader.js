@@ -163,7 +163,7 @@
   <div class="bk-ref-body">
    <div class="bk-ref-heading"><div><p class="bk-ref-overline">PsychDesk reading room · Your textbooks</p><h1>Reading library</h1></div>
     <p>A quiet, source-based companion to your study books. Not a copied textbook, with reading progress and private notes linked to your account.</p></div>
-   <section class="bk-ref-feature" aria-label="Biological Psychology study companion" style="margin:0 0 30px;min-height:310px">
+   <section class="bk-bio-feature" aria-label="Biological Psychology study companion" style="display:grid;grid-template-columns:minmax(0,190px) minmax(0,1fr);gap:clamp(24px,5vw,70px);align-items:center;padding:clamp(24px,4vw,48px);border:1px solid #c9d1bc;border-radius:11px;background:linear-gradient(114deg,#e5eadb 0%,#f6eee0 82%);box-shadow:0 16px 45px #4233230d;margin:0 0 30px;min-height:310px">
     <div class="bk-ref-cover" aria-hidden="true" style="background:linear-gradient(145deg,#263947,#17232c);border-color:#394955"><small>PsychDesk · Reading companion</small><strong>Biological Psychology</strong><span>James W. Kalat · 14th Edition</span></div>
     <div class="bk-ref-feature-content"><p class="bk-ref-overline">Complete classroom notes</p><h2>Biological Psychology</h2>
       <p class="bk-ref-description">Study all 14 chapters with 448 topic explanations, 42 modules, and 41 illustrated textbook figures. Designed for focused desktop reading with a collapsible contents panel.</p>
