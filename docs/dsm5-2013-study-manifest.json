@@ -1,0 +1,3938 @@
+{
+  "edition": "DSM-5 (2013)",
+  "attribution": "American Psychiatric Association",
+  "releaseStatus": "AUDIT_ONLY_NOT_PUBLISHED",
+  "scope": "Bibliographic headings, navigational references, and editorial progress only; no diagnostic criteria or publisher-owned prose",
+  "entryCount": 392,
+  "classificationCandidateAudit": {
+    "reviewed": 401,
+    "directlyLinked": 325,
+    "ocrAliases": 19,
+    "groupHeaders": 39,
+    "ocrFragments": 18,
+    "unresolved": 0
+  },
+  "fullOriginalNoteRewritesOutstanding": 244,
+  "entries": [
+    {
+      "id": "dsm5-2013-intellectual-disability-intellectual-developmental-disorder",
+      "title": "Intellectual Disability (Intellectual Developmental Disorder)",
+      "chapterId": "dsm5-2013-neurodevelopmental",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 33,
+      "pdfViewerPage": 71,
+      "editorialStatus": "editorial_draft",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-global-developmental-delay",
+      "title": "Global Developmental Delay",
+      "chapterId": "dsm5-2013-neurodevelopmental",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 41,
+      "pdfViewerPage": 79,
+      "editorialStatus": "editorial_draft",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-unspecified-intellectual-disability-intellectual-developmental-disorder",
+      "title": "Unspecified Intellectual Disability (Intellectual Developmental Disorder)",
+      "chapterId": "dsm5-2013-neurodevelopmental",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 41,
+      "pdfViewerPage": 79,
+      "editorialStatus": "editorial_draft",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-language-disorder",
+      "title": "Language Disorder",
+      "chapterId": "dsm5-2013-neurodevelopmental",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 42,
+      "pdfViewerPage": 80,
+      "editorialStatus": "editorial_draft",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-speech-sound-disorder",
+      "title": "Speech Sound Disorder",
+      "chapterId": "dsm5-2013-neurodevelopmental",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 44,
+      "pdfViewerPage": 82,
+      "editorialStatus": "editorial_draft",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-childhood-onset-fluency-disorder-stuttering",
+      "title": "Childhood-Onset Fluency Disorder (Stuttering)",
+      "chapterId": "dsm5-2013-neurodevelopmental",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 45,
+      "pdfViewerPage": 83,
+      "editorialStatus": "editorial_draft",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-social-pragmatic-communication-disorder",
+      "title": "Social (Pragmatic) Communication Disorder",
+      "chapterId": "dsm5-2013-neurodevelopmental",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 47,
+      "pdfViewerPage": 85,
+      "editorialStatus": "editorial_draft",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-unspecified-communication-disorder",
+      "title": "Unspecified Communication Disorder",
+      "chapterId": "dsm5-2013-neurodevelopmental",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 49,
+      "pdfViewerPage": 87,
+      "editorialStatus": "editorial_draft",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-autism-spectrum-disorder",
+      "title": "Autism Spectrum Disorder",
+      "chapterId": "dsm5-2013-neurodevelopmental",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 50,
+      "pdfViewerPage": 88,
+      "editorialStatus": "editorial_draft",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-attention-deficit-hyperactivity-disorder",
+      "title": "Attention-Deficit/Hyperactivity Disorder",
+      "chapterId": "dsm5-2013-neurodevelopmental",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 59,
+      "pdfViewerPage": 97,
+      "editorialStatus": "editorial_draft",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-other-specified-attention-deficit-hyperactivity-disorder",
+      "title": "Other Specified Attention-Deficit/Hyperactivity Disorder",
+      "chapterId": "dsm5-2013-neurodevelopmental",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 65,
+      "pdfViewerPage": 103,
+      "editorialStatus": "editorial_draft",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-specific-learning-disorder",
+      "title": "Specific Learning Disorder",
+      "chapterId": "dsm5-2013-neurodevelopmental",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 66,
+      "pdfViewerPage": 104,
+      "editorialStatus": "editorial_draft",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-unspecified-attention-deficit-hyperactivity-disorder",
+      "title": "Unspecified Attention-Deficit/Hyperactivity Disorder",
+      "chapterId": "dsm5-2013-neurodevelopmental",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 66,
+      "pdfViewerPage": 104,
+      "editorialStatus": "editorial_draft",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-developmental-coordination-disorder",
+      "title": "Developmental Coordination Disorder",
+      "chapterId": "dsm5-2013-neurodevelopmental",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 74,
+      "pdfViewerPage": 112,
+      "editorialStatus": "editorial_draft",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-stereotypic-movement-disorder",
+      "title": "Stereotypic Movement Disorder",
+      "chapterId": "dsm5-2013-neurodevelopmental",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 77,
+      "pdfViewerPage": 115,
+      "editorialStatus": "editorial_draft",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-persistent-chronic-motor-or-vocal-tic-disorder",
+      "title": "Persistent (Chronic) Motor or Vocal Tic Disorder",
+      "chapterId": "dsm5-2013-neurodevelopmental",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 81,
+      "pdfViewerPage": 119,
+      "editorialStatus": "editorial_draft",
+      "sourceStatus": "classification_and_diagnostic_body_verified"
+    },
+    {
+      "id": "dsm5-2013-provisional-tic-disorder",
+      "title": "Provisional Tic Disorder",
+      "chapterId": "dsm5-2013-neurodevelopmental",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 81,
+      "pdfViewerPage": 119,
+      "editorialStatus": "editorial_draft",
+      "sourceStatus": "classification_and_diagnostic_body_verified"
+    },
+    {
+      "id": "dsm5-2013-tic-disorders",
+      "title": "Tic Disorders",
+      "chapterId": "dsm5-2013-neurodevelopmental",
+      "kind": "family_or_specifier",
+      "printedPage": 81,
+      "pdfViewerPage": 119,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-tourette-s-disorder",
+      "title": "Tourette's Disorder",
+      "chapterId": "dsm5-2013-neurodevelopmental",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 81,
+      "pdfViewerPage": 119,
+      "editorialStatus": "editorial_draft",
+      "sourceStatus": "short_original_paraphrase_source_page_checked"
+    },
+    {
+      "id": "dsm5-2013-other-specified-tic-disorder",
+      "title": "Other Specified Tic Disorder",
+      "chapterId": "dsm5-2013-neurodevelopmental",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 85,
+      "pdfViewerPage": 123,
+      "editorialStatus": "editorial_draft",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-unspecified-tic-disorder",
+      "title": "Unspecified Tic Disorder",
+      "chapterId": "dsm5-2013-neurodevelopmental",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 85,
+      "pdfViewerPage": 123,
+      "editorialStatus": "editorial_draft",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-other-specified-neurodevelopmental-disorder",
+      "title": "Other Specified Neurodevelopmental Disorder",
+      "chapterId": "dsm5-2013-neurodevelopmental",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 86,
+      "pdfViewerPage": 124,
+      "editorialStatus": "editorial_draft",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-unspecified-neurodevelopmental-disorder",
+      "title": "Unspecified Neurodevelopmental Disorder",
+      "chapterId": "dsm5-2013-neurodevelopmental",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 86,
+      "pdfViewerPage": 124,
+      "editorialStatus": "editorial_draft",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-delusional-disorder",
+      "title": "Delusional Disorder",
+      "chapterId": "dsm5-2013-psychotic",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 90,
+      "pdfViewerPage": 128,
+      "editorialStatus": "editorial_draft",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-schizotypal-personality-disorder",
+      "title": "Schizotypal (Personality) Disorder",
+      "chapterId": "dsm5-2013-psychotic",
+      "kind": "cross_reference",
+      "printedPage": 90,
+      "pdfViewerPage": 128,
+      "editorialStatus": "editorial_draft",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-brief-psychotic-disorder",
+      "title": "Brief Psychotic Disorder",
+      "chapterId": "dsm5-2013-psychotic",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 94,
+      "pdfViewerPage": 132,
+      "editorialStatus": "editorial_draft",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-schizophreniform-disorder",
+      "title": "Schizophreniform Disorder",
+      "chapterId": "dsm5-2013-psychotic",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 96,
+      "pdfViewerPage": 134,
+      "editorialStatus": "editorial_draft",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-schizophrenia",
+      "title": "Schizophrenia",
+      "chapterId": "dsm5-2013-psychotic",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 99,
+      "pdfViewerPage": 137,
+      "editorialStatus": "editorial_draft",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-schizoaffective-disorder",
+      "title": "Schizoaffective Disorder",
+      "chapterId": "dsm5-2013-psychotic",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 105,
+      "pdfViewerPage": 143,
+      "editorialStatus": "editorial_draft",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-substance-medication-induced-psychotic-disorder",
+      "title": "Substance/Medication-Induced Psychotic Disorder",
+      "chapterId": "dsm5-2013-psychotic",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 110,
+      "pdfViewerPage": 148,
+      "editorialStatus": "editorial_draft",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-psychotic-disorder-due-to-another-medical-condition",
+      "title": "Psychotic Disorder Due to Another Medical Condition",
+      "chapterId": "dsm5-2013-psychotic",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 115,
+      "pdfViewerPage": 153,
+      "editorialStatus": "editorial_draft",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-catatonia-associated-with-another-mental-disorder-catatonia-specifier",
+      "title": "Catatonia Associated With Another Mental Disorder (Catatonia Specifier)",
+      "chapterId": "dsm5-2013-psychotic",
+      "kind": "specifier",
+      "printedPage": 119,
+      "pdfViewerPage": 157,
+      "editorialStatus": "editorial_draft",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-catatonic-disorder-due-to-another-medical-condition",
+      "title": "Catatonic Disorder Due to Another Medical Condition",
+      "chapterId": "dsm5-2013-psychotic",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 120,
+      "pdfViewerPage": 158,
+      "editorialStatus": "editorial_draft",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-unspecified-catatonia",
+      "title": "Unspecified Catatonia",
+      "chapterId": "dsm5-2013-psychotic",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 121,
+      "pdfViewerPage": 159,
+      "editorialStatus": "editorial_draft",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-other-specified-schizophrenia-spectrum-and-other-psychotic-disorder",
+      "title": "Other Specified Schizophrenia Spectrum and Other Psychotic Disorder",
+      "chapterId": "dsm5-2013-psychotic",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 122,
+      "pdfViewerPage": 160,
+      "editorialStatus": "editorial_draft",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-unspecified-schizophrenia-spectrum-and-other-psychotic-disorder",
+      "title": "Unspecified Schizophrenia Spectrum and Other Psychotic Disorder",
+      "chapterId": "dsm5-2013-psychotic",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 122,
+      "pdfViewerPage": 160,
+      "editorialStatus": "editorial_draft",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-bipolar-i-disorder",
+      "title": "Bipolar I Disorder",
+      "chapterId": "dsm5-2013-bipolar",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 123,
+      "pdfViewerPage": 161,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-bipolar-ii-disorder",
+      "title": "Bipolar II Disorder",
+      "chapterId": "dsm5-2013-bipolar",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 132,
+      "pdfViewerPage": 170,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-cyclothymic-disorder",
+      "title": "Cyclothymic Disorder",
+      "chapterId": "dsm5-2013-bipolar",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 139,
+      "pdfViewerPage": 177,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-substance-medication-induced-bipolar-and-related-disorder",
+      "title": "Substance/Medication-Induced Bipolar and Related Disorder",
+      "chapterId": "dsm5-2013-bipolar",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 142,
+      "pdfViewerPage": 180,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-bipolar-and-related-disorder-due-to-another-medical-condition",
+      "title": "Bipolar and Related Disorder Due to Another Medical Condition",
+      "chapterId": "dsm5-2013-bipolar",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 145,
+      "pdfViewerPage": 183,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-other-specified-bipolar-and-related-disorder",
+      "title": "Other Specified Bipolar and Related Disorder",
+      "chapterId": "dsm5-2013-bipolar",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 148,
+      "pdfViewerPage": 186,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-specifiers-for-bipolar-and-related-disorders",
+      "title": "Specifiers for Bipolar and Related Disorders",
+      "chapterId": "dsm5-2013-bipolar",
+      "kind": "family_or_specifier",
+      "printedPage": 149,
+      "pdfViewerPage": 187,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-unspecified-bipolar-and-related-disorder",
+      "title": "Unspecified Bipolar and Related Disorder",
+      "chapterId": "dsm5-2013-bipolar",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 149,
+      "pdfViewerPage": 187,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-disruptive-mood-dysregulation-disorder",
+      "title": "Disruptive Mood Dysregulation Disorder",
+      "chapterId": "dsm5-2013-depressive",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 156,
+      "pdfViewerPage": 194,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-major-depressive-disorder",
+      "title": "Major Depressive Disorder",
+      "chapterId": "dsm5-2013-depressive",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 160,
+      "pdfViewerPage": 198,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-persistent-depressive-disorder-dysthymia",
+      "title": "Persistent Depressive Disorder (Dysthymia)",
+      "chapterId": "dsm5-2013-depressive",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 168,
+      "pdfViewerPage": 206,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-premenstrual-dysphoric-disorder",
+      "title": "Premenstrual Dysphoric Disorder",
+      "chapterId": "dsm5-2013-depressive",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 171,
+      "pdfViewerPage": 209,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-substance-medication-induced-depressive-disorder",
+      "title": "Substance/Medication-Induced Depressive Disorder",
+      "chapterId": "dsm5-2013-depressive",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 175,
+      "pdfViewerPage": 213,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-depressive-disorder-due-to-another-medical-condition",
+      "title": "Depressive Disorder Due to Another Medical Condition",
+      "chapterId": "dsm5-2013-depressive",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 180,
+      "pdfViewerPage": 218,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-other-specified-depressive-disorder",
+      "title": "Other Specified Depressive Disorder",
+      "chapterId": "dsm5-2013-depressive",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 183,
+      "pdfViewerPage": 221,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-specifiers-for-depressive-disorders",
+      "title": "Specifiers for Depressive Disorders",
+      "chapterId": "dsm5-2013-depressive",
+      "kind": "family_or_specifier",
+      "printedPage": 184,
+      "pdfViewerPage": 222,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-unspecified-depressive-disorder",
+      "title": "Unspecified Depressive Disorder",
+      "chapterId": "dsm5-2013-depressive",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 184,
+      "pdfViewerPage": 222,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-separation-anxiety-disorder",
+      "title": "Separation Anxiety Disorder",
+      "chapterId": "dsm5-2013-anxiety",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 190,
+      "pdfViewerPage": 228,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-selective-mutism",
+      "title": "Selective Mutism",
+      "chapterId": "dsm5-2013-anxiety",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 195,
+      "pdfViewerPage": 233,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-specific-phobia",
+      "title": "Specific Phobia",
+      "chapterId": "dsm5-2013-anxiety",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 197,
+      "pdfViewerPage": 235,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-social-anxiety-disorder-social-phobia",
+      "title": "Social Anxiety Disorder (Social Phobia)",
+      "chapterId": "dsm5-2013-anxiety",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 202,
+      "pdfViewerPage": 240,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-panic-disorder",
+      "title": "Panic Disorder",
+      "chapterId": "dsm5-2013-anxiety",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 208,
+      "pdfViewerPage": 246,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-panic-attack-specifier",
+      "title": "Panic Attack Specifier",
+      "chapterId": "dsm5-2013-anxiety",
+      "kind": "family_or_specifier",
+      "printedPage": 214,
+      "pdfViewerPage": 252,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-agoraphobia",
+      "title": "Agoraphobia",
+      "chapterId": "dsm5-2013-anxiety",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 217,
+      "pdfViewerPage": 255,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-generalized-anxiety-disorder",
+      "title": "Generalized Anxiety Disorder",
+      "chapterId": "dsm5-2013-anxiety",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 222,
+      "pdfViewerPage": 260,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-substance-medication-induced-anxiety-disorder",
+      "title": "Substance/Medication-Induced Anxiety Disorder",
+      "chapterId": "dsm5-2013-anxiety",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 226,
+      "pdfViewerPage": 264,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-anxiety-disorder-due-to-another-medical-condition",
+      "title": "Anxiety Disorder Due to Another Medical Condition",
+      "chapterId": "dsm5-2013-anxiety",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 230,
+      "pdfViewerPage": 268,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-other-specified-anxiety-disorder",
+      "title": "Other Specified Anxiety Disorder",
+      "chapterId": "dsm5-2013-anxiety",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 233,
+      "pdfViewerPage": 271,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-unspecified-anxiety-disorder",
+      "title": "Unspecified Anxiety Disorder",
+      "chapterId": "dsm5-2013-anxiety",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 233,
+      "pdfViewerPage": 271,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-obsessive-compulsive-disorder",
+      "title": "Obsessive-Compulsive Disorder",
+      "chapterId": "dsm5-2013-obsessive_compulsive",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 237,
+      "pdfViewerPage": 274,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-body-dysmorphic-disorder",
+      "title": "Body Dysmorphic Disorder",
+      "chapterId": "dsm5-2013-obsessive_compulsive",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 242,
+      "pdfViewerPage": 279,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-hoarding-disorder",
+      "title": "Hoarding Disorder",
+      "chapterId": "dsm5-2013-obsessive_compulsive",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 247,
+      "pdfViewerPage": 284,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-trichotillomania-hair-pulling-disorder",
+      "title": "Trichotillomania (Hair-Pulling Disorder)",
+      "chapterId": "dsm5-2013-obsessive_compulsive",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 251,
+      "pdfViewerPage": 288,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-excoriation-skin-picking-disorder",
+      "title": "Excoriation (Skin-Picking) Disorder",
+      "chapterId": "dsm5-2013-obsessive_compulsive",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 253,
+      "pdfViewerPage": 291,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-substance-medication-induced-obsessive-compulsive-and-related-disorder",
+      "title": "Substance/Medication-Induced Obsessive-Compulsive and Related Disorder",
+      "chapterId": "dsm5-2013-obsessive_compulsive",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 256,
+      "pdfViewerPage": 294,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-obsessive-compulsive-and-related-disorder-due-to-another-medical-condition",
+      "title": "Obsessive-Compulsive and Related Disorder Due to Another Medical Condition",
+      "chapterId": "dsm5-2013-obsessive_compulsive",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 259,
+      "pdfViewerPage": 297,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-other-specified-obsessive-compulsive-and-related-disorder",
+      "title": "Other Specified Obsessive-Compulsive and Related Disorder",
+      "chapterId": "dsm5-2013-obsessive_compulsive",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 262,
+      "pdfViewerPage": 300,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-unspecified-obsessive-compulsive-and-related-disorder",
+      "title": "Unspecified Obsessive-Compulsive and Related Disorder",
+      "chapterId": "dsm5-2013-obsessive_compulsive",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 264,
+      "pdfViewerPage": 301,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-reactive-attachment-disorder",
+      "title": "Reactive Attachment Disorder",
+      "chapterId": "dsm5-2013-trauma",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 265,
+      "pdfViewerPage": 302,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-disinhibited-social-engagement-disorder",
+      "title": "Disinhibited Social Engagement Disorder",
+      "chapterId": "dsm5-2013-trauma",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 268,
+      "pdfViewerPage": 305,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-posttraumatic-stress-disorder",
+      "title": "Posttraumatic Stress Disorder",
+      "chapterId": "dsm5-2013-trauma",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 270,
+      "pdfViewerPage": 308,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-acute-stress-disorder",
+      "title": "Acute Stress Disorder",
+      "chapterId": "dsm5-2013-trauma",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 280,
+      "pdfViewerPage": 317,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-adjustment-disorders",
+      "title": "Adjustment Disorders",
+      "chapterId": "dsm5-2013-trauma",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 286,
+      "pdfViewerPage": 323,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-other-specified-trauma-and-stressor-related-disorder",
+      "title": "Other Specified Trauma- and Stressor-Related Disorder",
+      "chapterId": "dsm5-2013-trauma",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 289,
+      "pdfViewerPage": 326,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-unspecified-trauma-and-stressor-related-disorder",
+      "title": "Unspecified Trauma- and Stressor-Related Disorder",
+      "chapterId": "dsm5-2013-trauma",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 290,
+      "pdfViewerPage": 327,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-dissociative-identity-disorder",
+      "title": "Dissociative Identity Disorder",
+      "chapterId": "dsm5-2013-dissociative",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 292,
+      "pdfViewerPage": 329,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-dissociative-amnesia",
+      "title": "Dissociative Amnesia",
+      "chapterId": "dsm5-2013-dissociative",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 298,
+      "pdfViewerPage": 335,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-depersonalization-derealization-disorder",
+      "title": "Depersonalization/Derealization Disorder",
+      "chapterId": "dsm5-2013-dissociative",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 302,
+      "pdfViewerPage": 339,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-other-specified-dissociative-disorder",
+      "title": "Other Specified Dissociative Disorder",
+      "chapterId": "dsm5-2013-dissociative",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 305,
+      "pdfViewerPage": 343,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-unspecified-dissociative-disorder",
+      "title": "Unspecified Dissociative Disorder",
+      "chapterId": "dsm5-2013-dissociative",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 307,
+      "pdfViewerPage": 344,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-somatic-symptom-disorder",
+      "title": "Somatic Symptom Disorder",
+      "chapterId": "dsm5-2013-somatic",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 311,
+      "pdfViewerPage": 347,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-illness-anxiety-disorder",
+      "title": "Illness Anxiety Disorder",
+      "chapterId": "dsm5-2013-somatic",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 315,
+      "pdfViewerPage": 351,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-conversion-disorder-functional-neurological-symptom-disorder",
+      "title": "Conversion Disorder (Functional Neurological Symptom Disorder)",
+      "chapterId": "dsm5-2013-somatic",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 316,
+      "pdfViewerPage": 354,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-psychological-factors-affecting-other-medical-conditions",
+      "title": "Psychological Factors Affecting Other Medical Conditions",
+      "chapterId": "dsm5-2013-somatic",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 322,
+      "pdfViewerPage": 358,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-factitious-disorder",
+      "title": "Factitious Disorder",
+      "chapterId": "dsm5-2013-somatic",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 322,
+      "pdfViewerPage": 360,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-other-specified-somatic-symptom-and-related-disorder",
+      "title": "Other Specified Somatic Symptom and Related Disorder",
+      "chapterId": "dsm5-2013-somatic",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 327,
+      "pdfViewerPage": 363,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-unspecified-somatic-symptom-and-related-disorder",
+      "title": "Unspecified Somatic Symptom and Related Disorder",
+      "chapterId": "dsm5-2013-somatic",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 327,
+      "pdfViewerPage": 363,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-pica",
+      "title": "Pica",
+      "chapterId": "dsm5-2013-eating",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 329,
+      "pdfViewerPage": 364,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-rumination-disorder",
+      "title": "Rumination Disorder",
+      "chapterId": "dsm5-2013-eating",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 332,
+      "pdfViewerPage": 367,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-avoidant-restrictive-food-intake-disorder",
+      "title": "Avoidant/Restrictive Food Intake Disorder",
+      "chapterId": "dsm5-2013-eating",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 331,
+      "pdfViewerPage": 369,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-anorexia-nervosa",
+      "title": "Anorexia Nervosa",
+      "chapterId": "dsm5-2013-eating",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 338,
+      "pdfViewerPage": 373,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-bulimia-nervosa",
+      "title": "Bulimia Nervosa",
+      "chapterId": "dsm5-2013-eating",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 345,
+      "pdfViewerPage": 380,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-binge-eating-disorder",
+      "title": "Binge-Eating Disorder",
+      "chapterId": "dsm5-2013-eating",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 350,
+      "pdfViewerPage": 385,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-other-specified-feeding-or-eating-disorder",
+      "title": "Other Specified Feeding or Eating Disorder",
+      "chapterId": "dsm5-2013-eating",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 353,
+      "pdfViewerPage": 388,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-unspecified-feeding-or-eating-disorder",
+      "title": "Unspecified Feeding or Eating Disorder",
+      "chapterId": "dsm5-2013-eating",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 354,
+      "pdfViewerPage": 389,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-enuresis",
+      "title": "Enuresis",
+      "chapterId": "dsm5-2013-elimination",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 355,
+      "pdfViewerPage": 390,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-encopresis",
+      "title": "Encopresis",
+      "chapterId": "dsm5-2013-elimination",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 357,
+      "pdfViewerPage": 392,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-other-specified-elimination-disorder",
+      "title": "Other Specified Elimination Disorder",
+      "chapterId": "dsm5-2013-elimination",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 359,
+      "pdfViewerPage": 394,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-unspecified-elimination-disorder",
+      "title": "Unspecified Elimination Disorder",
+      "chapterId": "dsm5-2013-elimination",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 360,
+      "pdfViewerPage": 395,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-insomnia-disorder",
+      "title": "Insomnia Disorder",
+      "chapterId": "dsm5-2013-sleep",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 362,
+      "pdfViewerPage": 397,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-hypersomnolence-disorder",
+      "title": "Hypersomnolence Disorder",
+      "chapterId": "dsm5-2013-sleep",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 365,
+      "pdfViewerPage": 403,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-narcolepsy",
+      "title": "Narcolepsy",
+      "chapterId": "dsm5-2013-sleep",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 372,
+      "pdfViewerPage": 407,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-obstructive-sleep-apnea-hypopnea",
+      "title": "Obstructive Sleep Apnea Hypopnea",
+      "chapterId": "dsm5-2013-sleep",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 378,
+      "pdfViewerPage": 413,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-central-sleep-apnea",
+      "title": "Central Sleep Apnea",
+      "chapterId": "dsm5-2013-sleep",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 383,
+      "pdfViewerPage": 418,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-sleep-related-hypoventilation",
+      "title": "Sleep-Related Hypoventilation",
+      "chapterId": "dsm5-2013-sleep",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 387,
+      "pdfViewerPage": 422,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-circadian-rhythm-sleep-wake-disorders",
+      "title": "Circadian Rhythm Sleep-Wake Disorders",
+      "chapterId": "dsm5-2013-sleep",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 390,
+      "pdfViewerPage": 425,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-delayed-sleep-phase-type",
+      "title": "Delayed Sleep Phase Type",
+      "chapterId": "dsm5-2013-sleep",
+      "kind": "subtype",
+      "printedPage": 391,
+      "pdfViewerPage": 426,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-advanced-sleep-phase-type",
+      "title": "Advanced Sleep Phase Type",
+      "chapterId": "dsm5-2013-sleep",
+      "kind": "subtype",
+      "printedPage": 393,
+      "pdfViewerPage": 428,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-irregular-sleep-wake-type",
+      "title": "Irregular Sleep-Wake Type",
+      "chapterId": "dsm5-2013-sleep",
+      "kind": "subtype",
+      "printedPage": 394,
+      "pdfViewerPage": 429,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-non-24-hour-sleep-wake-type",
+      "title": "Non-24-Hour Sleep-Wake Type",
+      "chapterId": "dsm5-2013-sleep",
+      "kind": "subtype",
+      "printedPage": 396,
+      "pdfViewerPage": 431,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-shift-work-type",
+      "title": "Shift Work Type",
+      "chapterId": "dsm5-2013-sleep",
+      "kind": "subtype",
+      "printedPage": 397,
+      "pdfViewerPage": 432,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-non-rapid-eye-movement-sleep-arousal-disorders",
+      "title": "Non-Rapid Eye Movement Sleep Arousal Disorders",
+      "chapterId": "dsm5-2013-sleep",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 399,
+      "pdfViewerPage": 434,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-nightmare-disorder",
+      "title": "Nightmare Disorder",
+      "chapterId": "dsm5-2013-sleep",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 404,
+      "pdfViewerPage": 439,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-rapid-eye-movement-sleep-behavior-disorder",
+      "title": "Rapid Eye Movement Sleep Behavior Disorder",
+      "chapterId": "dsm5-2013-sleep",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 407,
+      "pdfViewerPage": 442,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-restless-legs-syndrome",
+      "title": "Restless Legs Syndrome",
+      "chapterId": "dsm5-2013-sleep",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 407,
+      "pdfViewerPage": 445,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-substance-medication-induced-sleep-disorder",
+      "title": "Substance/Medication-Induced Sleep Disorder",
+      "chapterId": "dsm5-2013-sleep",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 413,
+      "pdfViewerPage": 448,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-other-specified-insomnia-disorder",
+      "title": "Other Specified Insomnia Disorder",
+      "chapterId": "dsm5-2013-sleep",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 420,
+      "pdfViewerPage": 455,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-unspecified-insomnia-disorder",
+      "title": "Unspecified Insomnia Disorder",
+      "chapterId": "dsm5-2013-sleep",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 417,
+      "pdfViewerPage": 455,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-other-specified-hypersomnolence-disorder",
+      "title": "Other Specified Hypersomnolence Disorder",
+      "chapterId": "dsm5-2013-sleep",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 421,
+      "pdfViewerPage": 456,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-other-specified-sleep-wake-disorder",
+      "title": "Other Specified Sleep-Wake Disorder",
+      "chapterId": "dsm5-2013-sleep",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 421,
+      "pdfViewerPage": 456,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-unspecified-hypersomnolence-disorder",
+      "title": "Unspecified Hypersomnolence Disorder",
+      "chapterId": "dsm5-2013-sleep",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 421,
+      "pdfViewerPage": 456,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-unspecified-sleep-wake-disorder",
+      "title": "Unspecified Sleep-Wake Disorder",
+      "chapterId": "dsm5-2013-sleep",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 422,
+      "pdfViewerPage": 457,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-delayed-ejaculation",
+      "title": "Delayed Ejaculation",
+      "chapterId": "dsm5-2013-sexual",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 424,
+      "pdfViewerPage": 459,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-erectile-disorder",
+      "title": "Erectile Disorder",
+      "chapterId": "dsm5-2013-sexual",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 426,
+      "pdfViewerPage": 461,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-female-orgasmic-disorder",
+      "title": "Female Orgasmic Disorder",
+      "chapterId": "dsm5-2013-sexual",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 429,
+      "pdfViewerPage": 464,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-female-sexual-interest-arousal-disorder",
+      "title": "Female Sexual Interest/Arousal Disorder",
+      "chapterId": "dsm5-2013-sexual",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 433,
+      "pdfViewerPage": 468,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-genito-pelvic-pain-penetration-disorder",
+      "title": "Genito-Pelvic Pain/Penetration Disorder",
+      "chapterId": "dsm5-2013-sexual",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 437,
+      "pdfViewerPage": 472,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-male-hypoactive-sexual-desire-disorder",
+      "title": "Male Hypoactive Sexual Desire Disorder",
+      "chapterId": "dsm5-2013-sexual",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 440,
+      "pdfViewerPage": 475,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-premature-early-ejaculation",
+      "title": "Premature (Early) Ejaculation",
+      "chapterId": "dsm5-2013-sexual",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 443,
+      "pdfViewerPage": 478,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-substance-medication-induced-sexual-dysfunction",
+      "title": "Substance/Medication-Induced Sexual Dysfunction",
+      "chapterId": "dsm5-2013-sexual",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 446,
+      "pdfViewerPage": 481,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-other-specified-sexual-dysfunction",
+      "title": "Other Specified Sexual Dysfunction",
+      "chapterId": "dsm5-2013-sexual",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 450,
+      "pdfViewerPage": 485,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-unspecified-sexual-dysfunction",
+      "title": "Unspecified Sexual Dysfunction",
+      "chapterId": "dsm5-2013-sexual",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 450,
+      "pdfViewerPage": 485,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-gender-dysphoria",
+      "title": "Gender Dysphoria",
+      "chapterId": "dsm5-2013-gender",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 452,
+      "pdfViewerPage": 487,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-other-specified-gender-dysphoria",
+      "title": "Other Specified Gender Dysphoria",
+      "chapterId": "dsm5-2013-gender",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 459,
+      "pdfViewerPage": 494,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-unspecified-gender-dysphoria",
+      "title": "Unspecified Gender Dysphoria",
+      "chapterId": "dsm5-2013-gender",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 459,
+      "pdfViewerPage": 494,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-oppositional-defiant-disorder",
+      "title": "Oppositional Defiant Disorder",
+      "chapterId": "dsm5-2013-impulse",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 462,
+      "pdfViewerPage": 496,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-intermittent-explosive-disorder",
+      "title": "Intermittent Explosive Disorder",
+      "chapterId": "dsm5-2013-impulse",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 466,
+      "pdfViewerPage": 500,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-conduct-disorder",
+      "title": "Conduct Disorder",
+      "chapterId": "dsm5-2013-impulse",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 469,
+      "pdfViewerPage": 503,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-antisocial-personality-disorder",
+      "title": "Antisocial Personality Disorder",
+      "chapterId": "dsm5-2013-impulse",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 476,
+      "pdfViewerPage": 510,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-pyromania",
+      "title": "Pyromania",
+      "chapterId": "dsm5-2013-impulse",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 472,
+      "pdfViewerPage": 510,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-kleptomania",
+      "title": "Kleptomania",
+      "chapterId": "dsm5-2013-impulse",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 478,
+      "pdfViewerPage": 512,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-other-specified-disruptive-impulse-control-and-conduct-disorder",
+      "title": "Other Specified Disruptive, Impulse-Control, and Conduct Disorder",
+      "chapterId": "dsm5-2013-impulse",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 475,
+      "pdfViewerPage": 513,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-unspecified-disruptive-impulse-control-and-conduct-disorder",
+      "title": "Unspecified Disruptive, Impulse-Control, and Conduct Disorder",
+      "chapterId": "dsm5-2013-impulse",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 476,
+      "pdfViewerPage": 514,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-alcohol-use-disorder",
+      "title": "Alcohol Use Disorder",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 490,
+      "pdfViewerPage": 524,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-alcohol-intoxication",
+      "title": "Alcohol Intoxication",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 497,
+      "pdfViewerPage": 531,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-alcohol-withdrawal",
+      "title": "Alcohol Withdrawal",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 499,
+      "pdfViewerPage": 533,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-other-alcohol-induced-disorders",
+      "title": "Other Alcohol-Induced Disorders",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 502,
+      "pdfViewerPage": 536,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-caffeine-intoxication",
+      "title": "Caffeine Intoxication",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 503,
+      "pdfViewerPage": 537,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-unspecified-alcohol-related-disorder",
+      "title": "Unspecified Alcohol-Related Disorder",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 499,
+      "pdfViewerPage": 537,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-caffeine-withdrawal",
+      "title": "Caffeine Withdrawal",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 506,
+      "pdfViewerPage": 540,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-other-caffeine-induced-disorders",
+      "title": "Other Caffeine-Induced Disorders",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "substance_induced_cross_reference",
+      "printedPage": 508,
+      "pdfViewerPage": 542,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_original_paraphrase_pdf_heading_verified"
+    },
+    {
+      "id": "dsm5-2013-cannabis-use-disorder",
+      "title": "Cannabis Use Disorder",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 509,
+      "pdfViewerPage": 543,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-unspecified-caffeine-related-disorder",
+      "title": "Unspecified Caffeine-Related Disorder",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 505,
+      "pdfViewerPage": 543,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-cannabis-intoxication",
+      "title": "Cannabis Intoxication",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 512,
+      "pdfViewerPage": 550,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-cannabis-withdrawal",
+      "title": "Cannabis Withdrawal",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 517,
+      "pdfViewerPage": 551,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-other-cannabis-induced-disorders",
+      "title": "Other Cannabis-Induced Disorders",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "substance_induced_cross_reference",
+      "printedPage": 519,
+      "pdfViewerPage": 553,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_original_paraphrase_pdf_heading_verified"
+    },
+    {
+      "id": "dsm5-2013-unspecified-cannabis-related-disorder",
+      "title": "Unspecified Cannabis-Related Disorder",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 519,
+      "pdfViewerPage": 553,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-phencyclidine-use-disorder",
+      "title": "Phencyclidine Use Disorder",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 520,
+      "pdfViewerPage": 554,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-other-hallucinogen-use-disorder",
+      "title": "Other Hallucinogen Use Disorder",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 523,
+      "pdfViewerPage": 557,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-phencyclidine-intoxication",
+      "title": "Phencyclidine Intoxication",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 527,
+      "pdfViewerPage": 561,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-other-hallucinogen-intoxication",
+      "title": "Other Hallucinogen Intoxication",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 529,
+      "pdfViewerPage": 563,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-hallucinogen-persisting-perception-disorder",
+      "title": "Hallucinogen Persisting Perception Disorder",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 531,
+      "pdfViewerPage": 565,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-other-hallucinogen-induced-disorders",
+      "title": "Other Hallucinogen-Induced Disorders",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "substance_induced_cross_reference",
+      "printedPage": 532,
+      "pdfViewerPage": 566,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_original_paraphrase_pdf_heading_verified"
+    },
+    {
+      "id": "dsm5-2013-other-phencyclidine-induced-disorders",
+      "title": "Other Phencyclidine-Induced Disorders",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "substance_induced_cross_reference",
+      "printedPage": 532,
+      "pdfViewerPage": 566,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_original_paraphrase_pdf_heading_verified"
+    },
+    {
+      "id": "dsm5-2013-inhalant-use-disorder",
+      "title": "Inhalant Use Disorder",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 533,
+      "pdfViewerPage": 567,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-unspecified-hallucinogen-related-disorder",
+      "title": "Unspecified Hallucinogen-Related Disorder",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 533,
+      "pdfViewerPage": 567,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-unspecified-phencyclidine-related-disorder",
+      "title": "Unspecified Phencyclidine-Related Disorder",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 533,
+      "pdfViewerPage": 567,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-inhalant-intoxication",
+      "title": "Inhalant Intoxication",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 538,
+      "pdfViewerPage": 572,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-other-inhalant-induced-disorders",
+      "title": "Other Inhalant-Induced Disorders",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "substance_induced_cross_reference",
+      "printedPage": 540,
+      "pdfViewerPage": 574,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_original_paraphrase_pdf_heading_verified"
+    },
+    {
+      "id": "dsm5-2013-unspecified-inhalant-related-disorder",
+      "title": "Unspecified Inhalant-Related Disorder",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 540,
+      "pdfViewerPage": 574,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-opioid-use-disorder",
+      "title": "Opioid Use Disorder",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 541,
+      "pdfViewerPage": 575,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-opioid-intoxication",
+      "title": "Opioid Intoxication",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 542,
+      "pdfViewerPage": 580,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-opioid-withdrawal",
+      "title": "Opioid Withdrawal",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 543,
+      "pdfViewerPage": 581,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-other-opioid-induced-disorders",
+      "title": "Other Opioid-Induced Disorders",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "substance_induced_cross_reference",
+      "printedPage": 549,
+      "pdfViewerPage": 583,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_original_paraphrase_pdf_heading_verified"
+    },
+    {
+      "id": "dsm5-2013-sedative-hypnotic-or-anxiolytic-use-disorder",
+      "title": "Sedative, Hypnotic, or Anxiolytic Use Disorder",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 550,
+      "pdfViewerPage": 584,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-unspecified-opioid-related-disorder",
+      "title": "Unspecified Opioid-Related Disorder",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 550,
+      "pdfViewerPage": 584,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-sedative-hypnotic-or-anxiolytic-intoxication",
+      "title": "Sedative, Hypnotic, or Anxiolytic Intoxication",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 556,
+      "pdfViewerPage": 590,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-sedative-hypnotic-or-anxiolytic-withdrawal",
+      "title": "Sedative, Hypnotic, or Anxiolytic Withdrawal",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 557,
+      "pdfViewerPage": 591,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-unspecified-sedative-hypnotic-or-anxiolytic-related-disorder",
+      "title": "Unspecified Sedative-, Hypnotic-, or Anxiolytic-Related Disorder",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 556,
+      "pdfViewerPage": 594,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-stimulant-use-disorder",
+      "title": "Stimulant Use Disorder",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 561,
+      "pdfViewerPage": 595,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-stimulant-intoxication",
+      "title": "Stimulant Intoxication",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 563,
+      "pdfViewerPage": 601,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-stimulant-withdrawal",
+      "title": "Stimulant Withdrawal",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 569,
+      "pdfViewerPage": 603,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-other-stimulant-induced-disorders",
+      "title": "Other Stimulant-Induced Disorders",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "substance_induced_cross_reference",
+      "printedPage": 570,
+      "pdfViewerPage": 604,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_original_paraphrase_pdf_heading_verified"
+    },
+    {
+      "id": "dsm5-2013-unspecified-stimulant-related-disorder",
+      "title": "Unspecified Stimulant-Related Disorder",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 570,
+      "pdfViewerPage": 604,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-tobacco-use-disorder",
+      "title": "Tobacco Use Disorder",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 571,
+      "pdfViewerPage": 605,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-tobacco-withdrawal",
+      "title": "Tobacco Withdrawal",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 575,
+      "pdfViewerPage": 609,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-other-tobacco-induced-disorders",
+      "title": "Other Tobacco-Induced Disorders",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "substance_induced_cross_reference",
+      "printedPage": 576,
+      "pdfViewerPage": 610,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_original_paraphrase_pdf_heading_verified"
+    },
+    {
+      "id": "dsm5-2013-other-or-unknown-substance-use-disorder",
+      "title": "Other (or Unknown) Substance Use Disorder",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 577,
+      "pdfViewerPage": 611,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-unspecified-tobacco-related-disorder",
+      "title": "Unspecified Tobacco-Related Disorder",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 573,
+      "pdfViewerPage": 611,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-other-or-unknown-substance-intoxication",
+      "title": "Other (or Unknown) Substance Intoxication",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 581,
+      "pdfViewerPage": 615,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-other-or-unknown-substance-withdrawal",
+      "title": "Other (or Unknown) Substance Withdrawal",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 583,
+      "pdfViewerPage": 617,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-gambling-disorder",
+      "title": "Gambling Disorder",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 585,
+      "pdfViewerPage": 619,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-other-or-unknown-substance-induced-disorders",
+      "title": "Other (or Unknown) Substance-Induced Disorders",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "substance_induced_cross_reference",
+      "printedPage": 585,
+      "pdfViewerPage": 619,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_original_paraphrase_pdf_heading_verified"
+    },
+    {
+      "id": "dsm5-2013-unspecified-other-or-unknown-substance-related-disorder",
+      "title": "Unspecified Other (or Unknown) Substance-Related Disorder",
+      "chapterId": "dsm5-2013-substances",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 581,
+      "pdfViewerPage": 619,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-delirium",
+      "title": "Delirium",
+      "chapterId": "dsm5-2013-neurocognitive",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 596,
+      "pdfViewerPage": 629,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-major-neurocognitive-disorder",
+      "title": "Major Neurocognitive Disorder",
+      "chapterId": "dsm5-2013-neurocognitive",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 597,
+      "pdfViewerPage": 635,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-major-and-mild-neurocognitive-disorders",
+      "title": "Major and Mild Neurocognitive Disorders",
+      "chapterId": "dsm5-2013-neurocognitive",
+      "kind": "family_or_specifier",
+      "printedPage": 597,
+      "pdfViewerPage": 635,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "short_original_paraphrase_source_page_checked"
+    },
+    {
+      "id": "dsm5-2013-other-specified-delirium",
+      "title": "Other Specified Delirium",
+      "chapterId": "dsm5-2013-neurocognitive",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 602,
+      "pdfViewerPage": 635,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-unspecified-delirium",
+      "title": "Unspecified Delirium",
+      "chapterId": "dsm5-2013-neurocognitive",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 602,
+      "pdfViewerPage": 635,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-mild-neurocognitive-disorder",
+      "title": "Mild Neurocognitive Disorder",
+      "chapterId": "dsm5-2013-neurocognitive",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 600,
+      "pdfViewerPage": 638,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-major-or-mild-neurocognitive-disorder-due-to-alzheimer-s-disease",
+      "title": "Major or Mild Neurocognitive Disorder Due to Alzheimer's Disease",
+      "chapterId": "dsm5-2013-neurocognitive",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 606,
+      "pdfViewerPage": 644,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-major-or-mild-frontotemporal-neurocognitive-disorder",
+      "title": "Major or Mild Frontotemporal Neurocognitive Disorder",
+      "chapterId": "dsm5-2013-neurocognitive",
+      "kind": "diagnostic_family_or_combined_entry",
+      "printedPage": 614,
+      "pdfViewerPage": 647,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-major-or-mild-neurocognitive-disorder-with-lewy-bodies",
+      "title": "Major or Mild Neurocognitive Disorder With Lewy Bodies",
+      "chapterId": "dsm5-2013-neurocognitive",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 613,
+      "pdfViewerPage": 651,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-major-or-mild-vascular-neurocognitive-disorder",
+      "title": "Major or Mild Vascular Neurocognitive Disorder",
+      "chapterId": "dsm5-2013-neurocognitive",
+      "kind": "diagnostic_family_or_combined_entry",
+      "printedPage": 621,
+      "pdfViewerPage": 654,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-major-or-mild-neurocognitive-disorder-due-to-traumatic-brain-injury",
+      "title": "Major or Mild Neurocognitive Disorder Due to Traumatic Brain Injury",
+      "chapterId": "dsm5-2013-neurocognitive",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 619,
+      "pdfViewerPage": 657,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-substance-medication-induced-major-or-mild-neurocognitive-disorder",
+      "title": "Substance/Medication-Induced Major or Mild Neurocognitive Disorder",
+      "chapterId": "dsm5-2013-neurocognitive",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 622,
+      "pdfViewerPage": 660,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-major-or-mild-neurocognitive-disorder-due-to-hiv-infection",
+      "title": "Major or Mild Neurocognitive Disorder Due to HIV Infection",
+      "chapterId": "dsm5-2013-neurocognitive",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 627,
+      "pdfViewerPage": 665,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-major-or-mild-neurocognitive-disorder-due-to-prion-disease",
+      "title": "Major or Mild Neurocognitive Disorder Due to Prion Disease",
+      "chapterId": "dsm5-2013-neurocognitive",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 629,
+      "pdfViewerPage": 667,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-major-or-mild-neurocognitive-disorder-due-to-parkinson-s-disease",
+      "title": "Major or Mild Neurocognitive Disorder Due to Parkinson's Disease",
+      "chapterId": "dsm5-2013-neurocognitive",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 631,
+      "pdfViewerPage": 669,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-major-or-mild-neurocognitive-disorder-due-to-huntingtons-disease",
+      "title": "Major or Mild Neurocognitive Disorder Due to Huntington’s Disease",
+      "chapterId": "dsm5-2013-neurocognitive",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 633,
+      "pdfViewerPage": 671,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-major-or-mild-neurocognitive-disorder-due-to-another-medical-condition",
+      "title": "Major or Mild Neurocognitive Disorder Due to Another Medical Condition",
+      "chapterId": "dsm5-2013-neurocognitive",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 636,
+      "pdfViewerPage": 674,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-major-or-mild-neurocognitive-disorder-due-to-multiple-etiologies",
+      "title": "Major or Mild Neurocognitive Disorder Due to Multiple Etiologies",
+      "chapterId": "dsm5-2013-neurocognitive",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 637,
+      "pdfViewerPage": 675,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-unspecified-neurocognitive-disorder",
+      "title": "Unspecified Neurocognitive Disorder",
+      "chapterId": "dsm5-2013-neurocognitive",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 643,
+      "pdfViewerPage": 676,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-general-personality-disorder",
+      "title": "General Personality Disorder",
+      "chapterId": "dsm5-2013-personality",
+      "kind": "family_or_specifier",
+      "printedPage": 646,
+      "pdfViewerPage": 678,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-paranoid-personality-disorder",
+      "title": "Paranoid Personality Disorder",
+      "chapterId": "dsm5-2013-personality",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 649,
+      "pdfViewerPage": 681,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-schizoid-personality-disorder",
+      "title": "Schizoid Personality Disorder",
+      "chapterId": "dsm5-2013-personality",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 652,
+      "pdfViewerPage": 684,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-schizotypal-personality-disorder-at-viewer-687-2",
+      "title": "Schizotypal Personality Disorder",
+      "chapterId": "dsm5-2013-personality",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 655,
+      "pdfViewerPage": 687,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-antisocial-personality-disorder-at-viewer-691-2",
+      "title": "Antisocial Personality Disorder",
+      "chapterId": "dsm5-2013-personality",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 659,
+      "pdfViewerPage": 691,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-borderline-personality-disorder",
+      "title": "Borderline Personality Disorder",
+      "chapterId": "dsm5-2013-personality",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 663,
+      "pdfViewerPage": 695,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-histrionic-personality-disorder",
+      "title": "Histrionic Personality Disorder",
+      "chapterId": "dsm5-2013-personality",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 667,
+      "pdfViewerPage": 699,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-narcissistic-personality-disorder",
+      "title": "Narcissistic Personality Disorder",
+      "chapterId": "dsm5-2013-personality",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 669,
+      "pdfViewerPage": 701,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-avoidant-personality-disorder",
+      "title": "Avoidant Personality Disorder",
+      "chapterId": "dsm5-2013-personality",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 666,
+      "pdfViewerPage": 704,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-dependent-personality-disorder",
+      "title": "Dependent Personality Disorder",
+      "chapterId": "dsm5-2013-personality",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 675,
+      "pdfViewerPage": 707,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-obsessive-compulsive-personality-disorder",
+      "title": "Obsessive-Compulsive Personality Disorder",
+      "chapterId": "dsm5-2013-personality",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 678,
+      "pdfViewerPage": 710,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-personality-change-due-to-another-medical-condition",
+      "title": "Personality Change Due to Another Medical Condition",
+      "chapterId": "dsm5-2013-personality",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 682,
+      "pdfViewerPage": 714,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-other-specified-personality-disorder",
+      "title": "Other Specified Personality Disorder",
+      "chapterId": "dsm5-2013-personality",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 684,
+      "pdfViewerPage": 716,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-unspecified-personality-disorder",
+      "title": "Unspecified Personality Disorder",
+      "chapterId": "dsm5-2013-personality",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 684,
+      "pdfViewerPage": 716,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-voyeuristic-disorder",
+      "title": "Voyeuristic Disorder",
+      "chapterId": "dsm5-2013-paraphilic",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 686,
+      "pdfViewerPage": 718,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-exhibitionistic-disorder",
+      "title": "Exhibitionistic Disorder",
+      "chapterId": "dsm5-2013-paraphilic",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 689,
+      "pdfViewerPage": 721,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-frotteuristic-disorder",
+      "title": "Frotteuristic Disorder",
+      "chapterId": "dsm5-2013-paraphilic",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 691,
+      "pdfViewerPage": 723,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-sexual-masochism-disorder",
+      "title": "Sexual Masochism Disorder",
+      "chapterId": "dsm5-2013-paraphilic",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 694,
+      "pdfViewerPage": 726,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-sexual-sadism-disorder",
+      "title": "Sexual Sadism Disorder",
+      "chapterId": "dsm5-2013-paraphilic",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 695,
+      "pdfViewerPage": 727,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-pedophilic-disorder",
+      "title": "Pedophilic Disorder",
+      "chapterId": "dsm5-2013-paraphilic",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 697,
+      "pdfViewerPage": 729,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-fetishistic-disorder",
+      "title": "Fetishistic Disorder",
+      "chapterId": "dsm5-2013-paraphilic",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 700,
+      "pdfViewerPage": 732,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-transvestic-disorder",
+      "title": "Transvestic Disorder",
+      "chapterId": "dsm5-2013-paraphilic",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 702,
+      "pdfViewerPage": 734,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-other-specified-paraphilic-disorder",
+      "title": "Other Specified Paraphilic Disorder",
+      "chapterId": "dsm5-2013-paraphilic",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 705,
+      "pdfViewerPage": 737,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-unspecified-paraphilic-disorder",
+      "title": "Unspecified Paraphilic Disorder",
+      "chapterId": "dsm5-2013-paraphilic",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 705,
+      "pdfViewerPage": 737,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-other-specified-mental-disorder-due-to-another-medical-condition",
+      "title": "Other Specified Mental Disorder Due to Another Medical Condition",
+      "chapterId": "dsm5-2013-other_mental",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 707,
+      "pdfViewerPage": 738,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-other-specified-mental-disorder",
+      "title": "Other Specified Mental Disorder",
+      "chapterId": "dsm5-2013-other_mental",
+      "kind": "diagnostic_category",
+      "printedPage": 708,
+      "pdfViewerPage": 739,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-unspecified-mental-disorder",
+      "title": "Unspecified Mental Disorder",
+      "chapterId": "dsm5-2013-other_mental",
+      "kind": "diagnostic_category",
+      "printedPage": 708,
+      "pdfViewerPage": 739,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-unspecified-mental-disorder-due-to-another-medical-condition",
+      "title": "Unspecified Mental Disorder Due to Another Medical Condition",
+      "chapterId": "dsm5-2013-other_mental",
+      "kind": "disorder_or_diagnostic_category",
+      "printedPage": 708,
+      "pdfViewerPage": 739,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "short_original_paraphrase_source_page_checked"
+    },
+    {
+      "id": "dsm5-2013-neuroleptic-malignant-syndrome",
+      "title": "Neuroleptic Malignant Syndrome",
+      "chapterId": "dsm5-2013-medication_effects",
+      "kind": "medication_induced_effect",
+      "printedPage": 709,
+      "pdfViewerPage": 740,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "short_original_paraphrase_source_page_checked"
+    },
+    {
+      "id": "dsm5-2013-neuroleptic-induced-parkinsonism",
+      "title": "Neuroleptic-Induced Parkinsonism",
+      "chapterId": "dsm5-2013-medication_effects",
+      "kind": "medication_induced_effect",
+      "printedPage": 709,
+      "pdfViewerPage": 740,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "short_original_paraphrase_source_page_checked"
+    },
+    {
+      "id": "dsm5-2013-other-medication-induced-parkinsonism",
+      "title": "Other Medication-Induced Parkinsonism",
+      "chapterId": "dsm5-2013-medication_effects",
+      "kind": "medication_induced_effect",
+      "printedPage": 709,
+      "pdfViewerPage": 740,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "classification_list_verified"
+    },
+    {
+      "id": "dsm5-2013-medication-induced-acute-akathisia",
+      "title": "Medication-Induced Acute Akathisia",
+      "chapterId": "dsm5-2013-medication_effects",
+      "kind": "medication_induced_effect",
+      "printedPage": 711,
+      "pdfViewerPage": 742,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "short_original_paraphrase_source_page_checked"
+    },
+    {
+      "id": "dsm5-2013-medication-induced-acute-dystonia",
+      "title": "Medication-Induced Acute Dystonia",
+      "chapterId": "dsm5-2013-medication_effects",
+      "kind": "medication_induced_effect",
+      "printedPage": 711,
+      "pdfViewerPage": 742,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "classification_list_verified"
+    },
+    {
+      "id": "dsm5-2013-antidepressant-discontinuation-syndrome",
+      "title": "Antidepressant Discontinuation Syndrome",
+      "chapterId": "dsm5-2013-medication_effects",
+      "kind": "medication_induced_effect",
+      "printedPage": 712,
+      "pdfViewerPage": 743,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "short_original_paraphrase_source_page_checked"
+    },
+    {
+      "id": "dsm5-2013-medication-induced-postural-tremor",
+      "title": "Medication-Induced Postural Tremor",
+      "chapterId": "dsm5-2013-medication_effects",
+      "kind": "medication_induced_effect",
+      "printedPage": 712,
+      "pdfViewerPage": 743,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "short_original_paraphrase_source_page_checked"
+    },
+    {
+      "id": "dsm5-2013-other-medication-induced-movement-disorder",
+      "title": "Other Medication-Induced Movement Disorder",
+      "chapterId": "dsm5-2013-medication_effects",
+      "kind": "medication_induced_effect",
+      "printedPage": 712,
+      "pdfViewerPage": 743,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "short_original_paraphrase_source_page_checked"
+    },
+    {
+      "id": "dsm5-2013-tardive-akathisia",
+      "title": "Tardive Akathisia",
+      "chapterId": "dsm5-2013-medication_effects",
+      "kind": "medication_induced_effect",
+      "printedPage": 712,
+      "pdfViewerPage": 743,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "short_original_paraphrase_source_page_checked"
+    },
+    {
+      "id": "dsm5-2013-tardive-dyskinesia",
+      "title": "Tardive Dyskinesia",
+      "chapterId": "dsm5-2013-medication_effects",
+      "kind": "medication_induced_effect",
+      "printedPage": 712,
+      "pdfViewerPage": 743,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "short_original_paraphrase_source_page_checked"
+    },
+    {
+      "id": "dsm5-2013-tardive-dystonia",
+      "title": "Tardive Dystonia",
+      "chapterId": "dsm5-2013-medication_effects",
+      "kind": "medication_induced_effect",
+      "printedPage": 712,
+      "pdfViewerPage": 743,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "classification_list_verified"
+    },
+    {
+      "id": "dsm5-2013-other-adverse-effect-of-medication",
+      "title": "Other Adverse Effect of Medication",
+      "chapterId": "dsm5-2013-medication_effects",
+      "kind": "medication_induced_effect",
+      "printedPage": 714,
+      "pdfViewerPage": 745,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "classification_list_verified"
+    },
+    {
+      "id": "dsm5-2013-parent-child-relational-problem",
+      "title": "Parent-Child Relational Problem",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 715,
+      "pdfViewerPage": 746,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_original_paraphrase_pdf_heading_verified"
+    },
+    {
+      "id": "dsm5-2013-condition-problems-related-to-family-upbringing",
+      "title": "Problems Related to Family Upbringing",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 715,
+      "pdfViewerPage": 746,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "14pt_heading_candidate_manual_review_needed"
+    },
+    {
+      "id": "dsm5-2013-relational-problems",
+      "title": "Relational Problems",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_subclassification_or_group",
+      "printedPage": 715,
+      "pdfViewerPage": 746,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_variant_or_group_pdf_checked"
+    },
+    {
+      "id": "dsm5-2013-child-affected-by-parental-relationship-distress",
+      "title": "Child Affected by Parental Relationship Distress",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 716,
+      "pdfViewerPage": 747,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_index_pdf_body_verified"
+    },
+    {
+      "id": "dsm5-2013-disruption-of-family-by-separation-or-divorce",
+      "title": "Disruption of Family by Separation or Divorce",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 716,
+      "pdfViewerPage": 747,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_index_pdf_body_verified"
+    },
+    {
+      "id": "dsm5-2013-high-expressed-emotion-level-within-family",
+      "title": "High Expressed Emotion Level Within Family",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 716,
+      "pdfViewerPage": 747,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_index_pdf_body_verified"
+    },
+    {
+      "id": "dsm5-2013-other-problems-related-to-primary-support-group",
+      "title": "Other Problems Related to Primary Support Group",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_subclassification_or_group",
+      "printedPage": 716,
+      "pdfViewerPage": 747,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_variant_or_group_pdf_checked"
+    },
+    {
+      "id": "dsm5-2013-relationship-distress-with-spouse-or-intimate-partner",
+      "title": "Relationship Distress With Spouse or Intimate Partner",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 716,
+      "pdfViewerPage": 747,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_original_paraphrase_pdf_heading_verified"
+    },
+    {
+      "id": "dsm5-2013-sibling-relational-problem",
+      "title": "Sibling Relational Problem",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 716,
+      "pdfViewerPage": 747,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_original_paraphrase_pdf_heading_verified"
+    },
+    {
+      "id": "dsm5-2013-uncomplicated-bereavement",
+      "title": "Uncomplicated Bereavement",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 716,
+      "pdfViewerPage": 747,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_original_paraphrase_pdf_heading_verified"
+    },
+    {
+      "id": "dsm5-2013-upbringing-away-from-parents",
+      "title": "Upbringing Away From Parents",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 716,
+      "pdfViewerPage": 747,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_index_pdf_body_verified"
+    },
+    {
+      "id": "dsm5-2013-abuse-and-neglect",
+      "title": "Abuse and Neglect",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_subclassification_or_group",
+      "printedPage": 717,
+      "pdfViewerPage": 748,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_variant_or_group_pdf_checked"
+    },
+    {
+      "id": "dsm5-2013-condition-child-maltreatment-and-neglect-problems",
+      "title": "Child Maltreatment and Neglect Problems",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 717,
+      "pdfViewerPage": 748,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "short_original_paraphrase_source_page_checked"
+    },
+    {
+      "id": "dsm5-2013-condition-child-physical-abuse",
+      "title": "Child Physical Abuse",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 717,
+      "pdfViewerPage": 748,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "14pt_heading_candidate_manual_review_needed"
+    },
+    {
+      "id": "dsm5-2013-child-physical-abuse-confirmed",
+      "title": "Child Physical Abuse, Confirmed",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_subclassification_or_group",
+      "printedPage": 717,
+      "pdfViewerPage": 748,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_variant_or_group_pdf_checked"
+    },
+    {
+      "id": "dsm5-2013-child-physical-abuse-suspected",
+      "title": "Child Physical Abuse, Suspected",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_subclassification_or_group",
+      "printedPage": 717,
+      "pdfViewerPage": 748,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_variant_or_group_pdf_checked"
+    },
+    {
+      "id": "dsm5-2013-condition-child-neglect",
+      "title": "Child Neglect",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 718,
+      "pdfViewerPage": 749,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "14pt_heading_candidate_manual_review_needed"
+    },
+    {
+      "id": "dsm5-2013-child-neglect-confirmed",
+      "title": "Child Neglect, Confirmed",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_subclassification_or_group",
+      "printedPage": 718,
+      "pdfViewerPage": 749,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_variant_or_group_pdf_checked"
+    },
+    {
+      "id": "dsm5-2013-condition-child-sexual-abuse",
+      "title": "Child Sexual Abuse",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 718,
+      "pdfViewerPage": 749,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "14pt_heading_candidate_manual_review_needed"
+    },
+    {
+      "id": "dsm5-2013-child-sexual-abuse-confirmed",
+      "title": "Child Sexual Abuse, Confirmed",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_subclassification_or_group",
+      "printedPage": 718,
+      "pdfViewerPage": 749,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_variant_or_group_pdf_checked"
+    },
+    {
+      "id": "dsm5-2013-child-sexual-abuse-suspected",
+      "title": "Child Sexual Abuse, Suspected",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_subclassification_or_group",
+      "printedPage": 718,
+      "pdfViewerPage": 749,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_variant_or_group_pdf_checked"
+    },
+    {
+      "id": "dsm5-2013-other-circumstances-related-to-child-physical-abuse",
+      "title": "Other Circumstances Related to Child Physical Abuse",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_subclassification_or_group",
+      "printedPage": 718,
+      "pdfViewerPage": 749,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_variant_or_group_pdf_checked"
+    },
+    {
+      "id": "dsm5-2013-other-circumstances-related-to-child-sexual-abuse",
+      "title": "Other Circumstances Related to Child Sexual Abuse",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_subclassification_or_group",
+      "printedPage": 718,
+      "pdfViewerPage": 749,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_variant_or_group_pdf_checked"
+    },
+    {
+      "id": "dsm5-2013-child-neglect-suspected",
+      "title": "Child Neglect, Suspected",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_subclassification_or_group",
+      "printedPage": 719,
+      "pdfViewerPage": 750,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_variant_or_group_pdf_checked"
+    },
+    {
+      "id": "dsm5-2013-condition-child-psychological-abuse",
+      "title": "Child Psychological Abuse",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 719,
+      "pdfViewerPage": 750,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "14pt_heading_candidate_manual_review_needed"
+    },
+    {
+      "id": "dsm5-2013-child-psychological-abuse-confirmed",
+      "title": "Child Psychological Abuse, Confirmed",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_subclassification_or_group",
+      "printedPage": 719,
+      "pdfViewerPage": 750,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_variant_or_group_pdf_checked"
+    },
+    {
+      "id": "dsm5-2013-child-psychological-abuse-suspected",
+      "title": "Child Psychological Abuse, Suspected",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_subclassification_or_group",
+      "printedPage": 719,
+      "pdfViewerPage": 750,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_variant_or_group_pdf_checked"
+    },
+    {
+      "id": "dsm5-2013-other-circumstances-related-to-child-neglect",
+      "title": "Other Circumstances Related to Child Neglect",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_subclassification_or_group",
+      "printedPage": 719,
+      "pdfViewerPage": 750,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_variant_or_group_pdf_checked"
+    },
+    {
+      "id": "dsm5-2013-other-circumstances-related-to-child-psychological-abuse",
+      "title": "Other Circumstances Related to Child Psychological Abuse",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_subclassification_or_group",
+      "printedPage": 719,
+      "pdfViewerPage": 750,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_variant_or_group_pdf_checked"
+    },
+    {
+      "id": "dsm5-2013-condition-adult-maltreatment-and-neglect-problems",
+      "title": "Adult Maltreatment and Neglect Problems",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 720,
+      "pdfViewerPage": 751,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "short_original_paraphrase_source_page_checked"
+    },
+    {
+      "id": "dsm5-2013-other-circumstances-related-to-spouse-or-partner-violence-physical",
+      "title": "Other Circumstances Related to Spouse or Partner Violence, Physical",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_subclassification_or_group",
+      "printedPage": 720,
+      "pdfViewerPage": 751,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_variant_or_group_pdf_checked"
+    },
+    {
+      "id": "dsm5-2013-other-circumstances-related-to-spouse-or-partner-violence-sexual",
+      "title": "Other Circumstances Related to Spouse or Partner Violence, Sexual",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_subclassification_or_group",
+      "printedPage": 720,
+      "pdfViewerPage": 751,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_variant_or_group_pdf_checked"
+    },
+    {
+      "id": "dsm5-2013-condition-spouse-or-partner-violence-physical",
+      "title": "Spouse or Partner Violence, Physical",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 720,
+      "pdfViewerPage": 751,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "14pt_heading_candidate_manual_review_needed"
+    },
+    {
+      "id": "dsm5-2013-spouse-or-partner-violence-physical-confirmed",
+      "title": "Spouse or Partner Violence, Physical, Confirmed",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_subclassification_or_group",
+      "printedPage": 720,
+      "pdfViewerPage": 751,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_variant_or_group_pdf_checked"
+    },
+    {
+      "id": "dsm5-2013-spouse-or-partner-violence-physical-suspected",
+      "title": "Spouse or Partner Violence, Physical, Suspected",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_subclassification_or_group",
+      "printedPage": 720,
+      "pdfViewerPage": 751,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_variant_or_group_pdf_checked"
+    },
+    {
+      "id": "dsm5-2013-condition-spouse-or-partner-violence-sexual",
+      "title": "Spouse or Partner Violence, Sexual",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 720,
+      "pdfViewerPage": 751,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "14pt_heading_candidate_manual_review_needed"
+    },
+    {
+      "id": "dsm5-2013-spouse-or-partner-violence-sexual-confirmed",
+      "title": "Spouse or Partner Violence, Sexual, Confirmed",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_subclassification_or_group",
+      "printedPage": 720,
+      "pdfViewerPage": 751,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_variant_or_group_pdf_checked"
+    },
+    {
+      "id": "dsm5-2013-spouse-or-partner-violence-sexual-suspected",
+      "title": "Spouse or Partner Violence, Sexual, Suspected",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_subclassification_or_group",
+      "printedPage": 720,
+      "pdfViewerPage": 751,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_variant_or_group_pdf_checked"
+    },
+    {
+      "id": "dsm5-2013-other-circumstances-related-to-spouse-or-partner-abuse-psychological",
+      "title": "Other Circumstances Related to Spouse or Partner Abuse, Psychological",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_subclassification_or_group",
+      "printedPage": 721,
+      "pdfViewerPage": 752,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_variant_or_group_pdf_checked"
+    },
+    {
+      "id": "dsm5-2013-other-circumstances-related-to-spouse-or-partner-neglect",
+      "title": "Other Circumstances Related to Spouse or Partner Neglect",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_subclassification_or_group",
+      "printedPage": 721,
+      "pdfViewerPage": 752,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_variant_or_group_pdf_checked"
+    },
+    {
+      "id": "dsm5-2013-condition-spouse-or-partner-abuse-psychological",
+      "title": "Spouse or Partner Abuse, Psychological",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 721,
+      "pdfViewerPage": 752,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "14pt_heading_candidate_manual_review_needed"
+    },
+    {
+      "id": "dsm5-2013-spouse-or-partner-abuse-psychological-confirmed",
+      "title": "Spouse or Partner Abuse, Psychological, Confirmed",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_subclassification_or_group",
+      "printedPage": 721,
+      "pdfViewerPage": 752,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_variant_or_group_pdf_checked"
+    },
+    {
+      "id": "dsm5-2013-spouse-or-partner-abuse-psychological-suspected",
+      "title": "Spouse or Partner Abuse, Psychological, Suspected",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_subclassification_or_group",
+      "printedPage": 721,
+      "pdfViewerPage": 752,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_variant_or_group_pdf_checked"
+    },
+    {
+      "id": "dsm5-2013-condition-spouse-or-partner-neglect",
+      "title": "Spouse or Partner Neglect",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 721,
+      "pdfViewerPage": 752,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "14pt_heading_candidate_manual_review_needed"
+    },
+    {
+      "id": "dsm5-2013-spouse-or-partner-neglect-confirmed",
+      "title": "Spouse or Partner Neglect, Confirmed",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_subclassification_or_group",
+      "printedPage": 721,
+      "pdfViewerPage": 752,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_variant_or_group_pdf_checked"
+    },
+    {
+      "id": "dsm5-2013-spouse-or-partner-neglect-suspected",
+      "title": "Spouse or Partner Neglect, Suspected",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_subclassification_or_group",
+      "printedPage": 721,
+      "pdfViewerPage": 752,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_variant_or_group_pdf_checked"
+    },
+    {
+      "id": "dsm5-2013-condition-adult-abuse-by-nonspouse-or-nonpartner",
+      "title": "Adult Abuse by Nonspouse or Nonpartner",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 722,
+      "pdfViewerPage": 753,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "14pt_heading_candidate_manual_review_needed"
+    },
+    {
+      "id": "dsm5-2013-adult-physical-abuse-by-nonspouse-or-nonpartner-confirmed",
+      "title": "Adult Physical Abuse by Nonspouse or Nonpartner, Confirmed",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_subclassification_or_group",
+      "printedPage": 722,
+      "pdfViewerPage": 753,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_variant_or_group_pdf_checked"
+    },
+    {
+      "id": "dsm5-2013-adult-physical-abuse-by-nonspouse-or-nonpartner-suspected",
+      "title": "Adult Physical Abuse by Nonspouse or Nonpartner, Suspected",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_subclassification_or_group",
+      "printedPage": 722,
+      "pdfViewerPage": 753,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_variant_or_group_pdf_checked"
+    },
+    {
+      "id": "dsm5-2013-adult-psychological-abuse-by-nonspouse-or-nonpartner-confirmed",
+      "title": "Adult Psychological Abuse by Nonspouse or Nonpartner, Confirmed",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_subclassification_or_group",
+      "printedPage": 722,
+      "pdfViewerPage": 753,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_variant_or_group_pdf_checked"
+    },
+    {
+      "id": "dsm5-2013-adult-psychological-abuse-by-nonspouse-or-nonpartner-suspected",
+      "title": "Adult Psychological Abuse by Nonspouse or Nonpartner, Suspected",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_subclassification_or_group",
+      "printedPage": 722,
+      "pdfViewerPage": 753,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_variant_or_group_pdf_checked"
+    },
+    {
+      "id": "dsm5-2013-adult-sexual-abuse-by-nonspouse-or-nonpartner-confirmed",
+      "title": "Adult Sexual Abuse by Nonspouse or Nonpartner, Confirmed",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_subclassification_or_group",
+      "printedPage": 722,
+      "pdfViewerPage": 753,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_variant_or_group_pdf_checked"
+    },
+    {
+      "id": "dsm5-2013-adult-sexual-abuse-by-nonspouse-or-nonpartner-suspected",
+      "title": "Adult Sexual Abuse by Nonspouse or Nonpartner, Suspected",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_subclassification_or_group",
+      "printedPage": 722,
+      "pdfViewerPage": 753,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_variant_or_group_pdf_checked"
+    },
+    {
+      "id": "dsm5-2013-other-circumstances-related-to-adult-abuse-by-nonspouse-or-nonpartner",
+      "title": "Other Circumstances Related to Adult Abuse by Nonspouse or Nonpartner",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_subclassification_or_group",
+      "printedPage": 722,
+      "pdfViewerPage": 753,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_variant_or_group_pdf_checked"
+    },
+    {
+      "id": "dsm5-2013-academic-or-educational-problem",
+      "title": "Academic or Educational Problem",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 723,
+      "pdfViewerPage": 754,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_index_pdf_body_verified"
+    },
+    {
+      "id": "dsm5-2013-discord-with-neighbor-lodger-or-landlord",
+      "title": "Discord With Neighbor, Lodger, or Landlord",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 723,
+      "pdfViewerPage": 754,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_index_pdf_body_verified"
+    },
+    {
+      "id": "dsm5-2013-condition-educational-problems",
+      "title": "Educational Problems",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 723,
+      "pdfViewerPage": 754,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "14pt_heading_candidate_manual_review_needed"
+    },
+    {
+      "id": "dsm5-2013-educational-and-occupational-problems",
+      "title": "Educational and Occupational Problems",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_subclassification_or_group",
+      "printedPage": 723,
+      "pdfViewerPage": 754,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_variant_or_group_pdf_checked"
+    },
+    {
+      "id": "dsm5-2013-homelessness",
+      "title": "Homelessness",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 723,
+      "pdfViewerPage": 754,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_original_paraphrase_pdf_heading_verified"
+    },
+    {
+      "id": "dsm5-2013-condition-housing-problems",
+      "title": "Housing Problems",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 723,
+      "pdfViewerPage": 754,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "14pt_heading_candidate_manual_review_needed"
+    },
+    {
+      "id": "dsm5-2013-housing-and-economic-problems",
+      "title": "Housing and Economic Problems",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_subclassification_or_group",
+      "printedPage": 723,
+      "pdfViewerPage": 754,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_variant_or_group_pdf_checked"
+    },
+    {
+      "id": "dsm5-2013-inadequate-housing",
+      "title": "Inadequate Housing",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 723,
+      "pdfViewerPage": 754,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_index_pdf_body_verified"
+    },
+    {
+      "id": "dsm5-2013-condition-occupational-problems",
+      "title": "Occupational Problems",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 723,
+      "pdfViewerPage": 754,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "14pt_heading_candidate_manual_review_needed"
+    },
+    {
+      "id": "dsm5-2013-other-problem-related-to-employment",
+      "title": "Other Problem Related to Employment",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 723,
+      "pdfViewerPage": 754,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_index_pdf_body_verified"
+    },
+    {
+      "id": "dsm5-2013-problem-related-to-current-military-deployment-status",
+      "title": "Problem Related to Current Military Deployment Status",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 723,
+      "pdfViewerPage": 754,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_index_pdf_body_verified"
+    },
+    {
+      "id": "dsm5-2013-acculturation-difficulty",
+      "title": "Acculturation Difficulty",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 724,
+      "pdfViewerPage": 755,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_original_paraphrase_pdf_heading_verified"
+    },
+    {
+      "id": "dsm5-2013-condition-economic-problems",
+      "title": "Economic Problems",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 724,
+      "pdfViewerPage": 755,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "14pt_heading_candidate_manual_review_needed"
+    },
+    {
+      "id": "dsm5-2013-extreme-poverty",
+      "title": "Extreme Poverty",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 724,
+      "pdfViewerPage": 755,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_index_pdf_body_verified"
+    },
+    {
+      "id": "dsm5-2013-insufficient-social-insurance-or-welfare-support",
+      "title": "Insufficient Social Insurance or Welfare Support",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 724,
+      "pdfViewerPage": 755,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_index_pdf_body_verified"
+    },
+    {
+      "id": "dsm5-2013-lack-of-adequate-food-or-safe-drinking-water",
+      "title": "Lack of Adequate Food or Safe Drinking Water",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 724,
+      "pdfViewerPage": 755,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_index_pdf_body_verified"
+    },
+    {
+      "id": "dsm5-2013-low-income",
+      "title": "Low Income",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 724,
+      "pdfViewerPage": 755,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_index_pdf_body_verified"
+    },
+    {
+      "id": "dsm5-2013-other-problems-related-to-the-social-environment",
+      "title": "Other Problems Related to the Social Environment",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_subclassification_or_group",
+      "printedPage": 724,
+      "pdfViewerPage": 755,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "classification_variant_page_linked_body_exact_label_unverified"
+    },
+    {
+      "id": "dsm5-2013-phase-of-life-problem",
+      "title": "Phase of Life Problem",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 724,
+      "pdfViewerPage": 755,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_index_pdf_body_verified"
+    },
+    {
+      "id": "dsm5-2013-problem-related-to-living-alone",
+      "title": "Problem Related to Living Alone",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 724,
+      "pdfViewerPage": 755,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_index_pdf_body_verified"
+    },
+    {
+      "id": "dsm5-2013-problem-related-to-living-in-a-residential-institution",
+      "title": "Problem Related to Living in a Residential Institution",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_subclassification_or_group",
+      "printedPage": 724,
+      "pdfViewerPage": 755,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_variant_or_group_pdf_checked"
+    },
+    {
+      "id": "dsm5-2013-social-exclusion-or-rejection",
+      "title": "Social Exclusion or Rejection",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 724,
+      "pdfViewerPage": 755,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_original_paraphrase_pdf_heading_verified"
+    },
+    {
+      "id": "dsm5-2013-target-of-perceived-adverse-discrimination-or-persecution",
+      "title": "Target of (Perceived) Adverse Discrimination or Persecution",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 724,
+      "pdfViewerPage": 755,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_index_pdf_body_verified"
+    },
+    {
+      "id": "dsm5-2013-unspecified-housing-or-economic-problem",
+      "title": "Unspecified Housing or Economic Problem",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 724,
+      "pdfViewerPage": 755,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_index_pdf_body_verified"
+    },
+    {
+      "id": "dsm5-2013-conviction-in-civil-or-criminal-proceedings-without-imprisonment",
+      "title": "Conviction in Civil or Criminal Proceedings Without Imprisonment",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_subclassification_or_group",
+      "printedPage": 725,
+      "pdfViewerPage": 756,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_variant_or_group_pdf_checked"
+    },
+    {
+      "id": "dsm5-2013-discord-with-social-service-provider-including-probation-officer-case-manager-or-social-services-worker",
+      "title": "Discord With Social Service Provider, Including Probation Officer, Case Manager, or Social Services Worker",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_subclassification_or_group",
+      "printedPage": 725,
+      "pdfViewerPage": 756,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_variant_or_group_pdf_checked"
+    },
+    {
+      "id": "dsm5-2013-exposure-to-disaster-war-or-other-hostilities",
+      "title": "Exposure to Disaster, War, or Other Hostilities",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 725,
+      "pdfViewerPage": 756,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_index_pdf_body_verified"
+    },
+    {
+      "id": "dsm5-2013-imprisonment-or-other-incarceration",
+      "title": "Imprisonment or Other Incarceration",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 725,
+      "pdfViewerPage": 756,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_index_pdf_body_verified"
+    },
+    {
+      "id": "dsm5-2013-other-counseling-or-consultation",
+      "title": "Other Counseling or Consultation",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 725,
+      "pdfViewerPage": 756,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_index_pdf_body_verified"
+    },
+    {
+      "id": "dsm5-2013-other-health-service-encounters-for-counseling-and-medical-advice",
+      "title": "Other Health Service Encounters for Counseling and Medical Advice",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_subclassification_or_group",
+      "printedPage": 725,
+      "pdfViewerPage": 756,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_variant_or_group_pdf_checked"
+    },
+    {
+      "id": "dsm5-2013-other-problem-related-to-psychosocial-circumstances",
+      "title": "Other Problem Related to Psychosocial Circumstances",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 725,
+      "pdfViewerPage": 756,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_index_pdf_body_verified"
+    },
+    {
+      "id": "dsm5-2013-problems-related-to-crime-or-interaction-with-the-legal-system",
+      "title": "Problems Related to Crime or Interaction With the Legal System",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_subclassification_or_group",
+      "printedPage": 725,
+      "pdfViewerPage": 756,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_variant_or_group_pdf_checked"
+    },
+    {
+      "id": "dsm5-2013-problems-related-to-multiparity",
+      "title": "Problems Related to Multiparity",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 725,
+      "pdfViewerPage": 756,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_index_pdf_body_verified"
+    },
+    {
+      "id": "dsm5-2013-problems-related-to-other-legal-circumstances",
+      "title": "Problems Related to Other Legal Circumstances",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 725,
+      "pdfViewerPage": 756,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_index_pdf_body_verified"
+    },
+    {
+      "id": "dsm5-2013-problems-related-to-release-from-prison",
+      "title": "Problems Related to Release From Prison",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 725,
+      "pdfViewerPage": 756,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_index_pdf_body_verified"
+    },
+    {
+      "id": "dsm5-2013-problems-related-to-unwanted-pregnancy",
+      "title": "Problems Related to Unwanted Pregnancy",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 725,
+      "pdfViewerPage": 756,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_index_pdf_body_verified"
+    },
+    {
+      "id": "dsm5-2013-religious-or-spiritual-problem",
+      "title": "Religious or Spiritual Problem",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 725,
+      "pdfViewerPage": 756,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_original_paraphrase_pdf_heading_verified"
+    },
+    {
+      "id": "dsm5-2013-sex-counseling",
+      "title": "Sex Counseling",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 725,
+      "pdfViewerPage": 756,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_index_pdf_body_verified"
+    },
+    {
+      "id": "dsm5-2013-unspecified-problem-related-to-social-environment",
+      "title": "Unspecified Problem Related to Social Environment",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 725,
+      "pdfViewerPage": 756,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_index_pdf_body_verified"
+    },
+    {
+      "id": "dsm5-2013-unspecified-problem-related-to-unspecified-psychosocial-circumstances",
+      "title": "Unspecified Problem Related to Unspecified Psychosocial Circumstances",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_subclassification_or_group",
+      "printedPage": 725,
+      "pdfViewerPage": 756,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_variant_or_group_pdf_checked"
+    },
+    {
+      "id": "dsm5-2013-victim-of-crime",
+      "title": "Victim of Crime",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 725,
+      "pdfViewerPage": 756,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_index_pdf_body_verified"
+    },
+    {
+      "id": "dsm5-2013-victim-of-terrorism-or-torture",
+      "title": "Victim of Terrorism or Torture",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 725,
+      "pdfViewerPage": 756,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_original_paraphrase_pdf_heading_verified"
+    },
+    {
+      "id": "dsm5-2013-adult-antisocial-behavior",
+      "title": "Adult Antisocial Behavior",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 726,
+      "pdfViewerPage": 757,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_index_pdf_body_verified"
+    },
+    {
+      "id": "dsm5-2013-child-or-adolescent-antisocial-behavior",
+      "title": "Child or Adolescent Antisocial Behavior",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 726,
+      "pdfViewerPage": 757,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_index_pdf_body_verified"
+    },
+    {
+      "id": "dsm5-2013-malingering",
+      "title": "Malingering",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 726,
+      "pdfViewerPage": 757,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_original_paraphrase_pdf_heading_verified"
+    },
+    {
+      "id": "dsm5-2013-condition-nonadherence-to-medical-treatment",
+      "title": "Nonadherence to Medical Treatment",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 726,
+      "pdfViewerPage": 757,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "14pt_heading_candidate_manual_review_needed"
+    },
+    {
+      "id": "dsm5-2013-other-circumstances-of-personal-history",
+      "title": "Other Circumstances of Personal History",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_subclassification_or_group",
+      "printedPage": 726,
+      "pdfViewerPage": 757,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_variant_or_group_pdf_checked"
+    },
+    {
+      "id": "dsm5-2013-other-personal-history-of-psychological-trauma",
+      "title": "Other Personal History of Psychological Trauma",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 726,
+      "pdfViewerPage": 757,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_index_pdf_body_verified"
+    },
+    {
+      "id": "dsm5-2013-other-personal-risk-factors",
+      "title": "Other Personal Risk Factors",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 726,
+      "pdfViewerPage": 757,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_index_pdf_body_verified"
+    },
+    {
+      "id": "dsm5-2013-overweight-or-obesity",
+      "title": "Overweight or Obesity",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 726,
+      "pdfViewerPage": 757,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_index_pdf_body_verified"
+    },
+    {
+      "id": "dsm5-2013-personal-history-of-military-deployment",
+      "title": "Personal History of Military Deployment",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 726,
+      "pdfViewerPage": 757,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_index_pdf_body_verified"
+    },
+    {
+      "id": "dsm5-2013-personal-history-of-self-harm",
+      "title": "Personal History of Self-Harm",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 726,
+      "pdfViewerPage": 757,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_index_pdf_body_verified"
+    },
+    {
+      "id": "dsm5-2013-problem-related-to-lifestyle",
+      "title": "Problem Related to Lifestyle",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 726,
+      "pdfViewerPage": 757,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_index_pdf_body_verified"
+    },
+    {
+      "id": "dsm5-2013-condition-problems-related-to-access-to-medical",
+      "title": "Problems Related to Access to Medical",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 726,
+      "pdfViewerPage": 757,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "14pt_heading_candidate_manual_review_needed"
+    },
+    {
+      "id": "dsm5-2013-problems-related-to-access-to-medical-and-other-health-care",
+      "title": "Problems Related to Access to Medical and Other Health Care",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_subclassification_or_group",
+      "printedPage": 726,
+      "pdfViewerPage": 757,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_variant_or_group_pdf_checked"
+    },
+    {
+      "id": "dsm5-2013-unavailability-or-inaccessibility-of-health-care-facilities",
+      "title": "Unavailability or Inaccessibility of Health Care Facilities",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 726,
+      "pdfViewerPage": 757,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_index_pdf_body_verified"
+    },
+    {
+      "id": "dsm5-2013-unavailability-or-inaccessibility-of-other-helping-agencies",
+      "title": "Unavailability or Inaccessibility of Other Helping Agencies",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 726,
+      "pdfViewerPage": 757,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_index_pdf_body_verified"
+    },
+    {
+      "id": "dsm5-2013-borderline-intellectual-functioning",
+      "title": "Borderline Intellectual Functioning",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 727,
+      "pdfViewerPage": 758,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_original_paraphrase_pdf_heading_verified"
+    },
+    {
+      "id": "dsm5-2013-wandering-associated-with-a-mental-disorder",
+      "title": "Wandering Associated With a Mental Disorder",
+      "chapterId": "dsm5-2013-clinical_attention",
+      "kind": "clinical_attention_condition",
+      "printedPage": 727,
+      "pdfViewerPage": 758,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_classification_index_pdf_body_verified"
+    },
+    {
+      "id": "dsm5-2013-section3_assessment-overview",
+      "title": "Assessment Measures",
+      "chapterId": "dsm5-2013-section3_assessment",
+      "kind": "reference_section_overview",
+      "printedPage": 733,
+      "pdfViewerPage": 761,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "section_iii_main_heading_seen"
+    },
+    {
+      "id": "dsm5-2013-section3_cultural-overview",
+      "title": "Cultural Formulation",
+      "chapterId": "dsm5-2013-section3_cultural",
+      "kind": "reference_section_overview",
+      "printedPage": 749,
+      "pdfViewerPage": 777,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "section_iii_main_heading_seen"
+    },
+    {
+      "id": "dsm5-2013-section3_personality-overview",
+      "title": "Alternative DSM-5 Model for Personality Disorders",
+      "chapterId": "dsm5-2013-section3_personality",
+      "kind": "reference_section_overview",
+      "printedPage": 761,
+      "pdfViewerPage": 788,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "section_iii_main_heading_seen"
+    },
+    {
+      "id": "dsm5-2013-attenuated-psychosis-syndrome",
+      "title": "Attenuated Psychosis Syndrome",
+      "chapterId": "dsm5-2013-section3_further",
+      "kind": "section3_research_condition",
+      "printedPage": 778,
+      "pdfViewerPage": 809,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "section_iii_body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-depressive-episodes-with-short-duration-hypomania",
+      "title": "Depressive Episodes With Short-Duration Hypomania",
+      "chapterId": "dsm5-2013-section3_further",
+      "kind": "section3_research_condition",
+      "printedPage": 781,
+      "pdfViewerPage": 812,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "section_iii_body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-persistent-complex-bereavement-disorder",
+      "title": "Persistent Complex Bereavement Disorder",
+      "chapterId": "dsm5-2013-section3_further",
+      "kind": "section3_research_condition",
+      "printedPage": 784,
+      "pdfViewerPage": 815,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "section_iii_body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-caffeine-use-disorder",
+      "title": "Caffeine Use Disorder",
+      "chapterId": "dsm5-2013-section3_further",
+      "kind": "section3_research_condition",
+      "printedPage": 787,
+      "pdfViewerPage": 818,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "section_iii_body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-internet-gaming-disorder",
+      "title": "Internet Gaming Disorder",
+      "chapterId": "dsm5-2013-section3_further",
+      "kind": "section3_research_condition",
+      "printedPage": 790,
+      "pdfViewerPage": 821,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "section_iii_body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-neurobehavioral-disorder-associated-with-prenatal-alcohol-exposure",
+      "title": "Neurobehavioral Disorder Associated With Prenatal Alcohol Exposure",
+      "chapterId": "dsm5-2013-section3_further",
+      "kind": "section3_research_condition",
+      "printedPage": 793,
+      "pdfViewerPage": 824,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "section_iii_body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-suicidal-behavior-disorder",
+      "title": "Suicidal Behavior Disorder",
+      "chapterId": "dsm5-2013-section3_further",
+      "kind": "section3_research_condition",
+      "printedPage": 796,
+      "pdfViewerPage": 827,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "section_iii_body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-nonsuicidal-self-injury",
+      "title": "Nonsuicidal Self-Injury",
+      "chapterId": "dsm5-2013-section3_further",
+      "kind": "section3_research_condition",
+      "printedPage": 798,
+      "pdfViewerPage": 829,
+      "editorialStatus": "not_individually_rewritten",
+      "sourceStatus": "section_iii_body_heading_found"
+    },
+    {
+      "id": "dsm5-2013-introduction",
+      "title": "Introduction",
+      "chapterId": "dsm5-2013-basics",
+      "kind": "reference_section",
+      "printedPage": 5,
+      "pdfViewerPage": 47,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_original_paraphrase_pdf_heading_verified"
+    },
+    {
+      "id": "dsm5-2013-use-of-the-manual",
+      "title": "Use of the Manual",
+      "chapterId": "dsm5-2013-basics",
+      "kind": "reference_section",
+      "printedPage": 19,
+      "pdfViewerPage": 60,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_original_paraphrase_pdf_heading_verified"
+    },
+    {
+      "id": "dsm5-2013-cautionary-statement-for-forensic-use-of-dsm-5",
+      "title": "Cautionary Statement for Forensic Use of DSM-5",
+      "chapterId": "dsm5-2013-basics",
+      "kind": "reference_section",
+      "printedPage": 25,
+      "pdfViewerPage": 66,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_original_paraphrase_pdf_heading_verified"
+    },
+    {
+      "id": "dsm5-2013-highlights-of-changes-from-dsm-iv-to-dsm-5",
+      "title": "Highlights of Changes From DSM-IV to DSM-5",
+      "chapterId": "dsm5-2013-appendix",
+      "kind": "reference_section",
+      "printedPage": 809,
+      "pdfViewerPage": 834,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_original_paraphrase_pdf_heading_verified"
+    },
+    {
+      "id": "dsm5-2013-glossary-of-technical-terms",
+      "title": "Glossary of Technical Terms",
+      "chapterId": "dsm5-2013-appendix",
+      "kind": "reference_section",
+      "printedPage": 817,
+      "pdfViewerPage": 842,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_original_paraphrase_pdf_heading_verified"
+    },
+    {
+      "id": "dsm5-2013-glossary-of-cultural-concepts-of-distress",
+      "title": "Glossary of Cultural Concepts of Distress",
+      "chapterId": "dsm5-2013-appendix",
+      "kind": "reference_section",
+      "printedPage": 833,
+      "pdfViewerPage": 857,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_original_paraphrase_pdf_heading_verified"
+    },
+    {
+      "id": "dsm5-2013-alphabetical-listing-of-dsm-5-diagnoses-and-codes",
+      "title": "Alphabetical Listing of DSM-5 Diagnoses and Codes",
+      "chapterId": "dsm5-2013-appendix",
+      "kind": "reference_section",
+      "printedPage": 839,
+      "pdfViewerPage": 862,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_original_paraphrase_pdf_heading_verified"
+    },
+    {
+      "id": "dsm5-2013-numerical-listing-of-dsm-5-diagnoses-and-codes-icd-9-cm",
+      "title": "Numerical Listing of DSM-5 Diagnoses and Codes (ICD-9-CM)",
+      "chapterId": "dsm5-2013-appendix",
+      "kind": "reference_section",
+      "printedPage": 863,
+      "pdfViewerPage": 886,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_original_paraphrase_pdf_heading_verified"
+    },
+    {
+      "id": "dsm5-2013-numerical-listing-of-dsm-5-diagnoses-and-codes-icd-10-cm",
+      "title": "Numerical Listing of DSM-5 Diagnoses and Codes (ICD-10-CM)",
+      "chapterId": "dsm5-2013-appendix",
+      "kind": "reference_section",
+      "printedPage": 877,
+      "pdfViewerPage": 900,
+      "editorialStatus": "source_bounded_original_short_note",
+      "sourceStatus": "source_bounded_original_paraphrase_pdf_heading_verified"
+    }
+  ]
+}
