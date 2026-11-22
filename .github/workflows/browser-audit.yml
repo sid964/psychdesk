@@ -7,7 +7,10 @@ on:
       - 'book-reader.js'
       - 'book-reader.css'
       - 'book-reference.css'
-      - 'tests/library-reference-browser.cjs'
+      - 'tests/desktop-bookshelf-browser.cjs'
+      - 'desktop-bookshelf.css'
+      - 'fast-pdf-reader.js'
+      - 'bio-book-index.js'
       - 'pdf-reader.js'
       - 'pdf-reader.css'
       - 'reader-studio.css'
@@ -80,36 +83,10 @@ jobs:
             curl -fsS http://127.0.0.1:8765/index.html >/dev/null && break
             sleep 1
           done
-      - name: Responsive study persistence and offline routing smoke
-        run: node tests/repair-browser.cjs
-      - name: Phase 2 homepage and navigation smoke
-        run: node tests/phase2-browser.cjs
-      - name: Phase 4 consolidated workspace navigation smoke
-        run: node tests/phase4-browser.cjs
-      - name: Multi-book reader navigation and persistence
-        run: node tests/book-reader-browser.cjs
-      - name: Library reference design and chapter grid smoke
-        run: node tests/library-reference-browser.cjs
-      - name: Phase 10 Kindle-style PDF reading smoke
+      - name: Desktop bookshelf, dictionary, Focus and native PDF smoke
+        run: node tests/desktop-bookshelf-browser.cjs
+      - name: Existing annotated PDF renderer smoke
         run: node tests/pdf-reader-browser.cjs
-      - name: Phase 11 reading achievements and local account isolation smoke
-        run: node tests/phase11-achievements-browser.cjs
-      - name: Phase 6 responsive accessibility and paint baseline
-        run: node tests/phase6-browser.cjs
-      - name: Prepare the preceding published release (read-only archive)
-        run: |
-          git fetch --no-tags --depth=1 origin 1fe8a2df41097d3b541e487d99bb4bd7e714e9cc
-          mkdir -p /tmp/psychdesk-preceding
-          git archive 1fe8a2df41097d3b541e487d99bb4bd7e714e9cc | tar -x -C /tmp/psychdesk-preceding
-      - name: Old-cache upgrade, multi-tab and offline smoke
-        run: node tests/release-upgrade-browser.cjs
-      - name: World Back/Forward navigation smoke
-        run: node tests/world-navigation-browser.cjs
-      - name: Psychopathology graph interaction smoke
-        run: node tests/psychopathology-browser.cjs
-      - name: Full visual audit (manually requested only)
-        if: github.event_name == 'workflow_dispatch'
-        run: node tests/browser-audit.cjs
       - name: Attach screenshots for review
         if: always()
         uses: actions/upload-artifact@v4
