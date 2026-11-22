@@ -14,6 +14,9 @@ test('Psychopathology companion is complete, source-mapped and linked in Bookshe
  assert.ok(html.includes('const psychdeskBookData = '));
  assert.ok(wrapper.includes("const count=23"));
  assert.ok(wrapper.includes('extra-diagrams.js'));
+ const loaderScript=wrapper.match(/<script>([\\s\\S]*?)<\\/script>/)?.[1];
+ assert.ok(loaderScript,'companion loader script missing');
+ assert.doesNotThrow(()=>new vm.Script(loaderScript));
  const prefix='const psychdeskBookData = ';
  const line=html.split('\n').find(row=>row.startsWith(prefix));
  assert.ok(line && line.endsWith(';'));
