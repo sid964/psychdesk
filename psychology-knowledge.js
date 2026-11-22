@@ -68,7 +68,7 @@ function dictionaryDetail(entry){
  '<div class="psy-detail-actions"><button type="button" data-psy="bookmark" data-id="'+h(entry.id)+'">'+(isMarked('dictionaryBookmarks',entry.id)?'✦ Bookmarked':'☆ Bookmark')+'</button>'+
  '<button type="button" data-psy="noteTerm" data-id="'+h(entry.id)+'">Save to notebook</button>'+
  '<button type="button" data-psy="stickyTerm" data-id="'+h(entry.id)+'">Make sticky</button>'+
- '<button type="button" data-psy="cardTerm" data-id="'+h(entry.id)+'">Make flashcard</button>'+
+
  (entry.personal?'<button type="button" data-psy="editTerm" data-id="'+h(entry.id)+'">Edit</button><button type="button" data-psy="deleteTerm" data-id="'+h(entry.id)+'">Delete</button>':'')+
  '</div></article>';
 }
