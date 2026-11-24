@@ -34,7 +34,14 @@ test('bookshelf renders curated reference titles without exposing private Drive 
  assert.match(html,/Reference collection/);
  assert.match(html,/Biological Psychology/);
  assert.match(html,/biological-psychology-14e\.html/);
- assert.match(html,/www\.cengage\.com\/covers\/imageServlet/);
+ for(const file of ['biological-psychology-14e.webp','psychopathology-9e.webp','dsm5-2013.webp']){
+  assert.ok(html.includes('src="./book-covers/'+file+'"'),file+' missing from bookshelf');
+  const bytes=fs.readFileSync(path.join(__dirname,'..','book-covers',file));
+  assert.equal(bytes.toString('ascii',0,4),'RIFF');
+  assert.equal(bytes.toString('ascii',8,12),'WEBP');
+  assert.ok(src('sw.js').includes("'./book-covers/"+file+"'"));
+ }
+ assert.doesNotMatch(html,/www\.cengage\.com\/covers\/imageServlet/);
  assert.doesNotMatch(html,/Research Methods PDF/);
  assert.doesNotMatch(html,/My Private Notes/);
  assert.match(html,/data-book-suggest="open"/);

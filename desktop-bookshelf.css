@@ -92,3 +92,6 @@ html[data-theme="dark"] .desktop-bookshelf,html[data-theme="dark"] .desktop-tool
 .book-suggestion-modal .book-suggestion-unavailable{padding:15px 18px;border:1px solid var(--line);background:var(--bg);border-radius:10px;color:var(--muted)}
 .book-suggestion-go{display:inline-flex;justify-content:center;align-items:center;padding:12px 20px;border-radius:9px;text-decoration:none;min-height:44px}
 .desk-bookshelf-header .desk-add-book{flex-shrink:0}
+
+/* Preserve the full source cover, including title and edition, without cropping. */
+.desk-original-cover img{object-fit:contain;background:#eeeeed}

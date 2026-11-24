@@ -130,7 +130,7 @@
   return {done,remaining:book.chapters.length-done,total:book.chapters.length,percent:Math.round(done/book.chapters.length*100)};
  }
  function renderHome(){
-  const cover='https://www.cengage.com/covers/imageServlet?catalog=Cengage&image_type=LRGFC&productISBN13=9780357798126';
+  const cover='./book-covers/biological-psychology-14e.webp';
   return '<section class="desktop-bookshelf" aria-label="Psychology reference bookshelf">'+
    '<header class="desk-bookshelf-header"><div><p class="desk-kicker">PSYCHOLOGY WORKSPACE · REFERENCE LIBRARY</p><h1>Bookshelf</h1><p>Psychology reference books.</p></div>'+
    '<button type="button" class="desk-add-book" data-book-suggest="open">Suggest a book</button></header>'+
@@ -138,12 +138,12 @@
    '<div class="desk-books-grid"><article class="desk-book-item desk-featured-book">'+
    '<a class="desk-book-cover desk-original-cover" href="./biological-psychology-14e.html" aria-label="Open Biological Psychology complete study notes">'+
    '<span class="desk-cover-fallback" aria-hidden="true"><small>14th edition</small><strong>Biological Psychology</strong><small>James W. Kalat</small></span>'+
-   '<img src="'+esc(cover)+'" alt="Cengage cover: Biological Psychology, 14th edition, James W. Kalat" loading="eager" decoding="async"></a>'+
+   '<img src="'+esc(cover)+'" alt="Original cover: Biological Psychology, 14th edition, James W. Kalat" loading="eager" decoding="async"></a>'+
    '<h3>Biological Psychology</h3><span>James W. Kalat · 14th edition</span>'+
    '<a class="desk-book-read" href="./biological-psychology-14e.html">Open study notes</a></article>'+
    '<article class="desk-book-item desk-featured-book">'+
-   '<a class="desk-book-cover desk-file-cover" href="./psychopathology-9e.html" aria-label="Open Psychopathology ninth-edition study notes">'+
-   '<small>9th edition</small><strong>Psychopathology</strong><small>Barlow · Durand · Hofmann</small></a>'+
+   '<a class="desk-book-cover desk-original-cover" href="./psychopathology-9e.html" aria-label="Open Psychopathology ninth-edition study notes">'+
+   '<span class="desk-cover-fallback" aria-hidden="true"><small>9th edition</small><strong>Psychopathology</strong><small>Barlow · Durand · Hofmann</small></span><img src="./book-covers/psychopathology-9e.webp" alt="Original cover: Psychopathology, ninth edition, Barlow, Durand and Hofmann" loading="eager" decoding="async"></a>'+
    '<h3>Psychopathology</h3><span>Barlow, Durand &amp; Hofmann · 9th edition</span>'+
    '<a class="desk-book-read" href="./psychopathology-9e.html">Open study notes · 16 chapters</a>'+
    '<span>Academic verification in progress</span></article>'+ 
@@ -154,7 +154,7 @@
    '<a class="desk-book-read" href="./singh-research-methods.html">Open study notes · 24 chapters</a>'+
    '<span>Academic verification in progress</span></article>'+
    '<article class="desk-book-item desk-featured-book">'+
-   '<a class="desk-book-cover desk-file-cover" href="./dsm5-2013.html" aria-label="Open DSM-5 study companion"><small>5th edition · 2013</small><strong>DSM-5</strong><small>American Psychiatric Association</small></a>'+
+   '<a class="desk-book-cover desk-original-cover" href="./dsm5-2013.html" aria-label="Open DSM-5 study companion"><span class="desk-cover-fallback" aria-hidden="true"><small>5th edition · 2013</small><strong>DSM-5</strong><small>American Psychiatric Association</small></span><img src="./book-covers/dsm5-2013.webp" alt="Original title page: Diagnostic and Statistical Manual of Mental Disorders, fifth edition" loading="eager" decoding="async"></a>'+
    '<h3>DSM-5</h3><span>American Psychiatric Association · 2013</span>'+
    '<a class="desk-book-read" href="./dsm5-2013.html">Open study notes</a>'+
    '<span>Academic verification in progress</span></article>'+
