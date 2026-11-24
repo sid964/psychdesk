@@ -167,3 +167,24 @@ test('invalid IDs, duplicate editions, and invalid PDF references are rejected',
  assert.throws(()=>api.validateCatalog([{...samples[0],id:'"><script>'}]),/Invalid book metadata/);
  assert.throws(()=>api.validateCatalog([{...samples[0],pdfOffset:-5}]),/Invalid reading section/);
 });
+
+
+test('Singh companion is linked, has all 24 chapters and 222 notes, and caches on demand',()=>{
+ const app=harness({fixture:false});
+ assert.match(app.api.render(),/\.\/singh-research-methods\.html/);
+ assert.match(app.api.render(),/A\. K\. Singh/);
+ const html=load('singh-research-methods.html');
+ const line=html.split('\n').find(line=>line.startsWith('const psychdeskBookData = '));
+ assert.ok(line);
+ const data=JSON.parse(line.slice('const psychdeskBookData = '.length,-1));
+ assert.equal(data.packageVersion,'0.2.0');
+ assert.equal(data.chapters.length,24);
+ assert.equal(data.studyParts.reduce((n,p)=>n+p.classroomNotes.length,0),222);
+ assert.equal(data.studyParts.reduce((n,p)=>n+p.classroomFigures.length,0),23);
+ assert.equal(data.storageKey,'psychdesk-reader:singh:tests-measurements-research-methods:scan-v1');
+ const ids=data.studyParts.flatMap(p=>p.classroomNotes.map(n=>n.id));
+ assert.equal(new Set(ids).size,222);
+ const worker=load('sw.js');
+ assert.ok(worker.includes("endsWith('/singh-research-methods.html')"));
+ assert.ok(!worker.split('\n')[0].includes("'./singh-research-methods.html'"));
+});
