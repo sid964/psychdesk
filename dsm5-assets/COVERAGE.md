@@ -1,0 +1,3 @@
+# DSM-5 study release v0.3
+
+2013 source edition. 441 navigation entries, 428 authored entries (315 teaching drafts and 113 clinical-context references), 13 source-only entries, 15 original diagrams. Eight selected disorders have PDF-text-checked supplements on prevalence, course or risk. These are not full disorder audits. Existing checkpoint IDs and storage key retained. No original PDF or publisher artwork included. Prior injected-page smoke tests were not production tests. Full academic audit, local PDF rendering and cross-restart persistence remain open. Consult the official manual for precise criteria and clinical decisions.
