@@ -152,6 +152,11 @@
    '<small>Research methods</small><strong>Tests, Measurements and Research Methods in Behavioural Sciences</strong><small>A. K. Singh</small></a>'+
    '<h3>Tests, Measurements and Research Methods in Behavioural Sciences</h3><span>A. K. Singh · Edition unverified</span>'+
    '<a class="desk-book-read" href="./singh-research-methods.html">Open study notes · 24 chapters</a>'+
+   '<span>Academic verification in progress</span></article>'+
+   '<article class="desk-book-item desk-featured-book">'+
+   '<a class="desk-book-cover desk-file-cover" href="./dsm5-2013.html" aria-label="Open DSM-5 study companion"><small>5th edition · 2013</small><strong>DSM-5</strong><small>American Psychiatric Association</small></a>'+
+   '<h3>DSM-5</h3><span>American Psychiatric Association · 2013</span>'+
+   '<a class="desk-book-read" href="./dsm5-2013.html">Open study notes</a>'+
    '<span>Academic verification in progress</span></article></div>'+
    '</section></section>';
  }
