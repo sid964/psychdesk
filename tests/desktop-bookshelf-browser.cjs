@@ -112,6 +112,12 @@ const {chromium}=require('playwright');
     const real=actual.frameLocator('#companionFrame');
     await real.locator('#viewport .library').waitFor({timeout:90000});
     assert.match(await real.locator('#viewport').innerText(),/Biological Psychology/);
+    await real.locator('#continueBtn').click();
+    await actual.waitForURL(/#companion\/biological-psychology-14e\/read%3D/,{timeout:15000});
+    const chapterURL=actual.url();
+    await actual.reload({waitUntil:'domcontentloaded'});
+    await actual.frameLocator('#companionFrame').locator('body[data-screen="reader"]').waitFor({timeout:90000});
+    assert.equal(actual.url(),chapterURL);
     await actual.locator('#companionWorkspace .companion-back').click();
     await actual.locator('.desktop-bookshelf').waitFor();
   }catch(err){
