@@ -238,6 +238,20 @@
   focus.addEventListener('click', () => setFocus(!focused));
   document.addEventListener('click', event => {
     if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) return;
+    const exhibit = event.target.closest?.('[data-explore-chapter]');
+    if (exhibit) {
+      const chapter = exhibit.dataset.exploreChapter, api = core();
+      const rows = (window.PsychDeskBiologicalIndex || []).filter(item => item.chapter === chapter);
+      const groups = new Map();
+      for (const item of rows) {
+        if (!groups.has(item.module)) groups.set(item.module, []);
+        groups.get(item.module).push(item);
+      }
+      const escape = api.esc;
+      const html = Array.from(groups, ([module,items]) => '<section class="academic-exhibit"><h3>'+escape(module)+'</h3><ul>'+items.map(item=>'<li>'+escape(item.term)+(item.page?' <small>· p. '+escape(String(item.page))+'</small>':'')+'</li>').join('')+'</ul></section>').join('');
+      api.openModal(chapter, '<p>Indexed headings · Biological Psychology, 14th edition</p>'+html+'<p><a href="./biological-psychology-14e.html" data-exhibit-open>Open study companion →</a></p>');
+      return;
+    }
     const link = event.target.closest?.('a[href]');
     if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
     const url = new URL(link.href, document.baseURI);
@@ -245,6 +259,7 @@
     const id = url.pathname.slice(root.pathname.length).replace(/\.html$/, '');
     if (!own(id) || url.pathname !== bookURL(id).pathname) return;
     event.preventDefault();
+    if (link.hasAttribute('data-exhibit-open')) core()?.closeModal();
     navigate(id, url.hash.slice(1));
   }, true);
   window.addEventListener('hashchange', readRoute);
