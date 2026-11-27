@@ -272,17 +272,19 @@
   document.addEventListener('keydown', event => {
     if (event.key === 'Escape' && focused && !document.querySelector('#modalRoot .modal')) setFocus(false);
   });
-  window.addEventListener('psychdesk:data-replaced', () => {
-    note.value = '';
-    noteStatus.textContent = '';
-    lookup.value = '';
-    renderLookup();
-    renderNotes();
-  });
-  window.addEventListener('psychdesk:account-ready', () => {
-    note.value = '';
-    noteStatus.textContent = '';
-    renderNotes();
-  });
+  let noteScope = core()?.getStorageKey();
+  function refreshAccount() {
+    const next = core()?.getStorageKey();
+    if (noteScope !== next) {
+      noteScope = next;
+      note.value = '';
+      noteStatus.textContent = '';
+      lookup.value = '';
+    }
+    if (toolsOpen) { renderLookup(); renderNotes(); }
+  }
+  window.addEventListener('psychdesk:data-replaced', refreshAccount);
+  window.addEventListener('psychdesk:account-ready', refreshAccount);
+  window.addEventListener('psychdesk:changed', () => { if (toolsOpen) renderNotes(); });
   readRoute();
 })();
