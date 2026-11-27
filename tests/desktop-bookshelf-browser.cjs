@@ -100,14 +100,24 @@ const {chromium}=require('playwright');
   await page.locator('.desk-explore-entry').first().click();
   await page.locator('#modalRoot .academic-exhibit').first().waitFor();
   await page.keyboard.press('Escape');
-  // Now load the real companion and ensure its original study interface still initializes.
+  // Verify the actual companion in a fresh page, never a reused fixture frame.
   await page.unroute('**/biological-psychology-14e.html');
-  await page.goto('http://127.0.0.1:8765/#companion/biological-psychology-14e',{waitUntil:'domcontentloaded'});
-  await page.reload({waitUntil:'domcontentloaded'});
-  await page.frameLocator('#companionFrame').locator('#viewport .library').waitFor({timeout:90000});
-  assert.match(await page.frameLocator('#companionFrame').locator('#viewport').innerText(),/Biological Psychology/);
-  await page.locator('#companionWorkspace .companion-back').click();
-  await page.locator('.desktop-bookshelf').waitFor();
+  const actual=await context.newPage();
+  const failures=[];
+  actual.on('pageerror',err=>failures.push(String(err)));
+  actual.on('response',response=>{if(response.status()>=400&&response.url().includes('biological-psychology'))failures.push(response.status()+' '+response.url());});
+  await actual.goto('http://127.0.0.1:8765/#companion/biological-psychology-14e',{waitUntil:'domcontentloaded'});
+  try{
+    await actual.locator('#companionWorkspace').waitFor();
+    const real=actual.frameLocator('#companionFrame');
+    await real.locator('#viewport .library').waitFor({timeout:90000});
+    assert.match(await real.locator('#viewport').innerText(),/Biological Psychology/);
+    await actual.locator('#companionWorkspace .companion-back').click();
+    await actual.locator('.desktop-bookshelf').waitFor();
+  }catch(err){
+    console.error('Actual companion diagnostics:',actual.url(), failures, await Promise.all(actual.frames().map(async frame=>({url:frame.url(),body:await frame.locator('body').innerText({timeout:3000}).then(x=>x.slice(0,1200)).catch(String)}))));
+    throw err;
+  }finally{await actual.close();}
   console.log('DESKTOP_BOOKSHELF_SMOKE_OK');
  }finally{await context.close();await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});
