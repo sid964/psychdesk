@@ -227,7 +227,7 @@
     const current = route();
     if (!current) return;
     // Explicit bookshelf navigation must not walk the iframe's chapter history.
-    history.pushState(history.state, '', location.pathname + location.search);
+    history.pushState({...history.state,psychdeskViewV1:{kind:'tab',tab:'today'}}, '', '#pd-today');
     hide();
     if (!main.querySelector('.desktop-bookshelf')) {
       scroll = 0;
@@ -264,13 +264,25 @@
   }, true);
   window.addEventListener('hashchange', readRoute);
   window.addEventListener('popstate', readRoute);
-  window.addEventListener('psychdesk:tab-changed', () => {
+  window.addEventListener('psychdesk:tab-changed', event => {
     if (host.hidden) return;
-    if (route()) history.pushState(history.state, '', location.pathname + location.search);
+    if (route()) { const tab = event.tab || 'today'; history.pushState({...history.state,psychdeskViewV1:{kind:'tab',tab}}, '', '#pd-' + tab); }
     hide();
   });
   document.addEventListener('keydown', event => {
     if (event.key === 'Escape' && focused && !document.querySelector('#modalRoot .modal')) setFocus(false);
+  });
+  window.addEventListener('psychdesk:data-replaced', () => {
+    note.value = '';
+    noteStatus.textContent = '';
+    lookup.value = '';
+    renderLookup();
+    renderNotes();
+  });
+  window.addEventListener('psychdesk:account-ready', () => {
+    note.value = '';
+    noteStatus.textContent = '';
+    renderNotes();
   });
   readRoute();
 })();
