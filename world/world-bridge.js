@@ -5,6 +5,7 @@ const main=document.getElementById('main');
 if(!main)return;
 const allowed=new Set(['today','materials','books','dictionary','focus','tools','reader','reader-fast','research','timeline','stickies']);
 const KEY='psychdeskViewV1';
+const isCompanionRoute=()=>/^#companion\/[a-z0-9-]+(?:\/|$)/.test(location.hash);
 const isBookRoute=()=>/^#books(?:\/|$)/.test(location.hash);
 let active=null,previousFocus=null,tab='today',restoring=false,background=[];
 function validView(view){
@@ -142,8 +143,9 @@ function restore(view){
  }finally{restoring=false;}
 }
 const initial=(isBookRoute()?routeFromHash():validView(history.state?.[KEY])||routeFromHash())||{kind:'tab',tab:'today'};
-if(!validView(history.state?.[KEY]))replace(initial);
+if(!validView(history.state?.[KEY])&&!isCompanionRoute())replace(initial);
 window.addEventListener('popstate',event=>{
+ if(isCompanionRoute())return;
  const routed=isBookRoute()?routeFromHash():validView(event.state?.[KEY])||routeFromHash();
  if(!routed&&location.hash){
   // Native in-page anchors (skip link and Tools section jumps) are not app
@@ -166,7 +168,7 @@ window.addEventListener('psychdesk:tab-changed',event=>{
 const observer=new MutationObserver(attachLaunch);
 observer.observe(main,{childList:true,subtree:true});
 attachLaunch();
-if(initial.kind!=='tab'||initial.tab!=='today'){
+if(!isCompanionRoute()&&(initial.kind!=='tab'||initial.tab!=='today')){
  queueMicrotask(()=>restore(initial));
 }
 window.PsychDeskWorldNavigation={openWorld,closeWorld:requestClose,getView:()=>validView(history.state?.[KEY])};
