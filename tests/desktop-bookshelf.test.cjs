@@ -6,11 +6,11 @@ const path=require('node:path');
 const vm=require('node:vm');
 const src=name=>fs.readFileSync(path.join(__dirname,'..',name),'utf8');
 
-test('desktop navigation shows only Home, Focus and More tools, preserving core controls',()=>{
+test('desktop navigation exposes approved study tools while preserving core controls',()=>{
  const html=src('index.html');
  const desktop=html.match(/<nav class="rail-nav"[^>]*>([\s\S]*?)<\/nav>/)?.[1];
  assert.ok(desktop,'desktop navigation missing');
- assert.deepEqual([...desktop.matchAll(/data-tab="([^"]+)"/g)].map(m=>m[1]),['today','focus','tools']);
+ assert.deepEqual([...desktop.matchAll(/data-tab="([^"]+)"/g)].map(m=>m[1]),['today','dictionary','timeline','research','stickies','reader-fast','focus','tools']);
  const mobile=html.match(/<nav class="bottom-nav"[^>]*>([\s\S]*?)<\/nav>/)?.[1];
  assert.deepEqual([...mobile.matchAll(/data-tab="([^"]+)"/g)].map(m=>m[1]),['today','focus','tools']);
  for(const id of ['themeToggle','accountBtn','driveStatusChip','settingsBtn'])assert.match(html,new RegExp('id="'+id+'"'));
