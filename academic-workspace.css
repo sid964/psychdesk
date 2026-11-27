@@ -47,3 +47,16 @@ html[data-theme=dark] #companionFrame{background:#000}
   .companion-toolbar :is(button,a){font-size:11px;padding:4px}
 }
 @media(prefers-reduced-motion:reduce){.desktop-bookshelf .desk-book-cover,.app-shell .rail-link{transition:none}}
+
+/* Keep the primary sidebar compact and allow the reader to reclaim its width. */
+.academic-rail-toggle{align-self:flex-end;display:grid;place-items:center;width:32px;height:30px;border:1px solid var(--line);border-radius:3px;color:inherit;background:transparent;margin:0 0 12px}
+.academic-rail-toggle:focus-visible{outline:2px solid currentColor;outline-offset:2px}
+@media(min-width:900px){
+  .app-shell.academic-rail-collapsed:not(.companion-focused){grid-template-columns:58px minmax(0,1fr)}
+  .app-shell.academic-rail-collapsed .desktop-rail{padding:16px 6px}
+  .app-shell.academic-rail-collapsed .rail-brand{justify-content:center;margin:4px 0 22px}
+  .app-shell.academic-rail-collapsed .rail-brand strong,.app-shell.academic-rail-collapsed .academic-rail-label{display:none}
+  .app-shell.academic-rail-collapsed .academic-rail-toggle{align-self:center}
+  .app-shell.academic-rail-collapsed .rail-nav>.rail-link{justify-content:center;padding:8px 0}
+  .app-shell.academic-rail-collapsed .rail-nav .rail-symbol{margin:0}
+}
