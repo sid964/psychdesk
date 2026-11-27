@@ -129,6 +129,17 @@
   const done=book.chapters.filter(chapter=>chapterStatus(book,chapter)==='Read').length;
   return {done,remaining:book.chapters.length-done,total:book.chapters.length,percent:Math.round(done/book.chapters.length*100)};
  }
+ function renderExplore(){
+   const groups=new Map();
+   for(const item of window.PsychDeskBiologicalIndex||[]){
+    if(!item.chapter||!item.module)continue;
+    if(!groups.has(item.chapter))groups.set(item.chapter,new Set());
+    groups.get(item.chapter).add(item.module);
+   }
+   if(!groups.size)return '';
+   return '<section class="desk-explore" aria-labelledby="deskExploreTitle"><h2 id="deskExploreTitle">Explore psychology</h2><p>Browse topics indexed from Biological Psychology, 14th edition.</p><div class="desk-explore-grid">'+
+    Array.from(groups,([chapter,modules])=>'<button type="button" class="desk-explore-entry" data-explore-chapter="'+esc(chapter)+'"><strong>'+esc(chapter)+'</strong><small>'+modules.size+' indexed '+(modules.size===1?'module':'modules')+'</small><span>Explore topics →</span></button>').join('')+'</div></section>';
+ }
  function renderHome(){
   const cover='./book-covers/biological-psychology-14e.webp';
   return '<section class="desktop-bookshelf" aria-label="Psychology reference bookshelf">'+
@@ -163,7 +174,7 @@
    '<h3>Theory and Practice of Counseling and Psychotherapy</h3><span>Gerald Corey · 9th edition</span>'+
    '<a class="desk-book-read" href="./counseling-psychotherapy-corey-9e.html">Open study notes · 16 chapters</a>'+
    '<span>236 teaching topics · Academic verification in progress</span></article></div>'+
-   '</section></section>';
+   '</section>'+renderExplore()+'</section>';
  }
  function shelf(){return renderHome();}
 function renderBlock(block, highlights) {
