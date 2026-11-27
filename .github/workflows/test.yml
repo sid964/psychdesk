@@ -14,3 +14,38 @@ jobs:
       - name: Check all application JavaScript
         run: |
           for file in *.js autopilot/*.js functions/*.js functions/lib/*.js tests/*.cjs scripts/*.cjs; do node --check "$file"; done
+
+  baseline-comparison:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Compare full test failures with the PR base (does not replace the full test job)
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        shell: bash
+        run: |
+          git worktree add --detach "$RUNNER_TEMP/psychdesk-base" "$BASE_SHA"
+          (cd "$RUNNER_TEMP/psychdesk-base" && node --test --test-reporter=tap tests/*.test.mjs tests/*.test.cjs functions/tests/*.test.cjs) > "$RUNNER_TEMP/base-tests.tap" 2>&1 || true
+          node --test --test-reporter=tap tests/*.test.mjs tests/*.test.cjs functions/tests/*.test.cjs > "$RUNNER_TEMP/head-tests.tap" 2>&1 || true
+          python3 - <<'PY'
+          import os, re, pathlib
+          root = pathlib.Path(os.environ['RUNNER_TEMP'])
+          def failures(file):
+              text = (root / file).read_text()
+              assert re.search(r'^# tests [1-9][0-9]*$', text, re.M), f'Incomplete test output: {file}'
+              return set(re.findall(r'^not ok \d+ - (.+)$', text, re.M))
+          base, head = failures('base-tests.tap'), failures('head-tests.tap')
+          print('Baseline failing tests:', len(base))
+          print('Current failing tests:', len(head))
+          print('Fixed:', sorted(base - head))
+          print('Existing failures:', sorted(base & head))
+          print('New failures:', sorted(head - base))
+          if head - base:
+              raise SystemExit(1)
+          PY

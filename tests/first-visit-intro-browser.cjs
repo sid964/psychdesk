@@ -16,7 +16,7 @@ const {chromium}=require('playwright');
   assert.equal(await page.locator('#tourShield').count(),1);
   assert.equal(await page.locator('#tourProgress').evaluate(el=>el.value),0);
   await page.locator('#tourNext').click();
-  await page.locator('.desk-original-cover').waitFor();
+  await page.locator('.desk-original-cover[href="./biological-psychology-14e.html"]').waitFor();
   assert.match(await page.locator('#tourTitle').innerText(),/bookshelf/);
   await page.locator('#tourNext').click();
   await page.locator('.focus-room-intro').waitFor();
