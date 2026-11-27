@@ -49,6 +49,45 @@ const {chromium}=require('playwright');
   assert.match(await page.locator('#fastPdfFrame').getAttribute('src'),/^blob:/);
   await page.locator('.desktop-rail [data-tab="today"]').click();
   await page.locator('.desktop-bookshelf').waitFor();
+  // Verify the actual shell transition independently of the large companion's content download.
+  await page.route('**/biological-psychology-14e.html', route => route.fulfill({
+    contentType:'text/html',body:'<!doctype html><html><body><h1>Reader test fixture</h1><a href="#read=chapter1">Chapter one</a></body></html>'
+  }));
+  await page.evaluate(()=>{window.__shellProbe=document.querySelector('#settingsBtn');});
+  const cover=page.locator('.desk-book-cover[href="./biological-psychology-14e.html"]');
+  await cover.click();
+  const workspace=page.locator('#companionWorkspace');
+  await workspace.waitFor();
+  const reader=page.frameLocator('#companionFrame');
+  await reader.getByRole('heading',{name:'Reader test fixture'}).waitFor();
+  assert.match(page.url(),/#companion\/biological-psychology-14e$/);
+  assert.equal(await page.evaluate(()=>window.__shellProbe===document.querySelector('#settingsBtn')),true);
+  assert.equal(await page.locator('#main').isVisible(),false);
+  await page.locator('#companionWorkspace .companion-focus').click();
+  assert.equal(await page.locator('.app-shell').evaluate(el=>el.classList.contains('companion-focused')),true);
+  await page.locator('#companionWorkspace .companion-focus').click();
+  await page.goBack();
+  await page.locator('.desktop-bookshelf').waitFor();
+  assert.equal(await workspace.isVisible(),false);
+  await page.goForward();
+  await workspace.waitFor();
+  await reader.getByRole('heading',{name:'Reader test fixture'}).waitFor();
+  await reader.getByRole('link',{name:'Chapter one'}).click();
+  await page.waitForURL(/#companion\/biological-psychology-14e\/read%3Dchapter1$/);
+  await page.reload({waitUntil:'domcontentloaded'});
+  await workspace.waitFor();
+  await reader.getByRole('heading',{name:'Reader test fixture'}).waitFor();
+  await page.waitForFunction(()=>document.querySelector('#companionFrame').contentWindow.location.hash==='#read=chapter1');
+  await page.locator('#companionWorkspace .companion-back').click();
+  await page.locator('.desktop-bookshelf').waitFor();
+  assert.equal(await workspace.isVisible(),false);
+  // Now load the real companion and ensure its original study interface still initializes.
+  await page.unroute('**/biological-psychology-14e.html');
+  await page.goto('http://127.0.0.1:8765/#companion/biological-psychology-14e',{waitUntil:'domcontentloaded'});
+  await page.frameLocator('#companionFrame').locator('#viewport .library').waitFor({timeout:90000});
+  assert.match(await page.frameLocator('#companionFrame').locator('#viewport').innerText(),/Biological Psychology/);
+  await page.locator('#companionWorkspace .companion-back').click();
+  await page.locator('.desktop-bookshelf').waitFor();
   console.log('DESKTOP_BOOKSHELF_SMOKE_OK');
  }finally{await context.close();await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});
