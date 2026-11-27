@@ -84,6 +84,7 @@ const {chromium}=require('playwright');
   // Now load the real companion and ensure its original study interface still initializes.
   await page.unroute('**/biological-psychology-14e.html');
   await page.goto('http://127.0.0.1:8765/#companion/biological-psychology-14e',{waitUntil:'domcontentloaded'});
+  await page.reload({waitUntil:'domcontentloaded'});
   await page.frameLocator('#companionFrame').locator('#viewport .library').waitFor({timeout:90000});
   assert.match(await page.frameLocator('#companionFrame').locator('#viewport').innerText(),/Biological Psychology/);
   await page.locator('#companionWorkspace .companion-back').click();
