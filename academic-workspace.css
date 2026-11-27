@@ -93,3 +93,8 @@ html[data-theme=dark] #companionFrame{background:#000}
 .desk-explore-entry:hover strong{text-decoration:underline;text-underline-offset:3px}
 @media(max-width:1050px){.companion-tools{max-width:42%}.companion-toolbar{gap:6px}.companion-toolbar :is(button,a){padding:4px}}
 @media(max-width:899px){.companion-body{flex-direction:column}.companion-tools{max-width:none;width:100%;height:40%;border-top:1px solid var(--line)}.companion-resizer{display:none}}
+
+/* Book identity remains visible after opening the bookshelf item. */
+.companion-toolbar .companion-thumbnail{display:block;flex:none;width:34px;height:46px;object-fit:contain;background:transparent;border:1px solid var(--line);border-radius:2px}
+.companion-toolbar .companion-thumbnail[hidden],.companion-focused .companion-thumbnail,.desk-original-cover img[hidden]{display:none!important}
+.desktop-bookshelf .desk-original-cover img{object-fit:contain}

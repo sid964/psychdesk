@@ -159,8 +159,8 @@
    '<a class="desk-book-read" href="./psychopathology-9e.html">Open study notes · 16 chapters</a>'+
    '<span>Academic verification in progress</span></article>'+ 
    '<article class="desk-book-item desk-featured-book">'+
-   '<a class="desk-book-cover desk-file-cover" href="./singh-research-methods.html" aria-label="Open A. K. Singh research methods study notes">'+
-   '<small>Research methods</small><strong>Tests, Measurements and Research Methods in Behavioural Sciences</strong><small>A. K. Singh</small></a>'+
+   '<a class="desk-book-cover desk-original-cover" href="./singh-research-methods.html" aria-label="Open A. K. Singh research methods study notes">'+
+   '<span class="desk-cover-fallback" aria-hidden="true"><small>Research methods</small><strong>Tests, Measurements and Research Methods in Behavioural Sciences</strong><small>A. K. Singh</small></span><img src="https://www.bharatibhawan.in/uploads/1043232315Tests%2C_Measurements_and_Research_Methods.jpg" alt="Publisher cover: Tests, Measurements and Research Methods in Behavioural Sciences, A. K. Singh; indexed edition unverified" loading="lazy" decoding="async" referrerpolicy="no-referrer"></a>'+
    '<h3>Tests, Measurements and Research Methods in Behavioural Sciences</h3><span>A. K. Singh · Edition unverified</span>'+
    '<a class="desk-book-read" href="./singh-research-methods.html">Open study notes · 24 chapters</a>'+
    '<span>Academic verification in progress</span></article>'+
@@ -170,7 +170,7 @@
    '<a class="desk-book-read" href="./dsm5-2013.html">Open study notes</a>'+
    '<span>Academic verification in progress</span></article>'+
    '<article class="desk-book-item desk-featured-book">'+
-   '<a class="desk-book-cover desk-file-cover" href="./counseling-psychotherapy-corey-9e.html" aria-label="Open Gerald Corey counseling and psychotherapy study companion"><small>9th edition · 2013</small><strong>Theory and Practice of Counseling and Psychotherapy</strong><small>Gerald Corey</small></a>'+
+   '<a class="desk-book-cover desk-original-cover" href="./counseling-psychotherapy-corey-9e.html" aria-label="Open Gerald Corey counseling and psychotherapy study companion"><span class="desk-cover-fallback" aria-hidden="true"><small>9th edition · 2013</small><strong>Theory and Practice of Counseling and Psychotherapy</strong><small>Gerald Corey</small></span><img src="https://covers.vitalsource.com/vbid/9798214354897/width/320?style=preview" alt="Original cover: Theory and Practice of Counseling and Psychotherapy, ninth edition, Gerald Corey" loading="lazy" decoding="async" referrerpolicy="no-referrer"></a>'+
    '<h3>Theory and Practice of Counseling and Psychotherapy</h3><span>Gerald Corey · 9th edition</span>'+
    '<a class="desk-book-read" href="./counseling-psychotherapy-corey-9e.html">Open study notes · 16 chapters</a>'+
    '<span>236 teaching topics · Academic verification in progress</span></article></div>'+

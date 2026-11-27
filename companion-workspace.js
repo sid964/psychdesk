@@ -10,6 +10,15 @@
     'counseling-psychotherapy-corey-9e': 'Theory and Practice of Counseling and Psychotherapy'
   });
   const root = new URL('./', document.baseURI);
+  // Local source covers are preferred; two publisher/retailer covers are linked
+  // until their image bytes can be archived in the repository.
+  const covers = Object.freeze({
+    'biological-psychology-14e': './book-covers/biological-psychology-14e.webp',
+    'psychopathology-9e': './book-covers/psychopathology-9e.webp',
+    'singh-research-methods': 'https://www.bharatibhawan.in/uploads/1043232315Tests%2C_Measurements_and_Research_Methods.jpg',
+    'dsm5-2013': './book-covers/dsm5-2013.webp',
+    'counseling-psychotherapy-corey-9e': 'https://covers.vitalsource.com/vbid/9798214354897/width/320?style=preview'
+  });
   const main = document.getElementById('main');
   if (!main) return;
   let frame, active, previousFocus, scroll = 0, previousCrumb = '', timer, routePoll, focused = false;
@@ -29,9 +38,47 @@
   host.id = 'companionWorkspace';
   host.hidden = true;
   host.setAttribute('aria-label', 'Book reading workspace');
-  host.innerHTML = '<header class="companion-toolbar"><button type="button" class="companion-back">‹ Bookshelf</button><h1 tabindex="-1"></h1><button type="button" class="companion-tools-toggle" aria-expanded="false" aria-controls="companionTools">Study tools</button><button type="button" class="companion-focus" aria-pressed="false">Focus mode</button><a class="companion-standalone" target="_blank" rel="noopener">Open separately ↗</a></header><div class="companion-body"><div class="companion-frame-slot"><p class="companion-status" role="status" hidden></p></div><aside id="companionTools" class="companion-tools" aria-label="Study tools" hidden><div class="companion-resizer" role="separator" aria-label="Study tools width" aria-orientation="vertical" tabindex="0" aria-valuemin="260" aria-valuemax="480" aria-valuenow="320"></div><div class="companion-tool-content"><h2>Dictionary</h2><label for="companionLookup">Look up a concept</label><input id="companionLookup" type="search" placeholder="Search your bookshelf" autocomplete="off"><div id="companionLookupResults" aria-live="polite"></div><section class="companion-notes"><h2>Sticky notes</h2><form id="companionNoteForm"><label for="companionNote">Capture a thought</label><textarea id="companionNote" rows="4" maxlength="4500" required></textarea><button type="submit">Save note</button><p id="companionNoteStatus" role="status"></p></form><div id="companionRecentNotes"></div></section></div></aside></div>';
+  host.innerHTML = '<header class="companion-toolbar"><button type="button" class="companion-back">‹ Bookshelf</button><img class="companion-thumbnail" alt="" referrerpolicy="no-referrer" hidden><h1 tabindex="-1"></h1><button type="button" class="companion-tools-toggle" aria-expanded="false" aria-controls="companionTools">Study tools</button><button type="button" class="companion-focus" aria-pressed="false">Focus mode</button><a class="companion-standalone" target="_blank" rel="noopener">Open separately ↗</a></header><div class="companion-body"><div class="companion-frame-slot"><p class="companion-status" role="status" hidden></p></div><aside id="companionTools" class="companion-tools" aria-label="Study tools" hidden><div class="companion-resizer" role="separator" aria-label="Study tools width" aria-orientation="vertical" tabindex="0" aria-valuemin="260" aria-valuemax="480" aria-valuenow="320"></div><div class="companion-tool-content"><h2>Dictionary</h2><label for="companionLookup">Look up a concept</label><input id="companionLookup" type="search" placeholder="Search your bookshelf" autocomplete="off"><div id="companionLookupResults" aria-live="polite"></div><section class="companion-notes"><h2>Sticky notes</h2><form id="companionNoteForm"><label for="companionNote">Capture a thought</label><textarea id="companionNote" rows="4" maxlength="4500" required></textarea><button type="submit">Save note</button><p id="companionNoteStatus" role="status"></p></form><div id="companionRecentNotes"></div></section></div></aside></div>';
   main.after(host);
   const title = host.querySelector('h1');
+  const thumbnail = host.querySelector('.companion-thumbnail');
+  thumbnail.addEventListener('load', () => { thumbnail.hidden = false; });
+  thumbnail.addEventListener('error', () => { thumbnail.hidden = true; });
+  function showThumbnail(id) {
+    const url = new URL(covers[id], root).href;
+    if (thumbnail.getAttribute('src') !== url) {
+      thumbnail.hidden = true;
+      thumbnail.src = url;
+    }
+  }
+  function hideBrokenCover(img) {
+    if (img.matches?.('.desk-original-cover img')) img.hidden = true;
+  }
+  document.addEventListener('error', event => hideBrokenCover(event.target), true);
+  for (const img of main.querySelectorAll('.desk-original-cover img')) {
+    if (img.complete && !img.naturalWidth) hideBrokenCover(img);
+  }
+  // Replace only the existing visual cover on a companion's library landing.
+  // Never modify textbook content or the legacy document's stored state.
+  function decorateBookLanding() {
+    if (!active || !frame || host.hidden) return;
+    try {
+      const doc = frame.contentDocument;
+      const cover = doc?.querySelector('.library .featured .book-cover, .featured .book-cover');
+      if (!cover || cover.dataset.psychdeskOriginalCover) return;
+      cover.dataset.psychdeskOriginalCover = '1';
+      const image = doc.createElement('img');
+      image.alt = books[active.id] + ' cover';
+      image.referrerPolicy = 'no-referrer';
+      image.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#eee;z-index:10;border-radius:inherit;pointer-events:none';
+      image.addEventListener('load', () => {
+        if (!cover.isConnected) return;
+        if (doc.defaultView.getComputedStyle(cover).position === 'static') cover.style.position = 'relative';
+        cover.append(image);
+      }, {once:true});
+      image.src = new URL(covers[active.id], root).href;
+    } catch { /* Standalone reader remains usable. */ }
+  }
   const back = host.querySelector('.companion-back');
   const focus = host.querySelector('.companion-focus');
   const standalone = host.querySelector('.companion-standalone');
@@ -141,6 +188,7 @@
   }
   function syncFrameRoute() {
     if (!active || !frame || host.hidden) return;
+    decorateBookLanding();
     try {
       const url = new URL(frame.contentWindow.location.href);
       if (url.origin !== root.origin || url.pathname !== bookURL(active.id).pathname) return;
@@ -185,6 +233,7 @@
     main.hidden = true;
     shell?.classList.add('companion-open');
     title.textContent = books[target.id];
+    showThumbnail(target.id);
     if (toolsOpen && !focused) { renderLookup(); renderNotes(); }
     standalone.href = bookURL(target.id, target.anchor).href;
     if (!frame || active.id !== target.id || (target.anchor && active.anchor !== target.anchor)) {
