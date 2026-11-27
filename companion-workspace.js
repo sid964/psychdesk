@@ -12,7 +12,7 @@
   const root = new URL('./', document.baseURI);
   const main = document.getElementById('main');
   if (!main) return;
-  let frame, active, previousFocus, scroll = 0, previousCrumb = '', timer, focused = false;
+  let frame, active, previousFocus, scroll = 0, previousCrumb = '', timer, routePoll, focused = false;
   const own = id => Object.prototype.hasOwnProperty.call(books, id);
   const route = () => {
     const match = /^#companion\/([a-z0-9-]+)(?:\/(.*))?$/.exec(location.hash);
@@ -193,6 +193,10 @@
       syncFrameRoute();
     }
     if (wasHidden) {
+      // A companion may replace its own document after loading its text chunks.
+      // Reconcile its URL even when document.open() removes the hash listener.
+      clearInterval(routePoll);
+      routePoll = setInterval(syncFrameRoute, 250);
       window.scrollTo({ top: 0, behavior: 'instant' });
       title.focus({ preventScroll: true });
     }
@@ -201,6 +205,7 @@
   }
   function hide() {
     if (host.hidden) return;
+    clearInterval(routePoll);
     setFocus(false);
     host.hidden = true;
     main.hidden = false;
