@@ -12,7 +12,7 @@
   const root = new URL('./', document.baseURI);
   const main = document.getElementById('main');
   if (!main) return;
-  let frame, active, previousFocus, scroll = 0, savedRoute = '', timer, focused = false;
+  let frame, active, previousFocus, scroll = 0, previousCrumb = '', timer, focused = false;
   const own = id => Object.prototype.hasOwnProperty.call(books, id);
   const route = () => {
     const match = /^#companion\/([a-z0-9-]+)(?:\/(.*))?$/.exec(location.hash);
@@ -84,6 +84,7 @@
     if (wasHidden) {
       previousFocus = document.activeElement;
       scroll = window.scrollY;
+      previousCrumb = document.getElementById('railCurrentSection')?.textContent || 'Bookshelf';
     }
     host.hidden = false;
     main.hidden = true;
@@ -92,6 +93,8 @@
     standalone.href = bookURL(target.id, target.anchor).href;
     if (!frame || active.id !== target.id || (target.anchor && active.anchor !== target.anchor)) {
       createFrame(target);
+    } else {
+      syncFrameRoute();
     }
     if (wasHidden) {
       window.scrollTo({ top: 0, behavior: 'instant' });
@@ -106,6 +109,8 @@
     host.hidden = true;
     main.hidden = false;
     shell?.classList.remove('companion-open');
+    const crumb = document.getElementById('railCurrentSection');
+    if (crumb) crumb.textContent = previousCrumb;
     requestAnimationFrame(() => {
       if (!host.hidden) return;
       window.scrollTo({ top: scroll, behavior: 'instant' });
@@ -119,7 +124,6 @@
   }
   function navigate(id, anchor) {
     const next = '#companion/' + id + (anchor ? '/' + encodeURIComponent(anchor) : '');
-    if (!route()) savedRoute = location.hash;
     if (location.hash !== next) history.pushState(history.state, '', next);
     readRoute();
   }
@@ -127,9 +131,12 @@
     const current = route();
     if (!current) return;
     // Explicit bookshelf navigation must not walk the iframe's chapter history.
-    history.pushState(history.state, '', savedRoute.startsWith('#books') ? savedRoute : location.pathname + location.search);
+    history.pushState(history.state, '', location.pathname + location.search);
     hide();
-    window.PsychDeskCore?.setTab('today');
+    if (!main.querySelector('.desktop-bookshelf')) {
+      scroll = 0;
+      window.PsychDeskCore?.setTab('today');
+    }
   }
   back.addEventListener('click', exitToShelf);
   focus.addEventListener('click', () => setFocus(!focused));
