@@ -42,6 +42,9 @@ test('bookshelf renders curated reference titles without exposing private Drive 
   assert.ok(src('sw.js').includes("'./book-covers/"+file+"'"));
  }
  assert.doesNotMatch(html,/www\.cengage\.com\/covers\/imageServlet/);
+ assert.match(html,/src="https:\/\/www\.bharatibhawan\.in\/uploads\/1043232315Tests%2C_Measurements_and_Research_Methods\.jpg"/);
+ assert.match(html,/src="https:\/\/covers\.vitalsource\.com\/vbid\/9798214354897\/width\/320\?style=preview"/);
+ assert.match(html,/indexed edition unverified/);
  assert.doesNotMatch(html,/Research Methods PDF/);
  assert.doesNotMatch(html,/My Private Notes/);
  assert.match(html,/data-book-suggest="open"/);
