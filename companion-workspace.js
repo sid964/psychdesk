@@ -38,6 +38,14 @@
   const slot = host.querySelector('.companion-frame-slot');
   const status = host.querySelector('.companion-status');
   const shell = main.closest('.app-shell');
+  const railToggle = document.querySelector('.academic-rail-toggle');
+  railToggle?.addEventListener('click', () => {
+    const collapsed = shell.classList.toggle('academic-rail-collapsed');
+    railToggle.setAttribute('aria-expanded', String(!collapsed));
+    railToggle.setAttribute('aria-label', collapsed ? 'Expand workspace navigation' : 'Collapse workspace navigation');
+    railToggle.title = collapsed ? 'Expand navigation' : 'Collapse navigation';
+    railToggle.textContent = collapsed ? '»' : '«';
+  });
   function setFocus(value) {
     focused = value;
     shell?.classList.toggle('companion-focused', value);
