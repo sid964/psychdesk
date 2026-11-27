@@ -110,7 +110,7 @@
     main.hidden = false;
     shell?.classList.remove('companion-open');
     const crumb = document.getElementById('railCurrentSection');
-    if (crumb) crumb.textContent = previousCrumb;
+    if (crumb && active && crumb.textContent === books[active.id]) crumb.textContent = previousCrumb;
     requestAnimationFrame(() => {
       if (!host.hidden) return;
       window.scrollTo({ top: scroll, behavior: 'instant' });
