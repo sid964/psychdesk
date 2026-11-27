@@ -29,7 +29,7 @@
   host.id = 'companionWorkspace';
   host.hidden = true;
   host.setAttribute('aria-label', 'Book reading workspace');
-  host.innerHTML = '<header class="companion-toolbar"><button type="button" class="companion-back">‹ Bookshelf</button><h1 tabindex="-1"></h1><button type="button" class="companion-focus" aria-pressed="false">Focus mode</button><a class="companion-standalone" target="_blank" rel="noopener">Open separately ↗</a></header><div class="companion-frame-slot"><p class="companion-status" role="status" hidden></p></div>';
+  host.innerHTML = '<header class="companion-toolbar"><button type="button" class="companion-back">‹ Bookshelf</button><h1 tabindex="-1"></h1><button type="button" class="companion-tools-toggle" aria-expanded="false" aria-controls="companionTools">Study tools</button><button type="button" class="companion-focus" aria-pressed="false">Focus mode</button><a class="companion-standalone" target="_blank" rel="noopener">Open separately ↗</a></header><div class="companion-body"><div class="companion-frame-slot"><p class="companion-status" role="status" hidden></p></div><aside id="companionTools" class="companion-tools" aria-label="Study tools" hidden><div class="companion-resizer" role="separator" aria-label="Study tools width" aria-orientation="vertical" tabindex="0" aria-valuemin="260" aria-valuemax="480" aria-valuenow="320"></div><div class="companion-tool-content"><h2>Dictionary</h2><label for="companionLookup">Look up a concept</label><input id="companionLookup" type="search" placeholder="Search your bookshelf" autocomplete="off"><div id="companionLookupResults" aria-live="polite"></div><section class="companion-notes"><h2>Sticky notes</h2><form id="companionNoteForm"><label for="companionNote">Capture a thought</label><textarea id="companionNote" rows="4" maxlength="4500" required></textarea><button type="submit">Save note</button><p id="companionNoteStatus" role="status"></p></form><div id="companionRecentNotes"></div></section></div></aside></div>';
   main.after(host);
   const title = host.querySelector('h1');
   const back = host.querySelector('.companion-back');
@@ -46,11 +46,98 @@
     railToggle.title = collapsed ? 'Expand navigation' : 'Collapse navigation';
     railToggle.textContent = collapsed ? '»' : '«';
   });
+  const toolsToggle = host.querySelector('.companion-tools-toggle');
+  const tools = host.querySelector('#companionTools');
+  const lookup = host.querySelector('#companionLookup');
+  const results = host.querySelector('#companionLookupResults');
+  const note = host.querySelector('#companionNote');
+  const noteStatus = host.querySelector('#companionNoteStatus');
+  const recent = host.querySelector('#companionRecentNotes');
+  const resizer = host.querySelector('.companion-resizer');
+  const core = () => window.PsychDeskCore;
+  const textNode = (tag, text) => { const el = document.createElement(tag); el.textContent = text; return el; };
+  let toolsOpen = false;
+  let width = 320;
+  function setTools(value) {
+    toolsOpen = value;
+    tools.hidden = !value || focused;
+    toolsToggle.setAttribute('aria-expanded', String(value && !focused));
+    if (value && !focused) { renderLookup(); renderNotes(); }
+  }
+  function renderLookup() {
+    results.replaceChildren();
+    const q = lookup.value.trim().toLocaleLowerCase();
+    if (q.length < 2) { results.append(textNode('p', 'Search indexed textbook headings or existing glossary terms.')); return; }
+    const entries = (window.PsychDeskKnowledge?.findTerms(q, 'All', false) || []).slice(0, 4);
+    for (const item of entries) {
+      const section = document.createElement('article');
+      section.append(textNode('h3', item.term), textNode('p', item.definition), textNode('small', 'Psychology Dictionary · ' + (item.category || 'General')));
+      results.append(section);
+    }
+    const rows = (window.PsychDeskBiologicalIndex || []).filter(item => [item.term,item.chapter,item.module,item.summary].join(' ').toLocaleLowerCase().includes(q)).slice(0, 6);
+    if (rows.length) results.append(textNode('h3', 'From Biological Psychology'));
+    for (const item of rows) {
+      const link = document.createElement('a');
+      link.href = bookURL('biological-psychology-14e').href;
+      link.target = '_blank';
+      link.rel = 'noopener';
+      link.append(textNode('strong', item.term), textNode('small', [item.chapter, item.module, item.page ? 'p. ' + item.page : ''].filter(Boolean).join(' · ')));
+      results.append(link);
+    }
+    if (!entries.length && !rows.length) results.append(textNode('p', 'No matching entries.'));
+  }
+  function renderNotes() {
+    recent.replaceChildren();
+    const rows = (core()?.getData()?.stickies || []).filter(n => !n.part).slice().sort((a,b) => String(b.updatedAt || '').localeCompare(String(a.updatedAt || ''))).slice(0, 4);
+    if (!rows.length) recent.append(textNode('p', 'No saved sticky notes yet.'));
+    for (const item of rows) {
+      const article = document.createElement('article');
+      article.append(textNode('h3', item.title || 'Sticky note'), textNode('p', item.rawText || (item.lines || []).join(' ')));
+      recent.append(article);
+    }
+  }
+  toolsToggle.addEventListener('click', () => setTools(!toolsOpen));
+  lookup.addEventListener('input', renderLookup);
+  host.querySelector('#companionNoteForm').addEventListener('submit', event => {
+    event.preventDefault();
+    const api = core(), value = note.value.trim();
+    if (!api || !value || !active) return;
+    const cards = window.PsychDeskStickies?.generate(value, books[active.id], '', 'cream', api.id(), []) || [];
+    if (!cards.length) { noteStatus.textContent = 'Note creator unavailable.'; return; }
+    const data = api.getData(), before = data.stickies;
+    data.stickies = [...(Array.isArray(before) ? before : []), ...cards];
+    if (api.save() === false) { data.stickies = before; noteStatus.textContent = 'Unable to save. Your text is still here.'; return; }
+    note.value = '';
+    noteStatus.textContent = 'Saved to Sticky Notes.';
+    renderNotes();
+  });
+  function resizeTools(value) {
+    width = Math.max(260, Math.min(480, value));
+    host.style.setProperty('--companion-tools-width', width + 'px');
+    resizer.setAttribute('aria-valuenow', String(width));
+  }
+  resizer.addEventListener('pointerdown', event => {
+    if (event.button !== 0) return;
+    const start = event.clientX, initial = width;
+    resizer.setPointerCapture(event.pointerId);
+    host.classList.add('companion-resizing');
+    const move = e => resizeTools(initial + start - e.clientX);
+    const finish = () => { host.classList.remove('companion-resizing'); resizer.removeEventListener('pointermove', move); };
+    resizer.addEventListener('pointermove', move);
+    resizer.addEventListener('lostpointercapture', finish, {once:true});
+  });
+  resizer.addEventListener('keydown', event => {
+    if (!['ArrowLeft','ArrowRight','Home','End'].includes(event.key)) return;
+    event.preventDefault();
+    resizeTools(event.key === 'Home' ? 260 : event.key === 'End' ? 480 : width + (event.key === 'ArrowLeft' ? 20 : -20));
+  });
   function setFocus(value) {
     focused = value;
     shell?.classList.toggle('companion-focused', value);
     focus.setAttribute('aria-pressed', String(value));
     focus.textContent = value ? 'Exit focus' : 'Focus mode';
+    toolsToggle.hidden = value;
+    setTools(toolsOpen);
   }
   function syncFrameRoute() {
     if (!active || !frame || host.hidden) return;
@@ -98,6 +185,7 @@
     main.hidden = true;
     shell?.classList.add('companion-open');
     title.textContent = books[target.id];
+    if (toolsOpen && !focused) { renderLookup(); renderNotes(); }
     standalone.href = bookURL(target.id, target.anchor).href;
     if (!frame || active.id !== target.id || (target.anchor && active.anchor !== target.anchor)) {
       createFrame(target);
